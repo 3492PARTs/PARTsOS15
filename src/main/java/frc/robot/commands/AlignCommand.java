@@ -55,12 +55,13 @@ public class AlignCommand extends Command {
   // simple proportional ranging control with Limelight's "ty" value
   // this works best if your Limelight's mount height and target mount height are different.
   // if your limelight and target are mounted at the same or similar heights, use "ta" (area) for target ranging rather than "ty"
-  double limelight_range_proportional(double dist)
+  double limelight_range_proportional()
   {    
     double kP = .1;
-    double targetingForwardSpeed = dist * kP;
+    double targetingForwardSpeed = LimelightHelpers.getTY("") * kP;
     targetingForwardSpeed *= Drivetrain.kMaxSpeed;
-    targetingForwardSpeed *= -1.0;
+    //targetingForwardSpeed *= -1.0;
+    System.out.println("Range Speed: " + targetingForwardSpeed);
     return targetingForwardSpeed;
   }
 
@@ -70,7 +71,7 @@ public class AlignCommand extends Command {
     private final SwerveRequest.RobotCentric m_alignRequest;
 
     private final ProfiledPIDController aimController;
-    //private final ProfiledPIDController rangeController;
+    private final ProfiledPIDController rangeController;
 
     //From tunerconsts and robtocontainer.java
     private static final double MAX_AIM_VELOCITY = 1.5*Math.PI; // radd/s
@@ -98,7 +99,7 @@ public class AlignCommand extends Command {
 
         aimController.enableContinuousInput(-Math.PI, Math.PI); //Wrpa from -pi to ip
         
-        //rangeController = new ProfiledPIDController(RANGE_P, RANGE_I, RANGE_D, new TrapezoidProfile.Constraints(MAX_RANGE_VELOCITY, MAX_RANGE_ACCELERATION));
+        rangeController = new ProfiledPIDController(RANGE_P, RANGE_I, RANGE_D, new TrapezoidProfile.Constraints(MAX_RANGE_VELOCITY, MAX_RANGE_ACCELERATION));
 
         addRequirements(m_Vision);
     }
@@ -108,10 +109,10 @@ public class AlignCommand extends Command {
         //m_Vision.setPipelineIndex(0);
         
         aimController.reset(0);
-        //rangeController.reset(m_Vision.getDistance(VisionConstants.REEF_APRILTAG_HEIGHT.in(Inches)).in(Inches)); //Init dist
+        rangeController.reset(m_Vision.getDistance(VisionConstants.REEF_APRILTAG_HEIGHT.in(Inches)).in(Inches)); //Init dist
         
         aimController.setGoal(0); // tx=0 is centered
-        //rangeController.setGoal(holdDistance.in(Meters));
+        rangeController.setGoal(holdDistance.in(Meters));
     }
 
     @Override
@@ -121,13 +122,13 @@ public class AlignCommand extends Command {
 
         double rotationOutput = limelight_aim_proportional(); // HELP MEEEEE //aimController.calculate(tx.in(Radians));
         //? This by itself causes no movement.
-        double rangeOutput =  limelight_range_proportional(currentDistance.in(Meters)); //rangeController.calculate(currentDistance.in(Meters));
+        double rangeOutput = limelight_range_proportional(); //rangeController.calculate(currentDistance.in(Meters));
 
         Translation2d translation = new Translation2d(rangeOutput, 0);
                 
         m_Swerve.setControl(m_alignRequest
             .withVelocityX(translation.getX())
-            .withVelocityY(0) // Intentionally zero here.
+            .withVelocityY(translation.getY())
             .withRotationalRate(rotationOutput));
     }
     
@@ -146,7 +147,7 @@ public class AlignCommand extends Command {
 
     public AlignCommand withTolerance(Angle aimTolerance, Distance rangeTolerance) {
         aimController.setTolerance(aimTolerance.in(Radians));
-        //rangeController.setTolerance(rangeTolerance.in(Meters));
+        rangeController.setTolerance(rangeTolerance.in(Meters));
         return this;
     }
 }
