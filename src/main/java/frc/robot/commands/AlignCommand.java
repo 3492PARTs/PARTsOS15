@@ -114,7 +114,7 @@ public class AlignCommand extends Command {
         aimController.setGoal(0); // tx=0 is centered
         rangeController.setGoal(holdDistance);
 
-        rangeController.setTolerance(0.3);
+        rangeController.setTolerance(0.1);
     }
 
     @Override
