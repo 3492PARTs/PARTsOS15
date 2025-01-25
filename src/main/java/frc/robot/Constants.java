@@ -27,6 +27,10 @@ public final class Constants {
     public static final Distance PROCCESSOR_APRILTAG_HEIGHT = Distance.ofBaseUnits(45.875, Inches);
     public static final Distance CORAL_APRILTAG_HEIGHT = Distance.ofBaseUnits(53.25, Inches);
   }
+  public static class Sensors {
+    public static final int laserCanId = 30;
+    public static final int canAndColorId = 31;
+  }
   public static class Elevator {
     public static final int leftElevatorId = 100;
     public static final int rightElevatorId = 99;
