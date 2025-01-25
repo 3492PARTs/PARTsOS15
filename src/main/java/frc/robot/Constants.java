@@ -15,8 +15,8 @@ import edu.wpi.first.units.measure.Distance;
  */
 public final class Constants {
     public static class Drivetrain {
-        public static final double kMaxAngularSpeed = Math.PI/4;
-        public static final double kMaxSpeed = 1.0; // 3 meters per second
+        public static final double kMaxAngularSpeed = Math.PI/4; // Radians
+        public static final double kMaxSpeed = 3.0; // Meters per second.
     }
     public static class VisionConstants {
     //public static final String LIMELIGHT_NAME = "limelight-a";

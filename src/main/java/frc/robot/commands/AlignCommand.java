@@ -55,10 +55,10 @@ public class AlignCommand extends Command {
   // simple proportional ranging control with Limelight's "ty" value
   // this works best if your Limelight's mount height and target mount height are different.
   // if your limelight and target are mounted at the same or similar heights, use "ta" (area) for target ranging rather than "ty"
-  double limelight_range_proportional()
+  double limelight_range_proportional(double dist)
   {    
     double kP = .1;
-    double targetingForwardSpeed = LimelightHelpers.getTY("") * kP;
+    double targetingForwardSpeed = dist * kP;
     targetingForwardSpeed *= Drivetrain.kMaxSpeed;
     targetingForwardSpeed *= -1.0;
     return targetingForwardSpeed;
@@ -116,18 +116,18 @@ public class AlignCommand extends Command {
 
     @Override
     public void execute() {
-        Angle tx = m_Vision.getTX();
+        //Angle tx = m_Vision.getTX();
         Distance currentDistance = m_Vision.getDistance(VisionConstants.REEF_APRILTAG_HEIGHT.in(Inches));
 
         double rotationOutput = limelight_aim_proportional(); // HELP MEEEEE //aimController.calculate(tx.in(Radians));
         //? This by itself causes no movement.
-        double rangeOutput =  limelight_range_proportional(); //rangeController.calculate(currentDistance.in(Meters));
+        double rangeOutput =  limelight_range_proportional(currentDistance.in(Meters)); //rangeController.calculate(currentDistance.in(Meters));
 
         Translation2d translation = new Translation2d(rangeOutput, 0);
                 
         m_Swerve.setControl(m_alignRequest
-            .withVelocityX(translation.getX()) //
-            .withVelocityY(translation.getY()) //
+            .withVelocityX(translation.getX())
+            .withVelocityY(0) // Intentionally zero here.
             .withRotationalRate(rotationOutput));
     }
     
