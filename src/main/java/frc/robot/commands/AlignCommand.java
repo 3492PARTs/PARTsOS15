@@ -80,7 +80,7 @@ public class AlignCommand extends Command {
     private static final double MAX_RANGE_ACCELERATION = 0.5; // m/2^s
   
     // Todo - Tune later
-    private static final double AIM_P = 0.1; //Proprotinal
+    private static final double AIM_P = 0.4; //Proprotinal
     private static final double AIM_I = 0.01; //0.01; //Gradual corretction
     private static final double AIM_D = 0.05; //0.05; //Smooth oscilattions
     
@@ -108,33 +108,35 @@ public class AlignCommand extends Command {
     public void initialize() {
         //m_Vision.setPipelineIndex(0);
         
-        aimController.reset(0);
+        aimController.reset(LimelightHelpers.getTX("")*(Math.PI/180));
         rangeController.reset(m_Vision.getDistance(0)); //Init dist
         
         aimController.setGoal(0); // tx=0 is centered
         rangeController.setGoal(holdDistance);
 
+        aimController.setTolerance(0.1);
         rangeController.setTolerance(0.1);
     }
 
     @Override
     public void execute() {
-        //double tx = m_Vision.getTX();
         double currentDistance = m_Vision.getDistance(VisionConstants.REEF_APRILTAG_HEIGHT.in(Inches));
+        double currentAngle = LimelightHelpers.getTX("");
 
-        double rotationOutput =  0;//aimController.calculate(LimelightHelpers.getTX("") * (Math.PI/180)); //limelight_aim_proportional()
+        // TODO: Test minimum rotating value for aimController.
+        double rotationOutput = aimController.calculate(currentAngle * (Math.PI/180)); //limelight_aim_proportional()
         //? Moving oppisite to expected position.
         double rangeOutput = rangeController.calculate(currentDistance, holdDistance); //limelight_range_proportional(); //
 
         Translation2d translation = new Translation2d(rangeOutput, 0);
         //System.out.println("Translation X: " + translation.getX()); // IS rangeOutput
-        System.out.println("Current Distance " + currentDistance);
-        System.out.println("Range Output: " + rangeOutput);
-        System.out.println("Controller: " + rangeController.getSetpoint().position);
+        System.out.println("Current Angle " + currentAngle);
+        System.out.println("Rotation Output: " + rotationOutput);
+        System.out.println("Controller: " + aimController.getSetpoint().position);
                   
         m_Swerve.setControl(m_alignRequest
-            .withVelocityX(translation.getX())
-            .withVelocityY(translation.getY())
+            .withVelocityX(0) //translation.getX()
+            .withVelocityY(0) //translation.getY()
             .withRotationalRate(rotationOutput));
           
     }
@@ -149,7 +151,7 @@ public class AlignCommand extends Command {
 
     @Override
     public boolean isFinished() {
-        return /*aimController.atGoal() &&*/ rangeController.atGoal();
+        return aimController.atGoal() || rangeController.atGoal();
     }
 
     public AlignCommand withTolerance(Angle aimTolerance, Distance rangeTolerance) {
