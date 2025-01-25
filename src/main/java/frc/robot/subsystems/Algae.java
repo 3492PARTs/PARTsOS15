@@ -18,7 +18,7 @@ import frc.robot.Constants;
 public class Algae extends SubsystemBase {
 
   private static SparkMax algaeIntake = new SparkMax(Constants.Algae.algaeIntakeId, MotorType.kBrushless);
-  private static RelativeEncoder algaeIntakEncoder;
+  private static RelativeEncoder algaeIntakeEncoder;
 
   private static SparkMax algaeWrist = new SparkMax(Constants.Algae.algaeWristId, MotorType.kBrushless);
   private static RelativeEncoder algaeWristEncoder;
@@ -32,13 +32,16 @@ public class Algae extends SubsystemBase {
     algaeWristConfig.idleMode(IdleMode.kBrake);
     algaeWrist.configure(algaeWristConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    algaeIntakEncoder = algaeIntake.getEncoder();
+    algaeIntakeEncoder = algaeIntake.getEncoder();
     algaeWristEncoder = algaeWrist.getEncoder();
   }
 
   public void setSpeed(double speed) {
     algaeWrist.set(speed);
     algaeIntake.set(speed);
+  }
+  public double getEncoderDistance() {
+    return algaeIntakeEncoder.getPosition();
   }
 
   @Override

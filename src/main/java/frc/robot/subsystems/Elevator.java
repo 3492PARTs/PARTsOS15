@@ -45,6 +45,9 @@ public class Elevator extends SubsystemBase {
     rightElevatorMotor.set(speed);
     leftElevatorMotor.set(speed);
   }
+  public double getEncoderDistance() {
+    return leftElevatorEncoder.getPosition();
+  }
 
   @Override
   public void periodic() {
