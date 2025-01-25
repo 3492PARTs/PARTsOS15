@@ -33,7 +33,7 @@ public class Elevator extends SubsystemBase {
 
     SparkMaxConfig rightElevatorConfig = new SparkMaxConfig();
     rightElevatorConfig.idleMode(IdleMode.kBrake);
-    rightElevatorConfig.follow(rightElevatorMotor);
+    rightElevatorConfig.follow(leftElevatorMotor);
     rightElevatorMotor.configure(rightElevatorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     leftElevatorEncoder = leftElevatorMotor.getEncoder();

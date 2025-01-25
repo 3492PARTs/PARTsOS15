@@ -38,7 +38,12 @@ public final class Constants {
   public static class Algae {
     public static final int algaeIntakeId = 50;
     public static final int algaeWristId = 51;
-    public static final int algaeIntakeSpeed = 0;
-    public static final int algaeWristSpeed = 0;
+    public static final double algaeIntakeSpeed = 0.2;
+    public static final double algaeWristSpeed = 0.2;
+  }
+  public static class Coral {
+    public static final int coralRightMotorId = 70;
+    public static final int coralLeftMotorId = 71;
+    public static final double coralMotorSpeed = 0.2;
   }
 }
