@@ -31,4 +31,10 @@ public final class Constants {
     public static final int leftElevatorId = 100;
     public static final int rightElevatorId = 99;
   }
+  public static class Algae {
+    public static final int algaeIntakeId = 50;
+    public static final int algaeWristId = 51;
+    public static final int algaeIntakeSpeed = 0;
+    public static final int algaeWristSpeed = 0;
+  }
 }
