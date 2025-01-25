@@ -9,6 +9,8 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Percent;
 import static edu.wpi.first.units.Units.Radians;
 
+import edu.wpi.first.units.AngleUnit;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Dimensionless;
 import edu.wpi.first.units.measure.Distance;
@@ -17,7 +19,7 @@ import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 
 public class Vision extends SubsystemBase {
- private LimelightHelpers.LimelightTarget_Detector limelightDetector;
+ //private LimelightHelpers.LimelightTarget_Detector limelightDetector;
 
   /** Creates a new Vision Subsystem. */
   public Vision() {}
@@ -27,21 +29,37 @@ public class Vision extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
-  public Distance getDistance(double goalHeight) {
-    Angle angleToGoal = getTY().plus(Constants.VisionConstants.LIMELIGHT_ANGLE);
-    Distance lensHeight = Constants.VisionConstants.LIMELIGHT_LENS_HEIGHT;
-    double distance = (goalHeight - lensHeight.in(Inches)) / Math.tan(angleToGoal.in(Radians));
-    Distance distanceUnit = Distance.ofBaseUnits(distance, Inches);
-    return distanceUnit;
+  /**
+   * Gets distance of robot in meters.
+   * @param goalHeight The height of the apriltag in inches.
+   * @return The distance from the apriltag in meters.
+   */
+  public double getDistance(double goalHeight) {
+    //System.out.println("goal height: " + goalHeight);
+    goalHeight = 16;
+    double angleToGoal = LimelightHelpers.getTY("") +8;//getTY().plus(Constants.VisionConstants.LIMELIGHT_ANGLE);
+    //Distance lensHeight = Constants.VisionConstants.LIMELIGHT_LENS_HEIGHT;
+    double distance = (goalHeight - 8.75) / Math.tan(angleToGoal * (Math.PI/180));
+    //Distance distanceUnit = Distance.ofBaseUnits(distance, Inches);
+    //System.out.println("angleToGoal: " + angleToGoal);
+    //System.out.println("distance: " + distance);
+    //System.out.println("distanceUnit: " + distanceUnit);
+    distance /= 39.37; // Convert to meters!!!!
+    return distance;
   }
 
   public Angle getTX() {
     return Angle.ofBaseUnits(LimelightHelpers.getTX(""), Degrees);
   }
 
+  /*
   public Angle getTY() {
-    return Angle.ofBaseUnits(LimelightHelpers.getTY(""), Degrees);
+    Angle gottenAngle = new AngleUnit().of(3); //Angle.ofBaseUnits(LimelightHelpers.getTY(""), Degrees);
+    System.out.println("Base TY: " + LimelightHelpers.getTY(""));
+    System.out.println("Converted TY: " + gottenAngle);
+    return gottenAngle;
   }
+  */
 
   public Dimensionless getTA(){
     return Dimensionless.ofBaseUnits(LimelightHelpers.getTA(""), Percent);

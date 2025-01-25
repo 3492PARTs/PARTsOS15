@@ -67,8 +67,8 @@ public class AlignCommand extends Command {
 
   private final Vision m_Vision;
     private final SwerveDrivetrain<TalonFX, TalonFX, CANcoder> m_Swerve;
-    private final Distance holdDistance;
-    private final SwerveRequest.RobotCentric m_alignRequest;
+    private final double holdDistance;
+    private final SwerveRequest.FieldCentric m_alignRequest;
 
     private final ProfiledPIDController aimController;
     private final ProfiledPIDController rangeController;
@@ -80,20 +80,20 @@ public class AlignCommand extends Command {
     private static final double MAX_RANGE_ACCELERATION = 0.5; // m/2^s
   
     // Todo - Tune later
-    private static final double AIM_P = 0.08; //Proprotinal
-    private static final double AIM_I = 0; //0.01; //Gradual corretction
-    private static final double AIM_D = 0; //0.05; //Smooth oscilattions
+    private static final double AIM_P = 0.1; //Proprotinal
+    private static final double AIM_I = 0.01; //0.01; //Gradual corretction
+    private static final double AIM_D = 0.05; //0.05; //Smooth oscilattions
     
-    private static final double RANGE_P = 0.1;
+    private static final double RANGE_P = 1.4;
     private static final double RANGE_I = 0.01;
     private static final double RANGE_D = 0.05;
 
-  public AlignCommand(Vision vision, SwerveDrivetrain<TalonFX, TalonFX, CANcoder> swerve, Distance holdDistance) {
+  public AlignCommand(Vision vision, SwerveDrivetrain<TalonFX, TalonFX, CANcoder> swerve, double holdDistance) {
         m_Vision = vision;
         m_Swerve = swerve;
         this.holdDistance = holdDistance;
         
-        this.m_alignRequest = new SwerveRequest.RobotCentric().withDeadband(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * 0.1).withRotationalDeadband(0.1);
+        this.m_alignRequest = new SwerveRequest.FieldCentric().withDeadband(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * 0.1).withRotationalDeadband(0.1);
 
         aimController = new ProfiledPIDController(AIM_P, AIM_I, AIM_D, new TrapezoidProfile.Constraints(MAX_AIM_VELOCITY, MAX_AIM_ACCELERATION));
 
@@ -109,27 +109,34 @@ public class AlignCommand extends Command {
         //m_Vision.setPipelineIndex(0);
         
         aimController.reset(0);
-        rangeController.reset(m_Vision.getDistance(VisionConstants.REEF_APRILTAG_HEIGHT.in(Inches)).in(Inches)); //Init dist
+        rangeController.reset(m_Vision.getDistance(0)); //Init dist
         
         aimController.setGoal(0); // tx=0 is centered
-        rangeController.setGoal(holdDistance.in(Meters));
+        rangeController.setGoal(holdDistance);
+
+        rangeController.setTolerance(0.3);
     }
 
     @Override
     public void execute() {
-        //Angle tx = m_Vision.getTX();
-        Distance currentDistance = m_Vision.getDistance(VisionConstants.REEF_APRILTAG_HEIGHT.in(Inches));
+        //double tx = m_Vision.getTX();
+        double currentDistance = m_Vision.getDistance(VisionConstants.REEF_APRILTAG_HEIGHT.in(Inches));
 
-        double rotationOutput = limelight_aim_proportional(); // HELP MEEEEE //aimController.calculate(tx.in(Radians));
-        //? This by itself causes no movement.
-        double rangeOutput = limelight_range_proportional(); //rangeController.calculate(currentDistance.in(Meters));
+        double rotationOutput =  0;//aimController.calculate(LimelightHelpers.getTX("") * (Math.PI/180)); //limelight_aim_proportional()
+        //? Moving oppisite to expected position.
+        double rangeOutput = rangeController.calculate(currentDistance, holdDistance); //limelight_range_proportional(); //
 
         Translation2d translation = new Translation2d(rangeOutput, 0);
-                
+        //System.out.println("Translation X: " + translation.getX()); // IS rangeOutput
+        System.out.println("Current Distance " + currentDistance);
+        System.out.println("Range Output: " + rangeOutput);
+        System.out.println("Controller: " + rangeController.getSetpoint().position);
+                  
         m_Swerve.setControl(m_alignRequest
             .withVelocityX(translation.getX())
             .withVelocityY(translation.getY())
             .withRotationalRate(rotationOutput));
+          
     }
     
     @Override
@@ -142,12 +149,12 @@ public class AlignCommand extends Command {
 
     @Override
     public boolean isFinished() {
-        return aimController.atGoal(); //&& rangeController.atGoal();
+        return /*aimController.atGoal() &&*/ rangeController.atGoal();
     }
 
     public AlignCommand withTolerance(Angle aimTolerance, Distance rangeTolerance) {
-        aimController.setTolerance(aimTolerance.in(Radians));
-        rangeController.setTolerance(rangeTolerance.in(Meters));
+        //aimController.setTolerance(aimTolerance.in(Radians));
+        rangeController.setTolerance(0.1);
         return this;
     }
 }
