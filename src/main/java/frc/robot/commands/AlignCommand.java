@@ -19,7 +19,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Vision;
-import frc.robot.util.PartsMath;
+import frc.robot.util.PARTsUnit;
+import frc.robot.util.PARTsUnit.PARTsUnitType;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 /**
@@ -74,7 +75,7 @@ public class AlignCommand extends Command {
       m_Vision.setPipelineIndex(0);
       
       // Init the aim controller.
-      aimController.reset(PartsMath.DegreesToRadians.apply(m_Vision.getTX()));
+      aimController.reset(new PARTsUnit(m_Vision.getTX(), PARTsUnitType.Angle).to(PARTsUnitType.Radian));
       aimController.setGoal(0); // tx=0 is centered.
       aimController.setTolerance(0.1);
 
@@ -90,7 +91,7 @@ public class AlignCommand extends Command {
       double currentAngle = m_Vision.getTX();
 
       // TODO: Test minimum rotating value for aimController.
-      double rotationOutput = aimController.calculate(PartsMath.DegreesToRadians.apply(currentAngle));
+      double rotationOutput = aimController.calculate(PARTsUnit.DegreesToRadians.apply(currentAngle));
       double rangeOutput = rangeController.calculate(currentDistance, holdDistance);
 
       // Zero range output for testing.

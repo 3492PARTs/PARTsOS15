@@ -4,8 +4,11 @@
 
 package frc.robot.util;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meter;
 import static edu.wpi.first.units.Units.Radian;
+
+import java.util.function.Function;
 
 /** Add your docs here. */
 public class PARTsUnit {
@@ -77,4 +80,8 @@ public class PARTsUnit {
         }
     }
 
+    //* DIRECT CONVERSIONS */
+    public static Function<Double, Double> InchesToMeters = inches -> inches / 39.37;
+    public static Function<Double, Double> MetersToInches = meters -> meters * 39.37;
+    public static Function<Double, Double> DegreesToRadians = degrees -> degrees * (Math.PI/180);
 }

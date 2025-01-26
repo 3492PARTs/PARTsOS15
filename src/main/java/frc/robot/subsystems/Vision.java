@@ -7,7 +7,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
-import frc.robot.util.PartsMath;
+import frc.robot.util.PARTsUnit;
 
 public class Vision extends SubsystemBase {
 
@@ -28,7 +28,7 @@ public class Vision extends SubsystemBase {
     double angleToGoal = LimelightHelpers.getTY("") + Constants.VisionConstants.LIMELIGHT_ANGLE;
 
     double distance = (goalHeight - Constants.VisionConstants.LIMELIGHT_LENS_HEIGHT) / Math.tan(angleToGoal * (Math.PI/180));
-    return PartsMath.InchesToMeters.apply(distance);
+    return PARTsUnit.InchesToMeters.apply(distance);
   }
 
   /**
