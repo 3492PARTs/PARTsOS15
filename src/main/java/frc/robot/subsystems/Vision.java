@@ -4,22 +4,12 @@
 
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Percent;
-import static edu.wpi.first.units.Units.Radians;
-
-import edu.wpi.first.units.AngleUnit;
-import edu.wpi.first.units.Units;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.Dimensionless;
-import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
+import frc.robot.util.PartsMath;
 
 public class Vision extends SubsystemBase {
- //private LimelightHelpers.LimelightTarget_Detector limelightDetector;
 
   /** Creates a new Vision Subsystem. */
   public Vision() {}
@@ -35,37 +25,49 @@ public class Vision extends SubsystemBase {
    * @return The distance from the apriltag in meters.
    */
   public double getDistance(double goalHeight) {
-    //System.out.println("goal height: " + goalHeight);
-    goalHeight = 16;
-    double angleToGoal = LimelightHelpers.getTY("") +8;//getTY().plus(Constants.VisionConstants.LIMELIGHT_ANGLE);
-    //Distance lensHeight = Constants.VisionConstants.LIMELIGHT_LENS_HEIGHT;
-    double distance = (goalHeight - 8.75) / Math.tan(angleToGoal * (Math.PI/180));
-    //Distance distanceUnit = Distance.ofBaseUnits(distance, Inches);
-    //System.out.println("angleToGoal: " + angleToGoal);
-    //System.out.println("distance: " + distance);
-    //System.out.println("distanceUnit: " + distanceUnit);
-    distance /= 39.37; // Convert to meters!!!!
-    return distance;
+    double angleToGoal = LimelightHelpers.getTY("") + Constants.VisionConstants.LIMELIGHT_ANGLE;
+
+    double distance = (goalHeight - Constants.VisionConstants.LIMELIGHT_LENS_HEIGHT) / Math.tan(angleToGoal * (Math.PI/180));
+    return PartsMath.InchesToMeters.apply(distance);
   }
 
-  public Angle getTX() {
-    return Angle.ofBaseUnits(LimelightHelpers.getTX(""), Degrees);
+  /**
+   * Gets the horizontal offset from the crosshair to the target in degrees.
+   * @return Horizontal offset angle in degrees.
+   */
+  public double getTX() {
+    return LimelightHelpers.getTX(Constants.VisionConstants.LIMELIGHT_NAME);
   }
 
-  /*
-  public Angle getTY() {
-    Angle gottenAngle = new AngleUnit().of(3); //Angle.ofBaseUnits(LimelightHelpers.getTY(""), Degrees);
-    System.out.println("Base TY: " + LimelightHelpers.getTY(""));
-    System.out.println("Converted TY: " + gottenAngle);
-    return gottenAngle;
-  }
-  */
-
-  public Dimensionless getTA(){
-    return Dimensionless.ofBaseUnits(LimelightHelpers.getTA(""), Percent);
+  /**
+   * Gets the vertical offset from the crosshair to the target in degrees.
+   * @return Vertical offset angle in degrees.
+   */
+  public double getTY() {
+    return LimelightHelpers.getTY(Constants.VisionConstants.LIMELIGHT_NAME);
   }
 
+  /**
+   * Gets the target area as a percentage of the image. (0% - 100%)
+   * @return Limelight TA percentage as a double. (0 - 100)
+   */
+  public double getTA() {
+    return LimelightHelpers.getTA(Constants.VisionConstants.LIMELIGHT_NAME);
+  }
+
+  /**
+   * Does the vision camera have a valid target?
+   * @return True if a valid target is found, otherwise false.
+   */
   public boolean isTarget(){
-     return LimelightHelpers.getTV("");
+     return LimelightHelpers.getTV(Constants.VisionConstants.LIMELIGHT_NAME);
+  }
+
+  /**
+   * Switch the pipeline via the index in the limelight.
+   * @param index The index of the pipeline to set.
+   */
+  public void setPipelineIndex(int index) {
+    LimelightHelpers.setPipelineIndex(Constants.VisionConstants.LIMELIGHT_NAME, index);
   }
 }
