@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import frc.robot.util.PARTsUnit;
+import frc.robot.util.PARTsUnit.PARTsUnitType;
 
 public class Vision extends SubsystemBase {
 
@@ -22,37 +23,38 @@ public class Vision extends SubsystemBase {
   /**
    * Gets distance of robot in meters.
    * @param goalHeight The height of the apriltag in inches.
-   * @return The distance from the apriltag in meters.
+   * @return The distance from the apriltag as a {@link frc.robot.util.PARTsUnit PARTsUnit} in Meters.
    */
-  public double getDistance(double goalHeight) {
+  public PARTsUnit getDistance(double goalHeight) {
     double angleToGoal = LimelightHelpers.getTY("") + Constants.VisionConstants.LIMELIGHT_ANGLE;
 
     double distance = (goalHeight - Constants.VisionConstants.LIMELIGHT_LENS_HEIGHT) / Math.tan(angleToGoal * (Math.PI/180));
-    return PARTsUnit.InchesToMeters.apply(distance);
+
+    return new PARTsUnit(distance, PARTsUnitType.Meter);
   }
 
   /**
    * Gets the horizontal offset from the crosshair to the target in degrees.
-   * @return Horizontal offset angle in degrees.
+   * @return Horizontal offset angle in degrees as a {@link frc.robot.util.PARTsUnit PARTsUnit}.
    */
-  public double getTX() {
-    return LimelightHelpers.getTX(Constants.VisionConstants.LIMELIGHT_NAME);
+  public PARTsUnit getTX() {
+    return new PARTsUnit(LimelightHelpers.getTX(Constants.VisionConstants.LIMELIGHT_NAME), PARTsUnitType.Angle);
   }
 
   /**
    * Gets the vertical offset from the crosshair to the target in degrees.
-   * @return Vertical offset angle in degrees.
+   * @return Vertical offset angle in degrees as a {@link frc.robot.util.PARTsUnit PARTsUnit}.
    */
-  public double getTY() {
-    return LimelightHelpers.getTY(Constants.VisionConstants.LIMELIGHT_NAME);
+  public PARTsUnit getTY() {
+    return new PARTsUnit(LimelightHelpers.getTY(Constants.VisionConstants.LIMELIGHT_NAME), PARTsUnitType.Angle);
   }
 
   /**
    * Gets the target area as a percentage of the image. (0% - 100%)
-   * @return Limelight TA percentage as a double. (0 - 100)
+   * @return Limelight TA percentage as a {@link frc.robot.util.PARTsUnit PARTsUnit}.
    */
-  public double getTA() {
-    return LimelightHelpers.getTA(Constants.VisionConstants.LIMELIGHT_NAME);
+  public PARTsUnit getTA() {
+    return new PARTsUnit(LimelightHelpers.getTA(Constants.VisionConstants.LIMELIGHT_NAME), PARTsUnitType.Percent);
   }
 
   /**

@@ -32,12 +32,15 @@ public class AlignCommand extends Command {
   private final SwerveDrivetrain<TalonFX, TalonFX, CANcoder> m_Swerve;
   private final SwerveRequest.FieldCentric m_alignRequest;
 
-  private final double holdDistance;
+  private final PARTsUnit holdDistance;
 
   private final ProfiledPIDController aimController;
   private final ProfiledPIDController rangeController;
 
-  //From tunerconsts and robtocontainer.java
+  /** 
+   * From {@link frc.robot.generated.TunerConstants TunerConstants}
+   * and {@link frc.robot.RobotContainer RobotContainer}
+   */
   private static final double MAX_AIM_VELOCITY = 1.5*Math.PI; // radd/s
   private static final double MAX_AIM_ACCELERATION = Math.PI / 2; // rad/s^2
   private static final double MAX_RANGE_VELOCITY = 1.0; // m/s
@@ -51,7 +54,7 @@ public class AlignCommand extends Command {
   private static final double RANGE_P = 1.4;
   private static final double RANGE_I = 0.01;
   private static final double RANGE_D = 0.05; //? ~10x P to prevent oscillation(?)  
-  public AlignCommand(Vision vision, SwerveDrivetrain<TalonFX, TalonFX, CANcoder> swerve, double holdDistance) {
+  public AlignCommand(Vision vision, SwerveDrivetrain<TalonFX, TalonFX, CANcoder> swerve, PARTsUnit holdDistance) {
         m_Vision = vision;
         m_Swerve = swerve;
         this.holdDistance = holdDistance;
@@ -68,31 +71,31 @@ public class AlignCommand extends Command {
 
     @Override
     public void initialize() {
-      // If we do not see a target, exit the command.
+      // If we do not see a target, end the command.
       if (m_Vision.isTarget() != true) end(true);
 
       // This is not needed right now, remove it if you feel we do not need it ever.
       m_Vision.setPipelineIndex(0);
       
-      // Init the aim controller.
-      aimController.reset(new PARTsUnit(m_Vision.getTX(), PARTsUnitType.Angle).to(PARTsUnitType.Radian));
+      // Initialize the aim controller.
+      aimController.reset(m_Vision.getTX().to(PARTsUnitType.Radian));
       aimController.setGoal(0); // tx=0 is centered.
       aimController.setTolerance(0.1);
 
-      // Init the range controller.
-      rangeController.reset(m_Vision.getDistance(0)); //Init dist
-      rangeController.setGoal(holdDistance);
+      // Initialize the range controller.
+      rangeController.reset(m_Vision.getDistance(0).to(PARTsUnitType.Meter));
+      rangeController.setGoal(holdDistance.getValue());
       rangeController.setTolerance(0.1);
     }
 
     @Override
     public void execute() {
-      double currentDistance = m_Vision.getDistance(VisionConstants.REEF_APRILTAG_HEIGHT);
-      double currentAngle = m_Vision.getTX();
+      PARTsUnit currentDistance = m_Vision.getDistance(VisionConstants.REEF_APRILTAG_HEIGHT);
+      PARTsUnit currentAngle = m_Vision.getTX();
 
       // TODO: Test minimum rotating value for aimController.
-      double rotationOutput = aimController.calculate(PARTsUnit.DegreesToRadians.apply(currentAngle));
-      double rangeOutput = rangeController.calculate(currentDistance, holdDistance);
+      double rotationOutput = aimController.calculate(currentAngle.to(PARTsUnitType.Radian));
+      double rangeOutput = rangeController.calculate(currentDistance.getValue(), holdDistance.getValue());
 
       // Zero range output for testing.
       rangeOutput = 0;
@@ -101,13 +104,12 @@ public class AlignCommand extends Command {
 
       System.out.println("Current Angle " + currentAngle);
       System.out.println("Rotation Output: " + rotationOutput);
-      System.out.println("Controller: " + aimController.getSetpoint().position);
+      System.out.println("Aim Controller: " + aimController.getSetpoint().position);
                   
       m_Swerve.setControl(m_alignRequest
           .withVelocityX(translation.getX())
           .withVelocityY(translation.getY())
           .withRotationalRate(rotationOutput));
-          
     }
     
     @Override
