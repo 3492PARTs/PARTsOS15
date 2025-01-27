@@ -18,6 +18,8 @@ import frc.robot.commands.AlignCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Vision;
+import frc.robot.util.PARTsUnit;
+import frc.robot.util.PARTsUnit.PARTsUnitType;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -59,7 +61,7 @@ public class RobotContainer {
             point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
         ));
 
-        joystick.leftTrigger().onTrue(new AlignCommand(visionSubsystem, drivetrain, 1));
+        joystick.leftTrigger().onTrue(new AlignCommand(visionSubsystem, drivetrain, new PARTsUnit(1, PARTsUnitType.Meter)));
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
