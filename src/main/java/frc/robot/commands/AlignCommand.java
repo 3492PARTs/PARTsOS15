@@ -83,7 +83,7 @@ public class AlignCommand extends Command {
       aimController.setTolerance(0.1);
 
       // Initialize the range controller.
-      rangeController.reset(m_Vision.getDistance(0).to(PARTsUnitType.Meter));
+      rangeController.reset(m_Vision.getDistance(0).getValue());
       rangeController.setGoal(holdDistance.getValue());
       rangeController.setTolerance(0.1);
     }
