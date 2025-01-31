@@ -77,7 +77,7 @@ public class RobotContainer {
 
         elevator.setDefaultCommand(new ElevatorJoystick(elevator, operatorController));
 
-        operatorController.leftBumper().whileTrue(new AlgaeIntake(algae, operatorController));
+        operatorController.rightBumper().whileTrue(new AlgaeIntake(algae, operatorController));
         operatorController.rightBumper().whileTrue(new AlgaeWrist(algae, operatorController));
         operatorController.leftTrigger().whileTrue(new CoralAction(coral, operatorController));
 

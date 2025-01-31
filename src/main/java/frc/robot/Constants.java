@@ -46,4 +46,8 @@ public final class Constants {
     public static final int coralLeftMotorId = 71;
     public static final double coralMotorSpeed = 0.2;
   }
+  public static class LED {
+    public static final int LED_PORT = 1000;
+    public static final int LED_LENGTH = 1001;
+  }
 }
