@@ -34,6 +34,12 @@ public final class Constants {
   public static class Elevator {
     public static final int leftElevatorId = 100;
     public static final int rightElevatorId = 99;
+    public static final int StowHeight = 0;
+    public static final int L2Height = 0;
+    public static final int L3Height = 0;
+    public static final int L4Height = 0;
+    public static final int LowAlgaeHeight = 0;
+    public static final int HighAlgaeHeight = 0;
   }
   public static class Algae {
     public static final int algaeIntakeId = 50;
@@ -49,5 +55,14 @@ public final class Constants {
   public static class LED {
     public static final int LED_PORT = 1000;
     public static final int LED_LENGTH = 1001;
+  }
+  public enum ElevatorState {
+    NONE,
+    STOW,
+    L2,
+    L3,
+    L4,
+    A1,
+    A2
   }
 }

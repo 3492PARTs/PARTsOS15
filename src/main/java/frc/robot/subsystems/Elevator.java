@@ -14,6 +14,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.ElevatorState;
 
 public class Elevator extends SubsystemBase {
 
@@ -23,8 +24,12 @@ public class Elevator extends SubsystemBase {
   private static SparkMax rightElevatorMotor = new SparkMax(Constants.Elevator.rightElevatorId, MotorType.kBrushless);
   private static RelativeEncoder rightElevatorEncoder;
 
+  private PeriodicIO mPeriodicIO;
+
   /** Creates a new Elevator. */
   public Elevator() {
+
+    mPeriodicIO = new PeriodicIO();
 
     SparkMaxConfig leftElevatorConfig = new SparkMaxConfig();
     leftElevatorConfig.idleMode(IdleMode.kBrake);
@@ -41,6 +46,8 @@ public class Elevator extends SubsystemBase {
 
   }
 
+
+
   public void setSpeed(double speed) {
     rightElevatorMotor.set(speed);
     leftElevatorMotor.set(speed);
@@ -54,4 +61,65 @@ public class Elevator extends SubsystemBase {
     // This method will be called once per scheduler run
 
   }
+
+  public void stop() {
+    mPeriodicIO.is_elevator_pos_control = false;
+    mPeriodicIO.elevator_power = 0.0;
+
+  }
+
+  private static class PeriodicIO {
+    double elevator_target = 0.0;
+    double elevator_power = 0.0;
+
+    boolean is_elevator_pos_control = false;
+
+    ElevatorState state = ElevatorState.STOW;
+  }
+
+  public ElevatorState getState() {
+    return mPeriodicIO.state;
+  }
+
+  public void setElevatorPower(double power) {
+    mPeriodicIO.is_elevator_pos_control = false;
+    mPeriodicIO.elevator_power = power;
+  }
+
+
+  public void goToElevatorStow() {
+    mPeriodicIO.is_elevator_pos_control = true;
+    mPeriodicIO.elevator_target = Constants.Elevator.StowHeight;
+    mPeriodicIO.state = ElevatorState.STOW;
+  }
+  public void goToElevatorL2() {
+    mPeriodicIO.is_elevator_pos_control = true;
+    mPeriodicIO.elevator_target = Constants.Elevator.L2Height;
+    mPeriodicIO.state = ElevatorState.L2;
+  }
+
+  public void goToElevatorL3() {
+    mPeriodicIO.is_elevator_pos_control = true;
+    mPeriodicIO.elevator_target = Constants.Elevator.L3Height;
+    mPeriodicIO.state = ElevatorState.L3;
+  }
+
+  public void goToElevatorL4() {
+    mPeriodicIO.is_elevator_pos_control = true;
+    mPeriodicIO.elevator_target = Constants.Elevator.L4Height;
+    mPeriodicIO.state = ElevatorState.L4;
+  }
+
+  public void goToAlgaeLow() {
+    mPeriodicIO.is_elevator_pos_control = true;
+    mPeriodicIO.elevator_target = Constants.Elevator.LowAlgaeHeight;
+    mPeriodicIO.state = ElevatorState.A1;
+  }
+
+  public void goToAlgaeHigh() {
+    mPeriodicIO.is_elevator_pos_control = true;
+    mPeriodicIO.elevator_target = Constants.Elevator.HighAlgaeHeight;
+    mPeriodicIO.state = ElevatorState.A2;
+  }
+
 }
