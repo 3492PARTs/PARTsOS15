@@ -15,6 +15,11 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.util.datalog.BooleanLogEntry;
+import edu.wpi.first.util.datalog.DataLog;
+import edu.wpi.first.util.datalog.DoubleLogEntry;
+import edu.wpi.first.util.datalog.StringLogEntry;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.Constants.VisionConstants;
@@ -54,7 +59,17 @@ public class AlignCommand extends Command {
     
   private static final double RANGE_P = 4;
   private static final double RANGE_I = 0.04;
-  private static final double RANGE_D = 0.1; //? ~10x P to prevent oscillation(?)  
+  private static final double RANGE_D = 0.1; //? ~10x P to prevent oscillation(?) 
+  
+  
+
+  DoubleLogEntry L_rangeOutput;
+  DoubleLogEntry L_rotationOutput;
+  DoubleLogEntry L_currentDistance;
+  DoubleLogEntry L_currentAngle;
+  //DoubleLogEntry L_rangeOutput;
+  //DoubleLogEntry L_rangeOutput;
+
   public AlignCommand(Vision vision, SwerveDrivetrain<TalonFX, TalonFX, CANcoder> swerve, PARTsUnit holdDistance) {
         m_Vision = vision;
         m_Swerve = swerve;
@@ -66,6 +81,13 @@ public class AlignCommand extends Command {
         aimController.enableContinuousInput(-Math.PI, Math.PI); //Wrpa from -pi to ip
         
         rangeController = new ProfiledPIDController(RANGE_P, RANGE_I, RANGE_D, new TrapezoidProfile.Constraints(MAX_RANGE_VELOCITY, MAX_RANGE_ACCELERATION));
+
+        // Set up custom log entries
+        DataLog log = DataLogManager.getLog();
+        L_currentDistance = new DoubleLogEntry(log, "/PARTs/align/currentDistance");
+        L_currentAngle = new DoubleLogEntry(log, "/PARTs/align/currentAngle");
+        L_rangeOutput = new DoubleLogEntry(log, "/PARTs/align/rangeOutput");
+        L_rotationOutput = new DoubleLogEntry(log, "/PARTs/align/rotationOutput");
 
         addRequirements(m_Vision);
     }
@@ -107,12 +129,17 @@ public class AlignCommand extends Command {
 
       Translation2d translation = new Translation2d(rangeOutput, 0);
 
-      System.out.println("AIM MEASURES:\nCurrent Angle " + currentAngle.getValue());
-      System.out.println("Rotation Output: " + rotationOutput + "\n");
+      //System.out.println("AIM MEASURES:\nCurrent Angle " + currentAngle.getValue());
+      //System.out.println("Rotation Output: " + rotationOutput + "\n");
       //System.out.println("Aim Controller: " + aimController.getSetpoint().position);
 
-      System.out.println("RANGEM MEASURES:\nCurrent Distance " + currentDistance.getValue());
-      System.out.println("Range Output: " + rangeOutput + "\n");
+      L_currentAngle.append(currentAngle.getValue());
+      L_rotationOutput.append(rotationOutput);
+      L_currentDistance.append(currentDistance.getValue());
+      L_rangeOutput.append(rangeOutput);
+
+      //System.out.println("RANGEM MEASURES:\nCurrent Distance " + currentDistance.getValue());
+      //System.out.println("Range Output: " + rangeOutput + "\n");
       //System.out.println("Range Controller: " + rangeController.getSetpoint().position);
                   
       m_Swerve.setControl(m_alignRequest
