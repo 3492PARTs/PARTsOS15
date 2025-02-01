@@ -32,17 +32,18 @@ public final class Constants {
     public static final int canAndColorId = 31;
   }
   public static class Elevator {
-    public static final int leftElevatorId = 100;
-    public static final int rightElevatorId = 99;
+    public static final int leftElevatorId = 2;
+    public static final int rightElevatorId = 1;
     public static final int StowHeight = 0;
     public static final int L2Height = 0;
     public static final int L3Height = 0;
     public static final int L4Height = 0;
     public static final int LowAlgaeHeight = 0;
     public static final int HighAlgaeHeight = 0;
+    public static final int L_SWITCH_PORT = 1;
   }
   public static class Algae {
-    public static final int algaeIntakeId = 50;
+    public static final int algaeIntakeId = 55;
     public static final int algaeWristId = 51;
     public static final double algaeIntakeSpeed = 0.2;
     public static final double algaeWristSpeed = 0.2;

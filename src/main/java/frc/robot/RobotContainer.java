@@ -77,9 +77,9 @@ public class RobotContainer {
 
         elevator.setDefaultCommand(new ElevatorJoystick(elevator, operatorController));
 
-        operatorController.rightBumper().whileTrue(new AlgaeIntake(algae, operatorController));
-        operatorController.rightBumper().whileTrue(new AlgaeWrist(algae, operatorController));
-        operatorController.leftTrigger().whileTrue(new CoralAction(coral, operatorController));
+       operatorController.rightBumper().whileTrue(new AlgaeIntake(algae, operatorController));
+      operatorController.rightBumper().whileTrue(new AlgaeWrist(algae, operatorController));
+       operatorController.leftTrigger().whileTrue(new CoralAction(coral, operatorController));
 
         // reset the field-centric heading on left bumper press
         joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
