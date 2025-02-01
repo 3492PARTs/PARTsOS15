@@ -52,9 +52,9 @@ public class AlignCommand extends Command {
   private static final double AIM_I = 0.01; //0.01; //Gradual corretction
   private static final double AIM_D = 0.05; //0.05; //Smooth oscilattions
     
-  private static final double RANGE_P = 1.4;
-  private static final double RANGE_I = 0.01;
-  private static final double RANGE_D = 0.05; //? ~10x P to prevent oscillation(?)  
+  private static final double RANGE_P = 4;
+  private static final double RANGE_I = 0;//0.01;
+  private static final double RANGE_D = 0;//0.05; //? ~10x P to prevent oscillation(?)  
   public AlignCommand(Vision vision, SwerveDrivetrain<TalonFX, TalonFX, CANcoder> swerve, PARTsUnit holdDistance) {
         m_Vision = vision;
         m_Swerve = swerve;
@@ -92,6 +92,7 @@ public class AlignCommand extends Command {
 
     @Override
     public void execute() {
+      if (m_Vision.isTarget() != true) end(true);
       PARTsUnit currentDistance = m_Vision.getDistance(VisionConstants.REEF_APRILTAG_HEIGHT);
       PARTsUnit currentAngle = m_Vision.getTX();
 
@@ -100,13 +101,19 @@ public class AlignCommand extends Command {
       double rangeOutput = rangeController.calculate(currentDistance.getValue(), holdDistance.getValue());
 
       // Zero range output for testing.
-      rangeOutput = 0;
+      //rangeOutput = 0;
+      // Zero rotation output for testing.
+      rotationOutput = 0;
 
       Translation2d translation = new Translation2d(rangeOutput, 0);
 
-      System.out.println("Current Angle " + currentAngle.getValue());
-      System.out.println("Rotation Output: " + rotationOutput);
-      System.out.println("Aim Controller: " + aimController.getSetpoint().position);
+      //System.out.println("Current Angle " + currentAngle.getValue());
+      //System.out.println("Rotation Output: " + rotationOutput);
+      //System.out.println("Aim Controller: " + aimController.getSetpoint().position);
+
+      System.out.println("Current Distance " + currentDistance.getValue());
+      System.out.println("Range Output: " + rangeOutput);
+      //System.out.println("Range Controller: " + rangeController.getSetpoint().position);
                   
       m_Swerve.setControl(m_alignRequest
           .withVelocityX(translation.getX())
@@ -125,6 +132,6 @@ public class AlignCommand extends Command {
     @Override
     public boolean isFinished() {
       // TODO: Change to && once both the rangeController and the aimController work together.
-      return aimController.atGoal() || rangeController.atGoal();
+      return rangeController.atGoal(); //aimController.atGoal() ||
     }
 }

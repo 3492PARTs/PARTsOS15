@@ -65,10 +65,13 @@ public class Vision extends SubsystemBase {
    */
   public PARTsUnit getDistance(double goalHeight) {
     double angleToGoal = LimelightHelpers.getTY(LIMELIGHT_NAME) + LIMELIGHT_ANGLE;
+    System.out.println("Vision -> Angle to goal: " + angleToGoal);
 
     double distance = (goalHeight - LIMELIGHT_LENS_HEIGHT) / Math.tan(angleToGoal * (Math.PI/180));
+    System.out.println("Vision -> Distance: " + distance);
 
-    return new PARTsUnit(distance, PARTsUnitType.Meter);
+    PARTsUnit unit = new PARTsUnit(distance, PARTsUnitType.Inch);
+    return unit.as(PARTsUnitType.Meter);
   }
 
   /**

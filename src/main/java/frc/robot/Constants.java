@@ -30,7 +30,7 @@ public final class Constants {
       public static final String DRIVETRAIN_LIMELIGHT = ""; //The_Real
       public static final String ELEVATOR_LIMELIGHT = "Slim_Shady";
       public static final double LIMELIGHT_LENS_HEIGHT = 8.75; // Inches
-      public static final double LIMELIGHT_ANGLE = 15; // Degrees
+      public static final double LIMELIGHT_ANGLE = 11; // Degrees
 
       public static final double REEF_APRILTAG_HEIGHT = 16; //Distance.ofBaseUnits(6.875, Inches);
       public static final double PROCCESSOR_APRILTAG_HEIGHT = 45.875; // Inches
