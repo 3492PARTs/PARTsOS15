@@ -50,8 +50,8 @@ public class Elevator extends SubsystemBase {
     rightElevatorConfig.follow(leftElevatorMotor);
     rightElevatorMotor.configure(rightElevatorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    leftElevatorEncoder = leftElevatorMotor.getEncoder();
-    rightElevatorEncoder = rightElevatorMotor.getEncoder();
+  leftElevatorEncoder = leftElevatorMotor.getAlternateEncoder();
+    rightElevatorEncoder = rightElevatorMotor.getAlternateEncoder();
 
   }
 
