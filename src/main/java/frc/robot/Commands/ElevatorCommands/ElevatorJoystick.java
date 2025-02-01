@@ -28,12 +28,14 @@ public class ElevatorJoystick extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(Math.abs(m_Controller.getRightY()) > 0.1) {
+    double speed = -m_Controller.getRightY()  * .3; 
+    if(Math.abs(speed) > 0.1) {
+      
       if (!m_Elevator.getLimitSwitch()) {
-        m_Elevator.setSpeed(m_Controller.getRightY());
+        m_Elevator.setSpeed(speed);
       }
-      else if (m_Controller.getRightY() > 0) {
-        m_Elevator.setSpeed(m_Controller.getRightY());
+      else if (speed > 0) {
+        m_Elevator.setSpeed(speed);
       }
     }
     else {

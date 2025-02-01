@@ -4,8 +4,6 @@
 
 package frc.robot.subsystems;
 
-import java.util.function.BooleanSupplier;
-
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -14,9 +12,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
-import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
+
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -47,11 +43,11 @@ public class Elevator extends SubsystemBase {
 
     SparkMaxConfig rightElevatorConfig = new SparkMaxConfig();
     rightElevatorConfig.idleMode(IdleMode.kBrake);
-    rightElevatorConfig.follow(leftElevatorMotor);
+    rightElevatorConfig.inverted(true);
     rightElevatorMotor.configure(rightElevatorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-  leftElevatorEncoder = leftElevatorMotor.getAlternateEncoder();
-    rightElevatorEncoder = rightElevatorMotor.getAlternateEncoder();
+    leftElevatorEncoder = leftElevatorMotor.getEncoder();
+    rightElevatorEncoder = rightElevatorMotor.getEncoder();
 
   }
 
@@ -77,6 +73,7 @@ public class Elevator extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    //System.out.println(getLimitSwitch());
   }
 
   public void stop() {
