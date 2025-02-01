@@ -63,8 +63,8 @@ public class Elevator extends SubsystemBase {
 
 
   public void setSpeed(double speed) {
-    rightElevatorMotor.set(speed);
     leftElevatorMotor.set(speed);
+    rightElevatorMotor.set(speed);
   }
   public double getEncoderDistance() {
     return leftElevatorEncoder.getPosition();
