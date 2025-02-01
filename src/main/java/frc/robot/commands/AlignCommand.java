@@ -16,6 +16,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Vision;
@@ -47,7 +48,7 @@ public class AlignCommand extends Command {
   private static final double MAX_RANGE_ACCELERATION = 0.5; // m/2^s
   
   // Todo - Tune later
-  private static final double AIM_P = 0.4; //Proprotinal
+  private static final double AIM_P = 1.8; //Proprotinal
   private static final double AIM_I = 0.01; //0.01; //Gradual corretction
   private static final double AIM_D = 0.05; //0.05; //Smooth oscilattions
     
@@ -82,8 +83,9 @@ public class AlignCommand extends Command {
       aimController.setGoal(0); // tx=0 is centered.
       aimController.setTolerance(0.1);
 
+
       // Initialize the range controller.
-      rangeController.reset(m_Vision.getDistance(0).getValue());
+      rangeController.reset(m_Vision.getDistance(Constants.VisionConstants.REEF_APRILTAG_HEIGHT).getValue());
       rangeController.setGoal(holdDistance.getValue());
       rangeController.setTolerance(0.1);
     }
@@ -102,7 +104,7 @@ public class AlignCommand extends Command {
 
       Translation2d translation = new Translation2d(rangeOutput, 0);
 
-      System.out.println("Current Angle " + currentAngle);
+      System.out.println("Current Angle " + currentAngle.getValue());
       System.out.println("Rotation Output: " + rotationOutput);
       System.out.println("Aim Controller: " + aimController.getSetpoint().position);
                   

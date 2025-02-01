@@ -52,7 +52,7 @@ public class PARTsUnit {
     /**
      * Converts current unit into the requested unit.
      * @param unitType The target unit.
-     * @return Doub
+     * @return Converted unit in double.
      */
     public double to(PARTsUnitType unitType) {
         String message = "No to type for unit.";
@@ -60,10 +60,14 @@ public class PARTsUnit {
             case Angle:
                 if (unitType == PARTsUnitType.Radian)
                     return this.value * Math.PI / 180.0;
+                else if (unitType == this.unitType)
+                    return this.value;
                 throw new RuntimeException(message);
             case Radian:
                 if (unitType == PARTsUnitType.Radian)
                     return this.value *  180.0 / Math.PI;
+                else if (unitType == this.unitType)
+                    return this.value;
                 throw new RuntimeException(message);
             case Meter:
                 switch (unitType) {
@@ -71,6 +75,8 @@ public class PARTsUnit {
                         return this.value * 39.3700787;
                     case Foot:
                         return this.value * 3.2808399;
+                    case Meter:
+                        return this.value;
                     default:
                         throw new RuntimeException(message);
                 }
@@ -80,6 +86,8 @@ public class PARTsUnit {
                         return this.value / 39.3700787;
                     case Foot:
                         return this.value / 12;
+                    case Inch:
+                        return this.value;
                     default:
                         throw new RuntimeException(message);
                 }
@@ -89,6 +97,8 @@ public class PARTsUnit {
                         return this.value / 3.2808399;
                     case Inch:
                         return this.value * 12;
+                    case Foot:
+                        return this.value;
                     default:
                         throw new RuntimeException(message);
                 }
@@ -97,6 +107,15 @@ public class PARTsUnit {
             default:
                 throw new RuntimeException(message);
         }
+    }
+
+    /**
+     * Converts current unit into the requested unit.
+     * @param unitType The target {@link frc.robot.util.PARTsUnit.PARTsUnitType PARTsUnitType}.
+     * @return The converted {@link frc.robot.util.PARTsUnit PARTsUnit}.
+     */
+    public PARTsUnit as(PARTsUnitType unitType) {
+        return new PARTsUnit(to(unitType), unitType);
     }
 
     //* DIRECT STATIC CONVERSIONS */

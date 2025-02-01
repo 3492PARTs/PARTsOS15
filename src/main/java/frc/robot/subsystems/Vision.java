@@ -5,15 +5,53 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import frc.robot.util.PARTsUnit;
 import frc.robot.util.PARTsUnit.PARTsUnitType;
 
 public class Vision extends SubsystemBase {
 
-  /** Creates a new Vision Subsystem. */
-  public Vision() {}
+  enum AprilTagType {
+    NONE(0),
+    REEF(1),
+    CAGE(2),
+    PROCESSOR(3),
+    STATION(4);
+
+    public final int index;
+
+    private AprilTagType(int index) {
+        this.index = index;
+    }
+  }
+
+  AprilTagType[] aprilTagList = {
+    AprilTagType.NONE,      AprilTagType.STATION,   AprilTagType.STATION,
+    AprilTagType.PROCESSOR, AprilTagType.CAGE,      AprilTagType.CAGE,
+    AprilTagType.REEF,      AprilTagType.REEF,      AprilTagType.REEF,
+    AprilTagType.REEF,      AprilTagType.REEF,      AprilTagType.REEF,
+    AprilTagType.STATION,   AprilTagType.STATION,   AprilTagType.CAGE,
+    AprilTagType.CAGE,      AprilTagType.PROCESSOR, AprilTagType.REEF,
+    AprilTagType.REEF,      AprilTagType.REEF,      AprilTagType.REEF,
+    AprilTagType.REEF
+  };
+
+  private final String LIMELIGHT_NAME;
+  private final double LIMELIGHT_ANGLE;
+  private final double LIMELIGHT_LENS_HEIGHT;
+
+  /**
+   * Creates a new Vision subsysten instance with the following Limelight paramaters.
+   * @param limelightName The name of the requested Limelight.
+   * @param limelightAngle The angle of the requested Limelight.
+   * @param limelightLensHeight The height of the Limelight lens from the ground.
+   */
+  public Vision(String limelightName, PARTsUnit limelightAngle, PARTsUnit limelightLensHeight) {
+    LIMELIGHT_NAME = limelightName;
+    LIMELIGHT_ANGLE = limelightAngle.to(PARTsUnitType.Angle);
+    LIMELIGHT_LENS_HEIGHT = limelightLensHeight.to(PARTsUnitType.Inch);
+    // Vision array of limelight data objects.
+  }
 
   @Override
   public void periodic() {
@@ -26,9 +64,9 @@ public class Vision extends SubsystemBase {
    * @return The distance from the apriltag as a {@link frc.robot.util.PARTsUnit PARTsUnit} in Meters.
    */
   public PARTsUnit getDistance(double goalHeight) {
-    double angleToGoal = LimelightHelpers.getTY("") + Constants.VisionConstants.LIMELIGHT_ANGLE;
+    double angleToGoal = LimelightHelpers.getTY(LIMELIGHT_NAME) + LIMELIGHT_ANGLE;
 
-    double distance = (goalHeight - Constants.VisionConstants.LIMELIGHT_LENS_HEIGHT) / Math.tan(angleToGoal * (Math.PI/180));
+    double distance = (goalHeight - LIMELIGHT_LENS_HEIGHT) / Math.tan(angleToGoal * (Math.PI/180));
 
     return new PARTsUnit(distance, PARTsUnitType.Meter);
   }
@@ -38,7 +76,7 @@ public class Vision extends SubsystemBase {
    * @return Horizontal offset angle in degrees as a {@link frc.robot.util.PARTsUnit PARTsUnit}.
    */
   public PARTsUnit getTX() {
-    return new PARTsUnit(LimelightHelpers.getTX(Constants.VisionConstants.LIMELIGHT_NAME), PARTsUnitType.Angle);
+    return new PARTsUnit(LimelightHelpers.getTX(LIMELIGHT_NAME), PARTsUnitType.Angle);
   }
 
   /**
@@ -46,7 +84,7 @@ public class Vision extends SubsystemBase {
    * @return Vertical offset angle in degrees as a {@link frc.robot.util.PARTsUnit PARTsUnit}.
    */
   public PARTsUnit getTY() {
-    return new PARTsUnit(LimelightHelpers.getTY(Constants.VisionConstants.LIMELIGHT_NAME), PARTsUnitType.Angle);
+    return new PARTsUnit(LimelightHelpers.getTY(LIMELIGHT_NAME), PARTsUnitType.Angle);
   }
 
   /**
@@ -54,7 +92,7 @@ public class Vision extends SubsystemBase {
    * @return Limelight TA percentage as a {@link frc.robot.util.PARTsUnit PARTsUnit}.
    */
   public PARTsUnit getTA() {
-    return new PARTsUnit(LimelightHelpers.getTA(Constants.VisionConstants.LIMELIGHT_NAME), PARTsUnitType.Percent);
+    return new PARTsUnit(LimelightHelpers.getTA(LIMELIGHT_NAME), PARTsUnitType.Percent);
   }
 
   /**
@@ -62,7 +100,29 @@ public class Vision extends SubsystemBase {
    * @return True if a valid target is found, otherwise false.
    */
   public boolean isTarget(){
-     return LimelightHelpers.getTV(Constants.VisionConstants.LIMELIGHT_NAME);
+     return LimelightHelpers.getTV(LIMELIGHT_NAME);
+  }
+
+  /**
+   * Gets the target AprilTag ID.
+   * @return The target ID as a double.
+   */
+  public double getTargetID() {
+    double[] targetArray = LimelightHelpers.getT2DArray(LIMELIGHT_NAME);
+    return targetArray[9];
+  }
+
+  /**
+   * Get the target AprilTag's height as a double.
+   * @param targetID The target AprilTag ID.
+   * @return Returns the height of the AprilTag associated the provided ID.
+   */
+  public double getTargetHeight(int targetID) {
+    
+    for (int i=1; i < aprilTagList.length; i++) {
+      if (aprilTagList[i].equals(targetID)) return i;
+    }
+    return 0;
   }
 
   /**
@@ -70,6 +130,6 @@ public class Vision extends SubsystemBase {
    * @param index The index of the pipeline to set.
    */
   public void setPipelineIndex(int index) {
-    LimelightHelpers.setPipelineIndex(Constants.VisionConstants.LIMELIGHT_NAME, index);
+    LimelightHelpers.setPipelineIndex(LIMELIGHT_NAME, index);
   }
 }
