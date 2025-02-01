@@ -29,7 +29,15 @@ public class ElevatorJoystick extends Command {
   @Override
   public void execute() {
     if(Math.abs(m_Controller.getRightY()) > 0.1) {
-      m_Elevator.setSpeed(m_Controller.getRightY());
+      if (!m_Elevator.getLimitSwitch()) {
+        m_Elevator.setSpeed(m_Controller.getRightY());
+      }
+      else if (m_Controller.getRightY() > 0) {
+        m_Elevator.setSpeed(m_Controller.getRightY());
+      }
+    }
+    else {
+      m_Elevator.setSpeed(0);
     }
   }
 

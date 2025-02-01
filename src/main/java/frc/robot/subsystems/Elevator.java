@@ -57,10 +57,10 @@ public class Elevator extends SubsystemBase {
 
   public boolean getLimitSwitch() {
     if (!elevatorLimit.get()) {
-
       return true;
-    } else {
-  
+    } 
+    
+    else {
       return false;
     }
   }
