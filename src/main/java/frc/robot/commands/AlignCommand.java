@@ -53,8 +53,8 @@ public class AlignCommand extends Command {
   private static final double AIM_D = 0.05; //0.05; //Smooth oscilattions
     
   private static final double RANGE_P = 4;
-  private static final double RANGE_I = 0;//0.01;
-  private static final double RANGE_D = 0;//0.05; //? ~10x P to prevent oscillation(?)  
+  private static final double RANGE_I = 0.04;
+  private static final double RANGE_D = 0.1; //? ~10x P to prevent oscillation(?)  
   public AlignCommand(Vision vision, SwerveDrivetrain<TalonFX, TalonFX, CANcoder> swerve, PARTsUnit holdDistance) {
         m_Vision = vision;
         m_Swerve = swerve;
@@ -103,16 +103,16 @@ public class AlignCommand extends Command {
       // Zero range output for testing.
       //rangeOutput = 0;
       // Zero rotation output for testing.
-      rotationOutput = 0;
+      //rotationOutput = 0;
 
       Translation2d translation = new Translation2d(rangeOutput, 0);
 
-      //System.out.println("Current Angle " + currentAngle.getValue());
-      //System.out.println("Rotation Output: " + rotationOutput);
+      System.out.println("AIM MEASURES:\nCurrent Angle " + currentAngle.getValue());
+      System.out.println("Rotation Output: " + rotationOutput + "\n");
       //System.out.println("Aim Controller: " + aimController.getSetpoint().position);
 
-      System.out.println("Current Distance " + currentDistance.getValue());
-      System.out.println("Range Output: " + rangeOutput);
+      System.out.println("RANGEM MEASURES:\nCurrent Distance " + currentDistance.getValue());
+      System.out.println("Range Output: " + rangeOutput + "\n");
       //System.out.println("Range Controller: " + rangeController.getSetpoint().position);
                   
       m_Swerve.setControl(m_alignRequest
@@ -132,6 +132,6 @@ public class AlignCommand extends Command {
     @Override
     public boolean isFinished() {
       // TODO: Change to && once both the rangeController and the aimController work together.
-      return rangeController.atGoal(); //aimController.atGoal() ||
+      return aimController.atGoal() && rangeController.atGoal();
     }
 }
