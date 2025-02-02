@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.BooleanSupplier;
+
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -57,6 +59,14 @@ public class Elevator extends SubsystemBase {
     rightElevatorEncoder = rightElevatorMotor.getAlternateEncoder();
   }
 
+  public void zeroElevatorEncoders() {
+    leftElevatorMotor.getEncoder().setPosition(0);
+    rightElevatorMotor.getEncoder().setPosition(0);
+
+    leftElevatorEncoder.setPosition(0);
+    rightElevatorEncoder.setPosition(0);
+  }
+
   public boolean getLimitSwitch() {
     if (!elevatorLimit.get()) {
       return true;
@@ -81,6 +91,11 @@ public class Elevator extends SubsystemBase {
     // This method will be called once per scheduler run
     //System.out.println(getLimitSwitch());
     System.out.println(getEncoderDistance());
+  }
+
+
+  public BooleanSupplier getLimitSwitchSupplier() {
+    return this::getLimitSwitch;
   }
 
   public void stop() {

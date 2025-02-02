@@ -13,11 +13,13 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Commands.Algae.AlgaeIntake;
 import frc.robot.Commands.Algae.AlgaeWrist;
 import frc.robot.Commands.Coral.CoralAction;
 import frc.robot.Commands.ElevatorCommands.ElevatorJoystick;
+import frc.robot.Commands.ElevatorCommands.ZeroElevatorEncoderCmdSeq;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Coral;
@@ -37,6 +39,8 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final Elevator elevator = new Elevator();
+
+    public final Trigger zeroElevatorTrigger = new Trigger(elevator.getLimitSwitchSupplier());
 
     //private final frc.robot.subsystems.Algae algae = new frc.robot.subsystems.Algae();
 
@@ -76,6 +80,8 @@ public class RobotContainer {
         joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         elevator.setDefaultCommand(new ElevatorJoystick(elevator, operatorController));
+        zeroElevatorTrigger.onTrue(new ZeroElevatorEncoderCmdSeq(elevator));
+
 
       // operatorController.rightBumper().whileTrue(new AlgaeIntake(algae, operatorController));
       // operatorController.rightBumper().whileTrue(new AlgaeWrist(algae, operatorController));
