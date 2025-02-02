@@ -9,6 +9,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.AlternateEncoderConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
@@ -22,9 +23,11 @@ public class Elevator extends SubsystemBase {
 
   private static SparkMax leftElevatorMotor = new SparkMax(Constants.Elevator.leftElevatorId, MotorType.kBrushless);
   private static RelativeEncoder leftElevatorEncoder;
+  AlternateEncoderConfig leftEncoderConfig = new AlternateEncoderConfig();
 
   private static SparkMax rightElevatorMotor = new SparkMax(Constants.Elevator.rightElevatorId, MotorType.kBrushless);
   private static RelativeEncoder rightElevatorEncoder;
+  AlternateEncoderConfig rightEncoderConfig = new AlternateEncoderConfig();
 
   private PeriodicIO mPeriodicIO;
 
@@ -38,17 +41,20 @@ public class Elevator extends SubsystemBase {
 
     SparkMaxConfig leftElevatorConfig = new SparkMaxConfig();
     leftElevatorConfig.idleMode(IdleMode.kBrake);
+    leftEncoderConfig.countsPerRevolution(8192);
+    leftElevatorConfig.alternateEncoder.apply(leftEncoderConfig);
     leftElevatorMotor.configure(leftElevatorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
 
     SparkMaxConfig rightElevatorConfig = new SparkMaxConfig();
     rightElevatorConfig.idleMode(IdleMode.kBrake);
     rightElevatorConfig.inverted(true);
+    rightEncoderConfig.countsPerRevolution(8192);
+    rightElevatorConfig.alternateEncoder.apply(rightEncoderConfig);
     rightElevatorMotor.configure(rightElevatorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    leftElevatorEncoder = leftElevatorMotor.getEncoder();
-    rightElevatorEncoder = rightElevatorMotor.getEncoder();
-
+    leftElevatorEncoder = leftElevatorMotor.getAlternateEncoder();
+    rightElevatorEncoder = rightElevatorMotor.getAlternateEncoder();
   }
 
   public boolean getLimitSwitch() {
@@ -61,11 +67,11 @@ public class Elevator extends SubsystemBase {
     }
   }
 
-
   public void setSpeed(double speed) {
     leftElevatorMotor.set(speed);
     rightElevatorMotor.set(speed);
   }
+
   public double getEncoderDistance() {
     return leftElevatorEncoder.getPosition();
   }
@@ -74,6 +80,7 @@ public class Elevator extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     //System.out.println(getLimitSwitch());
+    System.out.println(getEncoderDistance());
   }
 
   public void stop() {

@@ -30,7 +30,6 @@ public class ElevatorJoystick extends Command {
   public void execute() {
     double speed = -m_Controller.getRightY()  * .3; 
     if(Math.abs(speed) > 0.1) {
-      
       if (!m_Elevator.getLimitSwitch()) {
         m_Elevator.setSpeed(speed);
       }
