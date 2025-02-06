@@ -1,6 +1,6 @@
 {
   "version": 1.0,
-  "grid_size": 120,
+  "grid_size": 100,
   "tabs": [
     {
       "name": "Teleoperated",
