@@ -13,20 +13,17 @@ import com.ctre.phoenix6.swerve.SwerveDrivetrain;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.util.datalog.BooleanLogEntry;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
-import edu.wpi.first.util.datalog.StringLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
-import frc.robot.Constants.VisionConstants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Vision;
-import frc.robot.util.PARTsUnit;
-import frc.robot.util.PARTsUnit.PARTsUnitType;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 /**
@@ -36,12 +33,13 @@ import frc.robot.util.PARTsUnit.PARTsUnitType;
 public class AlignCommand extends Command {
   private final Vision m_Vision;
   private final SwerveDrivetrain<TalonFX, TalonFX, CANcoder> m_Swerve;
-  private final SwerveRequest.FieldCentric m_alignRequest;
+  private final SwerveRequest.RobotCentric m_alignRequest;
 
-  private final PARTsUnit holdDistance;
+  private final Pose2d holdDistance;
 
-  private final ProfiledPIDController aimController;
-  private final ProfiledPIDController rangeController;
+  private final ProfiledPIDController thetaController;
+  private final ProfiledPIDController xRangeController;
+  private final ProfiledPIDController yRangeController;
 
   /** 
    * From {@link frc.robot.generated.TunerConstants TunerConstants}
@@ -57,30 +55,35 @@ public class AlignCommand extends Command {
   private static final double AIM_I = 0.01; //0.01; //Gradual corretction
   private static final double AIM_D = 0.05; //0.05; //Smooth oscilattions
     
-  private static final double RANGE_P = 4;
+  private static final double RANGE_P = 0.8;
   private static final double RANGE_I = 0.04;
   private static final double RANGE_D = 0.1; //? ~10x P to prevent oscillation(?) 
-  
-  
+
+  // Robot poses.
+  private Pose3d initialRobotPose3d;
+  private Pose3d currentRobotPose3d;
 
   DoubleLogEntry L_rangeOutput;
   DoubleLogEntry L_rotationOutput;
   DoubleLogEntry L_currentDistance;
   DoubleLogEntry L_currentAngle;
-  //DoubleLogEntry L_rangeOutput;
-  //DoubleLogEntry L_rangeOutput;
+  DoubleLogEntry L_llposeX;
+  DoubleLogEntry L_llposeY;
+  DoubleLogEntry L_rposeX;
+  DoubleLogEntry L_rposeY;
 
-  public AlignCommand(Vision vision, SwerveDrivetrain<TalonFX, TalonFX, CANcoder> swerve, PARTsUnit holdDistance) {
+  public AlignCommand(Vision vision, SwerveDrivetrain<TalonFX, TalonFX, CANcoder> swerve, Pose2d holdDistance) {
         m_Vision = vision;
         m_Swerve = swerve;
         this.holdDistance = holdDistance;
         
-        this.m_alignRequest = new SwerveRequest.FieldCentric().withDeadband(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * 0.1).withRotationalDeadband(0.1);
+        this.m_alignRequest = new SwerveRequest.RobotCentric().withDeadband(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * 0.1).withRotationalDeadband(0.1);
 
-        aimController = new ProfiledPIDController(AIM_P, AIM_I, AIM_D, new TrapezoidProfile.Constraints(MAX_AIM_VELOCITY, MAX_AIM_ACCELERATION));
-        aimController.enableContinuousInput(-Math.PI, Math.PI); //Wrpa from -pi to ip
+        thetaController = new ProfiledPIDController(AIM_P, AIM_I, AIM_D, new TrapezoidProfile.Constraints(MAX_AIM_VELOCITY, MAX_AIM_ACCELERATION));
+        thetaController.enableContinuousInput(-Math.PI, Math.PI); //Wrpa from -pi to ip
         
-        rangeController = new ProfiledPIDController(RANGE_P, RANGE_I, RANGE_D, new TrapezoidProfile.Constraints(MAX_RANGE_VELOCITY, MAX_RANGE_ACCELERATION));
+        xRangeController = new ProfiledPIDController(RANGE_P, RANGE_I, RANGE_D, new TrapezoidProfile.Constraints(MAX_RANGE_VELOCITY, MAX_RANGE_ACCELERATION));
+        yRangeController = new ProfiledPIDController(RANGE_P, RANGE_I, RANGE_D, new TrapezoidProfile.Constraints(MAX_RANGE_VELOCITY, MAX_RANGE_ACCELERATION));
 
         // Set up custom log entries
         DataLog log = DataLogManager.getLog();
@@ -88,6 +91,11 @@ public class AlignCommand extends Command {
         L_currentAngle = new DoubleLogEntry(log, "/PARTs/align/currentAngle");
         L_rangeOutput = new DoubleLogEntry(log, "/PARTs/align/rangeOutput");
         L_rotationOutput = new DoubleLogEntry(log, "/PARTs/align/rotationOutput");
+        L_llposeX = new DoubleLogEntry(log, "/PARTs/align/llposeX");
+        L_llposeY = new DoubleLogEntry(log, "/PARTs/align/llposeY");
+        L_rposeX = new DoubleLogEntry(log, "/PARTs/align/rposeX");
+        L_rposeY = new DoubleLogEntry(log, "/PARTs/align/rposeY");
+
 
         addRequirements(m_Vision);
     }
@@ -99,53 +107,78 @@ public class AlignCommand extends Command {
 
       // This is not needed right now, remove it if you feel we do not need it ever.
       m_Vision.setPipelineIndex(0);
+
+      // Reset pose to zero.
+      m_Swerve.resetPose(new Pose2d(0,0, null));
+      
+      // Get init. distance from camera.
+      initialRobotPose3d = m_Vision.convertToKnownSpace(m_Vision.getPose3d());
+      m_Swerve.resetPose(initialRobotPose3d.toPose2d());
+
+      L_llposeX.append(initialRobotPose3d.getX());
+      L_llposeY.append(initialRobotPose3d.getY());
       
       // Initialize the aim controller.
-      aimController.reset(m_Vision.getTX().to(PARTsUnitType.Radian));
-      aimController.setGoal(0); // tx=0 is centered.
-      aimController.setTolerance(0.1);
+      thetaController.reset(initialRobotPose3d.getRotation().getAngle());
+      thetaController.setGoal(holdDistance.getRotation().getRadians()); // tx=0 is centered.
+      thetaController.setTolerance(0.1);
 
+      // Initialize the x-range controller.
+      xRangeController.reset(initialRobotPose3d.getX());
+      xRangeController.setGoal(holdDistance.getX());
+      xRangeController.setTolerance(0.1);
 
-      // Initialize the range controller.
-      rangeController.reset(m_Vision.getDistance(Constants.VisionConstants.REEF_APRILTAG_HEIGHT).getValue());
-      rangeController.setGoal(holdDistance.getValue());
-      rangeController.setTolerance(0.1);
+      // Initialize the y-range controller.
+      yRangeController.reset(initialRobotPose3d.getY()); // Center to target.
+      yRangeController.setGoal(holdDistance.getY()); // Center to target.
+      yRangeController.setTolerance(0.1);
     }
 
     @Override
     public void execute() {
-      if (m_Vision.isTarget() != true) end(true);
-      PARTsUnit currentDistance = m_Vision.getDistance(VisionConstants.REEF_APRILTAG_HEIGHT);
-      PARTsUnit currentAngle = m_Vision.getTX();
+      currentRobotPose3d = new Pose3d(m_Swerve.getState().Pose);
 
-      // TODO: Test minimum rotating value for aimController.
-      double rotationOutput = aimController.calculate(currentAngle.to(PARTsUnitType.Radian));
-      double rangeOutput = rangeController.calculate(currentDistance.getValue(), holdDistance.getValue());
+      L_rposeX.append(currentRobotPose3d.getX());
+      L_rposeY.append(currentRobotPose3d.getY());
 
-      // Zero range output for testing.
-      //rangeOutput = 0;
-      // Zero rotation output for testing.
-      //rotationOutput = 0;
+      /* Math not needed(?)
+      Pose2d newRobotPose2d = new Pose2d(
+        -(holdDistance.getX() - currentRobotPose3d.getX()),
+        -(holdDistance.getY() - currentRobotPose3d.getY()),
+        currentRobotPose3d.getRotation().toRotation2d()
+      );
+      */
 
-      Translation2d translation = new Translation2d(rangeOutput, 0);
+      Rotation2d rotationOutput = new Rotation2d(
+        thetaController.calculate(currentRobotPose3d.getRotation().toRotation2d().getRadians()));
+
+      Pose2d rangeOutput = new Pose2d(
+        -xRangeController.calculate(currentRobotPose3d.getX(), holdDistance.getX()), 
+        -yRangeController.calculate(currentRobotPose3d.getY(), holdDistance.getY()), 
+        null);
+
+      // Get dist. from drivetrain.
+
+      Translation2d translation = new Translation2d(rangeOutput.getX(), rangeOutput.getY());
 
       //System.out.println("AIM MEASURES:\nCurrent Angle " + currentAngle.getValue());
       //System.out.println("Rotation Output: " + rotationOutput + "\n");
       //System.out.println("Aim Controller: " + aimController.getSetpoint().position);
 
-      L_currentAngle.append(currentAngle.getValue());
-      L_rotationOutput.append(rotationOutput);
-      L_currentDistance.append(currentDistance.getValue());
-      L_rangeOutput.append(rangeOutput);
+      //L_currentAngle.append(currentAngle.getValue());
+      //L_rotationOutput.append(rotationOutput);
+      //L_currentDistance.append(currentDistance.getValue());
+      //L_rangeOutput.append(rangeOutput);
 
-      //System.out.println("RANGEM MEASURES:\nCurrent Distance " + currentDistance.getValue());
-      //System.out.println("Range Output: " + rangeOutput + "\n");
+      System.out.println("RANGE MEASURES:\nCurrent Distance: (" + currentRobotPose3d.getX() + ", " + currentRobotPose3d.getY() + ")");
+      System.out.println("Range Output: (" + rangeOutput.getX() + ", " + rangeOutput.getY() + ")\n");
       //System.out.println("Range Controller: " + rangeController.getSetpoint().position);
                   
       m_Swerve.setControl(m_alignRequest
           .withVelocityX(translation.getX())
           .withVelocityY(translation.getY())
-          .withRotationalRate(rotationOutput));
+          .withRotationalRate(rotationOutput.getRadians()*0)
+      );
     }
     
     @Override
@@ -158,7 +191,6 @@ public class AlignCommand extends Command {
 
     @Override
     public boolean isFinished() {
-      // TODO: Change to && once both the rangeController and the aimController work together.
-      return aimController.atGoal() && rangeController.atGoal();
+      return xRangeController.atGoal() && yRangeController.atGoal();// && thetaController.atGoal();
     }
 }

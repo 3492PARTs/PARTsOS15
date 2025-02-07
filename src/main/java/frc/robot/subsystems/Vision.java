@@ -4,37 +4,18 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.apriltag.AprilTag;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
+import frc.robot.Constants.LimelightData;
+import frc.robot.util.AprilTagData;
 import frc.robot.util.PARTsUnit;
+import frc.robot.util.AprilTagData.AprilTagType;
 import frc.robot.util.PARTsUnit.PARTsUnitType;
 
 public class Vision extends SubsystemBase {
-
-  enum AprilTagType {
-    NONE(0),
-    REEF(1),
-    CAGE(2),
-    PROCESSOR(3),
-    STATION(4);
-
-    public final int index;
-
-    private AprilTagType(int index) {
-        this.index = index;
-    }
-  }
-
-  AprilTagType[] aprilTagList = {
-    AprilTagType.NONE,      AprilTagType.STATION,   AprilTagType.STATION,
-    AprilTagType.PROCESSOR, AprilTagType.CAGE,      AprilTagType.CAGE,
-    AprilTagType.REEF,      AprilTagType.REEF,      AprilTagType.REEF,
-    AprilTagType.REEF,      AprilTagType.REEF,      AprilTagType.REEF,
-    AprilTagType.STATION,   AprilTagType.STATION,   AprilTagType.CAGE,
-    AprilTagType.CAGE,      AprilTagType.PROCESSOR, AprilTagType.REEF,
-    AprilTagType.REEF,      AprilTagType.REEF,      AprilTagType.REEF,
-    AprilTagType.REEF
-  };
 
   private final String LIMELIGHT_NAME;
   private final double LIMELIGHT_ANGLE;
@@ -55,24 +36,32 @@ public class Vision extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    if (!isTarget()) return;
   }
 
   /**
    * Gets distance of robot in meters.
    * @param goalHeight The height of the apriltag in inches.
    * @return The distance from the apriltag as a {@link frc.robot.util.PARTsUnit PARTsUnit} in Meters.
+   * @deprecated Please do not use this to get distance. Zero will always be returned.
    */
   public PARTsUnit getDistance(double goalHeight) {
     
-    double angleToGoal = LimelightHelpers.getTY(LIMELIGHT_NAME) + LIMELIGHT_ANGLE;
+    double angleToGoal = LimelightHelpers.getTY(LIMELIGHT_NAME);
     //System.out.println("Vision -> Angle to goal: " + angleToGoal);
 
-    double distance = (goalHeight - LIMELIGHT_LENS_HEIGHT) / Math.tan(angleToGoal * (Math.PI/180));
+    //double distance = (goalHeight - LIMELIGHT_LENS_HEIGHT) / Math.tan(angleToGoal * (Math.PI/180));
     //System.out.println("Vision -> Distance: " + distance);
 
-    PARTsUnit unit = new PARTsUnit(distance, PARTsUnitType.Inch);
+    // Dist from limelight, convert to x y for robot and 
+
+    PARTsUnit unit = new PARTsUnit(0, PARTsUnitType.Inch);
     return unit.as(PARTsUnitType.Meter);
+  }
+
+
+  public Pose3d getPose3d() {
+    return LimelightHelpers.getBotPose3d_TargetSpace(LIMELIGHT_NAME);
   }
 
   /**
@@ -117,16 +106,21 @@ public class Vision extends SubsystemBase {
   }
 
   /**
+   * Sets the Limelight's priority AprilTag ID to the requested AprilTag ID.
+   * @param targetID The requested AprilTag ID.
+   */
+  public void setTargetID(int targetID) {
+    if (AprilTagData.getTargeTagType(targetID).equals(AprilTagType.NONE)) return;
+    LimelightHelpers.setPriorityTagID(LIMELIGHT_NAME, targetID);
+  }
+
+  /**
    * Get the target AprilTag's height as a double.
    * @param targetID The target AprilTag ID.
    * @return Returns the height of the AprilTag associated the provided ID.
    */
   public double getTargetHeight(int targetID) {
-    
-    for (int i=1; i < aprilTagList.length; i++) {
-      if (aprilTagList[i].equals(targetID)) return i;
-    }
-    return 0;
+    return AprilTagData.getAprilTagHeight(targetID).to(PARTsUnitType.Inch);
   }
 
   /**
@@ -135,5 +129,20 @@ public class Vision extends SubsystemBase {
    */
   public void setPipelineIndex(int index) {
     LimelightHelpers.setPipelineIndex(LIMELIGHT_NAME, index);
+  }
+
+  /**
+   * Coverts the pose in target space to a pose in robot space.
+   * @see <a href="https://docs.limelightvision.io/docs/docs-limelight/pipeline-apriltag/apriltag-coordinate-systems">3D Coordinate Systems in Detail</a>.
+   * @param pose The pose in target space.
+   * @return The new pose in robot space.
+   */
+  public Pose3d convertToKnownSpace(Pose3d pose) {
+    return new Pose3d(
+      pose.getZ(),
+      -pose.getX(),
+      pose.getY(),
+      pose.getRotation() // TODO: Look into if this is an issue later.
+    );
   }
 }

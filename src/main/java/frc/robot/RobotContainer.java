@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -52,6 +53,7 @@ public class RobotContainer {
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
+            
             drivetrain.applyRequest(() ->
                 drive.withVelocityX((-joystick.getLeftY() * MaxSpeed)) // Drive forward with negative Y (forward) .52
                     .withVelocityY((-joystick.getLeftX() * MaxSpeed)) // Drive left with negative X (left)
@@ -64,7 +66,11 @@ public class RobotContainer {
             point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
         ));
 
-        joystick.leftTrigger().onTrue(new AlignCommand(visionSubsystem, drivetrain, new PARTsUnit(1, PARTsUnitType.Meter)));
+        joystick.leftTrigger().onTrue(new AlignCommand(
+            visionSubsystem, 
+            drivetrain, 
+            new Pose2d(-1,0,new Rotation2d(0,0))
+            ));
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
