@@ -7,19 +7,26 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.elasticlib.Elastic;
+import frc.robot.elasticlib.Elastic.Notification;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
 
+  private final Elastic m_Elastic;
+
   public Robot() {
     m_robotContainer = new RobotContainer();
+    m_Elastic = new Elastic();
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run(); 
+    m_Elastic.sendNotification(CommandSwerveDrivetrain.getNotification());
   }
 
   @Override
