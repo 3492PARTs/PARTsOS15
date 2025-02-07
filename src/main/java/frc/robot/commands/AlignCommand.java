@@ -109,7 +109,7 @@ public class AlignCommand extends Command {
       m_Vision.setPipelineIndex(0);
 
       // Reset pose to zero.
-      m_Swerve.resetPose(new Pose2d(0,0, null));
+      m_Swerve.resetPose(new Pose2d(0,0, new Rotation2d(0,0)));
       
       // Get init. distance from camera.
       initialRobotPose3d = m_Vision.convertToKnownSpace(m_Vision.getPose3d());
@@ -153,8 +153,8 @@ public class AlignCommand extends Command {
         thetaController.calculate(currentRobotPose3d.getRotation().toRotation2d().getRadians()));
 
       Pose2d rangeOutput = new Pose2d(
-        -xRangeController.calculate(currentRobotPose3d.getX(), holdDistance.getX()), 
-        -yRangeController.calculate(currentRobotPose3d.getY(), holdDistance.getY()), 
+        xRangeController.calculate(currentRobotPose3d.getX(), holdDistance.getX()), 
+        yRangeController.calculate(currentRobotPose3d.getY(), holdDistance.getY()), 
         null);
 
       // Get dist. from drivetrain.
