@@ -52,14 +52,14 @@ public class AlignCommand extends Command {
   private static final double MAX_AIM_VELOCITY = 1.5*Math.PI; // radd/s
   private static final double MAX_AIM_ACCELERATION = Math.PI / 2; // rad/s^2
   private static final double MAX_RANGE_VELOCITY = 1.0; // m/s
-  private static final double MAX_RANGE_ACCELERATION = 0.5; // m/2^s
+  private static final double MAX_RANGE_ACCELERATION = 1.5; //0.5; // m/2^s
   
   // Todo - Tune later
-  private static final double AIM_P = 1.8; //Proprotinal
-  private static final double AIM_I = 0.01; //0.01; //Gradual corretction
-  private static final double AIM_D = 0.05; //0.05; //Smooth oscilattions
+  private static final double THETA_P = 1.8; //Proprotinal
+  private static final double THETA_I = 0.01; //0.01; //Gradual corretction
+  private static final double THETA_D = 0.05; //0.05; //Smooth oscilattions
     
-  private static final double RANGE_P = 0.8;
+  private static final double RANGE_P = 1.6;//0.8;
   private static final double RANGE_I = 0.04;
   private static final double RANGE_D = 0.1; //? ~10x P to prevent oscillation(?) 
 
@@ -86,7 +86,7 @@ public class AlignCommand extends Command {
         
         this.m_alignRequest = new SwerveRequest.RobotCentric().withDeadband(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * 0.1).withRotationalDeadband(0.1);
 
-        thetaController = new ProfiledPIDController(AIM_P, AIM_I, AIM_D, new TrapezoidProfile.Constraints(MAX_AIM_VELOCITY, MAX_AIM_ACCELERATION));
+        thetaController = new ProfiledPIDController(THETA_P, THETA_I, THETA_D, new TrapezoidProfile.Constraints(MAX_AIM_VELOCITY, MAX_AIM_ACCELERATION));
         thetaController.enableContinuousInput(-Math.PI, Math.PI); //Wrpa from -pi to ip
         
         xRangeController = new ProfiledPIDController(RANGE_P, RANGE_I, RANGE_D, new TrapezoidProfile.Constraints(MAX_RANGE_VELOCITY, MAX_RANGE_ACCELERATION));
