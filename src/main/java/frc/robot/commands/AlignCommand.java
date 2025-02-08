@@ -67,7 +67,8 @@ public class AlignCommand extends Command {
   private Pose3d initialRobotPose3d;
   private Pose3d currentRobotPose3d;
 
-  DoubleLogEntry L_rangeOutput;
+  DoubleLogEntry L_rangeOutputX;
+  DoubleLogEntry L_rangeOutputY;
   DoubleLogEntry L_rotationOutput;
   DoubleLogEntry L_currentDistance;
   DoubleLogEntry L_currentAngle;
@@ -95,11 +96,14 @@ public class AlignCommand extends Command {
         DataLog log = DataLogManager.getLog();
         L_currentDistance = new DoubleLogEntry(log, "/PARTs/align/currentDistance");
         L_currentAngle = new DoubleLogEntry(log, "/PARTs/align/currentAngle");
-        L_rangeOutput = new DoubleLogEntry(log, "/PARTs/align/rangeOutput");
+        L_rangeOutputX = new DoubleLogEntry(log, "/PARTs/align/rangeOutputX");
+        L_rangeOutputY = new DoubleLogEntry(log, "/PARTs/align/rangeOutputY");
         L_rotationOutput = new DoubleLogEntry(log, "/PARTs/align/rotationOutput");
+
         L_llposeX = new DoubleLogEntry(log, "/PARTs/align/llposeX");
         L_llposeY = new DoubleLogEntry(log, "/PARTs/align/llposeY");
         L_llposeRot = new DoubleLogEntry(log, "/PARTs/align/llposeRot");
+
         L_rposeX = new DoubleLogEntry(log, "/PARTs/align/rposeX");
         L_rposeY = new DoubleLogEntry(log, "/PARTs/align/rposeY");
         L_rposeRot = new DoubleLogEntry(log, "/PARTs/align/rposeRot");
@@ -153,7 +157,7 @@ public class AlignCommand extends Command {
 
       L_rposeX.append(currentRobotPose3d.getX());
       L_rposeY.append(currentRobotPose3d.getY());
-      L_rposeRot.append(initialRobotPose3d.getRotation().getAngle());
+      L_rposeRot.append(currentRobotPose3d.getRotation().getAngle());
 
       /* Math not needed(?)
       Pose2d newRobotPose2d = new Pose2d(
@@ -179,9 +183,9 @@ public class AlignCommand extends Command {
       //System.out.println("Rotation Output: " + rotationOutput.getDegrees() + "\n");
       //System.out.println("Aim Controller: " + thetaController.getSetpoint().position);
 
-      //L_rotationOutput.append(rotationOutput.getDegrees());
-      //L_currentDistance.append(rangeOutput.getX());
-      //L_rangeOutput.append(rangeOutput.getY());
+      L_rotationOutput.append(rotationOutput.getDegrees());
+      L_rangeOutputX.append(rangeOutput.getX());
+      L_rangeOutputY.append(rangeOutput.getY());
 
       //System.out.println("RANGE MEASURES:\nCurrent Distance: (" + currentRobotPose3d.getX() + ", " + currentRobotPose3d.getY() + ")");
       //System.out.println("Range Output: (" + rangeOutput.getX() + ", " + rangeOutput.getY() + ")\n");
