@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.AlignCommand;
+import frc.robot.commands.DriveLogCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Vision;
@@ -53,12 +54,15 @@ public class RobotContainer {
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
-            
+            /*
             drivetrain.applyRequest(() ->
                 drive.withVelocityX((-joystick.getLeftY() * MaxSpeed)) // Drive forward with negative Y (forward) .52
                     .withVelocityY((-joystick.getLeftX() * MaxSpeed)) // Drive left with negative X (left)
                     .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left) .5
             )
+            */
+
+            new DriveLogCommand(drivetrain, joystick, visionSubsystem)
         );
 
         joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));

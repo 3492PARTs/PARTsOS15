@@ -161,23 +161,23 @@ public class AlignCommand extends Command {
 
       Translation2d translation = new Translation2d(rangeOutput.getX(), rangeOutput.getY());
 
-      //System.out.println("AIM MEASURES:\nCurrent Angle " + currentAngle.getValue());
-      //System.out.println("Rotation Output: " + rotationOutput + "\n");
-      //System.out.println("Aim Controller: " + aimController.getSetpoint().position);
+      System.out.println("AIM MEASURES:\nCurrent Angle " + currentRobotPose3d.getRotation().toRotation2d().getRadians());
+      System.out.println("Rotation Output: " + rotationOutput.getDegrees() + "\n");
+      //System.out.println("Aim Controller: " + thetaController.getSetpoint().position);
 
       //L_currentAngle.append(currentAngle.getValue());
       //L_rotationOutput.append(rotationOutput);
       //L_currentDistance.append(currentDistance.getValue());
       //L_rangeOutput.append(rangeOutput);
 
-      System.out.println("RANGE MEASURES:\nCurrent Distance: (" + currentRobotPose3d.getX() + ", " + currentRobotPose3d.getY() + ")");
-      System.out.println("Range Output: (" + rangeOutput.getX() + ", " + rangeOutput.getY() + ")\n");
+      //System.out.println("RANGE MEASURES:\nCurrent Distance: (" + currentRobotPose3d.getX() + ", " + currentRobotPose3d.getY() + ")");
+      //System.out.println("Range Output: (" + rangeOutput.getX() + ", " + rangeOutput.getY() + ")\n");
       //System.out.println("Range Controller: " + rangeController.getSetpoint().position);
                   
       m_Swerve.setControl(m_alignRequest
           .withVelocityX(translation.getX())
           .withVelocityY(translation.getY())
-          .withRotationalRate(rotationOutput.getRadians()*0)
+          .withRotationalRate(rotationOutput.getRadians())
       );
     }
     
@@ -191,6 +191,6 @@ public class AlignCommand extends Command {
 
     @Override
     public boolean isFinished() {
-      return xRangeController.atGoal() && yRangeController.atGoal();// && thetaController.atGoal();
+      return xRangeController.atGoal() && yRangeController.atGoal() && thetaController.atGoal();
     }
 }

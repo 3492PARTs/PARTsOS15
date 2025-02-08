@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.LimelightHelpers;
+import frc.robot.Constants.LimelightData;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Vision;
@@ -78,13 +79,21 @@ public class DriveLogCommand extends Command {
   DoubleLogEntry logCurrLimeY;
   DoubleLogEntry logCurrLimeZ;
 
-   // curr post calc robot
-   DoubleLogEntry logCurrRobotCalcX;
-   DoubleLogEntry logCurrRobotCalcY;
+  // curr post calc robot
+  DoubleLogEntry logCurrRobotCalcX;
+  DoubleLogEntry logCurrRobotCalcY;
  
-   // curr post calc limelight
-   DoubleLogEntry logCurrLimeCalcX;
-   DoubleLogEntry logCurrLimeCalcY;
+  // curr post calc limelight
+  DoubleLogEntry logCurrLimeCalcX;
+  DoubleLogEntry logCurrLimeCalcY;
+
+  // Curr rotation LL
+  DoubleLogEntry logCurrLLRotationX;
+  DoubleLogEntry logCurrLLRotationY;
+  
+  // Curr rotation robot
+  DoubleLogEntry logCurrRobotRotationX;
+  DoubleLogEntry logCurrRobotRotationY;
   
   /** Creates a new DriveLog. */
   public DriveLogCommand(CommandSwerveDrivetrain drivetrain, CommandXboxController joystick, Vision vision) {
@@ -101,23 +110,37 @@ public class DriveLogCommand extends Command {
 
     DataLog log = DataLogManager.getLog();
 
-    logInitRobotX= new DoubleLogEntry(log, "/PARTs/log/initRobotX");
-    logInitRobotY = new DoubleLogEntry(log, "/PARTs/log/initRobotY");
+    // Initial Robot
+    //logInitRobotX= new DoubleLogEntry(log, "/PARTs/log/initRobotX");
+    //logInitRobotY = new DoubleLogEntry(log, "/PARTs/log/initRobotY");
 
-    logInitLimeX = new DoubleLogEntry(log, "/PARTs/log/initLimeX");
-    logInitLimeY = new DoubleLogEntry(log, "/PARTs/log/initLimeY");
-    logInitLimeZ = new DoubleLogEntry(log, "/PARTs/log/initLimeZ");
+    // Initial LL
+    //logInitLimeX = new DoubleLogEntry(log, "/PARTs/log/initLimeX");
+    //logInitLimeY = new DoubleLogEntry(log, "/PARTs/log/initLimeY");
+    //logInitLimeZ = new DoubleLogEntry(log, "/PARTs/log/initLimeZ");
 
-    logCurrRobotX = new DoubleLogEntry(log, "/PARTs/log/currRobotX");
-    logCurrRobotY = new DoubleLogEntry(log, "/PARTs/log/currRobotY");
+    // Current Robot
+    //logCurrRobotX = new DoubleLogEntry(log, "/PARTs/log/currRobotX");
+    //logCurrRobotY = new DoubleLogEntry(log, "/PARTs/log/currRobotY");
 
-    logCurrLimeX = new DoubleLogEntry(log, "/PARTs/log/currLimeX");
-    logCurrLimeY = new DoubleLogEntry(log, "/PARTs/log/currLimeY");
-    logCurrLimeZ = new DoubleLogEntry(log, "/PARTs/log/currLimeZ");
+    // Current LL
+    //logCurrLimeX = new DoubleLogEntry(log, "/PARTs/log/currLimeX");
+    //logCurrLimeY = new DoubleLogEntry(log, "/PARTs/log/currLimeY");
+    //logCurrLimeZ = new DoubleLogEntry(log, "/PARTs/log/currLimeZ");
+
+    // Calculated
    // logCurrRobotCalcX = new DoubleLogEntry(log, "/PARTs/log/currRobotCalcX");
     //logCurrRobotCalcY = new DoubleLogEntry(log, "/PARTs/log/currRobotCalcY");
     //logCurrLimeCalcX = new DoubleLogEntry(log, "/PARTs/log/currLimeCalcX");
     //logCurrLimeCalcY = new DoubleLogEntry(log, "/PARTs/log/currLimeCalcY");
+
+    // Current LL Rotation
+    logCurrLLRotationX = new DoubleLogEntry(log, "/PARTs/log/currLLXRotation");
+    logCurrLLRotationY = new DoubleLogEntry(log, "/PARTs/log/currLLYRotation");
+
+    // Current Robot Rotation
+    logCurrRobotRotationX = new DoubleLogEntry(log, "/PARTs/log/currRobotXRotation");
+    logCurrRobotRotationY = new DoubleLogEntry(log, "/PARTs/log/currRobotYRotation");
   }
 
   // Called when the command is initially scheduled.
@@ -126,13 +149,14 @@ public class DriveLogCommand extends Command {
     //initialRobotPose3d = convertToRobotSpace(m_Vision.getPose3d());
 
     drivetrain.resetPose(new Pose2d(0,0,new Rotation2d(0)));
+    System.out.println("Drive Log Init\nCurrent rotation after reset: " + drivetrain.getRotation3d().toRotation2d().getRadians());
 
-    logInitRobotX.append(drivetrain.getState().Pose.getX());
+    //logInitRobotX.append(drivetrain.getState().Pose.getX());
     //logInitRobotY.append(drivetrain.getState().Pose.getY());
 
-    logInitLimeZ.append(vision.getPose3d().getZ());
-    logInitLimeX.append(vision.getPose3d().getX());
-    logInitLimeY.append(vision.getPose3d().getY());
+    //logInitLimeZ.append(vision.getPose3d().getZ());
+    //logInitLimeX.append(vision.getPose3d().getX());
+    //logInitLimeY.append(vision.getPose3d().getY());
 
     // Initialize the x-range controller.
     //xRangeController.reset(initialRobotPose3d.getX());
@@ -153,25 +177,30 @@ public class DriveLogCommand extends Command {
     double rawR = (-joystick.getRightX() * MaxAngularRate);
 
     // Log raw values.
-    logCurrLimeX.append(vision.getPose3d().getX());
-    logCurrLimeY.append(vision.getPose3d().getY());
-    logCurrLimeZ.append(vision.getPose3d().getZ());
+    //logCurrLimeX.append(vision.getPose3d().getX());
+    //logCurrLimeY.append(vision.getPose3d().getY());
+    //logCurrLimeZ.append(vision.getPose3d().getZ());
 
-    logCurrRobotX.append(drivetrain.getState().Pose.getX());
-    logCurrRobotY.append(drivetrain.getState().Pose.getY());
+    //logCurrRobotX.append(drivetrain.getState().Pose.getX());
+    //logCurrRobotY.append(drivetrain.getState().Pose.getY());
+
+    logCurrLLRotationX.append(LimelightHelpers.getBotPose3d_TargetSpace("").getRotation().toRotation2d().getRadians());
+
+    logCurrRobotRotationX.append(drivetrain.getRotation3d().toRotation2d().getRadians());
+
 
     // Setup calculated values.
-    double calcX = 0;
-    double calcY = rawY;
-    double calcR = rawR;
+    //double calcX = 0;
+    //double calcY = rawY;
+    //double calcR = rawR;
 
     // Modify calulated values through PID controllers.
 
     // Apply calculated velocities via the swerve request.
     drivetrain.setControl(
-      drive.withVelocityX(calcX)
-        .withVelocityY(calcY)
-        .withRotationalRate(calcR)
+      drive.withVelocityX(0)
+        .withVelocityY(0)
+        .withRotationalRate(rawR)
     );
     isFinished = false;
   }
