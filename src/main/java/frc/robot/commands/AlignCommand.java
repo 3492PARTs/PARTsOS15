@@ -61,7 +61,7 @@ public class AlignCommand extends Command {
   private static final double THETA_I = 0.01; // 0.01; //Gradual corretction
   private static final double THETA_D = 0.05; // 0.05; //Smooth oscilattions
 
-  private static final double RANGE_P = 1.6;// 0.8;
+  private static final double RANGE_P = 2.0;//1.6;// 0.8;
   private static final double RANGE_I = 0.04;
   private static final double RANGE_D = 0.1; // ? ~10x P to prevent oscillation(?)
 
@@ -161,7 +161,7 @@ public class AlignCommand extends Command {
       thetaController.reset(
           new PARTsUnit(initialRobotPose3d.getRotation().getAngle(), PARTsUnitType.Angle).to(PARTsUnitType.Radian));
       thetaController.setGoal(holdDistance.getRotation().getRadians()); // tx=0 is centered.
-      thetaController.setTolerance(0.1);
+      thetaController.setTolerance(new PARTsUnit(2, PARTsUnitType.Angle).to(PARTsUnitType.Radian));
 
       // Initialize the x-range controller.
       xRangeController.reset(initialRobotPose3d.getX());
@@ -222,6 +222,12 @@ public class AlignCommand extends Command {
     // currentRobotPose3d.getX() + ", " + currentRobotPose3d.getY() + ")");
     // System.out.println("Range Output: (" + rangeOutput.getX() + ", " +
     // rangeOutput.getY() + ")\n");
+
+    System.out.println("rotation angle: " + currentRobotPose3d.getRotation().getAngle());
+    m_drivetrain.updatePoseEstimator();
+    // Get init. distance from camera.
+    Rotation2d estRot = m_drivetrain.getEstimatedRotation2d();
+    System.out.println("ll angle: " + estRot.getDegrees());
 
     m_drivetrain.setControl(m_alignRequest
         .withVelocityX(translation.getX())
