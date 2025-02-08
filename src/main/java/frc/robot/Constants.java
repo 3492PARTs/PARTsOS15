@@ -43,14 +43,14 @@ public final class Constants {
     public static final int L_SWITCH_PORT = 1;
   }
   public static class Algae {
-    public static final int algaeIntakeId = 55;
-    public static final int algaeWristId = 51;
+    public static final int algaeIntakeId = 3;
+    public static final int algaeWristId = 4;
     public static final double algaeIntakeSpeed = 0.2;
     public static final double algaeWristSpeed = 0.2;
   }
   public static class Coral {
-    public static final int coralRightMotorId = 70;
-    public static final int coralLeftMotorId = 71;
+    public static final int coralRightMotorId = 5;
+    public static final int coralLeftMotorId = 6;
     public static final double coralMotorSpeed = 0.2;
   }
   public static class LED {

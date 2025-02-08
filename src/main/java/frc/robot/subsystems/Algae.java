@@ -36,8 +36,10 @@ public class Algae extends SubsystemBase {
     algaeWristEncoder = algaeWrist.getEncoder();
   }
 
-  public void setSpeed(double speed) {
+  public void setWristSpeed(double speed) {
     algaeWrist.set(speed);
+  }
+  public void setIntakeSpeed(double speed) {
     algaeIntake.set(speed);
   }
   public double getEncoderDistance() {

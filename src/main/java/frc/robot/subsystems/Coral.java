@@ -38,7 +38,6 @@ public class Coral extends SubsystemBase {
 
     SparkMaxConfig coralLeftMotorConfig = new SparkMaxConfig();
     coralLeftMotorConfig.idleMode(IdleMode.kBrake);
-    coralLeftMotorConfig.follow(coralRightMotor);
     coralLeftMotor.configure(coralLeftMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     coralRightMotorEncoder = coralRightMotor.getEncoder();
@@ -57,7 +56,7 @@ public class Coral extends SubsystemBase {
   }
 
   public void setSpeed(double speed) {
-    coralRightMotor.set(speed);
+    coralRightMotor.set(-speed);
     coralLeftMotor.set(speed);
   }
 

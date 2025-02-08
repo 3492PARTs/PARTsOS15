@@ -20,6 +20,7 @@ import frc.robot.Commands.Algae.AlgaeWrist;
 import frc.robot.Commands.Coral.CoralAction;
 import frc.robot.Commands.ElevatorCommands.ElevatorJoystick;
 import frc.robot.Commands.ElevatorCommands.ZeroElevatorEncoderCmdSeq;
+import frc.robot.subsystems.Algae;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Coral;
@@ -42,9 +43,9 @@ public class RobotContainer {
 
     public final Trigger zeroElevatorTrigger = new Trigger(elevator.getLimitSwitchSupplier());
 
-    //private final frc.robot.subsystems.Algae algae = new frc.robot.subsystems.Algae();
+    private final Algae algae = new Algae();
 
-    //private final Coral coral = new Coral();
+    private final Coral coral = new Coral();
 
     private final CommandXboxController joystick = new CommandXboxController(0);
     private final CommandXboxController operatorController = new CommandXboxController(1);
@@ -77,15 +78,15 @@ public class RobotContainer {
         joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
         joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
         joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse)); 
 
         elevator.setDefaultCommand(new ElevatorJoystick(elevator, operatorController));
         zeroElevatorTrigger.onTrue(new ZeroElevatorEncoderCmdSeq(elevator));
 
 
-      // operatorController.rightBumper().whileTrue(new AlgaeIntake(algae, operatorController));
-      // operatorController.rightBumper().whileTrue(new AlgaeWrist(algae, operatorController));
-      // operatorController.leftTrigger().whileTrue(new CoralAction(coral, operatorController));
+        operatorController.x().whileTrue(new AlgaeIntake(algae, operatorController));
+        operatorController.a().whileTrue(new AlgaeWrist(algae, operatorController));
+        operatorController.b().whileTrue(new CoralAction(coral, operatorController));
 
         // reset the field-centric heading on left bumper press
         joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
