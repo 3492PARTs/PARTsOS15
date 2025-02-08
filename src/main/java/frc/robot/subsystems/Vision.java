@@ -8,6 +8,7 @@ import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
 import frc.robot.Constants.LimelightData;
@@ -144,6 +145,21 @@ public class Vision extends SubsystemBase {
       -pose.getX(),
       pose.getY(),
       pose.getRotation() // TODO: Look into if this is an issue later.
+    );
+  }
+
+  /**
+   * Coverts the pose in target space to a pose in robot space.
+   * @see <a href="https://docs.limelightvision.io/docs/docs-limelight/pipeline-apriltag/apriltag-coordinate-systems">3D Coordinate Systems in Detail</a>.
+   * @param pose The pose in target space.
+   * @return The new pose in robot space.
+   */
+  public Pose3d convertToKnownSpace(Pose3d pose, Rotation3d rotation) {
+    return new Pose3d(
+      pose.getZ(),
+      -pose.getX(),
+      pose.getY(),
+      rotation 
     );
   }
 

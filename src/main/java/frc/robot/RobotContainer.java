@@ -54,15 +54,15 @@ public class RobotContainer {
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
-            /*
+            
             drivetrain.applyRequest(() ->
                 drive.withVelocityX((-joystick.getLeftY() * MaxSpeed)) // Drive forward with negative Y (forward) .52
                     .withVelocityY((-joystick.getLeftX() * MaxSpeed)) // Drive left with negative X (left)
                     .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left) .5
             )
-            */
+            
 
-            new DriveLogCommand(drivetrain, joystick, visionSubsystem)
+            //new DriveLogCommand(drivetrain, joystick, visionSubsystem)
         );
 
         joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
@@ -70,7 +70,7 @@ public class RobotContainer {
             point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
         ));
 
-        joystick.leftTrigger().onTrue(new AlignCommand(
+        joystick.leftTrigger().whileTrue(new AlignCommand(
             visionSubsystem, 
             drivetrain, 
             new Pose2d(-1,0,new Rotation2d(0,0))

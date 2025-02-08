@@ -46,8 +46,8 @@ public class DriveLogCommand extends Command {
 
   final CommandSwerveDrivetrain drivetrain;
   private final SwerveRequest.RobotCentric drive = new SwerveRequest.RobotCentric()
-    .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
-    .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+      .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+      .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
   final CommandXboxController joystick;
@@ -60,13 +60,13 @@ public class DriveLogCommand extends Command {
   private static final double RANGE_D = 0.1;
 
   // PID Controllers
-  //private final ProfiledPIDController thetaController;
+  // private final ProfiledPIDController thetaController;
   private final ProfiledPIDController xRangeController;
   private final ProfiledPIDController yRangeController;
 
   private final SwerveDrivePoseEstimator m_poseEstimator;
 
-  //* Log Data
+  // * Log Data
   // init robot
   DoubleLogEntry logInitRobotX;
   DoubleLogEntry logInitRobotY;
@@ -90,7 +90,7 @@ public class DriveLogCommand extends Command {
   // curr post calc robot
   DoubleLogEntry logCurrRobotCalcX;
   DoubleLogEntry logCurrRobotCalcY;
- 
+
   // curr post calc limelight
   DoubleLogEntry logCurrLimeCalcX;
   DoubleLogEntry logCurrLimeCalcY;
@@ -105,7 +105,7 @@ public class DriveLogCommand extends Command {
   DoubleLogEntry logCurrRobotRotationY;
 
   boolean doRejectUpdate = false;
-  
+
   /** Creates a new DriveLog. */
   public DriveLogCommand(CommandSwerveDrivetrain drivetrain, CommandXboxController joystick, Vision vision) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -122,41 +122,41 @@ public class DriveLogCommand extends Command {
     DataLog log = DataLogManager.getLog();
 
     m_poseEstimator = new SwerveDrivePoseEstimator(
-      drivetrain.getKinematics(),
-      drivetrain.getRotation3d().toRotation2d(),
-      new SwerveModulePosition[] {
-        drivetrain.getModule(0).getPosition(doRejectUpdate),
-        drivetrain.getModule(1).getPosition(doRejectUpdate),
-        drivetrain.getModule(2).getPosition(doRejectUpdate),
-        drivetrain.getModule(3).getPosition(doRejectUpdate)
-      },
-      new Pose2d(),
-      VecBuilder.fill(0.05, 0.05, new PARTsUnit(5, PARTsUnitType.Angle).to(PARTsUnitType.Radian)),
-      VecBuilder.fill(0.5, 0.5, new PARTsUnit(30, PARTsUnitType.Angle).to(PARTsUnitType.Radian)));
+        drivetrain.getKinematics(),
+        drivetrain.getRotation3d().toRotation2d(),
+        new SwerveModulePosition[] {
+            drivetrain.getModule(0).getPosition(doRejectUpdate),
+            drivetrain.getModule(1).getPosition(doRejectUpdate),
+            drivetrain.getModule(2).getPosition(doRejectUpdate),
+            drivetrain.getModule(3).getPosition(doRejectUpdate)
+        },
+        new Pose2d(),
+        VecBuilder.fill(0.05, 0.05, new PARTsUnit(5, PARTsUnitType.Angle).to(PARTsUnitType.Radian)),
+        VecBuilder.fill(0.5, 0.5, new PARTsUnit(30, PARTsUnitType.Angle).to(PARTsUnitType.Radian)));
 
     // Initial Robot
-    //logInitRobotX= new DoubleLogEntry(log, "/PARTs/log/initRobotX");
-    //logInitRobotY = new DoubleLogEntry(log, "/PARTs/log/initRobotY");
+    // logInitRobotX= new DoubleLogEntry(log, "/PARTs/log/initRobotX");
+    // logInitRobotY = new DoubleLogEntry(log, "/PARTs/log/initRobotY");
 
     // Initial LL
-    //logInitLimeX = new DoubleLogEntry(log, "/PARTs/log/initLimeX");
-    //logInitLimeY = new DoubleLogEntry(log, "/PARTs/log/initLimeY");
-    //logInitLimeZ = new DoubleLogEntry(log, "/PARTs/log/initLimeZ");
+    // logInitLimeX = new DoubleLogEntry(log, "/PARTs/log/initLimeX");
+    // logInitLimeY = new DoubleLogEntry(log, "/PARTs/log/initLimeY");
+    // logInitLimeZ = new DoubleLogEntry(log, "/PARTs/log/initLimeZ");
 
     // Current Robot
-    //logCurrRobotX = new DoubleLogEntry(log, "/PARTs/log/currRobotX");
-    //logCurrRobotY = new DoubleLogEntry(log, "/PARTs/log/currRobotY");
+    // logCurrRobotX = new DoubleLogEntry(log, "/PARTs/log/currRobotX");
+    // logCurrRobotY = new DoubleLogEntry(log, "/PARTs/log/currRobotY");
 
     // Current LL
-    //logCurrLimeX = new DoubleLogEntry(log, "/PARTs/log/currLimeX");
-    //logCurrLimeY = new DoubleLogEntry(log, "/PARTs/log/currLimeY");
-    //logCurrLimeZ = new DoubleLogEntry(log, "/PARTs/log/currLimeZ");
+    // logCurrLimeX = new DoubleLogEntry(log, "/PARTs/log/currLimeX");
+    // logCurrLimeY = new DoubleLogEntry(log, "/PARTs/log/currLimeY");
+    // logCurrLimeZ = new DoubleLogEntry(log, "/PARTs/log/currLimeZ");
 
     // Calculated
-   // logCurrRobotCalcX = new DoubleLogEntry(log, "/PARTs/log/currRobotCalcX");
-    //logCurrRobotCalcY = new DoubleLogEntry(log, "/PARTs/log/currRobotCalcY");
-    //logCurrLimeCalcX = new DoubleLogEntry(log, "/PARTs/log/currLimeCalcX");
-    //logCurrLimeCalcY = new DoubleLogEntry(log, "/PARTs/log/currLimeCalcY");
+    // logCurrRobotCalcX = new DoubleLogEntry(log, "/PARTs/log/currRobotCalcX");
+    // logCurrRobotCalcY = new DoubleLogEntry(log, "/PARTs/log/currRobotCalcY");
+    // logCurrLimeCalcX = new DoubleLogEntry(log, "/PARTs/log/currLimeCalcX");
+    // logCurrLimeCalcY = new DoubleLogEntry(log, "/PARTs/log/currLimeCalcY");
 
     // Current LL Rotation
     logCurrLLRotationX = new DoubleLogEntry(log, "/PARTs/log/currLLXRotation");
@@ -166,35 +166,36 @@ public class DriveLogCommand extends Command {
     // Current Robot Rotation
     logCurrRobotRotationX = new DoubleLogEntry(log, "/PARTs/log/currRobotXRotation");
     logCurrRobotRotationY = new DoubleLogEntry(log, "/PARTs/log/currRobotYRotation");
-    //logCurrRobotRotationZ = new DoubleLogEntry(log, "/PARTs/log/currRobotZRotation");
+    // logCurrRobotRotationZ = new DoubleLogEntry(log,
+    // "/PARTs/log/currRobotZRotation");
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    //initialRobotPose3d = convertToRobotSpace(m_Vision.getPose3d());
+    // initialRobotPose3d = convertToRobotSpace(m_Vision.getPose3d());
 
-    drivetrain.resetPose(new Pose2d(0,0,new Rotation2d(0)));
-    System.out.println("Drive Log Init\nCurrent rotation after reset: " + drivetrain.getRotation3d().toRotation2d().getRadians());
+    drivetrain.resetPose(new Pose2d(0, 0, new Rotation2d(0)));
+    System.out.println(
+        "Drive Log Init\nCurrent rotation after reset: " + drivetrain.getRotation3d().toRotation2d().getRadians());
 
-    //logInitRobotX.append(drivetrain.getState().Pose.getX());
-    //logInitRobotY.append(drivetrain.getState().Pose.getY());
+    // logInitRobotX.append(drivetrain.getState().Pose.getX());
+    // logInitRobotY.append(drivetrain.getState().Pose.getY());
 
-    //logInitLimeZ.append(vision.getPose3d().getZ());
-    //logInitLimeX.append(vision.getPose3d().getX());
-    //logInitLimeY.append(vision.getPose3d().getY());
+    // logInitLimeZ.append(vision.getPose3d().getZ());
+    // logInitLimeX.append(vision.getPose3d().getX());
+    // logInitLimeY.append(vision.getPose3d().getY());
 
     // Initialize the x-range controller.
-    //xRangeController.reset(initialRobotPose3d.getX());
-    //xRangeController.setGoal(holdDistance.getX());
-    //xRangeController.setTolerance(0.1);
+    // xRangeController.reset(initialRobotPose3d.getX());
+    // xRangeController.setGoal(holdDistance.getX());
+    // xRangeController.setTolerance(0.1);
 
     // Initialize the y-range controller.
-    //yRangeController.reset(initialRobotPose3d.getY()); // Center to target.
-    //yRangeController.setGoal(holdDistance.getY()); // Center to target.
-    //yRangeController.setTolerance(0.1);
+    // yRangeController.reset(initialRobotPose3d.getY()); // Center to target.
+    // yRangeController.setGoal(holdDistance.getY()); // Center to target.
+    // yRangeController.setTolerance(0.1);
   }
-   
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -204,75 +205,47 @@ public class DriveLogCommand extends Command {
     double rawR = (-joystick.getRightX() * MaxAngularRate);
 
     // Log raw values.
-    //logCurrLimeX.append(vision.getPose3d().getX());
-    //logCurrLimeY.append(vision.getPose3d().getY());
-    //logCurrLimeZ.append(vision.getPose3d().getZ());
+    // logCurrLimeX.append(vision.getPose3d().getX());
+    // logCurrLimeY.append(vision.getPose3d().getY());
+    // logCurrLimeZ.append(vision.getPose3d().getZ());
 
-    //logCurrRobotX.append(drivetrain.getState().Pose.getX());
-    //logCurrRobotY.append(drivetrain.getState().Pose.getY());
-    doRejectUpdate = false;
+    // logCurrRobotX.append(drivetrain.getState().Pose.getX());
+    // logCurrRobotY.append(drivetrain.getState().Pose.getY());
+    
+    drivetrain.updatePoseEstimator();
 
-    m_poseEstimator.update(
-      drivetrain.getPigeon2().getRotation2d(),
-      new SwerveModulePosition[] {
-        drivetrain.getModule(0).getPosition(doRejectUpdate),
-        drivetrain.getModule(1).getPosition(doRejectUpdate),
-        drivetrain.getModule(2).getPosition(doRejectUpdate),
-        drivetrain.getModule(3).getPosition(doRejectUpdate)
-      });
+    // logCurrLLRotationX.append(m_poseEstimator.getEstimatedPosition().getX());
+    // logCurrLLRotationY.append(m_poseEstimator.getEstimatedPosition().getY());
+    // logCurrLLRotationZ.append(m_poseEstimator.getEstimatedPosition().getRotation().getDegrees());
+    // System.out.println("TX: " + LimelightHelpers.getTX(""));
+    // System.out.println("TY: " + LimelightHelpers.getTY(""));
 
-    LimelightHelpers.SetRobotOrientation("", m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
-    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
-
-    if(Math.abs(drivetrain.getPigeon2().getRate()) > 720) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
-    {
-      doRejectUpdate = true;
-    }
-    if(mt2.tagCount == 0)
-    {
-      doRejectUpdate = true;
-    }
-    if(!doRejectUpdate)
-    {
-      m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
-      m_poseEstimator.addVisionMeasurement(
-          mt2.pose,
-          mt2.timestampSeconds);
-    }
-      
-    logCurrLLRotationX.append(m_poseEstimator.getEstimatedPosition().getX());
-    logCurrLLRotationY.append(m_poseEstimator.getEstimatedPosition().getY());
-    logCurrLLRotationZ.append(m_poseEstimator.getEstimatedPosition().getRotation().getDegrees());
-    //System.out.println("TX: " + LimelightHelpers.getTX(""));
-    //System.out.println("TY: " + LimelightHelpers.getTY(""));
-
-    //logCurrLLRotationZ.append(LimelightHelpers.getBotPose3d_TargetSpace("").getRotation().getZ());
-    //logCurrLLRotationY.append(LimelightHelpers.getBotPose3d_TargetSpace("").get);
+    // logCurrLLRotationZ.append(LimelightHelpers.getBotPose3d_TargetSpace("").getRotation().getZ());
+    // logCurrLLRotationY.append(LimelightHelpers.getBotPose3d_TargetSpace("").get);
 
     logCurrRobotRotationX.append(drivetrain.getRotation3d().toRotation2d().getDegrees());
-    //logCurrLLRotationY.append(drivetrain.getRotation3d().getY());
-    //logCurrLLRotationZ.append(drivetrain.getRotation3d().getZ());
-
+    // logCurrLLRotationY.append(drivetrain.getRotation3d().getY());
+    // logCurrLLRotationZ.append(drivetrain.getRotation3d().getZ());
 
     // Setup calculated values.
-    //double calcX = 0;
-    //double calcY = rawY;
-    //double calcR = rawR;
+    // double calcX = 0;
+    // double calcY = rawY;
+    // double calcR = rawR;
 
     // Modify calulated values through PID controllers.
 
     // Apply calculated velocities via the swerve request.
     drivetrain.setControl(
-      drive.withVelocityX(0)
-        .withVelocityY(0)
-        .withRotationalRate(rawR)
-    );
+        drive.withVelocityX(0)
+            .withVelocityY(0)
+            .withRotationalRate(rawR));
     isFinished = false;
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+  }
 
   // Returns true when the command should end.
   @Override

@@ -16,6 +16,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.util.datalog.DataLog;
@@ -23,7 +24,10 @@ import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Vision;
+import frc.robot.util.PARTsUnit;
+import frc.robot.util.PARTsUnit.PARTsUnitType;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 /**
@@ -32,7 +36,7 @@ import frc.robot.subsystems.Vision;
  */
 public class AlignCommand extends Command {
   private final Vision m_Vision;
-  private final SwerveDrivetrain<TalonFX, TalonFX, CANcoder> m_Swerve;
+  private final CommandSwerveDrivetrain m_drivetrain;
   private final SwerveRequest.RobotCentric m_alignRequest;
 
   private final Pose2d holdDistance;
@@ -69,12 +73,14 @@ public class AlignCommand extends Command {
   DoubleLogEntry L_currentAngle;
   DoubleLogEntry L_llposeX;
   DoubleLogEntry L_llposeY;
+  DoubleLogEntry L_llposeRot;
   DoubleLogEntry L_rposeX;
   DoubleLogEntry L_rposeY;
+  DoubleLogEntry L_rposeRot;
 
-  public AlignCommand(Vision vision, SwerveDrivetrain<TalonFX, TalonFX, CANcoder> swerve, Pose2d holdDistance) {
+  public AlignCommand(Vision vision, CommandSwerveDrivetrain swerve, Pose2d holdDistance) {
         m_Vision = vision;
-        m_Swerve = swerve;
+        m_drivetrain = swerve;
         this.holdDistance = holdDistance;
         
         this.m_alignRequest = new SwerveRequest.RobotCentric().withDeadband(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * 0.1).withRotationalDeadband(0.1);
@@ -93,8 +99,10 @@ public class AlignCommand extends Command {
         L_rotationOutput = new DoubleLogEntry(log, "/PARTs/align/rotationOutput");
         L_llposeX = new DoubleLogEntry(log, "/PARTs/align/llposeX");
         L_llposeY = new DoubleLogEntry(log, "/PARTs/align/llposeY");
+        L_llposeRot = new DoubleLogEntry(log, "/PARTs/align/llposeRot");
         L_rposeX = new DoubleLogEntry(log, "/PARTs/align/rposeX");
         L_rposeY = new DoubleLogEntry(log, "/PARTs/align/rposeY");
+        L_rposeRot = new DoubleLogEntry(log, "/PARTs/align/rposeRot");
 
 
         addRequirements(m_Vision);
@@ -109,17 +117,22 @@ public class AlignCommand extends Command {
       m_Vision.setPipelineIndex(0);
 
       // Reset pose to zero.
-      m_Swerve.resetPose(new Pose2d(0,0, new Rotation2d(0,0)));
-      
+      // TODO: See about removal
+      m_drivetrain.resetPose(new Pose2d(0,0, new Rotation2d(0,0)));
+
+      m_drivetrain.updatePoseEstimator();
       // Get init. distance from camera.
+      //Rotation3d rotation = new Rotation3d(m_drivetrain.getEstimatedRotation2d());
       initialRobotPose3d = m_Vision.convertToKnownSpace(m_Vision.getPose3d());
-      m_Swerve.resetPose(initialRobotPose3d.toPose2d());
+      
+      m_drivetrain.resetPose(initialRobotPose3d.toPose2d());
 
       L_llposeX.append(initialRobotPose3d.getX());
       L_llposeY.append(initialRobotPose3d.getY());
+      L_llposeRot.append(initialRobotPose3d.getRotation().getAngle());
       
       // Initialize the aim controller.
-      thetaController.reset(initialRobotPose3d.getRotation().getAngle());
+      thetaController.reset(new PARTsUnit(initialRobotPose3d.getRotation().getAngle(), PARTsUnitType.Angle).to(PARTsUnitType.Radian));
       thetaController.setGoal(holdDistance.getRotation().getRadians()); // tx=0 is centered.
       thetaController.setTolerance(0.1);
 
@@ -136,10 +149,11 @@ public class AlignCommand extends Command {
 
     @Override
     public void execute() {
-      currentRobotPose3d = new Pose3d(m_Swerve.getState().Pose);
+      currentRobotPose3d = new Pose3d(m_drivetrain.getState().Pose);
 
       L_rposeX.append(currentRobotPose3d.getX());
       L_rposeY.append(currentRobotPose3d.getY());
+      L_rposeRot.append(initialRobotPose3d.getRotation().getAngle());
 
       /* Math not needed(?)
       Pose2d newRobotPose2d = new Pose2d(
@@ -161,29 +175,27 @@ public class AlignCommand extends Command {
 
       Translation2d translation = new Translation2d(rangeOutput.getX(), rangeOutput.getY());
 
-      System.out.println("AIM MEASURES:\nCurrent Angle " + currentRobotPose3d.getRotation().toRotation2d().getRadians());
-      System.out.println("Rotation Output: " + rotationOutput.getDegrees() + "\n");
+      //System.out.println("AIM MEASURES:\nCurrent Angle " + currentRobotPose3d.getRotation().toRotation2d().getDegrees());
+      //System.out.println("Rotation Output: " + rotationOutput.getDegrees() + "\n");
       //System.out.println("Aim Controller: " + thetaController.getSetpoint().position);
 
-      //L_currentAngle.append(currentAngle.getValue());
-      //L_rotationOutput.append(rotationOutput);
-      //L_currentDistance.append(currentDistance.getValue());
-      //L_rangeOutput.append(rangeOutput);
+      //L_rotationOutput.append(rotationOutput.getDegrees());
+      //L_currentDistance.append(rangeOutput.getX());
+      //L_rangeOutput.append(rangeOutput.getY());
 
       //System.out.println("RANGE MEASURES:\nCurrent Distance: (" + currentRobotPose3d.getX() + ", " + currentRobotPose3d.getY() + ")");
       //System.out.println("Range Output: (" + rangeOutput.getX() + ", " + rangeOutput.getY() + ")\n");
-      //System.out.println("Range Controller: " + rangeController.getSetpoint().position);
                   
-      m_Swerve.setControl(m_alignRequest
+      m_drivetrain.setControl(m_alignRequest
           .withVelocityX(translation.getX())
           .withVelocityY(translation.getY())
-          .withRotationalRate(rotationOutput.getRadians())
+          .withRotationalRate(0 * rotationOutput.getRadians())
       );
     }
     
     @Override
     public void end(boolean interrupted) {
-      m_Swerve.setControl(m_alignRequest
+      m_drivetrain.setControl(m_alignRequest
           .withVelocityX(0)
           .withVelocityY(0)
           .withRotationalRate(0));
@@ -191,6 +203,6 @@ public class AlignCommand extends Command {
 
     @Override
     public boolean isFinished() {
-      return xRangeController.atGoal() && yRangeController.atGoal() && thetaController.atGoal();
+      return xRangeController.atGoal() && yRangeController.atGoal() && (true ||thetaController.atGoal());
     }
 }
