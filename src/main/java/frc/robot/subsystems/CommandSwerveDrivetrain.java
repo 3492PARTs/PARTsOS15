@@ -347,4 +347,30 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
         return m_poseEstimator.getEstimatedPosition().getRotation();
     }
+
+    public Pose2d getEstimatedPose() {
+        LimelightHelpers.SetRobotOrientation("", m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0,
+                0, 0,
+                0, 0);
+        LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
+
+        if (mt2 != null) {
+            if (Math.abs(getPigeon2().getRate()) > 720) // if our angular velocity is greater than 720 degrees per
+                                                        // second, ignore vision updates
+            {
+                doRejectUpdate = true;
+            }
+            if (mt2.tagCount == 0) {
+                doRejectUpdate = true;
+            }
+            if (!doRejectUpdate) {
+                m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
+                m_poseEstimator.addVisionMeasurement(
+                        mt2.pose,
+                        mt2.timestampSeconds);
+            }
+        }
+
+        return m_poseEstimator.getEstimatedPosition();
+    }
 }

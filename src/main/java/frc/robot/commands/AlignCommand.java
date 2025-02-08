@@ -118,12 +118,12 @@ public class AlignCommand extends Command {
 
       // Reset pose to zero.
       // TODO: See about removal
-      m_drivetrain.resetPose(new Pose2d(0,0, new Rotation2d(0,0)));
+      //m_drivetrain.resetPose(new Pose2d(0,0, new Rotation2d(0,0)));
 
       m_drivetrain.updatePoseEstimator();
       // Get init. distance from camera.
-      //Rotation3d rotation = new Rotation3d(m_drivetrain.getEstimatedRotation2d());
-      initialRobotPose3d = m_Vision.convertToKnownSpace(m_Vision.getPose3d());
+      Rotation3d rotation = new Rotation3d(m_drivetrain.getEstimatedRotation2d());
+      initialRobotPose3d = m_Vision.convertToKnownSpace(m_Vision.getPose3d(), rotation);
       
       m_drivetrain.resetPose(initialRobotPose3d.toPose2d());
 
@@ -189,7 +189,7 @@ public class AlignCommand extends Command {
       m_drivetrain.setControl(m_alignRequest
           .withVelocityX(translation.getX())
           .withVelocityY(translation.getY())
-          .withRotationalRate(0 * rotationOutput.getRadians())
+          .withRotationalRate(rotationOutput.getRadians())
       );
     }
     
