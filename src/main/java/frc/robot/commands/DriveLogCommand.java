@@ -12,11 +12,15 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import java.util.Collection;
 
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
@@ -29,6 +33,8 @@ import frc.robot.Constants.LimelightData;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Vision;
+import frc.robot.util.PARTsUnit;
+import frc.robot.util.PARTsUnit.PARTsUnitType;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class DriveLogCommand extends Command {
@@ -57,6 +63,8 @@ public class DriveLogCommand extends Command {
   //private final ProfiledPIDController thetaController;
   private final ProfiledPIDController xRangeController;
   private final ProfiledPIDController yRangeController;
+
+  private final SwerveDrivePoseEstimator m_poseEstimator;
 
   //* Log Data
   // init robot
@@ -90,10 +98,13 @@ public class DriveLogCommand extends Command {
   // Curr rotation LL
   DoubleLogEntry logCurrLLRotationX;
   DoubleLogEntry logCurrLLRotationY;
-  
+  DoubleLogEntry logCurrLLRotationZ;
+
   // Curr rotation robot
   DoubleLogEntry logCurrRobotRotationX;
   DoubleLogEntry logCurrRobotRotationY;
+
+  boolean doRejectUpdate = false;
   
   /** Creates a new DriveLog. */
   public DriveLogCommand(CommandSwerveDrivetrain drivetrain, CommandXboxController joystick, Vision vision) {
@@ -109,6 +120,19 @@ public class DriveLogCommand extends Command {
     yRangeController = new ProfiledPIDController(RANGE_P, RANGE_I, RANGE_D, new TrapezoidProfile.Constraints(1.0, 0.5));
 
     DataLog log = DataLogManager.getLog();
+
+    m_poseEstimator = new SwerveDrivePoseEstimator(
+      drivetrain.getKinematics(),
+      drivetrain.getRotation3d().toRotation2d(),
+      new SwerveModulePosition[] {
+        drivetrain.getModule(0).getPosition(doRejectUpdate),
+        drivetrain.getModule(1).getPosition(doRejectUpdate),
+        drivetrain.getModule(2).getPosition(doRejectUpdate),
+        drivetrain.getModule(3).getPosition(doRejectUpdate)
+      },
+      new Pose2d(),
+      VecBuilder.fill(0.05, 0.05, new PARTsUnit(5, PARTsUnitType.Angle).to(PARTsUnitType.Radian)),
+      VecBuilder.fill(0.5, 0.5, new PARTsUnit(30, PARTsUnitType.Angle).to(PARTsUnitType.Radian)));
 
     // Initial Robot
     //logInitRobotX= new DoubleLogEntry(log, "/PARTs/log/initRobotX");
@@ -137,10 +161,12 @@ public class DriveLogCommand extends Command {
     // Current LL Rotation
     logCurrLLRotationX = new DoubleLogEntry(log, "/PARTs/log/currLLXRotation");
     logCurrLLRotationY = new DoubleLogEntry(log, "/PARTs/log/currLLYRotation");
+    logCurrLLRotationZ = new DoubleLogEntry(log, "/PARTs/log/currLLZRotation");
 
     // Current Robot Rotation
     logCurrRobotRotationX = new DoubleLogEntry(log, "/PARTs/log/currRobotXRotation");
     logCurrRobotRotationY = new DoubleLogEntry(log, "/PARTs/log/currRobotYRotation");
+    //logCurrRobotRotationZ = new DoubleLogEntry(log, "/PARTs/log/currRobotZRotation");
   }
 
   // Called when the command is initially scheduled.
@@ -168,6 +194,7 @@ public class DriveLogCommand extends Command {
     //yRangeController.setGoal(holdDistance.getY()); // Center to target.
     //yRangeController.setTolerance(0.1);
   }
+   
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -183,10 +210,48 @@ public class DriveLogCommand extends Command {
 
     //logCurrRobotX.append(drivetrain.getState().Pose.getX());
     //logCurrRobotY.append(drivetrain.getState().Pose.getY());
+    doRejectUpdate = false;
 
-    logCurrLLRotationX.append(LimelightHelpers.getBotPose3d_TargetSpace("").getRotation().toRotation2d().getRadians());
+    m_poseEstimator.update(
+      drivetrain.getPigeon2().getRotation2d(),
+      new SwerveModulePosition[] {
+        drivetrain.getModule(0).getPosition(doRejectUpdate),
+        drivetrain.getModule(1).getPosition(doRejectUpdate),
+        drivetrain.getModule(2).getPosition(doRejectUpdate),
+        drivetrain.getModule(3).getPosition(doRejectUpdate)
+      });
 
-    logCurrRobotRotationX.append(drivetrain.getRotation3d().toRotation2d().getRadians());
+    LimelightHelpers.SetRobotOrientation("", m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
+    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
+
+    if(Math.abs(drivetrain.getPigeon2().getRate()) > 720) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
+    {
+      doRejectUpdate = true;
+    }
+    if(mt2.tagCount == 0)
+    {
+      doRejectUpdate = true;
+    }
+    if(!doRejectUpdate)
+    {
+      m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
+      m_poseEstimator.addVisionMeasurement(
+          mt2.pose,
+          mt2.timestampSeconds);
+    }
+      
+    logCurrLLRotationX.append(m_poseEstimator.getEstimatedPosition().getX());
+    logCurrLLRotationY.append(m_poseEstimator.getEstimatedPosition().getY());
+    logCurrLLRotationZ.append(m_poseEstimator.getEstimatedPosition().getRotation().getDegrees());
+    //System.out.println("TX: " + LimelightHelpers.getTX(""));
+    //System.out.println("TY: " + LimelightHelpers.getTY(""));
+
+    //logCurrLLRotationZ.append(LimelightHelpers.getBotPose3d_TargetSpace("").getRotation().getZ());
+    //logCurrLLRotationY.append(LimelightHelpers.getBotPose3d_TargetSpace("").get);
+
+    logCurrRobotRotationX.append(drivetrain.getRotation3d().toRotation2d().getDegrees());
+    //logCurrLLRotationY.append(drivetrain.getRotation3d().getY());
+    //logCurrLLRotationZ.append(drivetrain.getRotation3d().getZ());
 
 
     // Setup calculated values.
