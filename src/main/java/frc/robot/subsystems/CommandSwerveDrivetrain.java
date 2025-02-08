@@ -345,7 +345,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             }
         }
 
-        return m_poseEstimator.getEstimatedPosition().getRotation();
+        return mt2 != null ? m_poseEstimator.getEstimatedPosition().getRotation() : null;
     }
 
     public Pose2d getEstimatedPose() {
