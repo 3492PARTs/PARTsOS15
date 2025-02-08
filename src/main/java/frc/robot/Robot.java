@@ -4,29 +4,36 @@
 
 package frc.robot;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.PubSubOption;
+import edu.wpi.first.networktables.StringPublisher;
+import edu.wpi.first.networktables.StringTopic;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.elasticlib.Elastic;
-import frc.robot.elasticlib.Elastic.Notification;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
-
-  private final Elastic m_Elastic;
+  /*example 
+  NetworkTableInstance inst = NetworkTableInstance.getDefault();
+  StringTopic strTopic = inst.getStringTopic("/Elastic/CANColorValues");
+  StringPublisher strPub = strTopic.publish(PubSubOption.sendAll(true));
+  */
 
   public Robot() {
     m_robotContainer = new RobotContainer();
-    m_Elastic = new Elastic();
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run(); 
-    m_Elastic.sendNotification(CommandSwerveDrivetrain.getNotification());
+    /* example
+    String canandcolorData = new String("Proximity: " + 1 +  " Red Value: " + 1 + " Blue Value: " + 1 + " Green Value: " + 1);
+    strPub.accept(canandcolorData);
+    */
   }
 
   @Override
