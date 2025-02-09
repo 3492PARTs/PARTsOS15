@@ -1,52 +1,414 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.BooleanEntry;
+import edu.wpi.first.networktables.BooleanTopic;
+import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.DoubleTopic;
+import edu.wpi.first.networktables.IntegerEntry;
+import edu.wpi.first.networktables.IntegerTopic;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.PubSubOption;
-import edu.wpi.first.networktables.Topic;
+import edu.wpi.first.networktables.StringEntry;
+import edu.wpi.first.networktables.StringTopic;
 
-/** Add your docs here. */
+/**
+ * PARTs NetworkTables Easy API.<p>
+ * {@code PARTsNT partsNT = new PARTsNT(this);}<p>
+ * This class is meant to be used as an instance for each class.
+ */
 public class PARTsNT {
     NetworkTableInstance nt_Instance = NetworkTableInstance.getDefault();
     NetworkTable table;
 
-    List<String> topicsList;
+    /**
+     * Generic topic entry that is not designed to be used by itself.<p>
+     * Use the other chilld classes instead.
+     */
+    private class EasyGenericEntry {
+        /** The NetworkTables topic name. */
+        public String topicName;
+        public EasyGenericEntry() {}
+    }
 
+    class EasyBooleanEntry extends EasyGenericEntry {
+        /** The NetworkTables topic name. */
+        public String topicName;
+        public BooleanTopic topic;
+        public BooleanEntry entry;
+        /** 
+         * The value last gotten from set or get.<p>
+         * Its purpose here is to provide a way to get the previous cached result, saving some time.
+        */
+        public boolean cachedValue;
+
+        public EasyBooleanEntry(String name) {
+            topicName = name;
+            topic = table.getBooleanTopic(name);
+            entry = topic.getEntry(false);
+        }
+
+        public EasyBooleanEntry(String name, Boolean value) {
+            topicName = name;
+            topic = table.getBooleanTopic(name);
+            entry = topic.getEntry(false);
+            entry.set(value);
+            cachedValue = value;
+        }
+    }
+
+    class EasyIntegerEntry extends EasyGenericEntry {
+        /** The NetworkTables topic name. */
+        public String topicName;
+        public IntegerTopic topic;
+        public IntegerEntry entry;
+        /** 
+         * The value last gotten from set or get.<p>
+         * Its purpose here is to provide a way to get the previous cached result, saving some time.
+        */
+        public int cachedValue;
+
+        public EasyIntegerEntry(String name) {
+            topicName = name;
+            topic = table.getIntegerTopic(name);
+            entry = topic.getEntry(0);
+        }
+
+        public EasyIntegerEntry(String name, int value) {
+            topicName = name;
+            topic = table.getIntegerTopic(name);
+            entry = topic.getEntry(0);
+            entry.set(value);
+            cachedValue = value;
+        }
+    }
+
+    class EasyDoubleEntry extends EasyGenericEntry {
+        /** The NetworkTables topic name. */
+        public String topicName;
+        public DoubleTopic topic;
+        public DoubleEntry entry;
+        /** 
+         * The value last gotten from set or get.<p>
+         * Its purpose here is to provide a way to get the previous cached result, saving some time.
+        */
+        public double cachedValue;
+
+        public EasyDoubleEntry(String name) {
+            topicName = name;
+            topic = table.getDoubleTopic(name);
+            entry = topic.getEntry(0.0);
+        }
+
+        public EasyDoubleEntry(String name, double value) {
+            topicName = name;
+            topic = table.getDoubleTopic(name);
+            entry = topic.getEntry(0.0);
+            entry.set(value);
+            cachedValue = value;
+        }
+    }
+
+    class EasyStringEntry extends EasyGenericEntry {
+        /** The NetworkTables topic name. */
+        public String topicName;
+        public StringTopic topic;
+        public StringEntry entry;
+        /** 
+         * The value last gotten from set or get.<p>
+         * Its purpose here is to provide a way to get the previous cached result, saving some time.
+        */
+        public String cachedValue;
+
+        public EasyStringEntry(String name) {
+            topicName = name;
+            topic = table.getStringTopic(name);
+            entry = topic.getEntry("");
+        }
+
+        public EasyStringEntry(String name, String value) {
+            topicName = name;
+            topic = table.getStringTopic(name);
+            entry = topic.getEntry("");
+            entry.set(value);
+            cachedValue = value;
+        }
+    }
+
+    List<List> masterList;
+    List<EasyGenericEntry> topicsList;
+    List<EasyBooleanEntry> booleanEntries;
+    List<EasyIntegerEntry> integerEntries;
+    List<EasyDoubleEntry> doubleEntries;
+    List<EasyStringEntry> stringEntries;
+
+    /**
+     * Creates a new PARTsNT instance.<p>
+     * Creates/uses the subtable "Generic" instead of the class subtable.<p>
+     * The object variation should be used instead.
+     */
     public PARTsNT() {
-        table = nt_Instance.getTable(getClass().getSuperclass().getSimpleName());
+        table = nt_Instance.getTable("PARTs").getSubTable("Generic");
+        topicsList = new ArrayList<>();
+        booleanEntries = new ArrayList<>();
+        integerEntries = new ArrayList<>();
+        doubleEntries = new ArrayList<>();
+        stringEntries = new ArrayList<>();
+        masterList.add(topicsList);
+        masterList.add(booleanEntries);
+        masterList.add(integerEntries);
+        masterList.add(doubleEntries);
+        masterList.add(stringEntries);
     }
 
-    public boolean topicExists(String name) {
-        if (topicsList.contains(name)) return true;
-        return false;
+    /**
+     * Creates a new PARTsNT instance.<p>
+     * Creates/uses the class subtable.
+     * @param o The class object. (E.g. passing in 'this'.)
+     */
+    public PARTsNT(Object o) {
+        table = nt_Instance.getTable("PARTs").getSubTable(o.getClass().getSimpleName());
+        topicsList = new ArrayList<>();
+        booleanEntries = new ArrayList<>();
     }
 
-    private void addToTList(String tName) {
-        if (topicExists(tName)) return;
-        topicsList.add(tName);
+    //* -------- HELPER FUNCTIONS -------- *//
+
+    /**
+     * Adds an entry to the list if the entry is not already on the list.
+     * @param entry The entry to be added.
+     */
+    private void addEntryToList(EasyGenericEntry entry) {
+        // Check if the entry already exists in the list.
+        for (int i=0; i<topicsList.size(); i++) {
+            if (topicsList.get(i).topicName == entry.topicName) {
+                return; // It exists so we abort adding it to avoid dupes.
+            }
+        }
+        // Add the EasyGenericEntry. (Could also be any child.)
+        topicsList.add(entry);
     }
 
-    public void setDouble(double value, String name) {
-        addToTList(name);
-        DoublePublisher pub = table.getDoubleTopic(name).publish();
-        pub.accept(value);
+    /**
+     * Gets an existing entry from the entry list.
+     * @param name The name of the entry.
+     * @return The entry if it exists, otherwise null.
+     */
+    private EasyGenericEntry getEntry(String name) {
+        for (EasyGenericEntry entry : topicsList) {
+            if (entry.topicName == name) return entry;
+        }
+        return null;
     }
 
+    /**
+     * Gets an existing entry from the entry list.
+     * @param name The name of the entry.
+     * @return The entry if it exists, otherwise null.
+     */
+    private EasyBooleanEntry getBooleanEntry(String name) {
+        for (EasyBooleanEntry entry : booleanEntries) {
+            if (entry instanceof EasyBooleanEntry) {
+                if (entry.topicName == name)
+                    return ((EasyBooleanEntry) entry);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Gets an existing entry from the entry list.
+     * @param name The name of the entry.
+     * @return The entry if it exists, otherwise null.
+     */
+    private EasyIntegerEntry getIntegerEntry(String name) {
+        for (EasyIntegerEntry entry : integerEntries) {
+            if (entry instanceof EasyIntegerEntry) {
+                if (entry.topicName == name)
+                    return ((EasyIntegerEntry) entry);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Gets an existing entry from the entry list.
+     * @param name The name of the entry.
+     * @return The entry if it exists, otherwise null.
+     */
+    private EasyDoubleEntry getDoubleEntry(String name) {
+        for (EasyDoubleEntry entry : doubleEntries) {
+            if (entry instanceof EasyDoubleEntry) {
+                if (entry.topicName == name)
+                    return ((EasyDoubleEntry) entry);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Gets an existing entry from the entry list.
+     * @param name The name of the entry.
+     * @return The entry if it exists, otherwise null.
+     */
+    private EasyStringEntry getStringEntry(String name) {
+        for (EasyStringEntry entry : stringEntries) {
+            if (entry instanceof EasyStringEntry) {
+                if (entry.topicName == name)
+                    return ((EasyStringEntry) entry);
+            }
+        }
+        return null;
+    }
+
+    //* -------- BOOLEAN FUNCTIONS -------- *//
+
+    /**
+     * Gets boolean value from the requested entry.
+     * @param name The topic name.
+     * @return Returns the boolean value if entry is found, otherwise returns false.
+     */
+    public boolean getBoolean(String name) {
+        EasyBooleanEntry entry = getBooleanEntry(name);
+        if (entry == null) return false;
+        entry.cachedValue = entry.entry.get();
+        return entry.cachedValue;
+    }
+
+    /**
+     * Sets the boolean value for the requested entry.
+     * @param name The name of the entry.
+     * @param value The new value to publish to the entry.
+     */
+    public void setBoolean(String name, boolean value) {
+        EasyBooleanEntry entry = (EasyBooleanEntry) getBooleanEntry(name);
+        if (entry == null) {
+            entry = new EasyBooleanEntry(name, value);
+            booleanEntries.add(entry);
+        } else {
+            entry.cachedValue = value;
+            entry.entry.set(value);
+        }
+    }
+
+    //* -------- INTEGER FUNCTIONS -------- *//
+
+    /**
+     * Gets the integer value from the requested entry.
+     * @param name The name of the entry.
+     * @return Returns the value if entry is found, otherwise returns zero.
+     */
+    public int getInteger(String name) {
+        EasyIntegerEntry entry = getIntegerEntry(name);
+        if (entry == null) return 0;
+        entry.cachedValue = Math.toIntExact(entry.entry.get());
+        return entry.cachedValue;
+    }
+
+    /**
+     * Sets the integer value for the requested entry.
+     * @param name The name of the entry.
+     * @param value The new value to publish to the entry.
+     */
+    public void setInteger(String name, int value) {
+        EasyIntegerEntry entry = (EasyIntegerEntry) getIntegerEntry(name);
+        if (entry == null) {
+            entry = new EasyIntegerEntry(name, value);
+            integerEntries.add(entry);
+        } else {
+            entry.cachedValue = value;
+            entry.entry.set(value);
+        }
+    }
+
+    //* -------- DOUBLE FUNCTIONS -------- *//
+
+    /**
+     * Gets the double value from the requested entry.
+     * @param name The name of the entry.
+     * @return Returns the value if entry is found, otherwise returns zero.
+     */
     public double getDouble(String name) {
-        DoubleSubscriber sub = table.getDoubleTopic(name).subscribe(0);
-        return sub.get();
+        EasyDoubleEntry entry = (EasyDoubleEntry) getDoubleEntry(name);
+        if (entry == null) return 0.0;
+        entry.cachedValue = entry.entry.get();
+        return entry.cachedValue;
+    }
+    
+    /**
+     * Sets the double value for the requested entry.
+     * @param name The name of the entry.
+     * @param value The new value to publish to the entry.
+     */
+    public void setDouble(String name, double value) {
+        EasyDoubleEntry entry = (EasyDoubleEntry) getDoubleEntry(name);
+        if (entry == null) {
+            entry = new EasyDoubleEntry(name, value);
+            doubleEntries.add(entry);
+        } else {
+            entry.cachedValue = value;
+            entry.entry.set(value);
+        }
     }
 
-    public void remove() {
-        topicsList.removeAll(topicsList);
+    //* -------- STRING FUNCTIONS -------- *//
+
+    /**
+     * Gets the string value from the requested entry.
+     * @param name The name of the entry.
+     * @return Returns the value if entry is found, otherwise returns an empty string.
+     */
+    public String getString(String name) {
+        EasyStringEntry entry = (EasyStringEntry) getStringEntry(name);
+        if (entry == null) return "";
+        entry.cachedValue = entry.entry.get();
+        return entry.cachedValue;
+    }
+
+    /**
+     * Sets the string value for the requested entry.
+     * @param name The name of the entry.
+     * @param value The new value to publish to the entry.
+     */
+    public void setString(String name, String value) {
+        EasyStringEntry entry = (EasyStringEntry) getStringEntry(name);
+        if (entry == null) {
+            entry = new EasyStringEntry(name, value);
+            stringEntries.add(entry);
+        } else {
+            entry.cachedValue = value;
+            entry.entry.set(value);
+        }
+    }
+
+    //* -------- REMOVAL FUNCTIONS -------- *//
+
+    /**
+     * Removes all previously created entries.
+     */
+    public void removeAllEntries() {
+        for (int i=0; i < masterList.size(); i++) {
+            for (int j=0; j < masterList.get(i).size(); j++) {
+                masterList.get(i).set(j, null);
+                masterList.get(i).remove(j);
+            }
+        }
+    }
+
+    /**
+     * Removes a previously created entry.
+     * @param name The name of the entry to remove.
+     */
+    public void removeEntry(String name) {
+        for (int i=0; i < masterList.size(); i++) {
+            for (int j=0; j < masterList.get(i).size(); j++) {
+                if (((EasyGenericEntry) masterList.get(i).get(j)).topicName == name) {
+                    masterList.get(i).set(j, null);
+                    masterList.get(i).remove(j);
+                }
+            }
+        }
     }
 }
