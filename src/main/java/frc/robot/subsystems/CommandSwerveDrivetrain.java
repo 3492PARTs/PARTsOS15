@@ -14,10 +14,13 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -250,4 +253,26 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         });
         m_simNotifier.startPeriodic(kSimLoopPeriod);
     }
-}
+
+    private void swerveDriveTrainSendable() {
+        SmartDashboard.putData("Swerve Drive", new Sendable() {
+        @Override
+        public void initSendable(SendableBuilder builder) {
+        builder.setSmartDashboardType("SwerveDrive");
+
+        builder.addDoubleProperty("Front Left Angle", () -> frontLeftModule.getAngle().getRadians(), null);
+        builder.addDoubleProperty("Front Left Velocity", () -> frontLeftModule.getVelocity(), null);
+
+        builder.addDoubleProperty("Front Right Angle", () -> frontRightModule.getAngle().getRadians(), null);
+        builder.addDoubleProperty("Front Right Velocity", () -> frontRightModule.getVelocity(), null);
+
+        builder.addDoubleProperty("Back Left Angle", () -> backLeftModule.getAngle().getRadians(), null);
+        builder.addDoubleProperty("Back Left Velocity", () -> backLeftModule.getVelocity(), null);
+
+        builder.addDoubleProperty("Back Right Angle", () -> backRightModule.getAngle().getRadians(), null);
+        builder.addDoubleProperty("Back Right Velocity", () -> backRightModule.getVelocity(), null);
+
+        builder.addDoubleProperty("Robot Angle", () -> getRotation().getRadians(), null);
+        }
+    });
+}}
