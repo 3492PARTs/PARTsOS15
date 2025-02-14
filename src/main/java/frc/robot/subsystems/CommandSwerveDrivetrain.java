@@ -377,27 +377,29 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
         return m_poseEstimator.getEstimatedPosition();
     }
-}
 
-    private void swerveDriveTrainSendable() {
+
+    public void swerveDriveTrainSendable() {
         SmartDashboard.putData("Swerve Drive", new Sendable() {
         @Override
         public void initSendable(SendableBuilder builder) {
         builder.setSmartDashboardType("SwerveDrive");
 
-        builder.addDoubleProperty("Front Left Angle", () -> frontLeftModule.getAngle().getRadians(), null);
-        builder.addDoubleProperty("Front Left Velocity", () -> frontLeftModule.getVelocity(), null);
+        builder.addDoubleProperty("Front Left Angle", () -> frontLeft.getCurrentState().angle.getDegrees(), null);
+        builder.addDoubleProperty("Front Left Velocity", () -> frontLeft.getCurrentState().speedMetersPerSecond, null);
 
-        builder.addDoubleProperty("Front Right Angle", () -> frontRightModule.getAngle().getRadians(), null);
-        builder.addDoubleProperty("Front Right Velocity", () -> frontRightModule.getVelocity(), null);
+        builder.addDoubleProperty("Front Right Angle", () -> frontRight.getCurrentState().angle.getDegrees(), null);
+        builder.addDoubleProperty("Front Right Velocity", () -> frontRight.getCurrentState().speedMetersPerSecond, null);
 
-        builder.addDoubleProperty("Back Left Angle", () -> backLeftModule.getAngle().getRadians(), null);
-        builder.addDoubleProperty("Back Left Velocity", () -> backLeftModule.getVelocity(), null);
+        builder.addDoubleProperty("Back Left Angle", () -> backLeft.getCurrentState().angle.getDegrees(), null);
+        builder.addDoubleProperty("Back Left Velocity", () -> backLeft.getCurrentState().speedMetersPerSecond, null);
 
-        builder.addDoubleProperty("Back Right Angle", () -> backRightModule.getAngle().getRadians(), null);
-        builder.addDoubleProperty("Back Right Velocity", () -> backRightModule.getVelocity(), null);
+        builder.addDoubleProperty("Back Right Angle", () -> backRight.getCurrentState().angle.getDegrees(), null);
+        builder.addDoubleProperty("Back Right Velocity", () -> backRight.getCurrentState().speedMetersPerSecond, null);
 
-        builder.addDoubleProperty("Robot Angle", () -> getRotation().getRadians(), null);
+        builder.addDoubleProperty("Robot Angle", () -> getPigeon2().getYaw().getValueAsDouble(), null);
         }
     });
+
+    
 }}

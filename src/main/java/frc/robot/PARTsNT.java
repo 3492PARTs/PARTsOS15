@@ -239,6 +239,7 @@ public class PARTsNT {
      * @return The entry if it exists, otherwise null.
      */
     private EasyDoubleEntry getDoubleEntry(String name) {
+        if (doubleEntries != null) 
         for (EasyDoubleEntry entry : doubleEntries) {
             if (entry instanceof EasyDoubleEntry) {
                 if (entry.topicName == name)
@@ -343,6 +344,9 @@ public class PARTsNT {
      * @param value The new value to publish to the entry.
      */
     public void setDouble(String name, double value) {
+        if (doubleEntries == null) {
+            doubleEntries = new ArrayList<>();
+        }
         EasyDoubleEntry entry = (EasyDoubleEntry) getDoubleEntry(name);
         if (entry == null) {
             entry = new EasyDoubleEntry(name, value);
