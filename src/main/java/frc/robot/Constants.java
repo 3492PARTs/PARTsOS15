@@ -120,4 +120,8 @@ public final class Constants {
     A1,
     A2
   }
+
+  public static class Debug {
+    public static boolean logging = true;
+  }
 }

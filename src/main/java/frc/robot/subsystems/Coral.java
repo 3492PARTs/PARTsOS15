@@ -40,7 +40,7 @@ public class Coral extends PARTsSubsystem {
   private SparkMax mRightMotor;
 
   private LaserCan mLaserCAN;
-  private Canandcolor canandcolor;
+  //private Canandcolor canandcolor;
 
   public Coral(Candle candle) {
     super("Coral");
@@ -64,7 +64,7 @@ public class Coral extends PARTsSubsystem {
         ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
 
-    canandcolor = new Canandcolor(Constants.Coral.canAndColorId);
+    //canandcolor = new Canandcolor(Constants.Coral.canAndColorId);
 
     mLaserCAN = new LaserCan(Constants.Coral.laserCanId);
     try {
@@ -94,7 +94,7 @@ public class Coral extends PARTsSubsystem {
   public void periodic() {
     super.periodic();
     mPeriodicIO.measurement = mLaserCAN.getMeasurement();
-    mPeriodicIO.canandcolorCoralMeasurement = canandcolor.getProximity();
+    //mPeriodicIO.canandcolorCoralMeasurement = canandcolor.getProximity();
 
     checkAutoTasks();
     mLeftMotor.set(mPeriodicIO.rpm - mPeriodicIO.speed_diff);
@@ -120,7 +120,7 @@ public class Coral extends PARTsSubsystem {
       super.partsNT.setDouble("Laser/status", measurement.status);
 
       super.partsNT.setBoolean("Laser/hasCoral", isHoldingCoralViaLaserCAN());
-      super.partsNT.setBoolean("Canandcolor/hasCoral", isHoldingCoralViaCAnandcolor());
+      //super.partsNT.setBoolean("Canandcolor/hasCoral", isHoldingCoralViaCAnandcolor());
     }
   }
 
@@ -131,7 +131,7 @@ public class Coral extends PARTsSubsystem {
   /*---------------------------------- Custom Public Functions ----------------------------------*/
 
   public boolean isHoldingCoralViaCAnandcolor() {
-    return mPeriodicIO.canandcolorCoralMeasurement < 7.0;
+    return true; //mPeriodicIO.canandcolorCoralMeasurement < 7.0;
   }
 
   public boolean isHoldingCoralViaLaserCAN() {
