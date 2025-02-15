@@ -1,0 +1,41 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
+package frc.robot.subsystems;
+
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.PARTsNT;
+
+public abstract class PARTsSubsystem extends SubsystemBase {
+  PARTsNT partsNT;
+
+  /**
+   * Creates a new PARTsSubsystem.
+   * <p>Comes with a PARTsNT generic instance.
+   */
+  public PARTsSubsystem() {
+    partsNT = new PARTsNT();
+  }
+
+  /**
+   * Creates a new PARTsSubsystem.
+   * <p>Comes with a PARTsNT instance based on the given class.
+   */
+  public PARTsSubsystem(Object o) {
+    partsNT = new PARTsNT(o);
+  }
+
+  /**
+   * Creates a new PARTsSubsystem.
+   * <p>Comes with a PARTsNT instance based on the given class name.
+   */
+  public PARTsSubsystem(String className) {
+    partsNT = new PARTsNT(className);
+  }
+
+  @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
+  }
+}
