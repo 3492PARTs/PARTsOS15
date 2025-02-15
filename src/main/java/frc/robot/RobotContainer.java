@@ -60,11 +60,11 @@ public class RobotContainer {
 
     public final Trigger zeroElevatorTrigger = new Trigger(elevator.getLimitSwitchSupplier());
      
-    public final Candle candle = new Candle();
+    //public final Candle candle = new Candle();
 
-    private final Algae algae = new Algae();
+    //private final Algae algae = new Algae();
 
-    private final Coral coral = new Coral(candle);
+    //private final Coral coral = new Coral(candle);
 
     private final CommandXboxController driveController = new CommandXboxController(0);
     private final CommandXboxController operatorController = new CommandXboxController(1);
@@ -174,14 +174,14 @@ public class RobotContainer {
         // -------------------------------------------
         // ---------------------------------------------------------------------------------------------
 
-        operatorController.rightTrigger().whileTrue(new CoralAction(coral, operatorController));
+        //operatorController.rightTrigger().whileTrue(new CoralAction(coral, operatorController));
 
         // =============================================================================================
         // ------------------------------------- Algae Control -------------------------------------------
         // ---------------------------------------------------------------------------------------------
 
-        operatorController.leftBumper().whileTrue(new AlgaeIntake(algae, operatorController));
-        algae.setDefaultCommand(new AlgaeWrist(algae, operatorController));
+        //operatorController.leftBumper().whileTrue(new AlgaeIntake(algae, operatorController));
+        //algae.setDefaultCommand(new AlgaeWrist(algae, operatorController));
 
     }
 

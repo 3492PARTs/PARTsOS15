@@ -116,6 +116,7 @@ public class Elevator extends PARTsSubsystem {
     // } else {
     // mPeriodicIO.is_pivot_low = false;
     // }
+    /*
     double curTime = Timer.getFPGATimestamp();
     double dt = curTime - prevUpdateTime;
     prevUpdateTime = curTime;
@@ -138,7 +139,7 @@ public class Elevator extends PARTsSubsystem {
       mCurState.position = mLeftEncoder.getPosition();
       mCurState.velocity = 0;
       mLeftMotor.set(mPeriodicIO.elevator_power);
-    }
+    }*/
   }
 
   public void stop() {
