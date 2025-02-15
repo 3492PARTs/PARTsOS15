@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Candle.Color;
-public class Coral extends SubsystemBase {
+public class Coral extends PARTsSubsystem {
 
   /*-------------------------------- Private instance variables ---------------------------------*/
   private PeriodicIO mPeriodicIO;
@@ -40,6 +40,7 @@ public class Coral extends SubsystemBase {
   private SparkMax mRightMotor;
 
   private LaserCan mLaserCAN;
+  private Canandcolor canandcolor;
 
   public Coral(Candle candle) {
     super("Coral");
@@ -63,6 +64,8 @@ public class Coral extends SubsystemBase {
         ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
 
+    canandcolor = new Canandcolor(Constants.Coral.canAndColorId);
+
     mLaserCAN = new LaserCan(Constants.Coral.laserCanId);
     try {
       mLaserCAN.setRangingMode(LaserCan.RangingMode.SHORT);
@@ -80,6 +83,7 @@ public class Coral extends SubsystemBase {
     int index_debounce = 0;
 
     LaserCan.Measurement measurement;
+    double canandcolorCoralMeasurement;
 
     IntakeState state = IntakeState.NONE;
   }
@@ -88,7 +92,9 @@ public class Coral extends SubsystemBase {
 
   @Override
   public void periodic() {
+    super.periodic();
     mPeriodicIO.measurement = mLaserCAN.getMeasurement();
+    mPeriodicIO.canandcolorCoralMeasurement = canandcolor.getProximity();
 
     checkAutoTasks();
     mLeftMotor.set(mPeriodicIO.rpm - mPeriodicIO.speed_diff);
@@ -101,28 +107,32 @@ public class Coral extends SubsystemBase {
     mPeriodicIO.state = IntakeState.NONE;
   }
 
-  /* 
+
   @Override
   public void outputTelemetry() {
-    putNumber("RPM/target", mPeriodicIO.rpm);
+    super.partsNT.setDouble("RPM/target", mPeriodicIO.rpm);
 
     LaserCan.Measurement measurement = mPeriodicIO.measurement;
     if (measurement != null) {
-      putNumber("Laser/distance", measurement.distance_mm);
-      putNumber("Laser/ambient", measurement.ambient);
-      putNumber("Laser/budget_ms", measurement.budget_ms);
-      putNumber("Laser/status", measurement.status);
+      super.partsNT.setDouble("Laser/distance", measurement.distance_mm);
+      super.partsNT.setDouble("Laser/ambient", measurement.ambient);
+      super.partsNT.setDouble("Laser/budget_ms", measurement.budget_ms);
+      super.partsNT.setDouble("Laser/status", measurement.status);
 
-      putBoolean("Laser/hasCoral", isHoldingCoralViaLaserCAN());
+      super.partsNT.setBoolean("Laser/hasCoral", isHoldingCoralViaLaserCAN());
+      super.partsNT.setBoolean("Canandcolor/hasCoral", isHoldingCoralViaCAnandcolor());
     }
   }
-  */
 
   public void reset() {
     stopCoral();
   }
 
   /*---------------------------------- Custom Public Functions ----------------------------------*/
+
+  public boolean isHoldingCoralViaCAnandcolor() {
+    return mPeriodicIO.canandcolorCoralMeasurement < 7.0;
+  }
 
   public boolean isHoldingCoralViaLaserCAN() {
     return mPeriodicIO.measurement.distance_mm < 75.0;

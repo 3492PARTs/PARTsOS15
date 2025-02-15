@@ -34,8 +34,11 @@ public abstract class PARTsSubsystem extends SubsystemBase {
     partsNT = new PARTsNT(className);
   }
 
+  public abstract void outputTelemetry();
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    outputTelemetry();
   }
 }

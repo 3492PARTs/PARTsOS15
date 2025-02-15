@@ -109,6 +109,7 @@ public class Elevator extends PARTsSubsystem {
 
   @Override
   public void periodic() {
+    super.periodic();
     // TODO: Use this pattern to only drive slowly when we're really high up
     // if(mPivotEncoder.getPosition() > Constants.kPivotScoreCount) {
     // mPeriodicIO.is_pivot_low = true;
@@ -138,8 +139,6 @@ public class Elevator extends PARTsSubsystem {
       mCurState.velocity = 0;
       mLeftMotor.set(mPeriodicIO.elevator_power);
     }
-
-    outputTelemetry();
   }
 
   public void stop() {
@@ -173,9 +172,10 @@ public class Elevator extends PARTsSubsystem {
    // mRightMotor.set(speed);
   }
 
+  @Override
   public void outputTelemetry() {
     super.partsNT.setDouble("Position/Current", mLeftEncoder.getPosition());
-    
+
     super.partsNT.setDouble("Position/Target", mPeriodicIO.elevator_target);
     super.partsNT.setDouble("Velocity/Current", mLeftEncoder.getVelocity());
 

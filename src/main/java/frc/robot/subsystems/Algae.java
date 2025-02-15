@@ -21,7 +21,7 @@ import frc.robot.Constants;
 import frc.robot.util.PARTsUnit;
 import frc.robot.util.PARTsUnit.PARTsUnitType;
 
-public class Algae extends SubsystemBase {
+public class Algae extends PARTsSubsystem {
   
   /*-------------------------------- Private instance variables ---------------------------------*/
   private PeriodicIO mPeriodicIO;
@@ -104,6 +104,7 @@ public class Algae extends SubsystemBase {
 
   @Override
   public void periodic() {
+    super.periodic();
     double pidCalc = mWristPIDController.calculate(getWristAngle(), mPeriodicIO.wrist_target_angle);
     double ffCalc = mWristFeedForward.calculate(Math.toRadians(getWristReferenceToHorizontal()),
         Math.toRadians(mWristPIDController.getSetpoint().velocity));
@@ -121,21 +122,19 @@ public class Algae extends SubsystemBase {
     mIntakeMotor.set(0.0);
   }
 
-  /* 
   @Override
   public void outputTelemetry() {
-    putNumber("Wrist/Position", getWristAngle());
-    putNumber("Wrist/Target", mPeriodicIO.wrist_target_angle);
-    putNumber("Wrist/Current", mWristMotor.getOutputCurrent());
-    putNumber("Wrist/Output", mWristMotor.getAppliedOutput());
-    putNumber("Wrist/Voltage", mPeriodicIO.wrist_voltage);
-    putNumber("Wrist/Frequency", mWristAbsEncoder.getFrequency());
+    super.partsNT.setDouble("Wrist/Position", getWristAngle());
+    super.partsNT.setDouble("Wrist/Target", mPeriodicIO.wrist_target_angle);
+    super.partsNT.setDouble("Wrist/Current", mWristMotor.getOutputCurrent());
+    super.partsNT.setDouble("Wrist/Output", mWristMotor.getAppliedOutput());
+    super.partsNT.setDouble("Wrist/Voltage", mPeriodicIO.wrist_voltage);
+    //super.partsNT.setDouble("Wrist/Frequency", mWristAbsEncoder.getFrequency());
 
-    putNumber("Intake/Current", mIntakeMotor.getOutputCurrent());
-    putNumber("Intake/Output", mIntakeMotor.getAppliedOutput());
-    putNumber("Intake/Power", mPeriodicIO.intake_power);
+    super.partsNT.setDouble("Intake/Current", mIntakeMotor.getOutputCurrent());
+    super.partsNT.setDouble("Intake/Output", mIntakeMotor.getAppliedOutput());
+    super.partsNT.setDouble("Intake/Power", mPeriodicIO.intake_power);
   }
-   */ 
 
   public void reset() {
   }
