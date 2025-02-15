@@ -57,6 +57,10 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
+        //=============================================================================================
+        // ------------------------------------- DriveTrain -------------------------------------------
+        //---------------------------------------------------------------------------------------------
+
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
@@ -68,10 +72,19 @@ public class RobotContainer {
             )
         );
 
+        //brakes swerve, puts modules into x configuration
         joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
+
+        //manual module direction control
         joystick.b().whileTrue(drivetrain.applyRequest(() ->
             point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
         ));
+
+        // reset the field-centric heading on left bumper press
+        joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+
+        //logging
+        drivetrain.registerTelemetry(logger::telemeterize);
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
@@ -80,18 +93,32 @@ public class RobotContainer {
         joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse)); 
 
+
+        //=============================================================================================
+        // ------------------------------------- Elevator -------------------------------------------
+        //---------------------------------------------------------------------------------------------
+
         elevator.setDefaultCommand(new ElevatorJoystick(elevator, operatorController));
+
+        //zeros elevator encoders
         zeroElevatorTrigger.onTrue(new ZeroElevatorEncoderCmdSeq(elevator));
 
 
-        operatorController.x().whileTrue(new AlgaeIntake(algae, operatorController));
-        operatorController.a().whileTrue(new AlgaeWrist(algae, operatorController));
+        //=============================================================================================
+        // ------------------------------------- Coral Controls -------------------------------------------
+        //---------------------------------------------------------------------------------------------
+
         operatorController.b().whileTrue(new CoralAction(coral, operatorController));
 
-        // reset the field-centric heading on left bumper press
-        joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        drivetrain.registerTelemetry(logger::telemeterize);
+        //=============================================================================================
+        // ------------------------------------- Algae Controls -------------------------------------------
+        //---------------------------------------------------------------------------------------------
+
+        operatorController.x().whileTrue(new AlgaeIntake(algae, operatorController));
+        operatorController.a().whileTrue(new AlgaeWrist(algae, operatorController));
+        
+
     }
 
     public Command getAutonomousCommand() {

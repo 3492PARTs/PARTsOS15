@@ -12,6 +12,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkClosedLoopController.ArbFFUnits;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.AlternateEncoderConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -30,6 +31,8 @@ public class Elevator extends SubsystemBase {
 
   private SparkMax mLeftMotor;
   private RelativeEncoder mLeftEncoder;
+  private RelativeEncoder mRightEncoder;
+
   private SparkClosedLoopController mLeftPIDController;
 
   private SparkMax mRightMotor;
@@ -58,10 +61,11 @@ public class Elevator extends SubsystemBase {
 
     elevatorConfig.idleMode(IdleMode.kBrake);
     elevatorConfig.limitSwitch.reverseLimitSwitchEnabled(true);
+    elevatorConfig.alternateEncoder.apply(new AlternateEncoderConfig().countsPerRevolution(8192));
 
     // LEFT ELEVATOR MOTOR
     mLeftMotor = new SparkMax(Constants.Elevator.leftElevatorId, MotorType.kBrushless);
-    mLeftEncoder = mLeftMotor.getEncoder();
+    mLeftEncoder = mLeftMotor.getAlternateEncoder();
     mLeftPIDController = mLeftMotor.getClosedLoopController();
     mLeftMotor.configure(
         elevatorConfig,
@@ -69,7 +73,8 @@ public class Elevator extends SubsystemBase {
         PersistMode.kPersistParameters);
 
     // RIGHT ELEVATOR MOTOR
-    //mRightMotor = new SimulatableCANSparkMax(Constants.Elevator.kElevatorRightMotorId, MotorType.kBrushless);
+    mRightMotor = new SparkMax(Constants.Elevator.rightElevatorId, MotorType.kBrushless);
+    mRightEncoder = mRightMotor.getAlternateEncoder();
     mRightMotor.configure(
         elevatorConfig.follow(mLeftMotor, true),
         ResetMode.kResetSafeParameters,
@@ -142,12 +147,12 @@ public class Elevator extends SubsystemBase {
     mLeftMotor.set(0.0);
   }
 
-  public void zeroElevatorEncoders() {
+  public void zeroEncoders() {
     mLeftMotor.getEncoder().setPosition(0);
     mRightMotor.getEncoder().setPosition(0);
 
     mLeftEncoder.setPosition(0);
-    //rightencoder.setPosition(0);
+    mRightEncoder.setPosition(0);
   }
 
   public boolean getLimitSwitch() {
