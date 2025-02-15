@@ -20,6 +20,8 @@ import edu.wpi.first.networktables.StringTopic;
  * This class is meant to be used as an instance for each class.
  */
 public class PARTsNT {
+    public String name = "Generic";
+
     NetworkTableInstance nt_Instance = NetworkTableInstance.getDefault();
     NetworkTable table;
 
@@ -178,7 +180,20 @@ public class PARTsNT {
      * @param o The class object. (E.g. passing in 'this'.)
      */
     public PARTsNT(Object o) {
-        table = nt_Instance.getTable("PARTs").getSubTable(o.getClass().getSimpleName());
+        name = o.getClass().getSimpleName();
+        table = nt_Instance.getTable("PARTs").getSubTable(name);
+        setupEntryLists();
+    }
+
+    /**
+     * Creates a new PARTsNT instance.<p>
+     * Creates/uses the subtable of the class via its name.<p>
+     * If the name is empty, then the "Generic" table will be used instead.
+     * @param className The name of the class.
+     */
+    public PARTsNT(String className) {
+        name = (className != "") ? className : "Generic";
+        table = nt_Instance.getTable("PARTs").getSubTable(className);
         setupEntryLists();
     }
 
