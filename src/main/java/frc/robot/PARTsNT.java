@@ -145,13 +145,12 @@ public class PARTsNT {
     List<EasyStringEntry> stringEntries;
 
     /**
-     * Creates a new PARTsNT instance.<p>
-     * Creates/uses the subtable "Generic" instead of the class subtable.<p>
-     * The object variation should be used instead.
+     * Sets up the master list and the entry lists.<p>
+     * Internal function.
      */
-    public PARTsNT() {
-        table = nt_Instance.getTable("PARTs").getSubTable("Generic");
+    private void setupEntryLists() {
         topicsList = new ArrayList<>();
+        masterList = new ArrayList<>();
         booleanEntries = new ArrayList<>();
         integerEntries = new ArrayList<>();
         doubleEntries = new ArrayList<>();
@@ -165,13 +164,22 @@ public class PARTsNT {
 
     /**
      * Creates a new PARTsNT instance.<p>
+     * Creates/uses the subtable "Generic" instead of the class subtable.<p>
+     * The object variation should be used instead.
+     */
+    public PARTsNT() {
+        table = nt_Instance.getTable("PARTs").getSubTable("Generic");
+        setupEntryLists();
+    }
+
+    /**
+     * Creates a new PARTsNT instance.<p>
      * Creates/uses the class subtable.
      * @param o The class object. (E.g. passing in 'this'.)
      */
     public PARTsNT(Object o) {
         table = nt_Instance.getTable("PARTs").getSubTable(o.getClass().getSimpleName());
-        topicsList = new ArrayList<>();
-        booleanEntries = new ArrayList<>();
+        setupEntryLists();
     }
 
     //* -------- HELPER FUNCTIONS -------- *//
@@ -202,6 +210,8 @@ public class PARTsNT {
         }
         return null;
     }
+
+    //* TYPE SPECIFIC ENTRY CHECKS *//
 
     /**
      * Gets an existing entry from the entry list.
