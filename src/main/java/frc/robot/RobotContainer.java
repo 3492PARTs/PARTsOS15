@@ -9,13 +9,18 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.Constants.VisionConstants;
+import frc.robot.commands.AlignCommand;
+import frc.robot.commands.DriveLogCommand;
 import frc.robot.Commands.Algae.AlgaeIntake;
 import frc.robot.Commands.Algae.AlgaeWrist;
 import frc.robot.Commands.Coral.CoralAction;
@@ -24,6 +29,9 @@ import frc.robot.Commands.ElevatorCommands.ZeroElevatorEncoderCmdSeq;
 import frc.robot.subsystems.Algae;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Vision;
+import frc.robot.util.PARTsUnit;
+import frc.robot.util.PARTsUnit.PARTsUnitType;
 import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.Elevator;
 
@@ -38,6 +46,8 @@ public class RobotContainer {
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+
+    private final Vision visionSubsystem = new Vision(VisionConstants.DRIVETRAIN_LIMELIGHT, new PARTsUnit(VisionConstants.LIMELIGHT_ANGLE, PARTsUnitType.Angle), new PARTsUnit(VisionConstants.LIMELIGHT_LENS_HEIGHT, PARTsUnitType.Inch));
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
@@ -56,6 +66,7 @@ public class RobotContainer {
 
     public RobotContainer() {
         configureBindings();
+        DataLogManager.start();
     }
 
     private void configureBindings() {
@@ -88,6 +99,12 @@ public class RobotContainer {
         // reset the field-centric heading on left bumper press
         driveController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
+        joystick.leftTrigger().onTrue(new AlignCommand(
+            visionSubsystem, 
+            drivetrain, 
+            new Pose2d(-1,0, new Rotation2d())
+            ));
+            
         // logging
         drivetrain.registerTelemetry(logger::telemeterize);
 
