@@ -17,67 +17,186 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.subsystems.Candle.Color;
 public class Coral extends SubsystemBase {
 
-  private static SparkMax coralRightMotor = new SparkMax(Constants.Coral.coralRightMotorId, MotorType.kBrushless);
-  private static RelativeEncoder coralRightMotorEncoder;
+  /*-------------------------------- Private instance variables ---------------------------------*/
+  private PeriodicIO mPeriodicIO;
+  public final Candle mCandle;
 
-  private static SparkMax coralLeftMotor = new SparkMax(Constants.Coral.coralLeftMotorId, MotorType.kBrushless);
-  private static RelativeEncoder coralLeftMotorEncoder;
+  public enum IntakeState {
+    NONE,
+    INTAKE,
+    REVERSE,
+    INDEX,
+    READY,
+    SCORE
+  }
 
-  private LaserCan lc;
-  private Canandcolor canandcolor;
+  private SparkMax mLeftMotor;
+  private SparkMax mRightMotor;
 
-  /** Creates a new Coral. */
-  public Coral() {
-     SparkMaxConfig coralRightMotorConfig = new SparkMaxConfig();
-    coralRightMotorConfig.idleMode(IdleMode.kBrake);
-    coralRightMotor.configure(coralRightMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+  private LaserCan mLaserCAN;
 
-    SparkMaxConfig coralLeftMotorConfig = new SparkMaxConfig();
-    coralLeftMotorConfig.idleMode(IdleMode.kBrake);
-    coralLeftMotor.configure(coralLeftMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+  public Coral(Candle candle) {
+    super("Coral");
+    this.mCandle = candle;
 
-    coralRightMotorEncoder = coralRightMotor.getEncoder();
-    coralLeftMotorEncoder = coralLeftMotor.getEncoder();
+    mPeriodicIO = new PeriodicIO();
 
-    Canandcolor canandcolor = new Canandcolor(Constants.Sensors.canAndColorId);
-    lc = new LaserCan(Constants.Sensors.laserCanId);
-    // Optionally initialise the settings of the LaserCAN, if you haven't already done so in GrappleHook
+    mLeftMotor = new SparkMax(Constants.Coral.coralLeftMotorId, MotorType.kBrushless);
+    mRightMotor = new SparkMax(Constants.Coral.coralRightMotorId, MotorType.kBrushless);
+
+    SparkMaxConfig coralConfig = new SparkMaxConfig();
+
+    coralConfig.idleMode(IdleMode.kBrake);
+
+    mLeftMotor.configure(
+        coralConfig,
+        ResetMode.kResetSafeParameters,
+        PersistMode.kPersistParameters);
+    mRightMotor.configure(
+        coralConfig,
+        ResetMode.kResetSafeParameters,
+        PersistMode.kPersistParameters);
+
+    mLaserCAN = new LaserCan(Constants.Coral.laserCanId);
     try {
-      lc.setRangingMode(LaserCan.RangingMode.SHORT);
-      lc.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 16, 16));
-      lc.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
+      mLaserCAN.setRangingMode(LaserCan.RangingMode.SHORT);
+      mLaserCAN.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 16, 16));
+      mLaserCAN.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
     } catch (ConfigurationFailedException e) {
       System.out.println("Configuration failed! " + e);
     }
   }
 
-  public void setSpeed(double speed) {
-    coralRightMotor.set(-speed);
-    coralLeftMotor.set(speed);
+  private static class PeriodicIO {
+    double rpm = 0.0;
+    double speed_diff = 0.0;
+
+    int index_debounce = 0;
+
+    LaserCan.Measurement measurement;
+
+    IntakeState state = IntakeState.NONE;
   }
 
-  public double getEncoderDistance() {
-    return coralLeftMotorEncoder.getPosition();
-  }
+  /*-------------------------------- Generic Subsystem Functions --------------------------------*/
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-    LaserCan.Measurement measurement = lc.getMeasurement();
-    if (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT) {
-      System.out.println("The target is " + measurement.distance_mm + "mm away!");
-    } else {
-      System.out.println("Oh no! The target is out of range, or we can't get a reliable measurement!");
-      // You can still use distance_mm in here, if you're ok tolerating a clamped value or an unreliable measurement.
+    mPeriodicIO.measurement = mLaserCAN.getMeasurement();
+
+    checkAutoTasks();
+    mLeftMotor.set(mPeriodicIO.rpm - mPeriodicIO.speed_diff);
+    mRightMotor.set(-mPeriodicIO.rpm);
+  }
+
+  public void stop() {
+    mPeriodicIO.rpm = 0.0;
+    mPeriodicIO.speed_diff = 0.0;
+    mPeriodicIO.state = IntakeState.NONE;
+  }
+
+  /* 
+  @Override
+  public void outputTelemetry() {
+    putNumber("RPM/target", mPeriodicIO.rpm);
+
+    LaserCan.Measurement measurement = mPeriodicIO.measurement;
+    if (measurement != null) {
+      putNumber("Laser/distance", measurement.distance_mm);
+      putNumber("Laser/ambient", measurement.ambient);
+      putNumber("Laser/budget_ms", measurement.budget_ms);
+      putNumber("Laser/status", measurement.status);
+
+      putBoolean("Laser/hasCoral", isHoldingCoralViaLaserCAN());
     }
-    double proximity = canandcolor.getProximity();
-    double red = canandcolor.getRed();
-    double blue = canandcolor.getBlue();
-    double green = canandcolor.getGreen();
-    System.out.println("Proximity: " + proximity +  "\n Red Value: " + red + "\n Blue Value: " + blue + "\n Green Value: " + green);
+  }
+  */
+
+  public void reset() {
+    stopCoral();
+  }
+
+  /*---------------------------------- Custom Public Functions ----------------------------------*/
+
+  public boolean isHoldingCoralViaLaserCAN() {
+    return mPeriodicIO.measurement.distance_mm < 75.0;
+  }
+
+  public void setSpeed(double rpm) {
+    mPeriodicIO.speed_diff = 0.0;
+    mPeriodicIO.rpm = rpm;
+  }
+
+  public void intake() {
+    mPeriodicIO.speed_diff = 0.0;
+    mPeriodicIO.rpm = Constants.Coral.kIntakeSpeed;
+    mPeriodicIO.state = IntakeState.INTAKE;
+
+    mCandle.setColor(Color.BLUE);
+  }
+
+  public void reverse() {
+    mPeriodicIO.speed_diff = 0.0;
+    mPeriodicIO.rpm = Constants.Coral.kReverseSpeed;
+    mPeriodicIO.state = IntakeState.REVERSE;
+  }
+
+  public void index() {
+    mPeriodicIO.speed_diff = 0.0;
+    mPeriodicIO.rpm = Constants.Coral.kIndexSpeed;
+    mPeriodicIO.state = IntakeState.INDEX;
+
+    mCandle.setColor(Color.GREEN);
+  }
+
+  public void scoreL1() {
+    mPeriodicIO.speed_diff = Constants.Coral.kSpeedDifference;
+    mPeriodicIO.rpm = Constants.Coral.kL1Speed;
+    mPeriodicIO.state = IntakeState.SCORE;
+  }
+
+  public void scoreL24() {
+    mPeriodicIO.speed_diff = 0.0;
+    mPeriodicIO.rpm = Constants.Coral.kL24Speed;
+    mPeriodicIO.state = IntakeState.SCORE;
+  }
+
+  public void stopCoral() {
+    mPeriodicIO.rpm = 0.0;
+    mPeriodicIO.speed_diff = 0.0;
+    mPeriodicIO.state = IntakeState.NONE;
+  }
+
+  /*---------------------------------- Custom Private Functions ---------------------------------*/
+
+  private void checkAutoTasks() {
+    switch (mPeriodicIO.state) {
+      case INTAKE:
+        if (isHoldingCoralViaLaserCAN()) {
+          mPeriodicIO.index_debounce++;
+
+          if (mPeriodicIO.index_debounce > 10) {
+            mPeriodicIO.index_debounce = 0;
+            index();
+          }
+        }
+        break;
+      case INDEX:
+        if (!isHoldingCoralViaLaserCAN()) {
+          stopCoral();
+
+          mPeriodicIO.state = IntakeState.READY;
+          mCandle.setColor(Color.PURPLE);
+        }
+        break;
+      default:
+        break;
+    }
   }
 }

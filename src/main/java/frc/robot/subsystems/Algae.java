@@ -18,6 +18,8 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.util.PARTsUnit;
+import frc.robot.util.PARTsUnit.PARTsUnitType;
 
 public class Algae extends SubsystemBase {
   
@@ -177,10 +179,7 @@ public class Algae extends SubsystemBase {
   /*---------------------------------- Custom Private Functions ---------------------------------*/
 
   public double getWristAngle() {
-    // TODO:
-    // This used to be `getAbsolutePosition` in the old API
-    // but I'm not sure if `get` is the correct replacement
-    return 0;//Units.rotationsToDegrees(mWristAbsEncoder());
+    return new PARTsUnit(mWristAbsEncoder.getPosition(), PARTsUnitType.Rotations).to(PARTsUnitType.Angle);
   }
 
   public double getWristReferenceToHorizontal() {

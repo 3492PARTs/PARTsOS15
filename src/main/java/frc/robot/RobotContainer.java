@@ -27,6 +27,7 @@ import frc.robot.Commands.Coral.CoralAction;
 import frc.robot.Commands.ElevatorCommands.ElevatorJoystick;
 import frc.robot.Commands.ElevatorCommands.ZeroElevatorEncoderCmdSeq;
 import frc.robot.subsystems.Algae;
+import frc.robot.subsystems.Candle;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Vision;
@@ -54,10 +55,12 @@ public class RobotContainer {
     private final Elevator elevator = new Elevator();
 
     public final Trigger zeroElevatorTrigger = new Trigger(elevator.getLimitSwitchSupplier());
+     
+    public final Candle candle = new Candle();
 
   //  private final Algae algae = new Algae();
 
-    private final Coral coral = new Coral();
+    private final Coral coral = new Coral(candle);
 
     private final CommandXboxController driveController = new CommandXboxController(0);
     private final CommandXboxController operatorController = new CommandXboxController(1);

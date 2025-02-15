@@ -24,7 +24,6 @@ import frc.robot.Constants;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class Candle extends SubsystemBase {
-    private static Candle candleInstance;
     private static CANdle candle;
     private final int LED_LENGTH = Constants.LED.LED_LENGTH;
     private Animation animation = null;
@@ -52,7 +51,7 @@ public class Candle extends SubsystemBase {
     }
 
     /** Creates a new light. */
-    private Candle() {
+    public Candle() {
         candle = new CANdle(Constants.LED.LED_PORT, "rio");
 
         CANdleConfiguration configAll = new CANdleConfiguration();
@@ -66,14 +65,6 @@ public class Candle extends SubsystemBase {
         candle.configAllSettings(configAll, 100);
 
         setColor(Color.OFF);
-    }
-
-    public static Candle getInstance() {
-        // If instance is null, then make a new instance.
-        if (candleInstance == null) {
-            candleInstance = new Candle();
-        }
-        return candleInstance;
     }
 
     public void setColor(Color color) {

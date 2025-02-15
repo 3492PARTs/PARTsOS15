@@ -17,7 +17,8 @@ public class PARTsUnit {
         Meter,
         Inch,
         Foot,
-        Percent
+        Percent,
+        Rotations
     }
 
     private double value;
@@ -99,6 +100,13 @@ public class PARTsUnit {
                         return this.value * 12;
                     case Foot:
                         return this.value;
+                    default:
+                        throw new RuntimeException(message);
+                }
+            case Rotations:
+                switch (unitType) {
+                    case Angle:
+                        return this.value * 360;
                     default:
                         throw new RuntimeException(message);
                 }
