@@ -50,7 +50,7 @@ public final class Constants {
     public static final int L4Height = 0;
     public static final int LowAlgaeHeight = 0;
     public static final int HighAlgaeHeight = 0;
-    public static final int L_SWITCH_PORT = 1;
+    public static final int L_SWITCH_PORT = 0;
     public static final int kP = 0;
     public static final int kI = 0;
     public static final int kD = 0;
@@ -65,7 +65,7 @@ public final class Constants {
     public static final int algaeIntakeId = 3;
     public static final int algaeWristId = 4;
     public static final double algaeIntakeSpeed = 0.2;
-    public static final double algaeWristSpeed = 0.2;
+    public static final double maxWristSpeed = .5;
     public static final int kMaxWristCurrent = 10;
 
     public static final double kWristP = 0.01;
@@ -100,8 +100,8 @@ public final class Constants {
     public static final int laserCanId = 30;
     public static final int canAndColorId = 31;
     
-    public static final double kIntakeSpeed = 0.3;
-    public static final double kReverseSpeed = -0.3;
+    public static final double kIntakeSpeed = -0.3;
+    public static final double kReverseSpeed = 0.3;
     public static final double kL1Speed = 0.4;
     public static final double kL24Speed = 0.4;
     public static final double kIndexSpeed = 0.1;

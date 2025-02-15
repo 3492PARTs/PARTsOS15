@@ -41,7 +41,7 @@ public class Algae extends SubsystemBase {
 
   private final RelativeEncoder mWristAbsEncoder;
 
-  private Algae() {
+  public Algae() {
     super("Algae");
 
     mPeriodicIO = new PeriodicIO();
@@ -188,6 +188,14 @@ public class Algae extends SubsystemBase {
 
   public IntakeState getState() {
     return mPeriodicIO.state;
+  }
+
+  public void setWristSpeed( double speed) {
+    mWristMotor.set(speed);
+  }
+
+  public void setIntakeSpeed (double speed) {
+    mIntakeMotor.set(speed);
   }
 
 }

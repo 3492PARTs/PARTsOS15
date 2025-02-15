@@ -138,6 +138,7 @@ public class Elevator extends SubsystemBase {
       mCurState.velocity = 0;
       mLeftMotor.set(mPeriodicIO.elevator_power);
     }
+
   }
 
   public void stop() {

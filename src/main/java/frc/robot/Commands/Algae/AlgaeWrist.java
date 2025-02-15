@@ -12,12 +12,12 @@ import frc.robot.subsystems.Algae;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class AlgaeWrist extends Command {
   private Algae m_algaeWrist;
-
+  private CommandXboxController controller;
   /** Creates a new AlgaeWrist. */
   public AlgaeWrist(Algae algae, CommandXboxController controller) {
-   // m_algaeWrist = new Algae();
     // Use addRequirements() here to declare subsystem dependencies.
-
+    this.m_algaeWrist = algae;
+    this.controller = controller;
     addRequirements(algae);
   }
 
@@ -28,13 +28,13 @@ public class AlgaeWrist extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-  //  m_algaeWrist.setWristSpeed(Constants.Algae.algaeWristSpeed);
+    m_algaeWrist.setWristSpeed(controller.getLeftY() * Constants.Algae.maxWristSpeed);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-   // m_algaeWrist.setWristSpeed(0);
+   m_algaeWrist.setWristSpeed(0);
   }
 
   // Returns true when the command should end.

@@ -58,7 +58,7 @@ public class RobotContainer {
      
     public final Candle candle = new Candle();
 
-  //  private final Algae algae = new Algae();
+    private final Algae algae = new Algae();
 
     private final Coral coral = new Coral(candle);
 
@@ -166,15 +166,14 @@ public class RobotContainer {
         // -------------------------------------------
         // ---------------------------------------------------------------------------------------------
 
-        operatorController.leftTrigger().whileTrue(new CoralAction(coral, operatorController));
+        operatorController.rightTrigger().whileTrue(new CoralAction(coral, operatorController));
 
         // =============================================================================================
-        // ------------------------------------- Algae Controls
-        // -------------------------------------------
+        // ------------------------------------- Algae Control -------------------------------------------
         // ---------------------------------------------------------------------------------------------
 
-      //  operatorController.x().whileTrue(new AlgaeIntake(algae, operatorController));
-       // operatorController.a().whileTrue(new AlgaeWrist(algae, operatorController));
+        operatorController.leftBumper().whileTrue(new AlgaeIntake(algae, operatorController));
+        algae.setDefaultCommand(new AlgaeWrist(algae, operatorController));
 
     }
 
