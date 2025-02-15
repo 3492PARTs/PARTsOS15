@@ -148,9 +148,6 @@ public class Elevator extends SubsystemBase {
   }
 
   public void zeroEncoders() {
-    mLeftMotor.getEncoder().setPosition(0);
-    mRightMotor.getEncoder().setPosition(0);
-
     mLeftEncoder.setPosition(0);
     mRightEncoder.setPosition(0);
   }
@@ -171,7 +168,7 @@ public class Elevator extends SubsystemBase {
 
   public void setSpeed(double speed) {
     mLeftMotor.set(speed);
-    mRightMotor.set(speed);
+   // mRightMotor.set(speed);
   }
 
   /*@Override

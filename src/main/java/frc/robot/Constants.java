@@ -56,7 +56,34 @@ public final class Constants {
     public static final int algaeWristId = 4;
     public static final double algaeIntakeSpeed = 0.2;
     public static final double algaeWristSpeed = 0.2;
+    public static final int kMaxWristCurrent = 10;
+
+    public static final double kWristP = 0.01;
+    public static final double kWristI = 0.0;
+    public static final double kWristD = 0.0;
+
+    public static final double kWristKS = 0.0;
+    public static final double kWristKG = 0.0;
+    public static final double kWristKV = 0.100;
+    public static final double kWristKA = 0.0;
+
+    public static final double kWristOffset = 141.0;
+
+    public static final double kWristMaxVelocity = 690.0;
+    public static final double kWristMaxAcceleration = 1380.0;
+
+    public static final double kStowAngle = 233.0;
+    public static final double kDeAlgaeAngle = 215.0;
+    public static final double kGroundIntakeAngle = 162.0;
+
+    // INTAKE
+    public static final int kMaxIntakeCurrent = 20;
+
+    public static final double kIntakeSpeed = 0.6;
+    public static final double kEjectSpeed = -0.3;
+    public static final double kGroundIntakeSpeed = -0.3;
   }
+  
   public static class Coral {
     public static final int coralRightMotorId = 5;
     public static final int coralLeftMotorId = 6;

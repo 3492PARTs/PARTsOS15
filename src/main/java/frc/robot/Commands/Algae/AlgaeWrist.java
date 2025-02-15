@@ -15,7 +15,7 @@ public class AlgaeWrist extends Command {
 
   /** Creates a new AlgaeWrist. */
   public AlgaeWrist(Algae algae, CommandXboxController controller) {
-    m_algaeWrist = new Algae();
+   // m_algaeWrist = new Algae();
     // Use addRequirements() here to declare subsystem dependencies.
 
     addRequirements(algae);
@@ -28,13 +28,13 @@ public class AlgaeWrist extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_algaeWrist.setWristSpeed(Constants.Algae.algaeWristSpeed);
+  //  m_algaeWrist.setWristSpeed(Constants.Algae.algaeWristSpeed);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_algaeWrist.setWristSpeed(0);
+   // m_algaeWrist.setWristSpeed(0);
   }
 
   // Returns true when the command should end.

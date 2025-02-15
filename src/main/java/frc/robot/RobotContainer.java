@@ -12,6 +12,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -28,7 +29,8 @@ import frc.robot.subsystems.Elevator;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second
+                                                                                      // max angular velocity
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.RobotCentric drive = new SwerveRequest.RobotCentric()
@@ -43,11 +45,11 @@ public class RobotContainer {
 
     public final Trigger zeroElevatorTrigger = new Trigger(elevator.getLimitSwitchSupplier());
 
-    private final Algae algae = new Algae();
+  //  private final Algae algae = new Algae();
 
     private final Coral coral = new Coral();
 
-    private final CommandXboxController joystick = new CommandXboxController(0);
+    private final CommandXboxController driveController = new CommandXboxController(0);
     private final CommandXboxController operatorController = new CommandXboxController(1);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
@@ -57,67 +59,102 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
-        //=============================================================================================
-        // ------------------------------------- DriveTrain -------------------------------------------
-        //---------------------------------------------------------------------------------------------
+        // =============================================================================================
+        // ------------------------------------- DriveTrain
+        // -------------------------------------------
+        // ---------------------------------------------------------------------------------------------
 
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
-            // Drivetrain will execute this command periodically
-            drivetrain.applyRequest(() ->
-                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-            )
-        );
+                // Drivetrain will execute this command periodically
+                drivetrain.applyRequest(() -> drive.withVelocityX(-driveController.getLeftY() * MaxSpeed) // Drive
+                                                                                                          // forward
+                                                                                                          // with
+                                                                                                          // negative Y
+                                                                                                          // (forward)
+                        .withVelocityY(-driveController.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                        .withRotationalRate(-driveController.getRightX() * MaxAngularRate) // Drive counterclockwise
+                                                                                           // with negative X (left)
+                ));
 
-        //brakes swerve, puts modules into x configuration
-        joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
+        // brakes swerve, puts modules into x configuration
+        driveController.a().whileTrue(drivetrain.applyRequest(() -> brake));
 
-        //manual module direction control
-        joystick.b().whileTrue(drivetrain.applyRequest(() ->
-            point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
-        ));
+        // manual module direction control
+        driveController.b().whileTrue(drivetrain.applyRequest(() -> point
+                .withModuleDirection(new Rotation2d(-driveController.getLeftY(), -driveController.getLeftX()))));
 
         // reset the field-centric heading on left bumper press
-        joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        driveController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        //logging
+        // logging
         drivetrain.registerTelemetry(logger::telemeterize);
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse)); 
+        driveController.back().and(driveController.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        driveController.back().and(driveController.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        driveController.start().and(driveController.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        driveController.start().and(driveController.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-
-        //=============================================================================================
-        // ------------------------------------- Elevator -------------------------------------------
-        //---------------------------------------------------------------------------------------------
+        // =============================================================================================
+        // ------------------------------------- Elevator
+        // -------------------------------------------
+        // ---------------------------------------------------------------------------------------------
 
         elevator.setDefaultCommand(new ElevatorJoystick(elevator, operatorController));
 
-        //zeros elevator encoders
+        operatorController.a().onTrue(new RunCommand(() -> {
+            elevator.goToElevatorStow();
+        }, elevator));
+
+        operatorController.x().onTrue(new RunCommand(() -> {
+            elevator.goToElevatorL2();
+        }, elevator));
+
+        operatorController.y().onTrue(new RunCommand(() -> {
+            elevator.goToElevatorL3();
+        }, elevator));
+
+        operatorController.b().onTrue(new RunCommand(() -> {
+            elevator.goToElevatorL4();
+          }, elevator));
+
+
+        /*
+         * if (operatorController.getWantsElevatorStow()) {
+         * m_elevator.goToElevatorStow();
+         * m_algae.stow();
+         * } else if (operatorController.getWantsElevatorL2()) {
+         * m_elevator.goToElevatorL2();
+         * m_algae.stow();
+         * } else if (operatorController.getWantsElevatorL3()) {
+         * m_elevator.goToElevatorL3();
+         * m_algae.stow();
+         * } else if (m_operatorController.getWantsElevatorL4()) {
+         * m_elevator.goToElevatorL4();
+         * m_algae.stow();
+         * }
+         */
+
+        // zeros elevator encoders
         zeroElevatorTrigger.onTrue(new ZeroElevatorEncoderCmdSeq(elevator));
 
-
-        //=============================================================================================
-        // ------------------------------------- Coral Controls -------------------------------------------
-        //---------------------------------------------------------------------------------------------
+        // =============================================================================================
+        // ------------------------------------- Coral Controls
+        // -------------------------------------------
+        // ---------------------------------------------------------------------------------------------
 
         operatorController.b().whileTrue(new CoralAction(coral, operatorController));
 
+        // =============================================================================================
+        // ------------------------------------- Algae Controls
+        // -------------------------------------------
+        // ---------------------------------------------------------------------------------------------
 
-        //=============================================================================================
-        // ------------------------------------- Algae Controls -------------------------------------------
-        //---------------------------------------------------------------------------------------------
-
-        operatorController.x().whileTrue(new AlgaeIntake(algae, operatorController));
-        operatorController.a().whileTrue(new AlgaeWrist(algae, operatorController));
-        
+      //  operatorController.x().whileTrue(new AlgaeIntake(algae, operatorController));
+       // operatorController.a().whileTrue(new AlgaeWrist(algae, operatorController));
 
     }
 
