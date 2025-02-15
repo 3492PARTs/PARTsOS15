@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.PARTsNT;
 
 public abstract class PARTsSubsystem extends SubsystemBase {
-  PARTsNT partsNT;
+  public PARTsNT partsNT;
 
   /**
    * Creates a new PARTsSubsystem.

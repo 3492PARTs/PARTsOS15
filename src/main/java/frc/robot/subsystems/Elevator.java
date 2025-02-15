@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class Elevator extends SubsystemBase {
+public class Elevator extends PARTsSubsystem {
 
   /*-------------------------------- Private instance variables ---------------------------------*/
   private PeriodicIO mPeriodicIO;
@@ -139,6 +139,7 @@ public class Elevator extends SubsystemBase {
       mLeftMotor.set(mPeriodicIO.elevator_power);
     }
 
+    outputTelemetry();
   }
 
   public void stop() {
@@ -172,23 +173,25 @@ public class Elevator extends SubsystemBase {
    // mRightMotor.set(speed);
   }
 
-  /*@Override
   public void outputTelemetry() {
-    putNumber("Position/Current", mLeftEncoder.getPosition());
-    putNumber("Position/Target", mPeriodicIO.elevator_target);
-    putNumber("Velocity/Current", mLeftEncoder.getVelocity());
+    super.partsNT.setDouble("Position/Current", mLeftEncoder.getPosition());
+    
+    super.partsNT.setDouble("Position/Target", mPeriodicIO.elevator_target);
+    super.partsNT.setDouble("Velocity/Current", mLeftEncoder.getVelocity());
 
-    putNumber("Position/Setpoint", mCurState.position);
-    putNumber("Velocity/Setpoint", mCurState.velocity);
+    super.partsNT.setDouble("Position/Setpoint", mCurState.position);
+    super.partsNT.setDouble("Velocity/Setpoint", mCurState.velocity);
 
-    putNumber("Current/Left", mLeftMotor.getOutputCurrent());
-    putNumber("Current/Right", mRightMotor.getOutputCurrent());
+    super.partsNT.setDouble("Current/Left", mLeftMotor.getOutputCurrent());
+    super.partsNT.setDouble("Current/Right", mRightMotor.getOutputCurrent());
 
-    putNumber("Output/Left", mLeftMotor.getAppliedOutput());
-    putNumber("Output/Right", mRightMotor.getAppliedOutput());
+    super.partsNT.setDouble("Output/Left", mLeftMotor.getAppliedOutput());
+    super.partsNT.setDouble("Output/Right", mRightMotor.getAppliedOutput());
 
-    putNumber("State", mPeriodicIO.state);
-  }*/
+    super.partsNT.setString("State", mPeriodicIO.state.toString());
+
+    super.partsNT.setBoolean("Limit Switch", getLimitSwitch());
+  }
 
 //TODO: Remember to swap for absolute
   public void reset() {
