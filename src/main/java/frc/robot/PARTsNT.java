@@ -193,7 +193,7 @@ public class PARTsNT {
      */
     public PARTsNT(String className) {
         name = (className != "") ? className : "Generic";
-        table = nt_Instance.getTable("PARTs").getSubTable(className);
+        table = nt_Instance.getTable("PARTs").getSubTable(name);
         setupEntryLists();
     }
 
