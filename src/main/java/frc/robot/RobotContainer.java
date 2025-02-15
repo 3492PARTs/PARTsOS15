@@ -19,8 +19,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.VisionConstants;
-import frc.robot.commands.AlignCommand;
-import frc.robot.commands.DriveLogCommand;
+import frc.robot.Commands.AlignCommand;
+import frc.robot.Commands.DriveLogCommand;
 import frc.robot.Commands.Algae.AlgaeIntake;
 import frc.robot.Commands.Algae.AlgaeWrist;
 import frc.robot.Commands.Coral.CoralAction;
@@ -99,7 +99,7 @@ public class RobotContainer {
         // reset the field-centric heading on left bumper press
         driveController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        joystick.leftTrigger().onTrue(new AlignCommand(
+        driveController.leftTrigger().onTrue(new AlignCommand(
             visionSubsystem, 
             drivetrain, 
             new Pose2d(-1,0, new Rotation2d())
