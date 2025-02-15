@@ -61,11 +61,11 @@ public class Elevator extends SubsystemBase {
 
     elevatorConfig.idleMode(IdleMode.kBrake);
     elevatorConfig.limitSwitch.reverseLimitSwitchEnabled(true);
-    elevatorConfig.alternateEncoder.apply(new AlternateEncoderConfig().countsPerRevolution(8192));
+    //elevatorConfig.alternateEncoder.apply(new AlternateEncoderConfig().countsPerRevolution(8192));
 
     // LEFT ELEVATOR MOTOR
     mLeftMotor = new SparkMax(Constants.Elevator.leftElevatorId, MotorType.kBrushless);
-    mLeftEncoder = mLeftMotor.getAlternateEncoder();
+    mLeftEncoder = mLeftMotor.getEncoder();
     mLeftPIDController = mLeftMotor.getClosedLoopController();
     mLeftMotor.configure(
         elevatorConfig,
@@ -74,7 +74,7 @@ public class Elevator extends SubsystemBase {
 
     // RIGHT ELEVATOR MOTOR
     mRightMotor = new SparkMax(Constants.Elevator.rightElevatorId, MotorType.kBrushless);
-    mRightEncoder = mRightMotor.getAlternateEncoder();
+    mRightEncoder = mRightMotor.getEncoder();
     mRightMotor.configure(
         elevatorConfig.follow(mLeftMotor, true),
         ResetMode.kResetSafeParameters,

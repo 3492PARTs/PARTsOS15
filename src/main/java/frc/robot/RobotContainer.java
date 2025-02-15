@@ -166,7 +166,7 @@ public class RobotContainer {
         // -------------------------------------------
         // ---------------------------------------------------------------------------------------------
 
-        operatorController.b().whileTrue(new CoralAction(coral, operatorController));
+        operatorController.leftTrigger().whileTrue(new CoralAction(coral, operatorController));
 
         // =============================================================================================
         // ------------------------------------- Algae Controls
