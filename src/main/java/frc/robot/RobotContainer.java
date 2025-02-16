@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.Commands.AlignCommand;
@@ -52,14 +53,16 @@ public class RobotContainer {
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
-    private final Vision visionSubsystem = new Vision(VisionConstants.DRIVETRAIN_LIMELIGHT, new PARTsUnit(VisionConstants.LIMELIGHT_ANGLE, PARTsUnitType.Angle), new PARTsUnit(VisionConstants.LIMELIGHT_LENS_HEIGHT, PARTsUnitType.Inch));
+    private final Vision visionSubsystem = new Vision(VisionConstants.DRIVETRAIN_LIMELIGHT,
+            new PARTsUnit(VisionConstants.LIMELIGHT_ANGLE, PARTsUnitType.Angle),
+            new PARTsUnit(VisionConstants.LIMELIGHT_LENS_HEIGHT, PARTsUnitType.Inch));
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final Elevator elevator = new Elevator();
 
     public final Trigger zeroElevatorTrigger = new Trigger(elevator.getLimitSwitchSupplier());
-     
+
     public final Candle candle = new Candle();
 
     private final Algae algae = new Algae();
@@ -71,11 +74,11 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-    /* 
-    NetworkTableInstance inst = NetworkTableInstance.getDefault();
-    StringTopic strTopic = inst.getStringTopic("/Elastic/CANColorValues");
-    StringPublisher strPub = strTopic.publish(PubSubOption.sendAll(true));
-    */
+    /*
+     * NetworkTableInstance inst = NetworkTableInstance.getDefault();
+     * StringTopic strTopic = inst.getStringTopic("/Elastic/CANColorValues");
+     * StringPublisher strPub = strTopic.publish(PubSubOption.sendAll(true));
+     */
 
     public RobotContainer() {
         configureBindings();
@@ -113,11 +116,10 @@ public class RobotContainer {
         driveController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         driveController.leftTrigger().onTrue(new AlignCommand(
-            visionSubsystem, 
-            drivetrain, 
-            new Pose2d(-1,0, new Rotation2d())
-            ));
-            
+                visionSubsystem,
+                drivetrain,
+                new Pose2d(-1, 0, new Rotation2d())));
+
         // logging
         drivetrain.registerTelemetry(logger::telemeterize);
 
@@ -135,6 +137,7 @@ public class RobotContainer {
 
         elevator.setDefaultCommand(new ElevatorJoystick(elevator, operatorController));
 
+        /*
         operatorController.a().onTrue(new RunCommand(() -> {
             elevator.goToElevatorStow();
         }, elevator));
@@ -149,8 +152,8 @@ public class RobotContainer {
 
         operatorController.b().onTrue(new RunCommand(() -> {
             elevator.goToElevatorL4();
-          }, elevator));
-
+        }, elevator));
+        */
 
         /*
          * if (operatorController.getWantsElevatorStow()) {
@@ -179,12 +182,27 @@ public class RobotContainer {
         operatorController.rightTrigger().whileTrue(new CoralAction(coral, operatorController));
 
         // =============================================================================================
-        // ------------------------------------- Algae Control -------------------------------------------
+        // ------------------------------------- Algae Control
+        // -------------------------------------------
         // ---------------------------------------------------------------------------------------------
 
         operatorController.leftBumper().whileTrue(new AlgaeIntake(algae, operatorController));
-       // operatorController.leftTrigger().whileTrue(getAutonomousCommand()));
+        // operatorController.leftTrigger().whileTrue(getAutonomousCommand()));
         algae.setDefaultCommand(new AlgaeWrist(algae, operatorController));
+
+        // =============================================================================================
+        // ------------------------------------- SysID
+        // -------------------------------------------
+        // ---------------------------------------------------------------------------------------------
+
+                operatorController.a().and(operatorController.rightBumper())
+                .whileTrue(elevator.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+                operatorController.b().and(operatorController.rightBumper())
+                .whileTrue(elevator.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+                operatorController.x().and(operatorController.rightBumper())
+                .whileTrue(elevator.sysIdDynamic(SysIdRoutine.Direction.kForward));
+                operatorController.y().and(operatorController.rightBumper())
+                .whileTrue(elevator.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     }
 

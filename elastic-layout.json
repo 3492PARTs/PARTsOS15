@@ -5,8 +5,110 @@
     {
       "name": "Teleoperated",
       "grid_layout": {
-        "layouts": [],
-        "containers": []
+        "layouts": [
+          {
+            "title": "Position",
+            "x": 500.0,
+            "y": 0.0,
+            "width": 200.0,
+            "height": 300.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "Current",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 200.0,
+                "height": 200.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/Elevator/Position/Current",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Setpoint",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 200.0,
+                "height": 200.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/Elevator/Position/Setpoint",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Target",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 200.0,
+                "height": 200.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/Elevator/Position/Target",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              }
+            ]
+          }
+        ],
+        "containers": [
+          {
+            "title": "Limit Switch",
+            "x": 900.0,
+            "y": 0.0,
+            "width": 200.0,
+            "height": 200.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/PARTs/Elevator/Limit Switch",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "speed",
+            "x": 700.0,
+            "y": 0.0,
+            "width": 200.0,
+            "height": 200.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/PARTs/ElevatorJoystick/speed",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "speed",
+            "x": 900.0,
+            "y": 200.0,
+            "width": 200.0,
+            "height": 200.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/PARTs/Elevator/speed",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          }
+        ]
       }
     },
     {
