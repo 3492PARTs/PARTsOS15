@@ -5,7 +5,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.PARTsNT;
+import frc.robot.util.PARTsNT;
 
 public abstract class PARTsSubsystem extends SubsystemBase {
   public PARTsNT partsNT;
