@@ -30,6 +30,7 @@ import frc.robot.subsystems.Candle;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.sysid.ElevatorSysId;
 import frc.robot.util.PARTsUnit;
 import frc.robot.util.PARTsUnit.PARTsUnitType;
 import frc.robot.subsystems.Coral;
@@ -53,7 +54,8 @@ public class RobotContainer {
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
-    private final Elevator elevator = new Elevator();
+    //private final Elevator elevator = new Elevator();
+    private final ElevatorSysId elevator = new ElevatorSysId();
 
     public final Trigger zeroElevatorTrigger = new Trigger(elevator.getLimitSwitchSupplier());
 

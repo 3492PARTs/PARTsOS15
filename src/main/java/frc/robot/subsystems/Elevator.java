@@ -31,7 +31,6 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
@@ -39,7 +38,6 @@ import static edu.wpi.first.units.Units.Volts;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Rotation;
-import static edu.wpi.first.units.Units.Volts;
 
 public class Elevator extends PARTsSubsystem {
 
@@ -49,8 +47,8 @@ public class Elevator extends PARTsSubsystem {
   // private static final double kPivotCLRampRate = 0.5;
   // private static final double kCLRampRate = 0.5;
 
-  private SparkMax mLeftMotor;
-  private RelativeEncoder mLeftEncoder;
+  protected SparkMax mLeftMotor;
+  protected RelativeEncoder mLeftEncoder;
   private RelativeEncoder mRightEncoder;
 
   private SparkClosedLoopController mLeftPIDController;
@@ -63,53 +61,6 @@ public class Elevator extends PARTsSubsystem {
   private TrapezoidProfile.State mCurState = new TrapezoidProfile.State();
   private TrapezoidProfile.State mGoalState = new TrapezoidProfile.State();
   private double prevUpdateTime = Timer.getFPGATimestamp();
-
-  
-
-   // SysID routine  
-   // Mutable holder for unit-safe voltage values, persisted to avoid reallocation.
-  private final MutVoltage m_appliedVoltage = Volts.mutable(0);
-  // Mutable holder for unit-safe linear distance values, persisted to avoid reallocation.
-  private final MutAngle m_distance = Rotations.mutable(0);
-  // Mutable holder for unit-safe linear velocity values, persisted to avoid reallocation.
-  private final MutAngularVelocity m_velocity = RotationsPerSecond.mutable(0);
-
-  // Create a new SysId routine for characterizing the drive.
-  private final SysIdRoutine m_sysIdRoutine =
-      new SysIdRoutine(
-          // Empty config defaults to 1 volt/second ramp rate and 7 volt step voltage.
-          new SysIdRoutine.Config(),
-          new SysIdRoutine.Mechanism(
-              // Tell SysId how to plumb the driving voltage to the motors.
-              voltage -> {
-                mLeftMotor.setVoltage(voltage);
-                mRightMotor.setVoltage(voltage);
-              },
-              // Tell SysId how to record a frame of data for each motor on the mechanism being
-              // characterized.
-              log -> {
-                // Record a frame for the left motors.  Since these share an encoder, we consider
-                // the entire group to be one motor.
-                log.motor("drive-left")
-                    .voltage(
-                        m_appliedVoltage.mut_replace(
-                            mLeftMotor.get() * RobotController.getBatteryVoltage(), Volts))
-                    .angularPosition(m_distance.mut_replace(mLeftEncoder.getPosition(), Rotations))
-                    .angularVelocity(
-                        m_velocity.mut_replace(getRPS(), RotationsPerSecond));
-                // Record a frame for the right motors.  Since these share an encoder, we consider
-                // the entire group to be one motor.
-                log.motor("drive-right")
-                    .voltage(
-                        m_appliedVoltage.mut_replace(
-                            mRightMotor.get() * RobotController.getBatteryVoltage(), Volts))
-                    .angularPosition(m_distance.mut_replace(mRightEncoder.getPosition(), Rotations))
-                    .angularVelocity(
-                        m_velocity.mut_replace(getRPS(), RotationsPerSecond));
-              },
-              // Tell SysId to make generated commands require this subsystem, suffix test state in
-              // WPILog with this subsystem's name ("drive")
-              this));
 
   public Elevator() {
     super("Elevator");
@@ -269,27 +220,6 @@ public class Elevator extends PARTsSubsystem {
 //TODO: Remember to swap for absolute
   public void reset() {
     mLeftEncoder.setPosition(0.0);
-  }
-
-
-  /*-------------------------------- SysID Functions --------------------------------*/
-
-   /**
-   * Returns a command that will execute a quasistatic test in the given direction.
-   *
-   * @param direction The direction (forward or reverse) to run the test in
-   */
-  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    return m_sysIdRoutine.quasistatic(direction);
-  }
-
-  /**
-   * Returns a command that will execute a dynamic test in the given direction.
-   *
-   * @param direction The direction (forward or reverse) to run the test in
-   */
-  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    return m_sysIdRoutine.dynamic(direction);
   }
 
 
