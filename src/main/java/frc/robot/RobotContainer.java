@@ -19,6 +19,10 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.VisionConstants;
+import frc.robot.cmds.algae.AlgaeWrist;
+import frc.robot.cmds.coral.CoralAction;
+import frc.robot.cmds.elevator.ElevatorJoystick;
+import frc.robot.cmds.elevator.ZeroElevatorEncoderCmdSeq;
 import frc.robot.subsystems.Algae;
 import frc.robot.subsystems.Candle;
 import frc.robot.generated.TunerConstants;
@@ -125,7 +129,7 @@ public class RobotContainer {
         // -------------------------------------------
         // ---------------------------------------------------------------------------------------------
 
-        //elevator.setDefaultCommand(new ElevatorJoystick(elevator, operatorController));
+        elevator.setDefaultCommand(new ElevatorJoystick(elevator, operatorController));
 
         /*
         operatorController.a().onTrue(new RunCommand(() -> {
@@ -162,14 +166,14 @@ public class RobotContainer {
          */
 
         // zeros elevator encoders
-        //zeroElevatorTrigger.onTrue(new ZeroElevatorEncoderCmdSeq(elevator));
+        zeroElevatorTrigger.onTrue(new ZeroElevatorEncoderCmdSeq(elevator));
 
         // =============================================================================================
         // ------------------------------------- Coral Controls
         // -------------------------------------------
         // ---------------------------------------------------------------------------------------------
 
-        //operatorController.rightTrigger().whileTrue(new CoralAction(coral, operatorController));
+        operatorController.rightTrigger().whileTrue(new CoralAction(coral, operatorController));
 
         // =============================================================================================
         // ------------------------------------- Algae Control
@@ -178,7 +182,7 @@ public class RobotContainer {
 
         //operatorController.leftBumper().whileTrue(new AlgaeIntake(algae, operatorController));
         // operatorController.leftTrigger().whileTrue(getAutonomousCommand()));
-        //algae.setDefaultCommand(new AlgaeWrist(algae, operatorController));
+        algae.setDefaultCommand(new AlgaeWrist(algae, operatorController));
 
         // =============================================================================================
         // ------------------------------------- SysID
