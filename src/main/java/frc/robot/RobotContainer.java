@@ -19,12 +19,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.VisionConstants;
-import frc.robot.commands.AlignCommand;
-import frc.robot.commands.algae.AlgaeIntake;
-import frc.robot.commands.algae.AlgaeWrist;
-import frc.robot.commands.coral.CoralAction;
-import frc.robot.commands.elevator.ElevatorJoystick;
-import frc.robot.commands.elevator.ZeroElevatorEncoderCmdSeq;
 import frc.robot.subsystems.Algae;
 import frc.robot.subsystems.Candle;
 import frc.robot.generated.TunerConstants;
@@ -110,12 +104,12 @@ public class RobotContainer {
 
         // reset the field-centric heading on left bumper press
         driveController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-
+/* 
         driveController.leftTrigger().onTrue(new AlignCommand(
                 visionSubsystem,
                 drivetrain,
                 new Pose2d(-1, 0, new Rotation2d())));
-
+*/
         // logging
         drivetrain.registerTelemetry(logger::telemeterize);
 
@@ -131,7 +125,7 @@ public class RobotContainer {
         // -------------------------------------------
         // ---------------------------------------------------------------------------------------------
 
-        elevator.setDefaultCommand(new ElevatorJoystick(elevator, operatorController));
+        //elevator.setDefaultCommand(new ElevatorJoystick(elevator, operatorController));
 
         /*
         operatorController.a().onTrue(new RunCommand(() -> {
@@ -168,23 +162,23 @@ public class RobotContainer {
          */
 
         // zeros elevator encoders
-        zeroElevatorTrigger.onTrue(new ZeroElevatorEncoderCmdSeq(elevator));
+        //zeroElevatorTrigger.onTrue(new ZeroElevatorEncoderCmdSeq(elevator));
 
         // =============================================================================================
         // ------------------------------------- Coral Controls
         // -------------------------------------------
         // ---------------------------------------------------------------------------------------------
 
-        operatorController.rightTrigger().whileTrue(new CoralAction(coral, operatorController));
+        //operatorController.rightTrigger().whileTrue(new CoralAction(coral, operatorController));
 
         // =============================================================================================
         // ------------------------------------- Algae Control
         // -------------------------------------------
         // ---------------------------------------------------------------------------------------------
 
-        operatorController.leftBumper().whileTrue(new AlgaeIntake(algae, operatorController));
+        //operatorController.leftBumper().whileTrue(new AlgaeIntake(algae, operatorController));
         // operatorController.leftTrigger().whileTrue(getAutonomousCommand()));
-        algae.setDefaultCommand(new AlgaeWrist(algae, operatorController));
+        //algae.setDefaultCommand(new AlgaeWrist(algae, operatorController));
 
         // =============================================================================================
         // ------------------------------------- SysID
