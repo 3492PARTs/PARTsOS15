@@ -18,6 +18,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
+import au.grapplerobotics.interfaces.LaserCanInterface.Measurement;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -148,7 +149,9 @@ public class Elevator extends PARTsSubsystem {
 
   @Override
   public void periodic() {
-    mPeriodicIO.elevator_measurement = upperLimitLaserCAN.getMeasurement().distance_mm;
+    Measurement m = upperLimitLaserCAN.getMeasurement();
+    if (m != null)
+      mPeriodicIO.elevator_measurement = m.distance_mm;
     // TODO: Use this pattern to only drive slowly when we're really high up
     // if(mPivotEncoder.getPosition() > Constants.kPivotScoreCount) {
     // mPeriodicIO.is_pivot_low = true;
