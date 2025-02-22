@@ -112,6 +112,8 @@ public class Elevator extends PARTsSubsystem {
             Constants.Elevator.kMaxVelocity,
             Constants.Elevator.kMaxAcceleration));
 
+    mElevatorPIDController.setTolerance(Constants.Elevator.kTolerance);
+
     // Elevator Feedforward
     mElevatorFeedForward = new ElevatorFeedforward(
         Constants.Elevator.kS,
@@ -156,14 +158,15 @@ public class Elevator extends PARTsSubsystem {
     if (mPeriodicIO.is_elevator_pos_control) {
       mElevatorPIDController.setGoal(mPeriodicIO.elevator_target);
       double pidCalc = mElevatorPIDController.atGoal() ? 0 : mElevatorPIDController.calculate(getElevatorPosition(), mPeriodicIO.elevator_target);
-      //double ffCalc = mElevatorFeedForward.calculate(mElevatorPIDController.getSetpoint().velocity);
+      double ffCalc = mElevatorFeedForward.calculate(mElevatorPIDController.getSetpoint().velocity);
 
-      mPeriodicIO.elevator_power = pidCalc;// + ffCalc;
+      mPeriodicIO.elevator_power = pidCalc + ffCalc;
 
+      setVoltage(mPeriodicIO.elevator_power);
+    } else if (mPeriodicIO.elevator_power > 0)
       setSpeed(mPeriodicIO.elevator_power);
-    } else {
-      setSpeed(mPeriodicIO.elevator_power);
-    }
+    else 
+      setVoltage(mElevatorFeedForward.calculate(0));
   }
 
   public double getElevatorPosition() {
@@ -197,6 +200,17 @@ public class Elevator extends PARTsSubsystem {
     // Directional control at limits
     else if ((getBottomLimit() && speed > 0) || (getTopLimit() && speed < 0)) 
       mLeftMotor.set(speed);
+    else
+      stop();
+  }
+
+  private void setVoltage(double voltage) {
+    // Full control in limits
+    if (!getBottomLimit() && !getTopLimit()) 
+      mLeftMotor.setVoltage(voltage);
+    // Directional control at limits
+    else if ((getBottomLimit() && voltage > 0) || (getTopLimit() && voltage < 0)) 
+      mLeftMotor.setVoltage(voltage);
     else
       stop();
   }
