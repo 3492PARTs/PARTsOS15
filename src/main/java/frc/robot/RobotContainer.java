@@ -14,6 +14,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -40,7 +41,7 @@ public class RobotContainer {
                                                                                       // max angular velocity
 
     /* Setting up bindings for necessary control of the swerve drive platform */
-    private final SwerveRequest.RobotCentric drive = new SwerveRequest.RobotCentric()
+    private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
@@ -52,8 +53,8 @@ public class RobotContainer {
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
-    //private final Elevator elevator = new Elevator();
-    private final ElevatorSysId elevator = new ElevatorSysId();
+    private final Elevator elevator = new Elevator();
+    //private final ElevatorSysId elevator = new ElevatorSysId();
 
     public final Trigger zeroElevatorTrigger = new Trigger(elevator.getLimitSwitchSupplier());
 
@@ -131,7 +132,7 @@ public class RobotContainer {
 
         elevator.setDefaultCommand(new ElevatorJoystick(elevator, operatorController));
 
-        /*
+        
         operatorController.a().onTrue(new RunCommand(() -> {
             elevator.goToElevatorStow();
         }, elevator));
@@ -147,23 +148,24 @@ public class RobotContainer {
         operatorController.b().onTrue(new RunCommand(() -> {
             elevator.goToElevatorL4();
         }, elevator));
-        */
+        
 
-        /*
-         * if (operatorController.getWantsElevatorStow()) {
-         * m_elevator.goToElevatorStow();
-         * m_algae.stow();
-         * } else if (operatorController.getWantsElevatorL2()) {
-         * m_elevator.goToElevatorL2();
-         * m_algae.stow();
-         * } else if (operatorController.getWantsElevatorL3()) {
-         * m_elevator.goToElevatorL3();
-         * m_algae.stow();
-         * } else if (m_operatorController.getWantsElevatorL4()) {
-         * m_elevator.goToElevatorL4();
-         * m_algae.stow();
-         * }
-         */
+        /* 
+          if (getWantsElevatorStow()) {
+          elevator.goToElevatorStow();
+          //algae.stow();
+          } else if (operatorController.getWantsElevatorL2()) {
+          elevator.goToElevatorL2();
+         //algae.stow();
+          } else if (operatorController.getWantsElevatorL3()) {
+          elevator.goToElevatorL3();
+          //m_algae.stow();
+          } else if (operatorController.getWantsElevatorL4()) {
+          elevator.goToElevatorL4();
+          //m_algae.stow();
+          }
+          */
+         
 
         // zeros elevator encoders
         zeroElevatorTrigger.onTrue(new ZeroElevatorEncoderCmdSeq(elevator));
@@ -189,7 +191,7 @@ public class RobotContainer {
         // -------------------------------------------
         // ---------------------------------------------------------------------------------------------
 
-                operatorController.a().and(operatorController.rightBumper())
+               /*  operatorController.a().and(operatorController.rightBumper())
                 .whileTrue(elevator.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
                 operatorController.b().and(operatorController.rightBumper())
                 .whileTrue(elevator.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
@@ -197,7 +199,7 @@ public class RobotContainer {
                 .whileTrue(elevator.sysIdDynamic(SysIdRoutine.Direction.kForward));
                 operatorController.y().and(operatorController.rightBumper())
                 .whileTrue(elevator.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-
+        */
     }
 
     public Command getAutonomousCommand() {
