@@ -86,6 +86,8 @@ public final class Constants {
     public static final double kDeAlgaeAngle = 215.0;
     public static final double kGroundIntakeAngle = 162.0;
 
+    public static final int wristGearRatio = 64/1;
+
     // INTAKE
     public static final int kMaxIntakeCurrent = 20;
 

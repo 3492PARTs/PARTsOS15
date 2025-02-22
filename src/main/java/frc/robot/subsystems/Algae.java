@@ -89,6 +89,8 @@ public class Algae extends PARTsSubsystem {
         intakeConfig,
         ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
+
+    reset();
   }
 
   private static class PeriodicIO {
@@ -114,6 +116,8 @@ public class Algae extends PARTsSubsystem {
     mWristMotor.set(mPeriodicIO.wrist_voltage);
     mIntakeMotor.set(mPeriodicIO.intake_power);
     */
+
+    outputTelemetry();
   }
 
   public void stop() {
@@ -126,7 +130,7 @@ public class Algae extends PARTsSubsystem {
 
   @Override
   public void outputTelemetry() {
-    super.partsNT.setDouble("Wrist/Position", getWristAngle());
+    super.partsNT.setDouble("Wrist/Angle", getWristAngle().getValue());
     super.partsNT.setDouble("Wrist/Target", mPeriodicIO.wrist_target_angle);
     super.partsNT.setDouble("Wrist/Current", mWristMotor.getOutputCurrent());
     super.partsNT.setDouble("Wrist/Output", mWristMotor.getAppliedOutput());
@@ -139,6 +143,7 @@ public class Algae extends PARTsSubsystem {
   }
 
   public void reset() {
+    mWristAbsEncoder.setPosition(0);
   }
 
   /*---------------------------------- Custom Public Functions ----------------------------------*/
@@ -179,12 +184,13 @@ public class Algae extends PARTsSubsystem {
 
   /*---------------------------------- Custom Private Functions ---------------------------------*/
 
-  public double getWristAngle() {
-    return new PARTsUnit(mWristAbsEncoder.getPosition(), PARTsUnitType.Rotations).to(PARTsUnitType.Angle);
+  public PARTsUnit getWristAngle() {
+    
+    return new PARTsUnit(-new PARTsUnit(mWristAbsEncoder.getPosition(), PARTsUnitType.Rotations).to(PARTsUnitType.Angle)/Constants.Algae.wristGearRatio, PARTsUnitType.Angle);
   }
 
   public double getWristReferenceToHorizontal() {
-    return getWristAngle() - Constants.Algae.kWristOffset;
+    return getWristAngle().getValue() - Constants.Algae.kWristOffset;
   }
 
   public IntakeState getState() {
