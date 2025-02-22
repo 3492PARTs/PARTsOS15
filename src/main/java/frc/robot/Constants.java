@@ -55,10 +55,10 @@ public final class Constants {
     public static final int kMaxCurrent = 40;
     public static final int kMaxVelocity = 5;
     public static final int kMaxAcceleration = 10;
-    public static final int kG = 0;
-    public static final int kS = 0;
-    public static final int kV = 0;
-    public static final int kA = 0;
+    public static final double kG = 0.3766;
+    public static final double kS = 0.24105;
+    public static final double kV = 0.020009;
+    public static final double kA = 0.0022395;
     public static final double maxSpeed = 0.3;
     public static final double maxHeight = 50.0;
     public static final double gearRatio = 16 / 1;

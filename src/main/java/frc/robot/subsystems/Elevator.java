@@ -140,21 +140,14 @@ public class Elevator extends PARTsSubsystem {
     if (mPeriodicIO.is_elevator_pos_control) {
 
       double pidCalc = mElevatorPIDController.calculate(getElevatorPosition(), mPeriodicIO.elevator_target);
-      double ffCalc = mElevatorFeedForward.calculate(mElevatorPIDController.getSetpoint().velocity);
+      //double ffCalc = mElevatorFeedForward.calculate(mElevatorPIDController.getSetpoint().velocity);
 
-      mPeriodicIO.elevator_power = pidCalc + ffCalc;
+      mPeriodicIO.elevator_power = pidCalc;// + ffCalc;
 
       setSpeed(mPeriodicIO.elevator_power);
     } else {
       setSpeed(mPeriodicIO.elevator_power);
     }
-
-    //TODO: Test safeguard for motor running down
-    if (getBottomLimit() && mLeftMotor.getAppliedOutput() < 0)
-      stop();
-
-    if (getTopLimit() && mLeftMotor.getAppliedOutput() > 0)
-      stop();
   }
 
   public double getElevatorPosition() {
@@ -186,12 +179,14 @@ public class Elevator extends PARTsSubsystem {
   }
 
   private void setSpeed(double speed) {
-    // Only allow to go up if limit pressed
-    if (!getBottomLimit()) {
+    // Full control in limits
+    if (!getBottomLimit() && !getTopLimit()) 
       mLeftMotor.set(speed);
-    } else if (speed > 0) {
+    // Directional control at limits
+    else if ((getBottomLimit() && speed > 0) || (getTopLimit() && speed < 0)) 
       mLeftMotor.set(speed);
-    }
+    else
+      stop();
   }
 
   @Override
@@ -211,7 +206,7 @@ public class Elevator extends PARTsSubsystem {
     super.partsNT.setString("State", mPeriodicIO.state.toString());
 
     super.partsNT.setBoolean("Limit/Bottom", getBottomLimit());
-    super.partsNT.setBoolean("Limit/Top", getBottomLimit());
+    super.partsNT.setBoolean("Limit/Top", getTopLimit());
 
     super.partsNT.setDouble("RPS", getRPS());
 
