@@ -207,6 +207,12 @@ public class RobotContainer {
         operatorController.povRight().onTrue(new RunCommand(() -> {
             algae.groundIntake();
         }, algae));
+        operatorController.povLeft().onTrue(new RunCommand(() -> {
+            algae.stopAlgae();
+        }, algae));
+        operatorController.leftTrigger().onTrue(new RunCommand(() -> {
+            algae.reset();
+        }, algae));
 
         // =============================================================================================
         // ------------------------------------- SysID
