@@ -65,7 +65,7 @@ public final class Constants {
     public static final int algaeIntakeId = 3;
     public static final int algaeWristId = 4;
     public static final double algaeIntakeSpeed = 0.2;
-    public static final double maxWristSpeed = .5
+    public static final double maxWristSpeed = .5;
     public static final int kMaxWristCurrent = 10;
 
     public static final double kWristP = 0.021296;
