@@ -41,23 +41,27 @@ public final class Constants {
   public static class Elevator {
     public static final int leftElevatorId = 2;
     public static final int rightElevatorId = 1;
+    public static final int laserCanId = 32;
     public static final int StowHeight = 0;
-    public static final double L2Height = 24.0;
-    public static final double L3Height = 32.0;
-    public static final double L4Height = 48.0;
+    public static final double L2Height = 11.0;
+    public static final double L3Height = 35.0;
+    public static final double L4Height = 72.5;
     public static final double LowAlgaeHeight = 0;
     public static final double HighAlgaeHeight = 0;
     public static final int L_SWITCH_PORT = 0;
-    public static final double kP = 0.0038539;
+    public static final double kP = 0.06;
     public static final double kI = 0;
     public static final double kD = 0;
     public static final int kIZone = 0;
     public static final int kMaxCurrent = 40;
-    public static final int kMaxVelocity = 5;
-    public static final int kMaxAcceleration = 10;
-    public static final int kG = 0;
-    public static final double maxSpeed = 0.3;
-    public static final double maxHeight = 50.0;
+    public static final int kMaxVelocity = 30;
+    public static final int kMaxAcceleration = 100;
+    public static final double kG = 0.3766;
+    public static final double kS = 0.24105;
+    public static final double kV = 0.020009;
+    public static final double kA = 0.0022395;
+    public static final double maxSpeed = 0.5;
+    public static final double maxHeight = 72.5;
     public static final double gearRatio = 16 / 1;
   }
 
@@ -103,7 +107,7 @@ public final class Constants {
     public static final int canAndColorId = 31;
 
     public static final double kIntakeSpeed = -0.3;
-    public static final double kReverseSpeed = 0.3;
+    public static final double kReverseSpeed = 0.6;
     public static final double kL1Speed = 0.4;
     public static final double kL24Speed = 0.4;
     public static final double kIndexSpeed = 0.1;
