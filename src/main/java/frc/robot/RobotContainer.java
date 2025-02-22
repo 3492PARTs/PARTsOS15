@@ -48,7 +48,7 @@ public class RobotContainer {
                                                                                       // max angular velocity
 
     /* Setting up bindings for necessary control of the swerve drive platform */
-    private final SwerveRequest.RobotCentric drive = new SwerveRequest.RobotCentric()
+    private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
@@ -110,6 +110,15 @@ public class RobotContainer {
                         .withRotationalRate(-driveController.getRightX() * MaxAngularRate) // Drive counterclockwise
                                                                                            // with negative X (left)
                 ));
+        
+        // fine grain controls
+        /*
+        driveController.rightBumper().onTrue(new RunCommand(() -> {
+            if (MaxSpeed == TunerConstants.kSpeedAt12Volts.in(MetersPerSecond)) 
+                MaxSpeed = 0.5;
+            else 
+                MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+        }));*/
 
         // brakes swerve, puts modules into x configuration
         driveController.a().whileTrue(drivetrain.applyRequest(() -> brake));
