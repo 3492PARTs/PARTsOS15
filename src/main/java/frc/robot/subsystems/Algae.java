@@ -51,7 +51,7 @@ public class Algae extends PARTsSubsystem {
     mWristRelEncoder = mWristMotor.getEncoder();
     SparkMaxConfig wristConfig = new SparkMaxConfig();
     wristConfig
-        .idleMode(IdleMode.kCoast)
+        .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(Constants.Algae.kMaxWristCurrent)
         .inverted(true);
 
