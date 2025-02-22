@@ -12,12 +12,12 @@ import frc.robot.subsystems.Coral;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class CoralAction extends Command {
   private Coral m_coral;
-
+  private double speed;
   
   /** Creates a new CoralAction. */
-  public CoralAction(Coral coral, CommandXboxController controller) {
+  public CoralAction(Coral coral, double speed) {
     m_coral = coral;
-    
+    this.speed = speed;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(coral);
   }
@@ -29,7 +29,7 @@ public class CoralAction extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_coral.setSpeed(Constants.Coral.kIntakeSpeed);
+    m_coral.setSpeed(speed);
   }
 
   // Called once the command ends or is interrupted.

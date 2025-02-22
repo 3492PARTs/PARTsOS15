@@ -78,7 +78,7 @@ public class RobotContainer {
     private final CommandXboxController driveController = new CommandXboxController(0);
     private final CommandXboxController operatorController = new CommandXboxController(1);
 
-    public final Trigger zeroElevatorTrigger = new Trigger(elevator.getLimitSwitchSupplier());
+    public final Trigger zeroElevatorTrigger = new Trigger(elevator::getBottomLimit);
 
     /*
      * NetworkTableInstance inst = NetworkTableInstance.getDefault();
@@ -110,6 +110,15 @@ public class RobotContainer {
                         .withRotationalRate(-driveController.getRightX() * MaxAngularRate) // Drive counterclockwise
                                                                                            // with negative X (left)
                 ));
+        
+        // fine grain controls
+        /*
+        driveController.rightBumper().onTrue(new RunCommand(() -> {
+            if (MaxSpeed == TunerConstants.kSpeedAt12Volts.in(MetersPerSecond)) 
+                MaxSpeed = 0.5;
+            else 
+                MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+        }));*/
 
         // brakes swerve, puts modules into x configuration
         driveController.a().whileTrue(drivetrain.applyRequest(() -> brake));
@@ -144,11 +153,12 @@ public class RobotContainer {
         elevator.setDefaultCommand(new RunCommand(() -> {
             double speed = -operatorController.getRightY() * Constants.Elevator.maxSpeed;
 
-            if (Math.abs(speed) > 0.1)
-                elevator.setElevatorPower(speed);
+            if (Math.abs(speed) < 0.1)
+                speed = 0;
+            elevator.setElevatorPower(speed);
         }, elevator));
 
-        /*operatorController.a().onTrue(new RunCommand(() -> {
+        operatorController.a().onTrue(new RunCommand(() -> {
             elevator.goToElevatorStow();
         }, elevator));
 
@@ -188,7 +198,8 @@ public class RobotContainer {
         // -------------------------------------------
         // ---------------------------------------------------------------------------------------------
 
-        operatorController.rightTrigger().whileTrue(new CoralAction(coral, operatorController));
+        operatorController.rightTrigger().whileTrue(new CoralAction(coral, Constants.Coral.kIntakeSpeed));
+        operatorController.rightBumper().whileTrue(new CoralAction(coral, Constants.Coral.kReverseSpeed));
 
         // =============================================================================================
         // ------------------------------------- Algae Control

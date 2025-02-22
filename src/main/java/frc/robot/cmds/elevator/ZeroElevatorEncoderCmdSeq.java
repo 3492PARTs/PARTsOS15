@@ -25,7 +25,9 @@ public class ZeroElevatorEncoderCmdSeq extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    elevator2.reset();
+    //keep accidental coral hits from throwing us off
+    if (elevator2.getElevatorPosition() <= 30)
+      elevator2.reset();
   }
 
   // Called once the command ends or is interrupted.
