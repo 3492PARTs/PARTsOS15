@@ -144,8 +144,10 @@ public class RobotContainer {
         elevator.setDefaultCommand(new RunCommand(() -> {
             double speed = -operatorController.getRightY() * Constants.Elevator.maxSpeed;
 
-            if (Math.abs(speed) > 0.1)
-                elevator.setElevatorPower(speed);
+            if (Math.abs(speed) < 0.1)
+                speed = 0;
+            elevator.setElevatorPower(speed);
+            
         }, elevator));
 
         operatorController.a().onTrue(new RunCommand(() -> {
