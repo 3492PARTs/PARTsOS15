@@ -16,6 +16,9 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.AlternateEncoderConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.MutableMeasure;
 import edu.wpi.first.units.measure.Angle;
@@ -53,14 +56,10 @@ public class Elevator extends PARTsSubsystem {
   protected RelativeEncoder mLeftEncoder;
   private RelativeEncoder mRightEncoder;
 
-  private SparkClosedLoopController mLeftPIDController;
+  private final ProfiledPIDController mElevatorPIDController;
+  private final ElevatorFeedforward mElevatorFeedForward;
 
   private DigitalInput elevatorLimit;
-
-  private TrapezoidProfile mProfile;
-  private TrapezoidProfile.State mCurState = new TrapezoidProfile.State();
-  private TrapezoidProfile.State mGoalState = new TrapezoidProfile.State();
-  private double prevUpdateTime = Timer.getFPGATimestamp();
 
   public Elevator() {
     super("Elevator");
@@ -70,10 +69,6 @@ public class Elevator extends PARTsSubsystem {
     elevatorLimit = new DigitalInput(Constants.Elevator.L_SWITCH_PORT);
 
     SparkMaxConfig elevatorConfig = new SparkMaxConfig();
-
-    elevatorConfig.closedLoop
-        .pid(Constants.Elevator.kP, Constants.Elevator.kI, Constants.Elevator.kD)
-        .iZone(Constants.Elevator.kIZone);
 
     elevatorConfig.smartCurrentLimit(Constants.Elevator.kMaxCurrent);
 
@@ -96,12 +91,21 @@ public class Elevator extends PARTsSubsystem {
         ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
 
-    mProfile = new TrapezoidProfile(
+    // Elevator PID
+    mElevatorPIDController = new ProfiledPIDController(
+        Constants.Elevator.kP,
+        Constants.Elevator.kI,
+        Constants.Elevator.kD,
         new TrapezoidProfile.Constraints(
             Constants.Elevator.kMaxVelocity,
             Constants.Elevator.kMaxAcceleration));
 
-    mLeftPIDController = mLeftMotor.getClosedLoopController();
+    // Elevator Feedforward
+    mElevatorFeedForward = new ElevatorFeedforward(
+        Constants.Elevator.kS,
+        Constants.Elevator.kG,
+        Constants.Elevator.kV,
+        Constants.Elevator.kA);
   }
 
   public enum ElevatorState {
@@ -133,28 +137,15 @@ public class Elevator extends PARTsSubsystem {
     // } else {
     // mPeriodicIO.is_pivot_low = false;
     // }
-
-    double curTime = Timer.getFPGATimestamp();
-    double dt = curTime - prevUpdateTime;
-    prevUpdateTime = curTime;
     if (mPeriodicIO.is_elevator_pos_control) {
-      // Update goal
-      mGoalState.position = mPeriodicIO.elevator_target;
 
-      // Calculate new state
-      prevUpdateTime = curTime;
-      mCurState = mProfile.calculate(dt, mCurState, mGoalState);
+      double pidCalc = mElevatorPIDController.calculate(getElevatorPosition(), mPeriodicIO.elevator_target);
+      double ffCalc = mElevatorFeedForward.calculate(mElevatorPIDController.getSetpoint().velocity);
 
-      // Set PID controller to new state
-      mLeftPIDController.setReference(
-          mCurState.position,
-          SparkBase.ControlType.kPosition,
-          ClosedLoopSlot.kSlot0,
-          Constants.Elevator.kG,
-          ArbFFUnits.kVoltage);
+      mPeriodicIO.elevator_power = pidCalc + ffCalc;
+
+      setSpeed(mPeriodicIO.elevator_power);
     } else {
-      mCurState.position = mLeftEncoder.getPosition();
-      mCurState.velocity = 0;
       setSpeed(mPeriodicIO.elevator_power);
     }
 
@@ -164,6 +155,10 @@ public class Elevator extends PARTsSubsystem {
 
     if (getTopLimit() && mLeftMotor.getAppliedOutput() > 0)
       stop();
+  }
+
+  public double getElevatorPosition() {
+    return mLeftEncoder.getPosition();
   }
 
   @Override
@@ -183,7 +178,7 @@ public class Elevator extends PARTsSubsystem {
   }
 
   public boolean getTopLimit() {
-    return mCurState.position >= Constants.Elevator.maxHeight;
+    return getElevatorPosition() >= Constants.Elevator.maxHeight;
   }
 
   public BooleanSupplier getLimitSwitchSupplier() {
@@ -201,13 +196,11 @@ public class Elevator extends PARTsSubsystem {
 
   @Override
   public void outputTelemetry() {
-    super.partsNT.setDouble("Position/Current", mLeftEncoder.getPosition());
-
+    super.partsNT.setDouble("Position/Current", getElevatorPosition());
     super.partsNT.setDouble("Position/Target", mPeriodicIO.elevator_target);
-    super.partsNT.setDouble("Velocity/Current", getRPS());
 
-    super.partsNT.setDouble("Position/Setpoint", mCurState.position);
-    super.partsNT.setDouble("Velocity/Setpoint", mCurState.velocity);
+    super.partsNT.setDouble("Velocity/Current", getRPS());
+    super.partsNT.setDouble("Velocity/Setpoint", mElevatorPIDController.getSetpoint().velocity);
 
     super.partsNT.setDouble("Current/Left", mLeftMotor.getOutputCurrent());
     super.partsNT.setDouble("Current/Right", mRightMotor.getOutputCurrent());
@@ -217,7 +210,8 @@ public class Elevator extends PARTsSubsystem {
 
     super.partsNT.setString("State", mPeriodicIO.state.toString());
 
-    super.partsNT.setBoolean("Limit Switch", getBottomLimit());
+    super.partsNT.setBoolean("Limit/Bottom", getBottomLimit());
+    super.partsNT.setBoolean("Limit/Top", getBottomLimit());
 
     super.partsNT.setDouble("RPS", getRPS());
 

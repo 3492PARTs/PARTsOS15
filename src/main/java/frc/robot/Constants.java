@@ -56,6 +56,9 @@ public final class Constants {
     public static final int kMaxVelocity = 5;
     public static final int kMaxAcceleration = 10;
     public static final int kG = 0;
+    public static final int kS = 0;
+    public static final int kV = 0;
+    public static final int kA = 0;
     public static final double maxSpeed = 0.3;
     public static final double maxHeight = 50.0;
     public static final double gearRatio = 16 / 1;
