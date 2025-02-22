@@ -65,26 +65,26 @@ public final class Constants {
     public static final int algaeIntakeId = 3;
     public static final int algaeWristId = 4;
     public static final double algaeIntakeSpeed = 0.2;
-    public static final double maxWristSpeed = .5;
+    public static final double maxWristSpeed = .5
     public static final int kMaxWristCurrent = 10;
 
-    public static final double kWristP = 0.01;
+    public static final double kWristP = 0.021296;
     public static final double kWristI = 0.0;
     public static final double kWristD = 0.0;
 
-    public static final double kWristKS = 0.0;
-    public static final double kWristKG = 0.0;
-    public static final double kWristKV = 0.100;
-    public static final double kWristKA = 0.0;
+    public static final double kWristKS = 0.25008;
+    public static final double kWristKG = 0.10667;
+    public static final double kWristKV = 0.0019276;
+    public static final double kWristKA = 0.00032922;
 
-    public static final double kWristOffset = 141.0;
+    public static final double kWristOffset = 0;//141.0;
 
     public static final double kWristMaxVelocity = 690.0;
     public static final double kWristMaxAcceleration = 1380.0;
 
-    public static final double kStowAngle = 233.0;
-    public static final double kDeAlgaeAngle = 215.0;
-    public static final double kGroundIntakeAngle = 162.0;
+    public static final double kStowAngle = 0;
+    public static final double kDeAlgaeAngle = 90.0;
+    public static final double kGroundIntakeAngle = 45.0;
 
     public static final int wristGearRatio = 64 / 1;
 

@@ -144,13 +144,11 @@ public class RobotContainer {
         elevator.setDefaultCommand(new RunCommand(() -> {
             double speed = -operatorController.getRightY() * Constants.Elevator.maxSpeed;
 
-            if (Math.abs(speed) < 0.1)
-                speed = 0;
-            elevator.setElevatorPower(speed);
-            
+            if (Math.abs(speed) > 0.1)
+                elevator.setElevatorPower(speed);
         }, elevator));
 
-        operatorController.a().onTrue(new RunCommand(() -> {
+        /*operatorController.a().onTrue(new RunCommand(() -> {
             elevator.goToElevatorStow();
         }, elevator));
 
@@ -200,6 +198,15 @@ public class RobotContainer {
         //operatorController.leftBumper().whileTrue(new AlgaeIntake(algae, operatorController));
         // operatorController.leftTrigger().whileTrue(getAutonomousCommand()));
         algae.setDefaultCommand(new AlgaeWrist(algae, operatorController));
+        operatorController.povDown().onTrue(new RunCommand(() -> {
+            algae.stow();
+        }, algae));
+        operatorController.povUp().onTrue(new RunCommand(() -> {
+            algae.grabAlgae();
+        }, algae));
+        operatorController.povRight().onTrue(new RunCommand(() -> {
+            algae.groundIntake();
+        }, algae));
 
         // =============================================================================================
         // ------------------------------------- SysID
@@ -216,7 +223,7 @@ public class RobotContainer {
          operatorController.y().and(operatorController.rightBumper())
          .whileTrue(elevator.sysIdDynamic(SysIdRoutine.Direction.kReverse));
         */
-        /* 
+         /* 
          operatorController.a().and(operatorController.rightBumper())
          .whileTrue(algae.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
          operatorController.b().and(operatorController.rightBumper())

@@ -16,7 +16,7 @@ public class AlgaeSysId extends Algae {
     // Mutable holder for unit-safe voltage values, persisted to avoid reallocation.
     private final MutVoltage m_appliedVoltage = Volts.mutable(0);
     // Mutable holder for unit-safe linear distance values, persisted to avoid reallocation.
-    private final MutAngle m_angle = Radians.mutable(0);
+    private final MutAngle m_angle = Rotations.mutable(0);
     // Mutable holder for unit-safe linear velocity values, persisted to avoid reallocation.
     private final MutAngularVelocity m_velocity = RotationsPerSecond.mutable(0);
     private SysIdRoutine routine;
