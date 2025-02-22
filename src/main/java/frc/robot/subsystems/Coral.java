@@ -10,14 +10,17 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
+import au.grapplerobotics.interfaces.LaserCanInterface.Measurement;
 
 import com.reduxrobotics.sensors.canandcolor.Canandcolor;
+import com.reduxrobotics.sensors.canandcolor.CanandcolorSettings;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Candle.Color;
@@ -40,8 +43,8 @@ public class Coral extends PARTsSubsystem {
   private SparkMax mLeftMotor;
   private SparkMax mRightMotor;
 
-  private LaserCan mLaserCAN;
-  //private Canandcolor canandcolor;
+  private LaserCan laserCAN;
+  private Canandcolor canandcolor;
 
   public Coral(Candle candle) {
     super("Coral");
@@ -65,13 +68,13 @@ public class Coral extends PARTsSubsystem {
         ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
 
-    //canandcolor = new Canandcolor(Constants.Coral.canAndColorId);
+    canandcolor = new Canandcolor(Constants.Coral.canAndColorId);
 
-    mLaserCAN = new LaserCan(Constants.Coral.laserCanId);
+    laserCAN = new LaserCan(Constants.Coral.laserCanId);
     try {
-      mLaserCAN.setRangingMode(LaserCan.RangingMode.SHORT);
-      mLaserCAN.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 16, 16));
-      mLaserCAN.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
+      laserCAN.setRangingMode(LaserCan.RangingMode.SHORT);
+      laserCAN.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 16, 16));
+      laserCAN.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
     } catch (ConfigurationFailedException e) {
       System.out.println("Configuration failed! " + e);
     }
@@ -83,8 +86,8 @@ public class Coral extends PARTsSubsystem {
 
     int index_debounce = 0;
 
-    LaserCan.Measurement measurement;
-    double canandcolorCoralMeasurement;
+    LaserCan.Measurement laserMeasurement = null;
+    double colorMeasurement;
 
     IntakeState state = IntakeState.NONE;
   }
@@ -93,8 +96,8 @@ public class Coral extends PARTsSubsystem {
 
   @Override
   public void periodic() {
-    mPeriodicIO.measurement = mLaserCAN.getMeasurement();
-    //mPeriodicIO.canandcolorCoralMeasurement = canandcolor.getProximity();
+    mPeriodicIO.laserMeasurement = laserCAN.getMeasurement();
+    mPeriodicIO.colorMeasurement = canandcolor.getProximity();
 
     checkAutoTasks();
     mLeftMotor.set(mPeriodicIO.rpm - mPeriodicIO.speed_diff);
@@ -112,16 +115,19 @@ public class Coral extends PARTsSubsystem {
   public void outputTelemetry() {
     super.partsNT.setDouble("RPM/target", mPeriodicIO.rpm);
 
-    LaserCan.Measurement measurement = mPeriodicIO.measurement;
-    if (measurement != null) {
-      super.partsNT.setDouble("Laser/distance", measurement.distance_mm);
-      super.partsNT.setDouble("Laser/ambient", measurement.ambient);
-      super.partsNT.setDouble("Laser/budget_ms", measurement.budget_ms);
-      super.partsNT.setDouble("Laser/status", measurement.status);
-
-      super.partsNT.setBoolean("Laser/hasCoral", isHoldingCoralViaLaserCAN());
-      //super.partsNT.setBoolean("Canandcolor/hasCoral", isHoldingCoralViaCAnandcolor());
+    if (mPeriodicIO.laserMeasurement != null) {
+      super.partsNT.setDouble("Laser/distance", mPeriodicIO.laserMeasurement.distance_mm);
+      super.partsNT.setDouble("Laser/ambient", mPeriodicIO.laserMeasurement.ambient);
+      super.partsNT.setDouble("Laser/budget_ms", mPeriodicIO.laserMeasurement.budget_ms);
+      super.partsNT.setDouble("Laser/status", mPeriodicIO.laserMeasurement.status);
     }
+
+    super.partsNT.setBoolean("Laser/hasCoral", isHoldingCoralViaLaserCAN());
+    
+
+    super.partsNT.setBoolean("Canandcolor/hasCoral", isHoldingCoralViaCAnandcolor());
+    super.partsNT.setDouble("Canandcolor/distance", mPeriodicIO.colorMeasurement);
+    super.partsNT.setBoolean("Canandcolor/Connection", canandcolor.isConnected());
   }
 
   @Override
@@ -132,11 +138,14 @@ public class Coral extends PARTsSubsystem {
   /*---------------------------------- Custom Public Functions ----------------------------------*/
 
   public boolean isHoldingCoralViaCAnandcolor() {
-    return true; //mPeriodicIO.canandcolorCoralMeasurement < 7.0;
+    return mPeriodicIO.colorMeasurement < 7.0;
   }
 
   public boolean isHoldingCoralViaLaserCAN() {
-    return mPeriodicIO.measurement.distance_mm < 75.0;
+    if (mPeriodicIO.laserMeasurement != null)
+      return mPeriodicIO.laserMeasurement.distance_mm < 7.0;
+    else
+      return false;
   }
 
   public void setSpeed(double rpm) {
@@ -144,44 +153,57 @@ public class Coral extends PARTsSubsystem {
     mPeriodicIO.rpm = rpm;
   }
 
-  public void intake() {
-    mPeriodicIO.speed_diff = 0.0;
-    mPeriodicIO.rpm = Constants.Coral.kIntakeSpeed;
-    mPeriodicIO.state = IntakeState.INTAKE;
+  public Command intake() {
+    return this.runOnce(() -> {
+      mPeriodicIO.speed_diff = 0.0;
+      mPeriodicIO.rpm = Constants.Coral.kIntakeSpeed;
+      mPeriodicIO.state = IntakeState.INTAKE;
 
-    mCandle.setColor(Color.BLUE);
+      mCandle.setColor(Color.BLUE);
+    });
   }
 
-  public void reverse() {
-    mPeriodicIO.speed_diff = 0.0;
-    mPeriodicIO.rpm = Constants.Coral.kReverseSpeed;
-    mPeriodicIO.state = IntakeState.REVERSE;
+  public Command reverse() {
+    return this.runOnce(() -> {
+      mPeriodicIO.speed_diff = 0.0;
+      mPeriodicIO.rpm = Constants.Coral.kReverseSpeed;
+      mPeriodicIO.state = IntakeState.REVERSE;
+    });
   }
 
-  public void index() {
-    mPeriodicIO.speed_diff = 0.0;
-    mPeriodicIO.rpm = Constants.Coral.kIndexSpeed;
-    mPeriodicIO.state = IntakeState.INDEX;
+  public Command index() {
+    return this.runOnce(() -> {
+      mPeriodicIO.speed_diff = 0.0;
+      mPeriodicIO.rpm = Constants.Coral.kIndexSpeed;
+      mPeriodicIO.state = IntakeState.INDEX;
 
-    mCandle.setColor(Color.GREEN);
+      mCandle.setColor(Color.GREEN);
+    });
   }
 
-  public void scoreL1() {
-    mPeriodicIO.speed_diff = Constants.Coral.kSpeedDifference;
-    mPeriodicIO.rpm = Constants.Coral.kL1Speed;
-    mPeriodicIO.state = IntakeState.SCORE;
+  public Command scoreL1() {
+    return this.runOnce(() -> {
+      mPeriodicIO.speed_diff = Constants.Coral.kSpeedDifference;
+      mPeriodicIO.rpm = Constants.Coral.kL1Speed;
+      mPeriodicIO.state = IntakeState.SCORE;
+    });
   }
 
-  public void scoreL24() {
-    mPeriodicIO.speed_diff = 0.0;
-    mPeriodicIO.rpm = Constants.Coral.kL24Speed;
-    mPeriodicIO.state = IntakeState.SCORE;
+  public Command scoreL24() {
+    return this.runOnce(() -> {
+      mPeriodicIO.speed_diff = 0.0;
+      mPeriodicIO.rpm = Constants.Coral.kL24Speed;
+      mPeriodicIO.state = IntakeState.SCORE;
+    });
   }
 
-  public void stopCoral() {
-    mPeriodicIO.rpm = 0.0;
-    mPeriodicIO.speed_diff = 0.0;
-    mPeriodicIO.state = IntakeState.NONE;
+  public Command stopCoral() {
+    return this.runOnce(() -> {
+      mPeriodicIO.rpm = 0.0;
+      mPeriodicIO.speed_diff = 0.0;
+      mPeriodicIO.state = IntakeState.NONE;
+    });
+
   }
 
   /*---------------------------------- Custom Private Functions ---------------------------------*/
@@ -214,6 +236,6 @@ public class Coral extends PARTsSubsystem {
   @Override
   public void log() {
     // TODO Auto-generated method stub
-    //throw new UnsupportedOperationException("Unimplemented method 'log'");
+    // throw new UnsupportedOperationException("Unimplemented method 'log'");
   }
 }

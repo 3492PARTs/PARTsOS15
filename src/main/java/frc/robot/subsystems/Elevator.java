@@ -18,6 +18,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
+import au.grapplerobotics.interfaces.LaserCanInterface.Measurement;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -148,7 +149,9 @@ public class Elevator extends PARTsSubsystem {
 
   @Override
   public void periodic() {
-    mPeriodicIO.elevator_measurement = upperLimitLaserCAN.getMeasurement().distance_mm;
+    Measurement m = upperLimitLaserCAN.getMeasurement();
+    if (m != null)
+      mPeriodicIO.elevator_measurement = m.distance_mm;
     // TODO: Use this pattern to only drive slowly when we're really high up
     // if(mPivotEncoder.getPosition() > Constants.kPivotScoreCount) {
     // mPeriodicIO.is_pivot_low = true;
@@ -163,7 +166,7 @@ public class Elevator extends PARTsSubsystem {
       mPeriodicIO.elevator_power = pidCalc + ffCalc;
 
       setVoltage(mPeriodicIO.elevator_power);
-    } else if (mPeriodicIO.elevator_power > 0)
+    } else if (Math.abs(mPeriodicIO.elevator_power) > 0)
       setSpeed(mPeriodicIO.elevator_power);
     else 
       setVoltage(mElevatorFeedForward.calculate(0));
@@ -238,6 +241,7 @@ public class Elevator extends PARTsSubsystem {
     super.partsNT.setDouble("RPS", getRPS());
     super.partsNT.setDouble("Power", mPeriodicIO.elevator_power);
     super.partsNT.setString("State", mPeriodicIO.state.toString());
+    super.partsNT.setBoolean("Is Position Control", mPeriodicIO.is_elevator_pos_control);
   }
 
   @Override
@@ -260,28 +264,36 @@ public class Elevator extends PARTsSubsystem {
     mPeriodicIO.elevator_power = power;
   }
 
-  public void goToElevatorStow() {
-    mPeriodicIO.is_elevator_pos_control = true;
-    mPeriodicIO.elevator_target = Constants.Elevator.StowHeight;
-    mPeriodicIO.state = ElevatorState.STOW;
+  public Command goToElevatorStow() {
+    return this.run(() -> {
+      mPeriodicIO.is_elevator_pos_control = true;
+      mPeriodicIO.elevator_target = Constants.Elevator.StowHeight;
+      mPeriodicIO.state = ElevatorState.STOW;
+    }).until(mElevatorPIDController::atGoal).unless(this::isPositionControl);    
   }
 
-  public void goToElevatorL2() {
-    mPeriodicIO.is_elevator_pos_control = true;
-    mPeriodicIO.elevator_target = Constants.Elevator.L2Height;
-    mPeriodicIO.state = ElevatorState.L2;
+  public Command goToElevatorL2() {
+    return this.run(() -> {
+      mPeriodicIO.is_elevator_pos_control = true;
+      mPeriodicIO.elevator_target = Constants.Elevator.L2Height;
+      mPeriodicIO.state = ElevatorState.L2;
+    }).until(mElevatorPIDController::atGoal).unless(this::isPositionControl);    
   }
 
-  public void goToElevatorL3() {
-    mPeriodicIO.is_elevator_pos_control = true;
+  public Command goToElevatorL3() {
+    return this.run(() -> {
+      mPeriodicIO.is_elevator_pos_control = true;
     mPeriodicIO.elevator_target = Constants.Elevator.L3Height;
     mPeriodicIO.state = ElevatorState.L3;
+    }).until(mElevatorPIDController::atGoal).unless(this::isPositionControl);    
   }
 
-  public void goToElevatorL4() {
-    mPeriodicIO.is_elevator_pos_control = true;
+  public Command goToElevatorL4() {
+    return this.run(() -> {
+      mPeriodicIO.is_elevator_pos_control = true;
     mPeriodicIO.elevator_target = Constants.Elevator.L4Height;
     mPeriodicIO.state = ElevatorState.L4;
+    }).until(mElevatorPIDController::atGoal).unless(this::isPositionControl);
   }
 
   public void goToAlgaeLow() {
@@ -294,6 +306,16 @@ public class Elevator extends PARTsSubsystem {
     mPeriodicIO.is_elevator_pos_control = true;
     mPeriodicIO.elevator_target = Constants.Elevator.HighAlgaeHeight;
     mPeriodicIO.state = ElevatorState.A2;
+  }
+
+  public Command interrupt() {
+    return this.runOnce(() -> {
+      mPeriodicIO.is_elevator_pos_control = false;
+    });
+  }
+
+  public boolean isPositionControl() {
+    return mPeriodicIO.is_elevator_pos_control;
   }
 
   @Override
