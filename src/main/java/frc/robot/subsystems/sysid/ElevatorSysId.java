@@ -35,30 +35,24 @@ public class ElevatorSysId extends Elevator {
         elevatorVelocity = InchesPerSecond.mutable(0);
 
         routine = new SysIdRoutine(
-            new SysIdRoutine.Config(),//ElevatorConstants.kSysIDConfig,
-            new SysIdRoutine.Mechanism(
-                super.mLeftMotor::setVoltage,
-                (log) -> {
-                    log.motor("elevatorMotor1")
-                        .voltage(appliedVoltage.mut_replace(
-                            super.mLeftMotor.getAppliedOutput() * mLeftMotor.getBusVoltage(), Volts
-                        ))
-                        .linearPosition(elevatorPosition.mut_replace(
-                            super.mLeftEncoder.getPosition(), Inches
-                        ))
-                        .linearVelocity(elevatorVelocity.mut_replace(
-                            super.getRPS(), InchesPerSecond
-                        ));
-                }, 
-                this
-            )
-        );
+                new SysIdRoutine.Config(), //ElevatorConstants.kSysIDConfig,
+                new SysIdRoutine.Mechanism(
+                        super.mLeftMotor::setVoltage,
+                        (log) -> {
+                            log.motor("elevatorMotor1")
+                                    .voltage(appliedVoltage.mut_replace(
+                                            super.mLeftMotor.getAppliedOutput() * mLeftMotor.getBusVoltage(), Volts))
+                                    .linearPosition(elevatorPosition.mut_replace(
+                                            super.mLeftEncoder.getPosition(), Inches))
+                                    .linearVelocity(elevatorVelocity.mut_replace(
+                                            super.getRPS(), InchesPerSecond));
+                        },
+                        this));
     }
 
     @Override
     public void periodic() {
         //dummy to stop super periodic from running
-        super.outputTelemetry();
     }
 
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {

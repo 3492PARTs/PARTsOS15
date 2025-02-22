@@ -34,6 +34,7 @@ import frc.robot.subsystems.Candle;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.sysid.AlgaeSysId;
 import frc.robot.subsystems.sysid.ElevatorSysId;
 import frc.robot.util.PARTsUnit;
 import frc.robot.util.PARTsUnit.PARTsUnitType;
@@ -59,23 +60,25 @@ public class RobotContainer {
 
     private final Telemetry telemetryLogger = new Telemetry(MaxSpeed);
 
+    /**Subsystems */
     private final Elevator elevator = new Elevator();
     //private final ElevatorSysId elevator = new ElevatorSysId();
-
-    public final Trigger zeroElevatorTrigger = new Trigger(elevator.getLimitSwitchSupplier());
 
     public final Candle candle = new Candle();
 
     private final Algae algae = new Algae();
+    //private final AlgaeSysId algae = new AlgaeSysId();
 
     private final Coral coral = new Coral(candle);
 
     private final ArrayList<PARTsSubsystem> subsystems = new ArrayList<>(Arrays.asList(candle, algae, coral, elevator));
+    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    /**End Subsystems */
 
     private final CommandXboxController driveController = new CommandXboxController(0);
     private final CommandXboxController operatorController = new CommandXboxController(1);
 
-    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    public final Trigger zeroElevatorTrigger = new Trigger(elevator.getLimitSwitchSupplier());
 
     /*
      * NetworkTableInstance inst = NetworkTableInstance.getDefault();
@@ -201,7 +204,8 @@ public class RobotContainer {
         // -------------------------------------------
         // ---------------------------------------------------------------------------------------------
 
-        /*  operatorController.a().and(operatorController.rightBumper())
+        /*  
+         operatorController.a().and(operatorController.rightBumper())
          .whileTrue(elevator.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
          operatorController.b().and(operatorController.rightBumper())
          .whileTrue(elevator.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
@@ -209,6 +213,16 @@ public class RobotContainer {
          .whileTrue(elevator.sysIdDynamic(SysIdRoutine.Direction.kForward));
          operatorController.y().and(operatorController.rightBumper())
          .whileTrue(elevator.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        */
+        /* 
+         operatorController.a().and(operatorController.rightBumper())
+         .whileTrue(algae.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+         operatorController.b().and(operatorController.rightBumper())
+         .whileTrue(algae.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+         operatorController.x().and(operatorController.rightBumper())
+         .whileTrue(algae.sysIdDynamic(SysIdRoutine.Direction.kForward));
+         operatorController.y().and(operatorController.rightBumper())
+         .whileTrue(algae.sysIdDynamic(SysIdRoutine.Direction.kReverse));
         */
     }
 

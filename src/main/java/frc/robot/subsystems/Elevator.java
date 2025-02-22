@@ -230,7 +230,7 @@ public class Elevator extends PARTsSubsystem {
   }
 
   public double getRPS() {
-    return mLeftEncoder.getVelocity() * 60 / 16; // 16 is the gear reduction
+    return mLeftEncoder.getVelocity() * 60 / Constants.Elevator.gearRatio; // 16 is the gear reduction
   }
 
   /*---------------------------------- Custom Public Functions ----------------------------------*/

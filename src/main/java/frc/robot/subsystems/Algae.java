@@ -33,13 +33,13 @@ public class Algae extends PARTsSubsystem {
     GROUND
   }
 
-  private SparkMax mWristMotor;
+  protected SparkMax mWristMotor;
   private final ProfiledPIDController mWristPIDController;
   private final ArmFeedforward mWristFeedForward;
 
   private SparkMax mIntakeMotor;
 
-  private final RelativeEncoder mWristAbsEncoder;
+  protected final RelativeEncoder mWristRelEncoder;
 
   public Algae() {
     super("Algae");
@@ -48,7 +48,7 @@ public class Algae extends PARTsSubsystem {
 
     // WRIST
     mWristMotor = new SparkMax(Constants.Algae.algaeWristId, MotorType.kBrushless);
-    mWristAbsEncoder = mWristMotor.getEncoder();
+    mWristRelEncoder = mWristMotor.getEncoder();
     SparkMaxConfig wristConfig = new SparkMaxConfig();
     wristConfig
         .idleMode(IdleMode.kCoast)
@@ -143,7 +143,7 @@ public class Algae extends PARTsSubsystem {
 
   @Override
   public void reset() {
-    mWristAbsEncoder.setPosition(0);
+    mWristRelEncoder.setPosition(0);
   }
 
   /*---------------------------------- Custom Public Functions ----------------------------------*/
@@ -186,7 +186,7 @@ public class Algae extends PARTsSubsystem {
 
   public PARTsUnit getWristAngle() {
 
-    return new PARTsUnit(-new PARTsUnit(mWristAbsEncoder.getPosition(), PARTsUnitType.Rotations).to(PARTsUnitType.Angle)
+    return new PARTsUnit(-new PARTsUnit(mWristRelEncoder.getPosition(), PARTsUnitType.Rotations).to(PARTsUnitType.Angle)
         / Constants.Algae.wristGearRatio, PARTsUnitType.Angle);
   }
 
@@ -204,6 +204,10 @@ public class Algae extends PARTsSubsystem {
 
   public void setIntakeSpeed(double speed) {
     mIntakeMotor.set(speed);
+  }
+
+  public double getRPS() {
+    return mWristRelEncoder.getVelocity() * 60 / Constants.Algae.wristGearRatio; // 16 is the gear reduction
   }
 
   @Override

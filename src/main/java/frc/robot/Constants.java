@@ -58,6 +58,7 @@ public final class Constants {
     public static final int kG = 0;
     public static final double maxSpeed = 0.3;
     public static final double maxHeight = 50.0;
+    public static final double gearRatio = 16 / 1;
   }
 
   public static class Algae {
