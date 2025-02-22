@@ -41,7 +41,7 @@ public final class Constants {
   public static class Elevator {
     public static final int leftElevatorId = 2;
     public static final int rightElevatorId = 1;
-    public static final int laserCanId = 2;
+    public static final int laserCanId = 32;
     public static final int StowHeight = 0;
     public static final double L2Height = 11.0;
     public static final double L3Height = 35.0;
@@ -110,7 +110,7 @@ public final class Constants {
     public static final double kReverseSpeed = 0.6;
     public static final double kL1Speed = 0.4;
     public static final double kL24Speed = 0.4;
-    public static final double kIndexSpeed = 0.1;
+    //public static final double kIndexSpeed = 0.1;
     public static final double kSpeedDifference = kL1Speed * 0.5;
   }
 

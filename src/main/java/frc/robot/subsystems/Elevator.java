@@ -62,7 +62,7 @@ public class Elevator extends PARTsSubsystem {
   private final ElevatorFeedforward mElevatorFeedForward;
 
   private DigitalInput lowerLimitSwitch;
-  //private LaserCan upperLimitLaserCAN;
+  private LaserCan upperLimitLaserCAN;
 
   public Elevator() {
     super("Elevator");
@@ -70,7 +70,7 @@ public class Elevator extends PARTsSubsystem {
     mPeriodicIO = new PeriodicIO();
 
     lowerLimitSwitch = new DigitalInput(Constants.Elevator.L_SWITCH_PORT);
-/* 
+
     upperLimitLaserCAN = new LaserCan(Constants.Elevator.laserCanId);
     try {
       upperLimitLaserCAN.setRangingMode(LaserCan.RangingMode.SHORT);
@@ -78,7 +78,7 @@ public class Elevator extends PARTsSubsystem {
       upperLimitLaserCAN.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
     } catch (ConfigurationFailedException e) {
       System.out.println("Configuration failed! " + e);
-    }*/
+    }
 
     SparkMaxConfig elevatorConfig = new SparkMaxConfig();
 
@@ -146,7 +146,7 @@ public class Elevator extends PARTsSubsystem {
 
   @Override
   public void periodic() {
-    //mPeriodicIO.elevator_measurement = upperLimitLaserCAN.getMeasurement().distance_mm;
+    mPeriodicIO.elevator_measurement = upperLimitLaserCAN.getMeasurement().distance_mm;
     // TODO: Use this pattern to only drive slowly when we're really high up
     // if(mPivotEncoder.getPosition() > Constants.kPivotScoreCount) {
     // mPeriodicIO.is_pivot_low = true;

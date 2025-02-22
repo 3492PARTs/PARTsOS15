@@ -190,7 +190,8 @@ public class RobotContainer {
         // -------------------------------------------
         // ---------------------------------------------------------------------------------------------
 
-        operatorController.rightTrigger().whileTrue(new CoralAction(coral, operatorController));
+        operatorController.rightTrigger().whileTrue(new CoralAction(coral, Constants.Coral.kIntakeSpeed));
+        operatorController.rightBumper().whileTrue(new CoralAction(coral, Constants.Coral.kReverseSpeed));
 
         // =============================================================================================
         // ------------------------------------- Algae Control
