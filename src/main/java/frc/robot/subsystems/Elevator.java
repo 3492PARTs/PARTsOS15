@@ -16,6 +16,8 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.AlternateEncoderConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import au.grapplerobotics.ConfigurationFailedException;
+import au.grapplerobotics.LaserCan;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -59,14 +61,24 @@ public class Elevator extends PARTsSubsystem {
   private final ProfiledPIDController mElevatorPIDController;
   private final ElevatorFeedforward mElevatorFeedForward;
 
-  private DigitalInput elevatorLimit;
+  private DigitalInput lowerLimitSwitch;
+  //private LaserCan upperLimitLaserCAN;
 
   public Elevator() {
     super("Elevator");
 
     mPeriodicIO = new PeriodicIO();
 
-    elevatorLimit = new DigitalInput(Constants.Elevator.L_SWITCH_PORT);
+    lowerLimitSwitch = new DigitalInput(Constants.Elevator.L_SWITCH_PORT);
+/* 
+    upperLimitLaserCAN = new LaserCan(Constants.Elevator.laserCanId);
+    try {
+      upperLimitLaserCAN.setRangingMode(LaserCan.RangingMode.SHORT);
+      upperLimitLaserCAN.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 16, 16));
+      upperLimitLaserCAN.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
+    } catch (ConfigurationFailedException e) {
+      System.out.println("Configuration failed! " + e);
+    }*/
 
     SparkMaxConfig elevatorConfig = new SparkMaxConfig();
 
@@ -106,6 +118,8 @@ public class Elevator extends PARTsSubsystem {
         Constants.Elevator.kG,
         Constants.Elevator.kV,
         Constants.Elevator.kA);
+
+
   }
 
   public enum ElevatorState {
@@ -121,6 +135,7 @@ public class Elevator extends PARTsSubsystem {
   private static class PeriodicIO {
     double elevator_target = 0.0;
     double elevator_power = 0.0;
+    double elevator_measurement = 0.0;
 
     boolean is_elevator_pos_control = false;
 
@@ -131,6 +146,7 @@ public class Elevator extends PARTsSubsystem {
 
   @Override
   public void periodic() {
+    //mPeriodicIO.elevator_measurement = upperLimitLaserCAN.getMeasurement().distance_mm;
     // TODO: Use this pattern to only drive slowly when we're really high up
     // if(mPivotEncoder.getPosition() > Constants.kPivotScoreCount) {
     // mPeriodicIO.is_pivot_low = true;
@@ -163,7 +179,7 @@ public class Elevator extends PARTsSubsystem {
   }
 
   public boolean getBottomLimit() {
-    if (!elevatorLimit.get()) {
+    if (!lowerLimitSwitch.get()) {
       return true;
     } else {
       return false;
@@ -199,15 +215,15 @@ public class Elevator extends PARTsSubsystem {
 
     super.partsNT.setDouble("Output/Left", mLeftMotor.getAppliedOutput());
     super.partsNT.setDouble("Output/Right", mRightMotor.getAppliedOutput());
-
-    super.partsNT.setString("State", mPeriodicIO.state.toString());
+    
 
     super.partsNT.setBoolean("Limit/Bottom", getBottomLimit());
     super.partsNT.setBoolean("Limit/Top", getTopLimit());
+    super.partsNT.setDouble("Limit/TopMeasurement", mPeriodicIO.elevator_measurement);
 
     super.partsNT.setDouble("RPS", getRPS());
-
     super.partsNT.setDouble("Power", mPeriodicIO.elevator_power);
+    super.partsNT.setString("State", mPeriodicIO.state.toString());
   }
 
   @Override
