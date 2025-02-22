@@ -158,21 +158,15 @@ public class RobotContainer {
             elevator.setElevatorPower(speed);
         }, elevator));
 
-        operatorController.a().onTrue(new RunCommand(() -> {
-            elevator.goToElevatorStow();
-        }, elevator));
+        operatorController.a().onTrue(elevator.goToElevatorStow());
 
-        operatorController.x().onTrue(new RunCommand(() -> {
-            elevator.goToElevatorL2();
-        }, elevator));
+        operatorController.x().onTrue(elevator.goToElevatorL2());
 
-        operatorController.y().onTrue(new RunCommand(() -> {
-            elevator.goToElevatorL3();
-        }, elevator));
+        operatorController.y().onTrue(elevator.goToElevatorL3());
 
-        operatorController.b().onTrue(new RunCommand(() -> {
-            elevator.goToElevatorL4();
-        }, elevator));
+        operatorController.b().onTrue(elevator.goToElevatorL4());
+
+        operatorController.leftBumper().onTrue(elevator.interrupt());
 
         /* 
           if (getWantsElevatorStow()) {
