@@ -22,7 +22,7 @@ import frc.robot.util.PARTsUnit;
 import frc.robot.util.PARTsUnit.PARTsUnitType;
 
 public class Algae extends PARTsSubsystem {
-  
+
   /*-------------------------------- Private instance variables ---------------------------------*/
   private PeriodicIO mPeriodicIO;
 
@@ -106,20 +106,19 @@ public class Algae extends PARTsSubsystem {
 
   @Override
   public void periodic() {
-    super.periodic();
     /* 
     double pidCalc = mWristPIDController.calculate(getWristAngle(), mPeriodicIO.wrist_target_angle);
     double ffCalc = mWristFeedForward.calculate(Math.toRadians(getWristReferenceToHorizontal()),
         Math.toRadians(mWristPIDController.getSetpoint().velocity));
-
+    
     mPeriodicIO.wrist_voltage = pidCalc + ffCalc;
     mWristMotor.set(mPeriodicIO.wrist_voltage);
     mIntakeMotor.set(mPeriodicIO.intake_power);
     */
 
-    outputTelemetry();
   }
 
+  @Override
   public void stop() {
     mPeriodicIO.wrist_voltage = 0.0;
     mPeriodicIO.wrist_target_angle = Constants.Algae.kStowAngle;
@@ -142,6 +141,7 @@ public class Algae extends PARTsSubsystem {
     super.partsNT.setDouble("Intake/Power", mPeriodicIO.intake_power);
   }
 
+  @Override
   public void reset() {
     mWristAbsEncoder.setPosition(0);
   }
@@ -185,8 +185,9 @@ public class Algae extends PARTsSubsystem {
   /*---------------------------------- Custom Private Functions ---------------------------------*/
 
   public PARTsUnit getWristAngle() {
-    
-    return new PARTsUnit(-new PARTsUnit(mWristAbsEncoder.getPosition(), PARTsUnitType.Rotations).to(PARTsUnitType.Angle)/Constants.Algae.wristGearRatio, PARTsUnitType.Angle);
+
+    return new PARTsUnit(-new PARTsUnit(mWristAbsEncoder.getPosition(), PARTsUnitType.Rotations).to(PARTsUnitType.Angle)
+        / Constants.Algae.wristGearRatio, PARTsUnitType.Angle);
   }
 
   public double getWristReferenceToHorizontal() {
@@ -197,13 +198,12 @@ public class Algae extends PARTsSubsystem {
     return mPeriodicIO.state;
   }
 
-  public void setWristSpeed( double speed) {
+  public void setWristSpeed(double speed) {
     mWristMotor.set(speed);
   }
 
-  public void setIntakeSpeed (double speed) {
+  public void setIntakeSpeed(double speed) {
     mIntakeMotor.set(speed);
   }
 
 }
-

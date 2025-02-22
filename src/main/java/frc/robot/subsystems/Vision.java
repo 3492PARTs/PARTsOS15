@@ -17,7 +17,7 @@ import frc.robot.util.PARTsUnit;
 import frc.robot.util.AprilTagData.AprilTagType;
 import frc.robot.util.PARTsUnit.PARTsUnitType;
 
-public class Vision extends SubsystemBase {
+public class Vision extends PARTsSubsystem {
 
   private final String LIMELIGHT_NAME;
   private final double LIMELIGHT_ANGLE;
@@ -38,7 +38,8 @@ public class Vision extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (!isTarget()) return;
+    if (!isTarget())
+      return;
   }
 
   /**
@@ -48,7 +49,7 @@ public class Vision extends SubsystemBase {
    * @deprecated Please do not use this to get distance. Zero will always be returned.
    */
   public PARTsUnit getDistance(double goalHeight) {
-    
+
     double angleToGoal = LimelightHelpers.getTY(LIMELIGHT_NAME);
     //System.out.println("Vision -> Angle to goal: " + angleToGoal);
 
@@ -60,7 +61,6 @@ public class Vision extends SubsystemBase {
     PARTsUnit unit = new PARTsUnit(0, PARTsUnitType.Inch);
     return unit.as(PARTsUnitType.Meter);
   }
-
 
   public Pose3d getPose3d() {
     return LimelightHelpers.getBotPose3d_TargetSpace(LIMELIGHT_NAME);
@@ -94,8 +94,8 @@ public class Vision extends SubsystemBase {
    * Does the vision camera have a valid target?
    * @return True if a valid target is found, otherwise false.
    */
-  public boolean isTarget(){
-     return LimelightHelpers.getTV(LIMELIGHT_NAME);
+  public boolean isTarget() {
+    return LimelightHelpers.getTV(LIMELIGHT_NAME);
   }
 
   /**
@@ -112,7 +112,8 @@ public class Vision extends SubsystemBase {
    * @param targetID The requested AprilTag ID.
    */
   public void setTargetID(int targetID) {
-    if (AprilTagData.getTargeTagType(targetID).equals(AprilTagType.NONE)) return;
+    if (AprilTagData.getTargeTagType(targetID).equals(AprilTagType.NONE))
+      return;
     LimelightHelpers.setPriorityTagID(LIMELIGHT_NAME, targetID);
   }
 
@@ -141,10 +142,10 @@ public class Vision extends SubsystemBase {
    */
   public Pose3d convertToKnownSpace(Pose3d pose) {
     return new Pose3d(
-      pose.getZ(),
-      -pose.getX(),
-      pose.getY(),
-      pose.getRotation() // TODO: Look into if this is an issue later.
+        pose.getZ(),
+        -pose.getX(),
+        pose.getY(),
+        pose.getRotation() // TODO: Look into if this is an issue later.
     );
   }
 
@@ -156,14 +157,31 @@ public class Vision extends SubsystemBase {
    */
   public Pose3d convertToKnownSpace(Pose3d pose, Rotation3d rotation) {
     return new Pose3d(
-      pose.getZ(),
-      -pose.getX(),
-      pose.getY(),
-      rotation 
-    );
+        pose.getZ(),
+        -pose.getX(),
+        pose.getY(),
+        rotation);
   }
 
   public Rotation2d flipRotation2d(Rotation2d rotation) {
     return new Rotation2d(-rotation.getRadians());
+  }
+
+  @Override
+  public void outputTelemetry() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'outputTelemetry'");
+  }
+
+  @Override
+  public void stop() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'stop'");
+  }
+
+  @Override
+  public void reset() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'reset'");
   }
 }

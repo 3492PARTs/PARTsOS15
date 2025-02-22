@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Candle.Color;
+
 public class Coral extends PARTsSubsystem {
 
   /*-------------------------------- Private instance variables ---------------------------------*/
@@ -92,7 +93,6 @@ public class Coral extends PARTsSubsystem {
 
   @Override
   public void periodic() {
-    super.periodic();
     mPeriodicIO.measurement = mLaserCAN.getMeasurement();
     //mPeriodicIO.canandcolorCoralMeasurement = canandcolor.getProximity();
 
@@ -101,12 +101,12 @@ public class Coral extends PARTsSubsystem {
     mRightMotor.set(-mPeriodicIO.rpm);
   }
 
+  @Override
   public void stop() {
     mPeriodicIO.rpm = 0.0;
     mPeriodicIO.speed_diff = 0.0;
     mPeriodicIO.state = IntakeState.NONE;
   }
-
 
   @Override
   public void outputTelemetry() {
@@ -124,6 +124,7 @@ public class Coral extends PARTsSubsystem {
     }
   }
 
+  @Override
   public void reset() {
     stopCoral();
   }

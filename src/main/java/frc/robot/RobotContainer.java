@@ -6,6 +6,11 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import org.opencv.core.Mat;
+
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
@@ -34,6 +39,7 @@ import frc.robot.util.PARTsUnit;
 import frc.robot.util.PARTsUnit.PARTsUnitType;
 import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.PARTsSubsystem;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -64,6 +70,8 @@ public class RobotContainer {
 
     private final Coral coral = new Coral(candle);
 
+    private final ArrayList<PARTsSubsystem> subsystems = new ArrayList<>(Arrays.asList(candle, algae, coral));
+
     private final CommandXboxController driveController = new CommandXboxController(0);
     private final CommandXboxController operatorController = new CommandXboxController(1);
 
@@ -91,10 +99,10 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
                 // Drivetrain will execute this command periodically
                 drivetrain.applyRequest(() -> drive.withVelocityX(-driveController.getLeftY() * MaxSpeed) // Drive
-                                                                                                          // forward
-                                                                                                          // with
-                                                                                                          // negative Y
-                                                                                                          // (forward)
+                        // forward
+                        // with
+                        // negative Y
+                        // (forward)
                         .withVelocityY(-driveController.getLeftX() * MaxSpeed) // Drive left with negative X (left)
                         .withRotationalRate(-driveController.getRightX() * MaxAngularRate) // Drive counterclockwise
                                                                                            // with negative X (left)
@@ -109,12 +117,12 @@ public class RobotContainer {
 
         // reset the field-centric heading on left bumper press
         driveController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-/* 
+        /* 
         driveController.leftTrigger().onTrue(new AlignCommand(
                 visionSubsystem,
                 drivetrain,
                 new Pose2d(-1, 0, new Rotation2d())));
-*/
+        */
         // logging
         drivetrain.registerTelemetry(logger::telemeterize);
 
@@ -130,9 +138,13 @@ public class RobotContainer {
         // -------------------------------------------
         // ---------------------------------------------------------------------------------------------
 
-        elevator.setDefaultCommand(new ElevatorJoystick(elevator, operatorController));
+        elevator.setDefaultCommand(new RunCommand(() -> {
+            double speed = -operatorController.getRightY() * Constants.Elevator.maxSpeed;
 
-        
+            if (Math.abs(speed) > 0.1)
+                elevator.setElevatorPower(speed);
+        }, elevator));
+
         operatorController.a().onTrue(new RunCommand(() -> {
             elevator.goToElevatorStow();
         }, elevator));
@@ -148,7 +160,6 @@ public class RobotContainer {
         operatorController.b().onTrue(new RunCommand(() -> {
             elevator.goToElevatorL4();
         }, elevator));
-        
 
         /* 
           if (getWantsElevatorStow()) {
@@ -165,7 +176,6 @@ public class RobotContainer {
           //m_algae.stow();
           }
           */
-         
 
         // zeros elevator encoders
         zeroElevatorTrigger.onTrue(new ZeroElevatorEncoderCmdSeq(elevator));
@@ -191,18 +201,26 @@ public class RobotContainer {
         // -------------------------------------------
         // ---------------------------------------------------------------------------------------------
 
-               /*  operatorController.a().and(operatorController.rightBumper())
-                .whileTrue(elevator.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-                operatorController.b().and(operatorController.rightBumper())
-                .whileTrue(elevator.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-                operatorController.x().and(operatorController.rightBumper())
-                .whileTrue(elevator.sysIdDynamic(SysIdRoutine.Direction.kForward));
-                operatorController.y().and(operatorController.rightBumper())
-                .whileTrue(elevator.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        /*  operatorController.a().and(operatorController.rightBumper())
+         .whileTrue(elevator.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+         operatorController.b().and(operatorController.rightBumper())
+         .whileTrue(elevator.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+         operatorController.x().and(operatorController.rightBumper())
+         .whileTrue(elevator.sysIdDynamic(SysIdRoutine.Direction.kForward));
+         operatorController.y().and(operatorController.rightBumper())
+         .whileTrue(elevator.sysIdDynamic(SysIdRoutine.Direction.kReverse));
         */
     }
 
     public Command getAutonomousCommand() {
         return Commands.print("No autonomous command configured");
+    }
+
+    public void outputTelemetry() {
+        subsystems.forEach(s -> s.outputTelemetry());
+    }
+
+    public void stop() {
+        subsystems.forEach(s -> s.stop());
     }
 }

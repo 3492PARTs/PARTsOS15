@@ -12,6 +12,7 @@ import frc.robot.subsystems.Elevator;
 public class ElevatorJoystick extends Command {
   private Elevator m_Elevator;
   private CommandXboxController m_Controller;
+
   /** Creates a new ElevatorJoystick. */
   public ElevatorJoystick(Elevator elevator, CommandXboxController controller) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -23,30 +24,29 @@ public class ElevatorJoystick extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double speed = -m_Controller.getRightY()  * .3; 
-    
-    if(Math.abs(speed) > 0.1) {
-      if (!m_Elevator.getLimitSwitch()) {
-        m_Elevator.setSpeed(speed);
+    double speed = -m_Controller.getRightY() * .3;
+
+    if (Math.abs(speed) > 0.1) {
+      if (!m_Elevator.getBottomLimit()) {
+        //m_Elevator.setSpeed(speed);
+      } else if (speed > 0) {
+        //m_Elevator.setSpeed(speed);
       }
-      else if (speed > 0) {
-        m_Elevator.setSpeed(speed);
-      }
-    }
-    else {
-      m_Elevator.setSpeed(0);
+    } else {
+      //m_Elevator.setSpeed(0);
     }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_Elevator.setSpeed(0);
+    //m_Elevator.setSpeed(0);
   }
 
   // Returns true when the command should end.

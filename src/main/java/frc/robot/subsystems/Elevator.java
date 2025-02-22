@@ -47,13 +47,13 @@ public class Elevator extends PARTsSubsystem {
   // private static final double kPivotCLRampRate = 0.5;
   // private static final double kCLRampRate = 0.5;
 
+  private SparkMax mRightMotor;
   protected SparkMax mLeftMotor;
+
   protected RelativeEncoder mLeftEncoder;
   private RelativeEncoder mRightEncoder;
 
   private SparkClosedLoopController mLeftPIDController;
-
-  private SparkMax mRightMotor;
 
   private DigitalInput elevatorLimit;
 
@@ -79,7 +79,6 @@ public class Elevator extends PARTsSubsystem {
 
     elevatorConfig.idleMode(IdleMode.kBrake);
     elevatorConfig.limitSwitch.reverseLimitSwitchEnabled(true);
-    //elevatorConfig.alternateEncoder.apply(new AlternateEncoderConfig().countsPerRevolution(8192));
 
     // LEFT ELEVATOR MOTOR
     mLeftMotor = new SparkMax(Constants.Elevator.leftElevatorId, MotorType.kBrushless);
@@ -128,7 +127,6 @@ public class Elevator extends PARTsSubsystem {
 
   @Override
   public void periodic() {
-    super.periodic();
     // TODO: Use this pattern to only drive slowly when we're really high up
     // if(mPivotEncoder.getPosition() > Constants.kPivotScoreCount) {
     // mPeriodicIO.is_pivot_low = true;
@@ -157,11 +155,18 @@ public class Elevator extends PARTsSubsystem {
     } else {
       mCurState.position = mLeftEncoder.getPosition();
       mCurState.velocity = 0;
-      mLeftMotor.set(mPeriodicIO.elevator_power);
+      setSpeed(mPeriodicIO.elevator_power);
     }
 
+    //TODO: Test safeguard for motor running down
+    if (getBottomLimit() && mLeftMotor.getAppliedOutput() < 0)
+      stop();
+
+    if (getTopLimit() && mLeftMotor.getAppliedOutput() > 0)
+      stop();
   }
 
+  @Override
   public void stop() {
     mPeriodicIO.is_elevator_pos_control = false;
     mPeriodicIO.elevator_power = 0.0;
@@ -169,28 +174,29 @@ public class Elevator extends PARTsSubsystem {
     mLeftMotor.set(0.0);
   }
 
-  public void zeroEncoders() {
-    mLeftEncoder.setPosition(0);
-    mRightEncoder.setPosition(0);
-  }
-
-  public boolean getLimitSwitch() {
+  public boolean getBottomLimit() {
     if (!elevatorLimit.get()) {
       return true;
-    } 
-    
-    else {
+    } else {
       return false;
     }
   }
 
-  public BooleanSupplier getLimitSwitchSupplier () {
-    return this::getLimitSwitch;
+  public boolean getTopLimit() {
+    return mCurState.position >= Constants.Elevator.maxHeight;
   }
 
-  public void setSpeed(double speed) {
-    mLeftMotor.set(speed);
-    mRightMotor.set(speed);
+  public BooleanSupplier getLimitSwitchSupplier() {
+    return this::getBottomLimit;
+  }
+
+  private void setSpeed(double speed) {
+    // Only allow to go up if limit pressed
+    if (!getBottomLimit()) {
+      mLeftMotor.set(speed);
+    } else if (speed > 0) {
+      mLeftMotor.set(speed);
+    }
   }
 
   @Override
@@ -211,12 +217,14 @@ public class Elevator extends PARTsSubsystem {
 
     super.partsNT.setString("State", mPeriodicIO.state.toString());
 
-    super.partsNT.setBoolean("Limit Switch", getLimitSwitch());
+    super.partsNT.setBoolean("Limit Switch", getBottomLimit());
 
     super.partsNT.setDouble("RPS", getRPS());
+
+    super.partsNT.setDouble("Power", mPeriodicIO.elevator_power);
   }
 
-//TODO: Remember to swap for absolute
+  @Override
   public void reset() {
     mLeftEncoder.setPosition(0.0);
   }
@@ -232,7 +240,6 @@ public class Elevator extends PARTsSubsystem {
   }
 
   public void setElevatorPower(double power) {
-    //putNumber("setElevatorPower", power);
     mPeriodicIO.is_elevator_pos_control = false;
     mPeriodicIO.elevator_power = power;
   }

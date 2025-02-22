@@ -23,7 +23,7 @@ import frc.robot.Constants;
 
 import edu.wpi.first.wpilibj2.command.Command;
 
-public class Candle extends SubsystemBase {
+public class Candle extends PARTsSubsystem {
     private static CANdle candle;
     private final int LED_LENGTH = Constants.LED.LED_LENGTH;
     private Animation animation = null;
@@ -157,5 +157,22 @@ public class Candle extends SubsystemBase {
             candle.animate(animation);
         }
     }
-}
 
+    @Override
+    public void outputTelemetry() {
+        // TODO Auto-generated method stub
+        //throw new UnsupportedOperationException("Unimplemented method 'outputTelemetry'");
+    }
+
+    @Override
+    public void stop() {
+        // TODO Auto-generated method stub
+        //throw new UnsupportedOperationException("Unimplemented method 'stop'");
+    }
+
+    @Override
+    public void reset() {
+        // TODO Auto-generated method stub
+        //throw new UnsupportedOperationException("Unimplemented method 'reset'");
+    }
+}
