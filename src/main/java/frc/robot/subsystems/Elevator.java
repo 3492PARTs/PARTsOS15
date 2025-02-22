@@ -280,5 +280,11 @@ public class Elevator extends PARTsSubsystem {
     mPeriodicIO.state = ElevatorState.A2;
   }
 
+  @Override
+  public void log() {
+    // TODO Auto-generated method stub
+    //throw new UnsupportedOperationException("Unimplemented method 'log'");
+  }
+
   /*---------------------------------- Custom Private Functions ---------------------------------*/
 }

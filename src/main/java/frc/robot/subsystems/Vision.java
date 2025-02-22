@@ -184,4 +184,10 @@ public class Vision extends PARTsSubsystem {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'reset'");
   }
+
+  @Override
+  public void log() {
+    // TODO Auto-generated method stub
+    //throw new UnsupportedOperationException("Unimplemented method 'log'");
+  }
 }

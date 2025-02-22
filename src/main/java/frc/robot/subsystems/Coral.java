@@ -210,4 +210,10 @@ public class Coral extends PARTsSubsystem {
         break;
     }
   }
+
+  @Override
+  public void log() {
+    // TODO Auto-generated method stub
+    //throw new UnsupportedOperationException("Unimplemented method 'log'");
+  }
 }

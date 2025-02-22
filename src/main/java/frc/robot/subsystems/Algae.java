@@ -206,4 +206,10 @@ public class Algae extends PARTsSubsystem {
     mIntakeMotor.set(speed);
   }
 
+  @Override
+  public void log() {
+    // TODO Auto-generated method stub
+    //throw new UnsupportedOperationException("Unimplemented method 'log'");
+  }
+
 }

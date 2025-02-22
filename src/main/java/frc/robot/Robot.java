@@ -22,9 +22,10 @@ public class Robot extends TimedRobot {
   private final RobotContainer m_robotContainer;
 
   public Robot() {
-    m_robotContainer = new RobotContainer();
+
     partsNT = new PARTsNT(this);
     partsLogger = new PARTsLogger();
+    m_robotContainer = new RobotContainer();
     // Set the scheduler to log Shuffleboard events for command initialize, interrupt, finish
     CommandScheduler.getInstance()
         .onCommandInitialize(

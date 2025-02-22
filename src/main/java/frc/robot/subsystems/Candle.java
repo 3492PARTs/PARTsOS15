@@ -175,4 +175,10 @@ public class Candle extends PARTsSubsystem {
         // TODO Auto-generated method stub
         //throw new UnsupportedOperationException("Unimplemented method 'reset'");
     }
+
+    @Override
+    public void log() {
+        // TODO Auto-generated method stub
+        //throw new UnsupportedOperationException("Unimplemented method 'log'");
+    }
 }

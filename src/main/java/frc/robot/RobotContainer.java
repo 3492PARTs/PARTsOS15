@@ -57,7 +57,7 @@ public class RobotContainer {
             new PARTsUnit(VisionConstants.LIMELIGHT_ANGLE, PARTsUnitType.Angle),
             new PARTsUnit(VisionConstants.LIMELIGHT_LENS_HEIGHT, PARTsUnitType.Inch));
 
-    private final Telemetry logger = new Telemetry(MaxSpeed);
+    private final Telemetry telemetryLogger = new Telemetry(MaxSpeed);
 
     private final Elevator elevator = new Elevator();
     //private final ElevatorSysId elevator = new ElevatorSysId();
@@ -70,7 +70,7 @@ public class RobotContainer {
 
     private final Coral coral = new Coral(candle);
 
-    private final ArrayList<PARTsSubsystem> subsystems = new ArrayList<>(Arrays.asList(candle, algae, coral));
+    private final ArrayList<PARTsSubsystem> subsystems = new ArrayList<>(Arrays.asList(candle, algae, coral, elevator));
 
     private final CommandXboxController driveController = new CommandXboxController(0);
     private final CommandXboxController operatorController = new CommandXboxController(1);
@@ -124,7 +124,7 @@ public class RobotContainer {
                 new Pose2d(-1, 0, new Rotation2d())));
         */
         // logging
-        drivetrain.registerTelemetry(logger::telemeterize);
+        drivetrain.registerTelemetry(telemetryLogger::telemeterize);
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
@@ -222,5 +222,9 @@ public class RobotContainer {
 
     public void stop() {
         subsystems.forEach(s -> s.stop());
+    }
+
+    public void log() {
+        subsystems.forEach(s -> s.log());
     }
 }

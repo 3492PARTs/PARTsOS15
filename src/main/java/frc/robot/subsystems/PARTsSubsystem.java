@@ -5,10 +5,12 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.util.PARTsLogger;
 import frc.robot.util.PARTsNT;
 
 public abstract class PARTsSubsystem extends SubsystemBase {
-  public PARTsNT partsNT;
+  protected PARTsNT partsNT;
+  protected PARTsLogger partsLogger;
 
   /**
    * Creates a new PARTsSubsystem.
@@ -16,6 +18,7 @@ public abstract class PARTsSubsystem extends SubsystemBase {
    */
   public PARTsSubsystem() {
     partsNT = new PARTsNT();
+    partsLogger = new PARTsLogger();
   }
 
   /**
@@ -24,6 +27,7 @@ public abstract class PARTsSubsystem extends SubsystemBase {
    */
   public PARTsSubsystem(Object o) {
     partsNT = new PARTsNT(o);
+    partsLogger = new PARTsLogger(o);
   }
 
   /**
@@ -32,6 +36,7 @@ public abstract class PARTsSubsystem extends SubsystemBase {
    */
   public PARTsSubsystem(String className) {
     partsNT = new PARTsNT(className);
+    partsLogger = new PARTsLogger(className);
   }
 
   public abstract void outputTelemetry();
@@ -39,5 +44,7 @@ public abstract class PARTsSubsystem extends SubsystemBase {
   public abstract void stop();
 
   public abstract void reset();
+
+  public abstract void log();
 
 }

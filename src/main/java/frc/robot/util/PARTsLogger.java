@@ -9,21 +9,35 @@ import frc.robot.Constants;
 
 public class PARTsLogger {
     private static DataLog log;
+    private String name = "";
 
     public PARTsLogger() {
+        instantiate();
+    }
+
+    public PARTsLogger(String name) {
+        instantiate();
+        this.name = name;
+    }
+
+    public PARTsLogger(Object o) {
+        name = o.getClass().getSimpleName();
+        instantiate();
+    }
+
+    private void instantiate() {
         if (Constants.Debug.logging) {
             // Starts recording to data log
             DataLogManager.start();
 
-            log = DataLogManager.getLog();
-            // Record both DS control and joystick data
-            //DriverStation.startDataLog(log);
+            if (log == null)
+                log = DataLogManager.getLog();
         }
     }
 
     public boolean logBoolean(String key, boolean b) {
         if (Constants.Debug.logging) {
-            new BooleanLogEntry(log, key).append(b);
+            new BooleanLogEntry(log, name.length() > 0 ? String.format("%s/%s", name, key) : key).append(b);
             return true;
         } else
             return false;
@@ -31,7 +45,7 @@ public class PARTsLogger {
 
     public boolean logDouble(String key, double d) {
         if (Constants.Debug.logging) {
-            new DoubleLogEntry(log, key).append(d);
+            new DoubleLogEntry(log, name.length() > 0 ? String.format("%s/%s", name, key) : key).append(d);
             return true;
         } else
             return false;
@@ -39,7 +53,7 @@ public class PARTsLogger {
 
     public boolean logString(String key, String s) {
         if (Constants.Debug.logging) {
-            new StringLogEntry(log, key).append(s);
+            new StringLogEntry(log, name.length() > 0 ? String.format("%s/%s", name, key) : key).append(s);
             return true;
         } else
             return false;
