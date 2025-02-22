@@ -138,8 +138,8 @@ public class Elevator extends PARTsSubsystem {
     // mPeriodicIO.is_pivot_low = false;
     // }
     if (mPeriodicIO.is_elevator_pos_control) {
-
-      double pidCalc = mElevatorPIDController.calculate(getElevatorPosition(), mPeriodicIO.elevator_target);
+      mElevatorPIDController.setGoal(mPeriodicIO.elevator_target);
+      double pidCalc = mElevatorPIDController.atGoal() ? 0 : mElevatorPIDController.calculate(getElevatorPosition(), mPeriodicIO.elevator_target);
       //double ffCalc = mElevatorFeedForward.calculate(mElevatorPIDController.getSetpoint().velocity);
 
       mPeriodicIO.elevator_power = pidCalc;// + ffCalc;
@@ -174,10 +174,6 @@ public class Elevator extends PARTsSubsystem {
     return getElevatorPosition() >= Constants.Elevator.maxHeight;
   }
 
-  public BooleanSupplier getLimitSwitchSupplier() {
-    return this::getBottomLimit;
-  }
-
   private void setSpeed(double speed) {
     // Full control in limits
     if (!getBottomLimit() && !getTopLimit()) 
@@ -193,6 +189,7 @@ public class Elevator extends PARTsSubsystem {
   public void outputTelemetry() {
     super.partsNT.setDouble("Position/Current", getElevatorPosition());
     super.partsNT.setDouble("Position/Target", mPeriodicIO.elevator_target);
+    super.partsNT.setBoolean("Position/At Goal", mElevatorPIDController.atGoal());
 
     super.partsNT.setDouble("Velocity/Current", getRPS());
     super.partsNT.setDouble("Velocity/Setpoint", mElevatorPIDController.getSetpoint().velocity);

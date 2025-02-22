@@ -78,7 +78,7 @@ public class RobotContainer {
     private final CommandXboxController driveController = new CommandXboxController(0);
     private final CommandXboxController operatorController = new CommandXboxController(1);
 
-    public final Trigger zeroElevatorTrigger = new Trigger(elevator.getLimitSwitchSupplier());
+    public final Trigger zeroElevatorTrigger = new Trigger(elevator::getBottomLimit);
 
     /*
      * NetworkTableInstance inst = NetworkTableInstance.getDefault();

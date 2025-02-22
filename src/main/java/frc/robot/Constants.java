@@ -48,13 +48,13 @@ public final class Constants {
     public static final double LowAlgaeHeight = 0;
     public static final double HighAlgaeHeight = 0;
     public static final int L_SWITCH_PORT = 0;
-    public static final double kP = 0.0038539;
+    public static final double kP = 0.06;
     public static final double kI = 0;
     public static final double kD = 0;
     public static final int kIZone = 0;
     public static final int kMaxCurrent = 40;
-    public static final int kMaxVelocity = 5;
-    public static final int kMaxAcceleration = 10;
+    public static final int kMaxVelocity = 30;
+    public static final int kMaxAcceleration = 100;
     public static final double kG = 0.3766;
     public static final double kS = 0.24105;
     public static final double kV = 0.020009;
