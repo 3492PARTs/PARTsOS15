@@ -41,13 +41,13 @@ public class ElevatorSysId extends Elevator {
                 (log) -> {
                     log.motor("elevatorMotor1")
                         .voltage(appliedVoltage.mut_replace(
-                            super.mLeftMotor.get() * RobotController.getBatteryVoltage(), Volts
+                            super.mLeftMotor.getAppliedOutput() * mLeftMotor.getBusVoltage(), Volts
                         ))
                         .linearPosition(elevatorPosition.mut_replace(
                             super.mLeftEncoder.getPosition(), Inches
                         ))
                         .linearVelocity(elevatorVelocity.mut_replace(
-                            super.mLeftEncoder.getVelocity(), InchesPerSecond
+                            super.getRPS(), InchesPerSecond
                         ));
                 }, 
                 this
@@ -58,6 +58,7 @@ public class ElevatorSysId extends Elevator {
     @Override
     public void periodic() {
         //dummy to stop super periodic from running
+        super.outputTelemetry();
     }
 
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {

@@ -45,19 +45,19 @@ public final class Constants {
     public static final int leftElevatorId = 2;
     public static final int rightElevatorId = 1;
     public static final int StowHeight = 0;
-    public static final int L2Height = 0;
-    public static final int L3Height = 0;
-    public static final int L4Height = 0;
-    public static final int LowAlgaeHeight = 0;
-    public static final int HighAlgaeHeight = 0;
+    public static final double L2Height = 24.0;
+    public static final double L3Height = 32.0;
+    public static final double L4Height = 48.0;
+    public static final double LowAlgaeHeight = 0;
+    public static final double HighAlgaeHeight = 0;
     public static final int L_SWITCH_PORT = 0;
-    public static final int kP = 0;
-    public static final int kI = 0;
-    public static final int kD = 0;
+    public static final double kP = 0.0038539;
+    public static final double kI = 0;
+    public static final double kD = 0;
     public static final int kIZone = 0;
-    public static final int kMaxCurrent = 0;
-    public static final int kMaxVelocity = 1;
-    public static final int kMaxAcceleration = 1;
+    public static final int kMaxCurrent = 40;
+    public static final int kMaxVelocity = 5;
+    public static final int kMaxAcceleration = 10;
     public static final int kG = 0;
 
   }

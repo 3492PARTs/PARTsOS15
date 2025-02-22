@@ -101,6 +101,8 @@ public class Elevator extends PARTsSubsystem {
         new TrapezoidProfile.Constraints(
             Constants.Elevator.kMaxVelocity,
             Constants.Elevator.kMaxAcceleration));
+
+    mLeftPIDController = mLeftMotor.getClosedLoopController();
   }
 
   public enum ElevatorState {
@@ -133,7 +135,7 @@ public class Elevator extends PARTsSubsystem {
     // } else {
     // mPeriodicIO.is_pivot_low = false;
     // }
-    /*
+
     double curTime = Timer.getFPGATimestamp();
     double dt = curTime - prevUpdateTime;
     prevUpdateTime = curTime;
@@ -156,7 +158,8 @@ public class Elevator extends PARTsSubsystem {
       mCurState.position = mLeftEncoder.getPosition();
       mCurState.velocity = 0;
       mLeftMotor.set(mPeriodicIO.elevator_power);
-    }*/
+    }
+
   }
 
   public void stop() {
@@ -190,16 +193,12 @@ public class Elevator extends PARTsSubsystem {
     mRightMotor.set(speed);
   }
 
-  public double getRPS() {
-    return mLeftEncoder.getVelocity() * 360 / 60;
-  }
-
   @Override
   public void outputTelemetry() {
     super.partsNT.setDouble("Position/Current", mLeftEncoder.getPosition());
 
     super.partsNT.setDouble("Position/Target", mPeriodicIO.elevator_target);
-    super.partsNT.setDouble("Velocity/Current", mLeftEncoder.getVelocity());
+    super.partsNT.setDouble("Velocity/Current", getRPS());
 
     super.partsNT.setDouble("Position/Setpoint", mCurState.position);
     super.partsNT.setDouble("Velocity/Setpoint", mCurState.velocity);
@@ -222,6 +221,9 @@ public class Elevator extends PARTsSubsystem {
     mLeftEncoder.setPosition(0.0);
   }
 
+  public double getRPS() {
+    return mLeftEncoder.getVelocity() * 60 / 16; // 16 is the gear reduction
+  }
 
   /*---------------------------------- Custom Public Functions ----------------------------------*/
 
