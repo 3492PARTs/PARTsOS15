@@ -173,7 +173,7 @@ public class Elevator extends PARTsSubsystem {
     }
     // Error controls
     else {
-      if (Math.abs(mPeriodicIO.elevator_power) > 0)
+      if (Math.abs(mPeriodicIO.elevator_power) > 0 && !mPeriodicIO.gantry_blocked)
         setSpeed(mPeriodicIO.elevator_power);
       else
         setVoltage(mElevatorFeedForward.calculate(0));
