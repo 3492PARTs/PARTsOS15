@@ -274,7 +274,7 @@ public class Elevator extends PARTsSubsystem {
       mPeriodicIO.is_elevator_pos_control = true;
       mPeriodicIO.elevator_target = Constants.Elevator.StowHeight;
       mPeriodicIO.state = ElevatorState.STOW;
-    }).until(mElevatorPIDController::atGoal).unless(this::isPositionControl);    
+    }).until(mElevatorPIDController::atGoal).unless(this::isNotPositionControl);    
   }
 
   public Command goToElevatorL2() {
@@ -282,7 +282,7 @@ public class Elevator extends PARTsSubsystem {
       mPeriodicIO.is_elevator_pos_control = true;
       mPeriodicIO.elevator_target = Constants.Elevator.L2Height;
       mPeriodicIO.state = ElevatorState.L2;
-    }).until(mElevatorPIDController::atGoal).unless(this::isPositionControl);    
+    }).until(mElevatorPIDController::atGoal).unless(this::isNotPositionControl);    
   }
 
   public Command goToElevatorL3() {
@@ -290,7 +290,7 @@ public class Elevator extends PARTsSubsystem {
       mPeriodicIO.is_elevator_pos_control = true;
     mPeriodicIO.elevator_target = Constants.Elevator.L3Height;
     mPeriodicIO.state = ElevatorState.L3;
-    }).until(mElevatorPIDController::atGoal).unless(this::isPositionControl);    
+    }).until(mElevatorPIDController::atGoal).unless(this::isNotPositionControl);    
   }
 
   public Command goToElevatorL4() {
@@ -298,7 +298,7 @@ public class Elevator extends PARTsSubsystem {
       mPeriodicIO.is_elevator_pos_control = true;
     mPeriodicIO.elevator_target = Constants.Elevator.L4Height;
     mPeriodicIO.state = ElevatorState.L4;
-    }).until(mElevatorPIDController::atGoal).unless(this::isPositionControl);
+    }).until(mElevatorPIDController::atGoal).unless(this::isNotPositionControl);
   }
 
   public void goToAlgaeLow() {
@@ -321,6 +321,10 @@ public class Elevator extends PARTsSubsystem {
 
   public boolean isPositionControl() {
     return mPeriodicIO.is_elevator_pos_control;
+  }
+
+  public boolean isNotPositionControl() {
+    return !mPeriodicIO.is_elevator_pos_control;
   }
 
   @Override

@@ -218,7 +218,7 @@ public class Coral extends PARTsSubsystem {
           scoreL1().schedule();
           break;
         default:
-        scoreL24().schedule();
+          scoreL24().schedule();
           break;
       }
     });
