@@ -81,8 +81,6 @@ public class RobotContainer {
     private final CommandXboxController driveController = new CommandXboxController(0);
     private final CommandXboxController operatorController = new CommandXboxController(1);
 
-    public final Trigger zeroElevatorTrigger = new Trigger(elevator::getBottomLimit);
-
     /*
      * NetworkTableInstance inst = NetworkTableInstance.getDefault();
      * StringTopic strTopic = inst.getStringTopic("/Elastic/CANColorValues");
@@ -192,9 +190,6 @@ public class RobotContainer {
           //m_algae.stow();
           }
           */
-
-        // zeros elevator encoders
-        zeroElevatorTrigger.onTrue(new ZeroElevatorEncoderCmdSeq(elevator));
 
         // =============================================================================================
         // ------------------------------------- Coral Controls
