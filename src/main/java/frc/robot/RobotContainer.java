@@ -69,7 +69,7 @@ public class RobotContainer {
     private final Algae algae = new Algae();
     //private final AlgaeSysId algae = new AlgaeSysId();
 
-    private final Coral coral = new Coral(candle);
+    private final Coral coral = new Coral(candle, elevator);
 
     private final ArrayList<PARTsSubsystem> subsystems = new ArrayList<>(Arrays.asList(candle, algae, coral, elevator));
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
@@ -166,7 +166,7 @@ public class RobotContainer {
 
         operatorController.b().onTrue(elevator.goToElevatorL4());
 
-        operatorController.leftBumper().onTrue(elevator.interrupt());
+        //operatorController.leftBumper().onTrue(elevator.interrupt());
 
         /* 
           if (getWantsElevatorStow()) {
@@ -193,8 +193,9 @@ public class RobotContainer {
         // ---------------------------------------------------------------------------------------------
 
         operatorController.rightTrigger().onTrue(coral.intake());
-        //operatorController.rightTrigger().whileTrue(new CoralAction(coral, Constants.Coral.kIntakeSpeed));
-        operatorController.rightBumper().whileTrue(new CoralAction(coral, Constants.Coral.kReverseSpeed));
+        operatorController.rightBumper().onTrue(coral.reverse());
+        operatorController.leftTrigger().onTrue(coral.stopCoral());
+        operatorController.leftBumper().onTrue(coral.score());
 
         // =============================================================================================
         // ------------------------------------- Algae Control

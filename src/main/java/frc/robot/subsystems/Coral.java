@@ -26,6 +26,7 @@ import frc.robot.Constants;
 import frc.robot.subsystems.Candle.Color;
 
 public class Coral extends PARTsSubsystem {
+  private Elevator elevator;
 
   /*-------------------------------- Private instance variables ---------------------------------*/
   private PeriodicIO mPeriodicIO;
@@ -46,9 +47,10 @@ public class Coral extends PARTsSubsystem {
   private LaserCan laserCAN;
   private Canandcolor canandcolor;
 
-  public Coral(Candle candle) {
+  public Coral(Candle candle, Elevator elevator) {
     super("Coral");
     this.mCandle = candle;
+    this.elevator = elevator;
 
     mPeriodicIO = new PeriodicIO();
 
@@ -209,6 +211,19 @@ public class Coral extends PARTsSubsystem {
 
   }
 
+  public Command score() {
+    return this.runOnce(() -> {
+      switch (elevator.getState()) {
+        case STOW:
+          scoreL1().schedule();
+          break;
+        default:
+        scoreL24().schedule();
+          break;
+      }
+    });
+  }
+
   /*---------------------------------- Custom Private Functions ---------------------------------*/
 
   private void checkAutoTasks() {
@@ -230,6 +245,10 @@ public class Coral extends PARTsSubsystem {
           mPeriodicIO.state = IntakeState.READY;
           mCandle.setColor(Color.PURPLE);
         }
+        break;
+      case SCORE:
+        if (!isHoldingCoralViaCAnandcolor()) 
+          stopCoral().schedule();
         break;
       default:
         break;

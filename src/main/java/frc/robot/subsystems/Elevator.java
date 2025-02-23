@@ -191,8 +191,8 @@ public class Elevator extends PARTsSubsystem {
   }
 
   public boolean getTopLimit() {
-    //return getElevatorPosition() >= Constants.Elevator.maxHeight;
-    return mPeriodicIO.elevator_measurement != null ? mPeriodicIO.elevator_measurement.distance_mm <= 40 : false;
+    return getElevatorPosition() >= Constants.Elevator.maxHeight;
+    //return mPeriodicIO.elevator_measurement != null ? mPeriodicIO.elevator_measurement.distance_mm <= 40 : false;
   }
 
   private void setSpeed(double speed) {
