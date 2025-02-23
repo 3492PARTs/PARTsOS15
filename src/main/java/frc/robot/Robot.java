@@ -5,15 +5,18 @@
 package frc.robot;
 
 import au.grapplerobotics.CanBridge;
+import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.EventImportance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.subsystems.Candle.CandleState;
+import frc.robot.util.PARTsDashboard;
 import frc.robot.util.PARTsLogger;
 import frc.robot.util.PARTsNT;
+import frc.robot.util.PARTsDashboard.DashboardState;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
@@ -24,12 +27,16 @@ public class Robot extends TimedRobot {
   private final RobotContainer m_robotContainer;
 
   public Robot() {
-    if (Constants.Debug.debug)
+    if (Constants.Debug.debug) {
       CanBridge.runTCP();
+    }
 
     partsNT = new PARTsNT(this);
     partsLogger = new PARTsLogger();
     m_robotContainer = new RobotContainer();
+
+    WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
+    /* 
     // Set the scheduler to log Shuffleboard events for command initialize, interrupt, finish
     CommandScheduler.getInstance()
         .onCommandInitialize(
@@ -55,6 +62,7 @@ public class Robot extends TimedRobot {
                   "Command finished", command.getName(), EventImportance.kNormal);
               //System.out.println("Command finished " + command.getName());
             });
+            */
   }
 
   @Override
@@ -80,6 +88,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+    if (!Constants.Debug.debug) {
+      PARTsDashboard.setDashboard(DashboardState.AUTONOMOUS);
+    }
     m_robotContainer.setIdleCandleState();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
@@ -98,6 +109,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    if (!Constants.Debug.debug) {
+      PARTsDashboard.setDashboard(DashboardState.TEHEOPERATED);
+    }
     m_robotContainer.setIdleCandleState();
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();

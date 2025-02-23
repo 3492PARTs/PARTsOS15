@@ -77,6 +77,8 @@ public class Candle extends PARTsSubsystem {
 
     /** Creates a new light. */
     public Candle() {
+        super("Candle");
+        mPeriodicIO = new PeriodicIO();
         candle = new CANdle(Constants.Candle.candleId, "rio");
 
         CANdleConfiguration configAll = new CANdleConfiguration();
