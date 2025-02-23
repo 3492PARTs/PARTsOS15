@@ -166,7 +166,8 @@ public class RobotContainer {
 
         operatorController.b().onTrue(elevator.goToElevatorL4());
 
-        operatorController.leftBumper().onTrue(elevator.interrupt());
+        //TODO: UNCOMMENT THIS LATEr I'M OUT OF BUTTONS
+        //operatorController.leftBumper().onTrue(elevator.interrupt());
 
         /* 
           if (getWantsElevatorStow()) {
@@ -204,10 +205,10 @@ public class RobotContainer {
         //operatorController.leftBumper().whileTrue(new AlgaeIntake(algae, operatorController));
         // operatorController.leftTrigger().whileTrue(getAutonomousCommand()));
         algae.setDefaultCommand(new AlgaeWrist(algae, operatorController));
-        operatorController.povDown().onTrue(new RunCommand(() -> {
+        operatorController.povUp().onTrue(new RunCommand(() -> {
             algae.stow();
         }, algae));
-        operatorController.povUp().onTrue(new RunCommand(() -> {
+        operatorController.povDown().onTrue(new RunCommand(() -> {
             algae.grabAlgae();
         }, algae));
         operatorController.povRight().onTrue(new RunCommand(() -> {
@@ -219,6 +220,11 @@ public class RobotContainer {
         operatorController.leftTrigger().onTrue(new RunCommand(() -> {
             algae.reset();
         }, algae));
+
+        operatorController.leftBumper().onTrue(new RunCommand(() -> {
+            algae.score();
+        }, algae));
+        
 
         // =============================================================================================
         // ------------------------------------- SysID

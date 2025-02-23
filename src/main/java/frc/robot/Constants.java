@@ -89,8 +89,8 @@ public final class Constants {
     public static final double kWristMaxAcceleration = 1380.0;
 
     public static final double kStowAngle = 0;
-    public static final double kDeAlgaeAngle = 90.0;
-    public static final double kGroundIntakeAngle = 80.0;
+    public static final double kDeAlgaeAngle = 150.0;
+    public static final double kGroundIntakeAngle = 145.0;
 
     public static final int wristGearRatio = 64 / 1;
 
@@ -98,7 +98,7 @@ public final class Constants {
     public static final int kMaxIntakeCurrent = 20;
 
     public static final double kIntakeSpeed = 0.6;
-    public static final double kEjectSpeed = -0.3;
+    public static final double kEjectSpeed = 0.3;
     public static final double kGroundIntakeSpeed = -0.3;
   }
 

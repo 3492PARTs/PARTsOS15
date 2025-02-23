@@ -175,11 +175,7 @@ public class Algae extends PARTsSubsystem {
   }
 
   public void score() {
-    if (mPeriodicIO.state == IntakeState.GROUND) {
-      mPeriodicIO.intake_power = -Constants.Algae.kEjectSpeed;
-    } else {
       mPeriodicIO.intake_power = Constants.Algae.kEjectSpeed;
-    }
   }
 
   public void groundIntake() {
