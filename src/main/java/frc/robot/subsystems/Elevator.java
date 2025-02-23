@@ -342,10 +342,10 @@ public class Elevator extends PARTsSubsystem {
 
   private void setSpeed(double speed) {
     // Full control in limits
-    if (!getBottomLimit() && !getTopLimit())
+    if (!getBottomLimit() && !getTopLimit() && !mPeriodicIO.gantry_blocked)
       setSpeedWithoutLimits(speed);
     // Directional control at limits
-    else if ((getBottomLimit() && speed > 0) || (getTopLimit() && speed < 0))
+    else if (((getBottomLimit() && speed > 0) || (getTopLimit() && speed < 0)) && !mPeriodicIO.gantry_blocked)
       setSpeedWithoutLimits(speed);
     else
       stop();
