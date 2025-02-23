@@ -134,40 +134,8 @@ public class Elevator extends PARTsSubsystem {
 
   @Override
   public void periodic() {
-    /* Error Conditions 
-     * Bottom and top limit hit at same time
-     * Laser can in use and the measurement is null or status is not good
-     * The bottom limit is hit for more than 10 loop runs and we are reporting a current position higher than the margin of error
-    */
-
-    mPeriodicIO.elevator_bottom_limit_error = (getBottomLimit()
-        && getElevatorPosition() > Constants.Elevator.bottomLimitPositionErrorMargin);
-    if (mPeriodicIO.elevator_bottom_limit_error)
-      mPeriodicIO.elevator_bottom_limit_debounce++;
-    else
-      mPeriodicIO.elevator_bottom_limit_debounce = 0;
-
-    if ((getBottomLimit() && getTopLimit()) ||
-        (mPeriodicIO.useLaserCan
-            && (mPeriodicIO.elevator_measurement == null || mPeriodicIO.elevator_measurement.status != 0))
-        || (mPeriodicIO.elevator_bottom_limit_error && mPeriodicIO.elevator_bottom_limit_debounce >= 10)) {
-      // If there wasn't an error report it.
-      if (!mPeriodicIO.error) {
-        mPeriodicIO.error = true;
-
-        setElevatorPower(0);
-        mPeriodicIO.state = ElevatorState.ERROR;
-        candle.addState(CandleState.ELEVATOR_ERROR);
-      }
-    } else {
-      // If there was an error remove it
-      if (mPeriodicIO.error) {
-        mPeriodicIO.error = false;
-        mPeriodicIO.state = ElevatorState.NONE;
-        candle.removeState(CandleState.ELEVATOR_ERROR);
-        zeroElevatorCommand().schedule();
-      }
-    }
+    //TODO: TEST
+    errorTasks();
 
     mPeriodicIO.elevator_measurement = upperLimitLaserCAN.getMeasurement();
 
@@ -400,5 +368,42 @@ public class Elevator extends PARTsSubsystem {
 
   private void resetEncoder() {
     mLeftEncoder.setPosition(0.0);
+  }
+
+  private void errorTasks() {
+    /* Error Conditions 
+     * Bottom and top limit hit at same time
+     * Laser can in use and the measurement is null or status is not good
+     * The bottom limit is hit for more than 10 loop runs and we are reporting a current position higher than the margin of error
+    */
+
+    mPeriodicIO.elevator_bottom_limit_error = (getBottomLimit()
+        && getElevatorPosition() > Constants.Elevator.bottomLimitPositionErrorMargin);
+    if (mPeriodicIO.elevator_bottom_limit_error)
+      mPeriodicIO.elevator_bottom_limit_debounce++;
+    else
+      mPeriodicIO.elevator_bottom_limit_debounce = 0;
+
+    if ((getBottomLimit() && getTopLimit()) ||
+        (mPeriodicIO.useLaserCan
+            && (mPeriodicIO.elevator_measurement == null || mPeriodicIO.elevator_measurement.status != 0))
+        || (mPeriodicIO.elevator_bottom_limit_error && mPeriodicIO.elevator_bottom_limit_debounce >= 10)) {
+      // If there wasn't an error report it.
+      if (!mPeriodicIO.error) {
+        mPeriodicIO.error = true;
+
+        setElevatorPower(0);
+        mPeriodicIO.state = ElevatorState.ERROR;
+        candle.addState(CandleState.ELEVATOR_ERROR);
+      }
+    } else {
+      // If there was an error remove it
+      if (mPeriodicIO.error) {
+        mPeriodicIO.error = false;
+        mPeriodicIO.state = ElevatorState.NONE;
+        candle.removeState(CandleState.ELEVATOR_ERROR);
+        zeroElevatorCommand().schedule();
+      }
+    }
   }
 }

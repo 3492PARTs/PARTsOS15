@@ -113,16 +113,16 @@ public class Candle extends PARTsSubsystem {
     }
 
     private void setState() {
-        if (mPeriodicIO.robotStates.contains(CandleState.ELEVATOR_ERROR))
-            runBlinkAnimation(Color.RED);
-        if (mPeriodicIO.robotStates.contains(CandleState.INTAKE_ERROR))
-            runBlinkAnimation(Color.ORANGE);
-        else if (mPeriodicIO.robotStates.contains(CandleState.FINE_GRAIN_DRIVE))
+        if (mPeriodicIO.robotStates.contains(CandleState.FINE_GRAIN_DRIVE))
             runFadeAnimation(Color.YELLOW);
         else if (mPeriodicIO.robotStates.contains(CandleState.CORAL_ENTERING))
             runFadeAnimation(Color.PURPLE);
         else if (mPeriodicIO.robotStates.contains(CandleState.HAS_CORAL))
             runFadeAnimation(Color.GREEN);
+        else if (mPeriodicIO.robotStates.contains(CandleState.ELEVATOR_ERROR))
+            runBlinkAnimation(Color.RED);
+        else if (mPeriodicIO.robotStates.contains(CandleState.INTAKE_ERROR))
+            runBlinkAnimation(Color.ORANGE);
         else if (mPeriodicIO.robotStates.contains(CandleState.IDLE))
             runFadeAnimation(Color.BLUE);
         else if (mPeriodicIO.robotStates.contains(CandleState.DISABLED))
