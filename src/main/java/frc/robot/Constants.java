@@ -73,9 +73,10 @@ public final class Constants {
     public static final double maxWristSpeed = .5;
     public static final int kMaxWristCurrent = 10;
 
-    public static final double kWristP = 0.03;
+    public static final double kWristP = 5.0;
     public static final double kWristI = 0.0;
     public static final double kWristD = 0.0;
+    public static final double kTolerance = 1.0;
 
     public static final double kWristKS = 0.25008;
     public static final double kWristKG = 0.10667;

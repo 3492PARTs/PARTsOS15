@@ -75,6 +75,8 @@ public class Algae extends PARTsSubsystem {
         Constants.Algae.kWristKG,
         Constants.Algae.kWristKV,
         Constants.Algae.kWristKA);
+
+    mWristPIDController.setTolerance(Constants.Algae.kTolerance);
     
 
     // INTAKE
@@ -108,15 +110,21 @@ public class Algae extends PARTsSubsystem {
   @Override
   public void periodic() {
     
-    
-    double pidCalc = mWristPIDController.calculate(getWristAngle().getValue(), mPeriodicIO.wrist_target_angle);
-    double ffCalc = mWristFeedForward.calculate(Math.toRadians(getWristReferenceToHorizontal()),
+    //mWristPIDController.setGoal(mPeriodicIO.wrist_target_angle);
+    double pidCalc =  mWristPIDController.calculate(Math.toRadians(getWristAngle().getValue()), Math.toRadians(mPeriodicIO.wrist_target_angle));
+
+    double ffCalc = mWristFeedForward.calculate(Math.toRadians(getWristAngle().getValue()),
        Math.toRadians(mWristPIDController.getSetpoint().velocity));
     
-    mPeriodicIO.wrist_voltage = pidCalc;
-    //+ ffCalc;
+    mPeriodicIO.wrist_voltage = pidCalc + ffCalc;
+
     mWristMotor.setVoltage(mPeriodicIO.wrist_voltage);
     mIntakeMotor.set(mPeriodicIO.intake_power);
+
+    
+     // mWristMotor.setVoltage(mWristFeedForward.calculate(Math.toRadians(getWristAngle().getValue()), 0));
+
+    
     
 
   }
