@@ -116,6 +116,9 @@ public class Elevator extends PARTsSubsystem {
   }
 
   private static class PeriodicIO {
+    double elevator_previous_position = 0.0;
+    int elevator_position_debounce = 0;
+
     double elevator_target = 0.0;
     double elevator_power = 0.0;
     LaserCan.Measurement elevator_measurement = null;
@@ -132,8 +135,10 @@ public class Elevator extends PARTsSubsystem {
   @Override
   public void periodic() {
     // top and bottom limit triggered at same time, this is impossible
-    if (!mPeriodicIO.error)
+    if (!mPeriodicIO.error) {
       mPeriodicIO.error = getBottomLimit() && getTopLimit();
+      setSpeed(0);
+    }
 
     mPeriodicIO.elevator_measurement = upperLimitLaserCAN.getMeasurement();
 
@@ -147,6 +152,19 @@ public class Elevator extends PARTsSubsystem {
         mPeriodicIO.elevator_power = pidCalc + ffCalc;
 
         setVoltage(mPeriodicIO.elevator_power);
+
+        mPeriodicIO.elevator_position_debounce++;
+
+        // Check to make sure we move, or trigger error
+        if (mPeriodicIO.elevator_position_debounce > 10) {
+          mPeriodicIO.elevator_position_debounce = 0;
+          if (getElevatorPosition() - mPeriodicIO.elevator_previous_position == 0) {
+            mPeriodicIO.error = true;
+            setSpeed(0);
+          }
+          mPeriodicIO.elevator_previous_position = getElevatorPosition();
+        }
+
       } else if (Math.abs(mPeriodicIO.elevator_power) > 0 && !mPeriodicIO.gantry_blocked)
         setSpeed(mPeriodicIO.elevator_power);
       else
@@ -155,9 +173,14 @@ public class Elevator extends PARTsSubsystem {
       //reset encoders, only do if lower than 30 to keep coral falls from triggering.
       if (getBottomLimit() && getElevatorPosition() <= 30)
         reset();
-    } else {
+    }
+    // Error controls
+    else {
       candle.addState(CandleState.ERROR);
-      setSpeed(mPeriodicIO.elevator_power);
+      if (Math.abs(mPeriodicIO.elevator_power) > 0)
+        setSpeed(mPeriodicIO.elevator_power);
+      else
+        setVoltage(mElevatorFeedForward.calculate(0));
     }
   }
 
