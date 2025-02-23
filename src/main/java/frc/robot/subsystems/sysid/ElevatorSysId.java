@@ -10,6 +10,7 @@ import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.subsystems.Candle;
 import frc.robot.subsystems.Elevator;
 import static edu.wpi.first.units.Units.Volts;
 import static edu.wpi.first.units.Units.Inches;
@@ -25,8 +26,8 @@ public class ElevatorSysId extends Elevator {
 
     private SysIdRoutine routine;
 
-    public ElevatorSysId() {
-        super();
+    public ElevatorSysId(Candle candle) {
+        super(candle);
 
         appliedVoltage = Volts.mutable(0);
 

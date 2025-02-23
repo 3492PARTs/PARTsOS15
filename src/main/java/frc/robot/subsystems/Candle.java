@@ -8,12 +8,20 @@
 
 package frc.robot.subsystems;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+
 import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.FireAnimation;
 import com.ctre.phoenix.led.RainbowAnimation;
 import com.ctre.phoenix.led.SingleFadeAnimation;
 import com.ctre.phoenix.led.StrobeAnimation;
+
+import au.grapplerobotics.LaserCan;
+
 import com.ctre.phoenix.led.CANdle.LEDStripType;
 import com.ctre.phoenix.led.CANdle.VBatOutputMode;
 import com.ctre.phoenix.led.CANdleConfiguration;
@@ -24,9 +32,12 @@ import frc.robot.Constants;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class Candle extends PARTsSubsystem {
+    //https://github.com/CrossTheRoadElec/Phoenix5-Examples/blob/master/Java%20General/CANdle%20MultiAnimation/src/main/java/frc/robot/subsystems/CANdleSystem.java
     private static CANdle candle;
     private final int LED_LENGTH = Constants.LED.LED_LENGTH;
     private Animation animation = null;
+
+    private PeriodicIO mPeriodicIO;
 
     public enum Color {
 
@@ -50,6 +61,20 @@ public class Candle extends PARTsSubsystem {
         }
     }
 
+    public enum CandleState {
+        IDLE,
+        DISABLED,
+        ERROR,
+        FINE_GRAIN_DRIVE,
+        CORAL_ENTERING,
+        HAS_CORAL
+    }
+
+    private static class PeriodicIO {
+        CandleState state = CandleState.DISABLED;
+        Set<CandleState> robotStates = new HashSet<>();
+    }
+
     /** Creates a new light. */
     public Candle() {
         candle = new CANdle(Constants.LED.LED_PORT, "rio");
@@ -67,54 +92,92 @@ public class Candle extends PARTsSubsystem {
         setColor(Color.OFF);
     }
 
-    public void setColor(Color color) {
+    public void addState(CandleState state) {
+        mPeriodicIO.robotStates.add(state);
+
+        setState();
+    }
+
+    public void removeState(CandleState state) {
+        mPeriodicIO.robotStates.remove(state);
+
+        setState();
+    }
+
+    public void disable() {
+        mPeriodicIO.robotStates.clear();
+        mPeriodicIO.robotStates.add(CandleState.DISABLED);
+
+        setState();
+    }
+
+    private void setState() {
+        if (mPeriodicIO.robotStates.contains(CandleState.ERROR))
+            runFadeAnimation(Color.RED);
+        else if (mPeriodicIO.robotStates.contains(CandleState.FINE_GRAIN_DRIVE))
+            runFadeAnimation(Color.YELLOW);
+        else if (mPeriodicIO.robotStates.contains(CandleState.CORAL_ENTERING))
+            runFadeAnimation(Color.PURPLE);
+        else if (mPeriodicIO.robotStates.contains(CandleState.HAS_CORAL))
+            runFadeAnimation(Color.GREEN);
+        else if (mPeriodicIO.robotStates.contains(CandleState.IDLE))
+            runFadeAnimation(Color.BLUE);
+        else if (mPeriodicIO.robotStates.contains(CandleState.DISABLED))
+            setColor(Color.BLUE);
+    }
+
+    private void setColor(Color color) {
         animation = null;
         candle.animate(animation);
         candle.setLEDs(color.r, color.g, color.b);
     }
 
-    public void setNoColor() {
+    private void setNoColor() {
         setColor(Color.OFF);
     }
 
-    public Command setColorGreenCommand() {
+    private Command setColorGreenCommand() {
         return runOnce(() -> setColor(Color.GREEN));
     }
 
-    public Command setNoColorCommand() {
+    private Command setNoColorCommand() {
         return runOnce(() -> setColor(Color.OFF));
     }
 
-    public FireAnimation getBurnyBurnAnimation() {
+    private FireAnimation getBurnyBurnAnimation() {
         return new FireAnimation(1, .5, LED_LENGTH, .5, .5);
     }
 
-    public RainbowAnimation getRainbowAnimation() {
+    private RainbowAnimation getRainbowAnimation() {
         return new RainbowAnimation();
     }
 
-    public StrobeAnimation getBlinkAnimation(Color color) {
+    private StrobeAnimation getBlinkAnimation(Color color) {
         return new StrobeAnimation(color.r, color.g, color.b);
     }
 
-    public SingleFadeAnimation getFadeAnimation(Color color) {
+    private SingleFadeAnimation getFadeAnimation(Color color) {
         return new SingleFadeAnimation(color.r, color.g, color.b);
     }
 
-    public void runBurnyBurnAnimation() {
-        animation = getBurnyBurnAnimation();
+    private void runBurnyBurnAnimation() {
+        setAnimation(getBurnyBurnAnimation());
     }
 
-    public void runRainbowAnimation() {
-        animation = getRainbowAnimation();
+    private void runRainbowAnimation() {
+        setAnimation(getRainbowAnimation());
     }
 
-    public void runBlinkAnimation(Color color) {
-        animation = getBlinkAnimation(color);
+    private void runBlinkAnimation(Color color) {
+        setAnimation(getBlinkAnimation(color));
     }
 
-    public void runFadeAnimation(Color color) {
-        animation = getFadeAnimation(color);
+    private void runFadeAnimation(Color color) {
+        setAnimation(getFadeAnimation(color));
+    }
+
+    private void setAnimation(Animation a) {
+        animation = a;
     }
 
     /* Wrappers so we can access the CANdle from the subsystem */

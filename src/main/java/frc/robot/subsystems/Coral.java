@@ -21,8 +21,11 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
+import frc.robot.subsystems.Candle.CandleState;
 import frc.robot.subsystems.Candle.Color;
 
 public class Coral extends PARTsSubsystem {
@@ -49,6 +52,7 @@ public class Coral extends PARTsSubsystem {
 
   public Coral(Candle candle, Elevator elevator) {
     super("Coral");
+
     this.mCandle = candle;
     this.elevator = elevator;
 
@@ -81,6 +85,12 @@ public class Coral extends PARTsSubsystem {
     } catch (ConfigurationFailedException e) {
       System.out.println("Configuration failed! " + e);
     }
+
+    new Trigger(this::isCoralInEntry).onTrue(Commands.runOnce(() -> candle.addState(CandleState.CORAL_ENTERING)));
+    new Trigger(() -> !isCoralInEntry()).onTrue(Commands.runOnce(() -> candle.removeState(CandleState.CORAL_ENTERING)));
+
+    new Trigger(this::isCoralInExit).onTrue(Commands.runOnce(() -> candle.addState(CandleState.HAS_CORAL)));
+    new Trigger(() -> !isCoralInExit()).onTrue(Commands.runOnce(() -> candle.removeState(CandleState.HAS_CORAL)));
   }
 
   private static class PeriodicIO {
@@ -101,6 +111,8 @@ public class Coral extends PARTsSubsystem {
   public void periodic() {
     mPeriodicIO.laserMeasurement = laserCAN.getMeasurement();
     mPeriodicIO.colorMeasurement = canandcolor.getProximity();
+
+    elevator.setGantryBlock(isCoralInEntry());
 
     checkAutoTasks();
     mLeftMotor.set(mPeriodicIO.rpm - mPeriodicIO.speed_diff);
@@ -125,10 +137,9 @@ public class Coral extends PARTsSubsystem {
       super.partsNT.setDouble("Laser/status", mPeriodicIO.laserMeasurement.status);
     }
 
-    super.partsNT.setBoolean("Laser/hasCoral", isHoldingCoralViaLaserCAN());
-    
+    super.partsNT.setBoolean("Laser/hasCoral", isCoralInEntry());
 
-    super.partsNT.setBoolean("Canandcolor/hasCoral", isHoldingCoralViaCAnandcolor());
+    super.partsNT.setBoolean("Canandcolor/hasCoral", isCoralInExit());
     super.partsNT.setDouble("Canandcolor/distance", mPeriodicIO.colorMeasurement);
     super.partsNT.setBoolean("Canandcolor/Connection", canandcolor.isConnected());
 
@@ -140,13 +151,18 @@ public class Coral extends PARTsSubsystem {
     stopCoral().schedule();
   }
 
+  @Override
+  public void log() {
+    // TODO Auto-generated method stub
+    // throw new UnsupportedOperationException("Unimplemented method 'log'");
+  }
   /*---------------------------------- Custom Public Functions ----------------------------------*/
 
-  public boolean isHoldingCoralViaCAnandcolor() {
+  public boolean isCoralInExit() {
     return mPeriodicIO.colorMeasurement <= 0.013;
   }
 
-  public boolean isHoldingCoralViaLaserCAN() {
+  public boolean isCoralInEntry() {
     if (mPeriodicIO.laserMeasurement != null)
       return mPeriodicIO.laserMeasurement.distance_mm <= 22;
     else
@@ -163,8 +179,6 @@ public class Coral extends PARTsSubsystem {
       mPeriodicIO.speed_diff = 0.0;
       mPeriodicIO.rpm = Constants.Coral.kIntakeSpeed;
       mPeriodicIO.state = IntakeState.INTAKE;
-
-      mCandle.setColor(Color.BLUE);
     });
   }
 
@@ -181,8 +195,6 @@ public class Coral extends PARTsSubsystem {
       mPeriodicIO.speed_diff = 0.0;
       mPeriodicIO.rpm = Constants.Coral.kIndexSpeed;
       mPeriodicIO.state = IntakeState.INDEX;
-
-      mCandle.setColor(Color.GREEN);
     });
   }
 
@@ -229,9 +241,10 @@ public class Coral extends PARTsSubsystem {
   private void checkAutoTasks() {
     switch (mPeriodicIO.state) {
       case INTAKE:
-        if (isHoldingCoralViaLaserCAN()) {
+        if (isCoralInEntry()) {
           mPeriodicIO.index_debounce++;
 
+          // Index for 10 loop run to get the coral in the right place
           if (mPeriodicIO.index_debounce > 10) {
             mPeriodicIO.index_debounce = 0;
             index().schedule();
@@ -239,25 +252,29 @@ public class Coral extends PARTsSubsystem {
         }
         break;
       case INDEX:
-        if (!isHoldingCoralViaLaserCAN()) {
+        // pulls in slowly till we pass th sensor, stop after
+        if (!isCoralInEntry()) {
           stopCoral().schedule();
 
           mPeriodicIO.state = IntakeState.READY;
-          mCandle.setColor(Color.PURPLE);
         }
         break;
       case SCORE:
-        if (!isHoldingCoralViaCAnandcolor()) 
-          stopCoral().schedule();
+        // stop after the coral leaves the bot
+        if (!isCoralInExit()) {
+          mPeriodicIO.index_debounce++;
+
+          // Let coral be gone for 10 loop runs then stow elevator
+          if (mPeriodicIO.index_debounce > 10) {
+            mPeriodicIO.index_debounce = 0;
+            stopCoral().schedule();
+            elevator.goToElevatorStow().schedule();
+          }
+        }
         break;
       default:
         break;
     }
   }
 
-  @Override
-  public void log() {
-    // TODO Auto-generated method stub
-    // throw new UnsupportedOperationException("Unimplemented method 'log'");
-  }
 }

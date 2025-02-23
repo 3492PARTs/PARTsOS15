@@ -34,6 +34,8 @@ import frc.robot.subsystems.Candle;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.Candle.CandleState;
+import frc.robot.subsystems.Candle.Color;
 import frc.robot.subsystems.sysid.AlgaeSysId;
 import frc.robot.subsystems.sysid.ElevatorSysId;
 import frc.robot.util.PARTsUnit;
@@ -43,6 +45,7 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.PARTsSubsystem;
 
 public class RobotContainer {
+    private boolean fineGrainDrive = false;
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second
                                                                                       // max angular velocity
@@ -61,10 +64,10 @@ public class RobotContainer {
     private final Telemetry telemetryLogger = new Telemetry(MaxSpeed);
 
     /**Subsystems */
-    private final Elevator elevator = new Elevator();
-    //private final ElevatorSysId elevator = new ElevatorSysId();
-
     public final Candle candle = new Candle();
+
+    private final Elevator elevator = new Elevator(candle);
+    //private final ElevatorSysId elevator = new ElevatorSysId();
 
     private final Algae algae = new Algae();
     //private final AlgaeSysId algae = new AlgaeSysId();
@@ -101,24 +104,25 @@ public class RobotContainer {
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
                 // Drivetrain will execute this command periodically
-                drivetrain.applyRequest(() -> drive.withVelocityX(-driveController.getLeftY() * MaxSpeed) // Drive
-                        // forward
-                        // with
-                        // negative Y
-                        // (forward)
-                        .withVelocityY(-driveController.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                        .withRotationalRate(-driveController.getRightX() * MaxAngularRate) // Drive counterclockwise
-                                                                                           // with negative X (left)
-                ));
-        
+                drivetrain.applyRequest(() -> {
+                    double limit = MaxSpeed;
+                    if (elevator.getElevatorPosition() > Constants.Elevator.L2Height)
+                        limit = 0.5;
+                    else if (fineGrainDrive)
+                        limit = 0.5;
+                    return drive.withVelocityX(-driveController.getLeftY() * limit) // Drive forward with negative Y (forward)
+                            .withVelocityY(-driveController.getLeftX() * limit) // Drive left with negative X (left)
+                            .withRotationalRate(-driveController.getRightX() * MaxAngularRate); // Drive counterclockwise with negative X (left)
+                }));
+
         // fine grain controls
-        /*
-        driveController.rightBumper().onTrue(new RunCommand(() -> {
-            if (MaxSpeed == TunerConstants.kSpeedAt12Volts.in(MetersPerSecond)) 
-                MaxSpeed = 0.5;
-            else 
-                MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
-        }));*/
+        driveController.rightBumper().onTrue(Commands.runOnce(() -> {
+            fineGrainDrive = !fineGrainDrive;
+            if (fineGrainDrive)
+                candle.addState(CandleState.FINE_GRAIN_DRIVE);
+            else
+                candle.removeState(CandleState.FINE_GRAIN_DRIVE);
+        }));
 
         // brakes swerve, puts modules into x configuration
         driveController.a().whileTrue(drivetrain.applyRequest(() -> brake));
@@ -149,14 +153,18 @@ public class RobotContainer {
         // ------------------------------------- Elevator
         // -------------------------------------------
         // ---------------------------------------------------------------------------------------------
-
+        /*
         elevator.setDefaultCommand(new RunCommand(() -> {
             double speed = -operatorController.getRightY() * Constants.Elevator.maxSpeed;
-
+        
             if (Math.abs(speed) < 0.1)
                 speed = 0;
             elevator.setElevatorPower(speed);
-        }, elevator));
+        }, elevator));*/
+
+        // While the joystick is moving control the elevator in manual, and when done stop
+        operatorController.axisMagnitudeGreaterThan(1, 0.1)
+                .onTrue(elevator.joystickElevatorControl(operatorController));
 
         operatorController.a().onTrue(elevator.goToElevatorStow());
 
@@ -224,7 +232,6 @@ public class RobotContainer {
         operatorController.leftBumper().whileTrue(new RunCommand(() -> {
             algae.score();
         }, algae));
-        
 
         // =============================================================================================
         // ------------------------------------- SysID
@@ -241,15 +248,15 @@ public class RobotContainer {
          operatorController.y().and(operatorController.rightBumper())
          .whileTrue(elevator.sysIdDynamic(SysIdRoutine.Direction.kReverse));
         */
-         /* 
-         operatorController.a().and(operatorController.rightBumper())
-         .whileTrue(algae.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-         operatorController.b().and(operatorController.rightBumper())
-         .whileTrue(algae.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-         operatorController.x().and(operatorController.rightBumper())
-         .whileTrue(algae.sysIdDynamic(SysIdRoutine.Direction.kForward));
-         operatorController.y().and(operatorController.rightBumper())
-         .whileTrue(algae.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        /* 
+        operatorController.a().and(operatorController.rightBumper())
+        .whileTrue(algae.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        operatorController.b().and(operatorController.rightBumper())
+        .whileTrue(algae.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        operatorController.x().and(operatorController.rightBumper())
+        .whileTrue(algae.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        operatorController.y().and(operatorController.rightBumper())
+        .whileTrue(algae.sysIdDynamic(SysIdRoutine.Direction.kReverse));
         */
     }
 
@@ -267,5 +274,13 @@ public class RobotContainer {
 
     public void log() {
         subsystems.forEach(s -> s.log());
+    }
+
+    public void setCandleDisabledState() {
+        candle.disable();
+    }
+
+    public void setIdleCandleState() {
+        candle.addState(CandleState.IDLE);
     }
 }

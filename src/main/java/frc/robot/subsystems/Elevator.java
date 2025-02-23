@@ -1,54 +1,30 @@
 package frc.robot.subsystems;
 
-import java.util.function.BooleanSupplier;
-
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.ClosedLoopSlot;
-import com.revrobotics.spark.SparkAbsoluteEncoder;
-import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkClosedLoopController.ArbFFUnits;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.AlternateEncoderConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
-import au.grapplerobotics.interfaces.LaserCanInterface.Measurement;
-import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.units.MutableMeasure;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.MutAngle;
-import edu.wpi.first.units.measure.MutAngularVelocity;
-import edu.wpi.first.units.measure.MutDistance;
-import edu.wpi.first.units.measure.MutLinearVelocity;
-import edu.wpi.first.units.measure.MutVoltage;
-import edu.wpi.first.units.measure.Velocity;
-import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants;
-import static edu.wpi.first.units.Units.Rotations;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.Volts;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.Rotation;
+import frc.robot.subsystems.Candle.CandleState;
+import frc.robot.subsystems.Candle.Color;
 
 public class Elevator extends PARTsSubsystem {
 
   /*-------------------------------- Private instance variables ---------------------------------*/
   private PeriodicIO mPeriodicIO;
+  private Candle candle;
 
   // private static final double kPivotCLRampRate = 0.5;
   // private static final double kCLRampRate = 0.5;
@@ -65,9 +41,10 @@ public class Elevator extends PARTsSubsystem {
   private DigitalInput lowerLimitSwitch;
   private LaserCan upperLimitLaserCAN;
 
-  public Elevator() {
+  public Elevator(Candle candle) {
     super("Elevator");
 
+    this.candle = candle;
     mPeriodicIO = new PeriodicIO();
 
     lowerLimitSwitch = new DigitalInput(Constants.Elevator.L_SWITCH_PORT);
@@ -122,17 +99,22 @@ public class Elevator extends PARTsSubsystem {
         Constants.Elevator.kV,
         Constants.Elevator.kA);
 
-
   }
 
   public enum ElevatorState {
-    NONE,
-    STOW,
-    L2,
-    L3,
-    L4,
-    A1,
-    A2
+    NONE(0),
+    STOW(0),
+    L2(Constants.Elevator.L2Height),
+    L3(Constants.Elevator.L3Height),
+    L4(Constants.Elevator.L4Height),
+    A1(Constants.Elevator.LowAlgaeHeight),
+    A2(Constants.Elevator.HighAlgaeHeight);
+
+    double height;
+
+    ElevatorState(double i) {
+      height = i;
+    }
   }
 
   private static class PeriodicIO {
@@ -141,6 +123,8 @@ public class Elevator extends PARTsSubsystem {
     LaserCan.Measurement elevator_measurement = null;
 
     boolean is_elevator_pos_control = false;
+    boolean error = false;
+    boolean gantry_blocked = false;
 
     ElevatorState state = ElevatorState.STOW;
   }
@@ -149,25 +133,30 @@ public class Elevator extends PARTsSubsystem {
 
   @Override
   public void periodic() {
+    // top and bottom limit triggered at same time, this is impossible
+    if (!mPeriodicIO.error)
+      mPeriodicIO.error = getBottomLimit() && getTopLimit();
+
     mPeriodicIO.elevator_measurement = upperLimitLaserCAN.getMeasurement();
-    // TODO: Use this pattern to only drive slowly when we're really high up
-    // if(mPivotEncoder.getPosition() > Constants.kPivotScoreCount) {
-    // mPeriodicIO.is_pivot_low = true;
-    // } else {
-    // mPeriodicIO.is_pivot_low = false;
-    // }
-    if (mPeriodicIO.is_elevator_pos_control) {
-      mElevatorPIDController.setGoal(mPeriodicIO.elevator_target);
-      double pidCalc = mElevatorPIDController.atGoal() ? 0 : mElevatorPIDController.calculate(getElevatorPosition(), mPeriodicIO.elevator_target);
-      double ffCalc = mElevatorFeedForward.calculate(mElevatorPIDController.getSetpoint().velocity);
 
-      mPeriodicIO.elevator_power = pidCalc + ffCalc;
+    if (!mPeriodicIO.error) {
+      if (mPeriodicIO.is_elevator_pos_control && !mPeriodicIO.gantry_blocked) {
+        mElevatorPIDController.setGoal(mPeriodicIO.elevator_target);
+        double pidCalc = mElevatorPIDController.atGoal() ? 0
+            : mElevatorPIDController.calculate(getElevatorPosition(), mPeriodicIO.elevator_target);
+        double ffCalc = mElevatorFeedForward.calculate(mElevatorPIDController.getSetpoint().velocity);
 
-      setVoltage(mPeriodicIO.elevator_power);
-    } else if (Math.abs(mPeriodicIO.elevator_power) > 0)
+        mPeriodicIO.elevator_power = pidCalc + ffCalc;
+
+        setVoltage(mPeriodicIO.elevator_power);
+      } else if (Math.abs(mPeriodicIO.elevator_power) > 0 && !mPeriodicIO.gantry_blocked)
+        setSpeed(mPeriodicIO.elevator_power);
+      else
+        setVoltage(mElevatorFeedForward.calculate(0));
+    } else {
+      candle.addState(CandleState.ERROR);
       setSpeed(mPeriodicIO.elevator_power);
-    else 
-      setVoltage(mElevatorFeedForward.calculate(0));
+    }
   }
 
   public double getElevatorPosition() {
@@ -180,41 +169,6 @@ public class Elevator extends PARTsSubsystem {
     mPeriodicIO.elevator_power = 0.0;
 
     mLeftMotor.set(0.0);
-  }
-
-  public boolean getBottomLimit() {
-    if (!lowerLimitSwitch.get()) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  public boolean getTopLimit() {
-    return getElevatorPosition() >= Constants.Elevator.maxHeight;
-    //return mPeriodicIO.elevator_measurement != null ? mPeriodicIO.elevator_measurement.distance_mm <= 40 : false;
-  }
-
-  private void setSpeed(double speed) {
-    // Full control in limits
-    if (!getBottomLimit() && !getTopLimit()) 
-      mLeftMotor.set(speed);
-    // Directional control at limits
-    else if ((getBottomLimit() && speed > 0) || (getTopLimit() && speed < 0)) 
-      mLeftMotor.set(speed);
-    else
-      stop();
-  }
-
-  private void setVoltage(double voltage) {
-    // Full control in limits
-    if (!getBottomLimit() && !getTopLimit()) 
-      mLeftMotor.setVoltage(voltage);
-    // Directional control at limits
-    else if ((getBottomLimit() && voltage > 0) || (getTopLimit() && voltage < 0)) 
-      mLeftMotor.setVoltage(voltage);
-    else
-      stop();
   }
 
   @Override
@@ -231,7 +185,6 @@ public class Elevator extends PARTsSubsystem {
 
     super.partsNT.setDouble("Output/Left", mLeftMotor.getAppliedOutput());
     super.partsNT.setDouble("Output/Right", mRightMotor.getAppliedOutput());
-    
 
     super.partsNT.setBoolean("Limit/Bottom", getBottomLimit());
     super.partsNT.setBoolean("Limit/Top", getTopLimit());
@@ -254,11 +207,20 @@ public class Elevator extends PARTsSubsystem {
     mLeftEncoder.setPosition(0.0);
   }
 
-  public double getRPS() {
-    return mLeftEncoder.getVelocity() * 60 / Constants.Elevator.gearRatio; // 16 is the gear reduction
+  @Override
+  public void log() {
+    // TODO Auto-generated method stub
+    //throw new UnsupportedOperationException("Unimplemented method 'log'");
   }
 
   /*---------------------------------- Custom Public Functions ----------------------------------*/
+  public void setGantryBlock(boolean b) {
+    mPeriodicIO.gantry_blocked = b;
+  }
+
+  public double getRPS() {
+    return mLeftEncoder.getVelocity() * 60 / Constants.Elevator.gearRatio; // 16 is the gear reduction
+  }
 
   public ElevatorState getState() {
     return mPeriodicIO.state;
@@ -269,55 +231,67 @@ public class Elevator extends PARTsSubsystem {
     mPeriodicIO.elevator_power = power;
   }
 
-  public Command goToElevatorStow() {
+  public Command joystickElevatorControl(CommandXboxController controller) {
     return this.run(() -> {
+      double speed = -controller.getRightY() * Constants.Elevator.maxSpeed;
+      setElevatorPower(speed);
+    }).until(() -> Math.abs(controller.getRightY()) < 0.1).andThen(() -> setElevatorPower(0));
+  }
+
+  public Command goToElevatorStow() {
+    return this.runOnce(() -> {
       mPeriodicIO.is_elevator_pos_control = true;
       mPeriodicIO.elevator_target = Constants.Elevator.StowHeight;
       mPeriodicIO.state = ElevatorState.STOW;
-    }).until(mElevatorPIDController::atGoal).unless(this::isNotPositionControl);    
+    });
   }
 
   public Command goToElevatorL2() {
-    return this.run(() -> {
+    return this.runOnce(() -> {
       mPeriodicIO.is_elevator_pos_control = true;
       mPeriodicIO.elevator_target = Constants.Elevator.L2Height;
       mPeriodicIO.state = ElevatorState.L2;
-    }).until(mElevatorPIDController::atGoal).unless(this::isNotPositionControl);    
+    });
   }
 
   public Command goToElevatorL3() {
-    return this.run(() -> {
+    return this.runOnce(() -> {
       mPeriodicIO.is_elevator_pos_control = true;
-    mPeriodicIO.elevator_target = Constants.Elevator.L3Height;
-    mPeriodicIO.state = ElevatorState.L3;
-    }).until(mElevatorPIDController::atGoal).unless(this::isNotPositionControl);    
+      mPeriodicIO.elevator_target = Constants.Elevator.L3Height;
+      mPeriodicIO.state = ElevatorState.L3;
+    });
   }
 
   public Command goToElevatorL4() {
-    return this.run(() -> {
+    return this.runOnce(() -> {
       mPeriodicIO.is_elevator_pos_control = true;
-    mPeriodicIO.elevator_target = Constants.Elevator.L4Height;
-    mPeriodicIO.state = ElevatorState.L4;
-    }).until(mElevatorPIDController::atGoal).unless(this::isNotPositionControl);
+      mPeriodicIO.elevator_target = Constants.Elevator.L4Height;
+      mPeriodicIO.state = ElevatorState.L4;
+    });
   }
 
-  public void goToAlgaeLow() {
-    mPeriodicIO.is_elevator_pos_control = true;
-    mPeriodicIO.elevator_target = Constants.Elevator.LowAlgaeHeight;
-    mPeriodicIO.state = ElevatorState.A1;
+  public Command goToAlgaeLow() {
+    return this.runOnce(() -> {
+      mPeriodicIO.is_elevator_pos_control = true;
+      mPeriodicIO.elevator_target = Constants.Elevator.LowAlgaeHeight;
+      mPeriodicIO.state = ElevatorState.A1;
+    });
   }
 
-  public void goToAlgaeHigh() {
-    mPeriodicIO.is_elevator_pos_control = true;
-    mPeriodicIO.elevator_target = Constants.Elevator.HighAlgaeHeight;
-    mPeriodicIO.state = ElevatorState.A2;
+  public Command goToAlgaeHigh() {
+    return this.runOnce(() -> {
+      mPeriodicIO.is_elevator_pos_control = true;
+      mPeriodicIO.elevator_target = Constants.Elevator.HighAlgaeHeight;
+      mPeriodicIO.state = ElevatorState.A2;
+    });
   }
 
+  /*
   public Command interrupt() {
     return this.runOnce(() -> {
       mPeriodicIO.is_elevator_pos_control = false;
     });
-  }
+  }*/
 
   public boolean isPositionControl() {
     return mPeriodicIO.is_elevator_pos_control;
@@ -327,11 +301,41 @@ public class Elevator extends PARTsSubsystem {
     return !mPeriodicIO.is_elevator_pos_control;
   }
 
-  @Override
-  public void log() {
-    // TODO Auto-generated method stub
-    //throw new UnsupportedOperationException("Unimplemented method 'log'");
+  public boolean getBottomLimit() {
+    if (!lowerLimitSwitch.get()) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public boolean getTopLimit() {
+    return getElevatorPosition() >= Constants.Elevator.maxHeight;
+    //return mPeriodicIO.elevator_measurement != null ? mPeriodicIO.elevator_measurement.distance_mm <= 40 : false;
   }
 
   /*---------------------------------- Custom Private Functions ---------------------------------*/
+
+  private void setSpeed(double speed) {
+    // Full control in limits
+    if (!getBottomLimit() && !getTopLimit())
+      mLeftMotor.set(speed);
+    // Directional control at limits
+    else if ((getBottomLimit() && speed > 0) || (getTopLimit() && speed < 0))
+      mLeftMotor.set(speed);
+    else
+      stop();
+  }
+
+  private void setVoltage(double voltage) {
+    // Full control in limits
+    if (!getBottomLimit() && !getTopLimit())
+      mLeftMotor.setVoltage(voltage);
+    // Directional control at limits
+    else if ((getBottomLimit() && voltage > 0) || (getTopLimit() && voltage < 0))
+      mLeftMotor.setVoltage(voltage);
+    else
+      stop();
+  }
+
 }
