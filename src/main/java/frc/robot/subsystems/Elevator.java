@@ -100,8 +100,6 @@ public class Elevator extends PARTsSubsystem {
         Constants.Elevator.kG,
         Constants.Elevator.kV,
         Constants.Elevator.kA);
-
-    new Trigger(this::getBottomLimit).onTrue(new ZeroElevatorEncoderCmdSeq(this));
   }
 
   public enum ElevatorState {
@@ -156,6 +154,10 @@ public class Elevator extends PARTsSubsystem {
         setSpeed(mPeriodicIO.elevator_power);
       else
         setVoltage(mElevatorFeedForward.calculate(0));
+
+      //reset encoders, only do if lower than 30 to keep coral falls from triggering.
+      if (getBottomLimit() && getElevatorPosition() <= 30)
+        reset();
     } else {
       candle.addState(CandleState.ERROR);
       setSpeed(mPeriodicIO.elevator_power);
