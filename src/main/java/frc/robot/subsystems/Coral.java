@@ -26,6 +26,7 @@ import frc.robot.Constants;
 import frc.robot.subsystems.Candle.Color;
 
 public class Coral extends PARTsSubsystem {
+  private Elevator elevator;
 
   /*-------------------------------- Private instance variables ---------------------------------*/
   private PeriodicIO mPeriodicIO;
@@ -46,9 +47,10 @@ public class Coral extends PARTsSubsystem {
   private LaserCan laserCAN;
   private Canandcolor canandcolor;
 
-  public Coral(Candle candle) {
+  public Coral(Candle candle, Elevator elevator) {
     super("Coral");
     this.mCandle = candle;
+    this.elevator = elevator;
 
     mPeriodicIO = new PeriodicIO();
 
@@ -69,11 +71,12 @@ public class Coral extends PARTsSubsystem {
         PersistMode.kPersistParameters);
 
     canandcolor = new Canandcolor(Constants.Coral.canAndColorId);
+    canandcolor.setLampLEDBrightness(0);
 
     laserCAN = new LaserCan(Constants.Coral.laserCanId);
     try {
       laserCAN.setRangingMode(LaserCan.RangingMode.SHORT);
-      laserCAN.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 16, 16));
+      laserCAN.setRegionOfInterest(new LaserCan.RegionOfInterest(4, 4, 4, 4));
       laserCAN.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
     } catch (ConfigurationFailedException e) {
       System.out.println("Configuration failed! " + e);
@@ -128,22 +131,24 @@ public class Coral extends PARTsSubsystem {
     super.partsNT.setBoolean("Canandcolor/hasCoral", isHoldingCoralViaCAnandcolor());
     super.partsNT.setDouble("Canandcolor/distance", mPeriodicIO.colorMeasurement);
     super.partsNT.setBoolean("Canandcolor/Connection", canandcolor.isConnected());
+
+    super.partsNT.setString("State", mPeriodicIO.state.toString());
   }
 
   @Override
   public void reset() {
-    stopCoral();
+    stopCoral().schedule();
   }
 
   /*---------------------------------- Custom Public Functions ----------------------------------*/
 
   public boolean isHoldingCoralViaCAnandcolor() {
-    return mPeriodicIO.colorMeasurement < 7.0;
+    return mPeriodicIO.colorMeasurement <= 0.013;
   }
 
   public boolean isHoldingCoralViaLaserCAN() {
     if (mPeriodicIO.laserMeasurement != null)
-      return mPeriodicIO.laserMeasurement.distance_mm < 7.0;
+      return mPeriodicIO.laserMeasurement.distance_mm <= 22;
     else
       return false;
   }
@@ -206,6 +211,19 @@ public class Coral extends PARTsSubsystem {
 
   }
 
+  public Command score() {
+    return this.runOnce(() -> {
+      switch (elevator.getState()) {
+        case STOW:
+          scoreL1().schedule();
+          break;
+        default:
+          scoreL24().schedule();
+          break;
+      }
+    });
+  }
+
   /*---------------------------------- Custom Private Functions ---------------------------------*/
 
   private void checkAutoTasks() {
@@ -216,17 +234,21 @@ public class Coral extends PARTsSubsystem {
 
           if (mPeriodicIO.index_debounce > 10) {
             mPeriodicIO.index_debounce = 0;
-            index();
+            index().schedule();
           }
         }
         break;
       case INDEX:
         if (!isHoldingCoralViaLaserCAN()) {
-          stopCoral();
+          stopCoral().schedule();
 
           mPeriodicIO.state = IntakeState.READY;
           mCandle.setColor(Color.PURPLE);
         }
+        break;
+      case SCORE:
+        if (!isHoldingCoralViaCAnandcolor()) 
+          stopCoral().schedule();
         break;
       default:
         break;

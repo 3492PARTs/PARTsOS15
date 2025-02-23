@@ -75,7 +75,7 @@ public class Elevator extends PARTsSubsystem {
     upperLimitLaserCAN = new LaserCan(Constants.Elevator.laserCanId);
     try {
       upperLimitLaserCAN.setRangingMode(LaserCan.RangingMode.SHORT);
-      upperLimitLaserCAN.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 16, 16));
+      upperLimitLaserCAN.setRegionOfInterest(new LaserCan.RegionOfInterest(4, 4, 4, 4));
       upperLimitLaserCAN.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
     } catch (ConfigurationFailedException e) {
       System.out.println("Configuration failed! " + e);
@@ -138,7 +138,7 @@ public class Elevator extends PARTsSubsystem {
   private static class PeriodicIO {
     double elevator_target = 0.0;
     double elevator_power = 0.0;
-    double elevator_measurement = 0.0;
+    LaserCan.Measurement elevator_measurement = null;
 
     boolean is_elevator_pos_control = false;
 
@@ -149,9 +149,7 @@ public class Elevator extends PARTsSubsystem {
 
   @Override
   public void periodic() {
-    Measurement m = upperLimitLaserCAN.getMeasurement();
-    if (m != null)
-      mPeriodicIO.elevator_measurement = m.distance_mm;
+    mPeriodicIO.elevator_measurement = upperLimitLaserCAN.getMeasurement();
     // TODO: Use this pattern to only drive slowly when we're really high up
     // if(mPivotEncoder.getPosition() > Constants.kPivotScoreCount) {
     // mPeriodicIO.is_pivot_low = true;
@@ -194,6 +192,7 @@ public class Elevator extends PARTsSubsystem {
 
   public boolean getTopLimit() {
     return getElevatorPosition() >= Constants.Elevator.maxHeight;
+    //return mPeriodicIO.elevator_measurement != null ? mPeriodicIO.elevator_measurement.distance_mm <= 40 : false;
   }
 
   private void setSpeed(double speed) {
@@ -236,7 +235,13 @@ public class Elevator extends PARTsSubsystem {
 
     super.partsNT.setBoolean("Limit/Bottom", getBottomLimit());
     super.partsNT.setBoolean("Limit/Top", getTopLimit());
-    super.partsNT.setDouble("Limit/TopMeasurement", mPeriodicIO.elevator_measurement);
+
+    if (mPeriodicIO.elevator_measurement != null) {
+      super.partsNT.setDouble("Laser/distance", mPeriodicIO.elevator_measurement.distance_mm);
+      super.partsNT.setDouble("Laser/ambient", mPeriodicIO.elevator_measurement.ambient);
+      super.partsNT.setDouble("Laser/budget_ms", mPeriodicIO.elevator_measurement.budget_ms);
+      super.partsNT.setDouble("Laser/status", mPeriodicIO.elevator_measurement.status);
+    }
 
     super.partsNT.setDouble("RPS", getRPS());
     super.partsNT.setDouble("Power", mPeriodicIO.elevator_power);
@@ -269,7 +274,7 @@ public class Elevator extends PARTsSubsystem {
       mPeriodicIO.is_elevator_pos_control = true;
       mPeriodicIO.elevator_target = Constants.Elevator.StowHeight;
       mPeriodicIO.state = ElevatorState.STOW;
-    }).until(mElevatorPIDController::atGoal).unless(this::isPositionControl);    
+    }).until(mElevatorPIDController::atGoal).unless(this::isNotPositionControl);    
   }
 
   public Command goToElevatorL2() {
@@ -277,7 +282,7 @@ public class Elevator extends PARTsSubsystem {
       mPeriodicIO.is_elevator_pos_control = true;
       mPeriodicIO.elevator_target = Constants.Elevator.L2Height;
       mPeriodicIO.state = ElevatorState.L2;
-    }).until(mElevatorPIDController::atGoal).unless(this::isPositionControl);    
+    }).until(mElevatorPIDController::atGoal).unless(this::isNotPositionControl);    
   }
 
   public Command goToElevatorL3() {
@@ -285,7 +290,7 @@ public class Elevator extends PARTsSubsystem {
       mPeriodicIO.is_elevator_pos_control = true;
     mPeriodicIO.elevator_target = Constants.Elevator.L3Height;
     mPeriodicIO.state = ElevatorState.L3;
-    }).until(mElevatorPIDController::atGoal).unless(this::isPositionControl);    
+    }).until(mElevatorPIDController::atGoal).unless(this::isNotPositionControl);    
   }
 
   public Command goToElevatorL4() {
@@ -293,7 +298,7 @@ public class Elevator extends PARTsSubsystem {
       mPeriodicIO.is_elevator_pos_control = true;
     mPeriodicIO.elevator_target = Constants.Elevator.L4Height;
     mPeriodicIO.state = ElevatorState.L4;
-    }).until(mElevatorPIDController::atGoal).unless(this::isPositionControl);
+    }).until(mElevatorPIDController::atGoal).unless(this::isNotPositionControl);
   }
 
   public void goToAlgaeLow() {
@@ -316,6 +321,10 @@ public class Elevator extends PARTsSubsystem {
 
   public boolean isPositionControl() {
     return mPeriodicIO.is_elevator_pos_control;
+  }
+
+  public boolean isNotPositionControl() {
+    return !mPeriodicIO.is_elevator_pos_control;
   }
 
   @Override

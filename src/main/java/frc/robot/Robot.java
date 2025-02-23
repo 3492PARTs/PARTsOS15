@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import au.grapplerobotics.CanBridge;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.EventImportance;
@@ -25,7 +26,8 @@ public class Robot extends TimedRobot {
   private final RobotContainer m_robotContainer;
 
   public Robot() {
-    CanBridge.runTCP();
+    if (Constants.Debug.debug)
+      CanBridge.runTCP();
 
     partsNT = new PARTsNT(this);
     partsLogger = new PARTsLogger();
