@@ -66,7 +66,7 @@ public class RobotContainer {
     private final Algae algae = new Algae();
     //private final AlgaeSysId algae = new AlgaeSysId();
 
-    private final Coral coral = new Coral(candle, elevator, operatorController);
+    private final Coral coral = new Coral(candle, elevator);
 
     private final ArrayList<PARTsSubsystem> subsystems = new ArrayList<>(Arrays.asList(candle, algae, coral, elevator));
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();

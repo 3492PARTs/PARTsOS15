@@ -46,14 +46,11 @@ public class Coral extends PARTsSubsystem {
   private LaserCan laserCAN;
   private Canandcolor canandcolor;
 
-  private CommandXboxController controller;
-
-  public Coral(Candle candle, Elevator elevator, CommandXboxController controller) {
+  public Coral(Candle candle, Elevator elevator) {
     super("Coral");
 
     this.candle = candle;
     this.elevator = elevator;
-    this.controller = controller;
 
     mPeriodicIO = new PeriodicIO();
 
@@ -124,23 +121,12 @@ public class Coral extends PARTsSubsystem {
 
     if (mPeriodicIO.state != IntakeState.ERROR) {
       elevator.setGantryBlock(isCoralInEntry());
-
       checkAutoTasks();
-      mLeftMotor.set(mPeriodicIO.rpm - mPeriodicIO.speed_diff);
-      mRightMotor.set(-mPeriodicIO.rpm);
-    } else {
+    } else
       elevator.setGantryBlock(false);
 
-      double speed = controller.getLeftY();
-      if (Math.abs(speed) > .1) {
-        mLeftMotor.set(speed);
-        mRightMotor.set(-speed);
-      } else {
-        mLeftMotor.set(0);
-        mRightMotor.set(0);
-      }
-    }
-
+    mLeftMotor.set(mPeriodicIO.rpm - mPeriodicIO.speed_diff);
+    mRightMotor.set(-mPeriodicIO.rpm);
   }
 
   @Override
