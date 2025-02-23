@@ -9,14 +9,12 @@ import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.shuffleboard.EventImportance;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.util.PARTsDashboard;
 import frc.robot.util.PARTsLogger;
 import frc.robot.util.PARTsNT;
-import frc.robot.util.PARTsDashboard.DashboardState;
+import frc.robot.util.PARTsDashboard.DashboardTab;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
@@ -34,6 +32,7 @@ public class Robot extends TimedRobot {
     partsNT = new PARTsNT(this);
     partsLogger = new PARTsLogger();
     m_robotContainer = new RobotContainer();
+    m_robotContainer.constructDashboard();
 
     WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
     /* 
@@ -89,7 +88,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     if (!Constants.Debug.debug) {
-      PARTsDashboard.setDashboard(DashboardState.AUTONOMOUS);
+      PARTsDashboard.setTab(DashboardTab.AUTONOMOUS);
     }
     m_robotContainer.setIdleCandleState();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
@@ -110,7 +109,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     if (!Constants.Debug.debug) {
-      PARTsDashboard.setDashboard(DashboardState.TEHEOPERATED);
+      PARTsDashboard.setTab(DashboardTab.TEHEOPERATED);
     }
     m_robotContainer.setIdleCandleState();
     if (m_autonomousCommand != null) {

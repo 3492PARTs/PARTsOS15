@@ -582,7 +582,7 @@
             "title": "Match Time",
             "x": 400.0,
             "y": 300.0,
-            "width": 200.0,
+            "width": 300.0,
             "height": 200.0,
             "type": "Match Time",
             "properties": {
@@ -592,6 +592,52 @@
               "time_display_mode": "Minutes and Seconds",
               "red_start_time": 15,
               "yellow_start_time": 30
+            }
+          },
+          {
+            "title": "FMSInfo",
+            "x": 400.0,
+            "y": 500.0,
+            "width": 400.0,
+            "height": 200.0,
+            "type": "FMSInfo",
+            "properties": {
+              "topic": "/FMSInfo",
+              "period": 0.06
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Tab 4",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": "Swerve Drive",
+            "x": 1000.0,
+            "y": 0.0,
+            "width": 400.0,
+            "height": 400.0,
+            "type": "SwerveDrive",
+            "properties": {
+              "topic": "/SmartDashboard/Swerve Drive",
+              "period": 0.06,
+              "show_robot_rotation": true,
+              "rotation_unit": "Radians"
+            }
+          },
+          {
+            "title": "Scheduler",
+            "x": 500.0,
+            "y": 0.0,
+            "width": 400.0,
+            "height": 600.0,
+            "type": "Scheduler",
+            "properties": {
+              "topic": "/SmartDashboard/Scheduler",
+              "period": 0.06
             }
           }
         ]

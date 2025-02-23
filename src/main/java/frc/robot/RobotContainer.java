@@ -29,11 +29,12 @@ import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.Candle.CandleState;
 import frc.robot.subsystems.sysid.AlgaeSysId;
 import frc.robot.subsystems.sysid.ElevatorSysId;
+import frc.robot.util.PARTsDashboard;
+import frc.robot.util.PARTsSubsystem;
 import frc.robot.util.PARTsUnit;
 import frc.robot.util.PARTsUnit.PARTsUnitType;
 import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.PARTsSubsystem;
 
 public class RobotContainer {
     private boolean fineGrainDrive = false;
@@ -268,5 +269,10 @@ public class RobotContainer {
 
     public void setIdleCandleState() {
         candle.addState(CandleState.IDLE);
+    }
+
+    public void constructDashboard() {
+        PARTsDashboard.setSubsystems(subsystems);
+        PARTsDashboard.setCommandScheduler();
     }
 }

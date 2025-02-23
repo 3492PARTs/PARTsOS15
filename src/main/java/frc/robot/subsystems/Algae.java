@@ -18,6 +18,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.util.PARTsSubsystem;
 import frc.robot.util.PARTsUnit;
 import frc.robot.util.PARTsUnit.PARTsUnitType;
 
@@ -77,7 +78,6 @@ public class Algae extends PARTsSubsystem {
         Constants.Algae.kWristKA);
 
     mWristPIDController.setTolerance(Constants.Algae.kTolerance);
-    
 
     // INTAKE
     mIntakeMotor = new SparkMax(Constants.Algae.algaeIntakeId, MotorType.kBrushless);
@@ -109,23 +109,20 @@ public class Algae extends PARTsSubsystem {
 
   @Override
   public void periodic() {
-    
+
     //mWristPIDController.setGoal(mPeriodicIO.wrist_target_angle);
-    double pidCalc =  mWristPIDController.calculate(Math.toRadians(getWristAngle().getValue()), Math.toRadians(mPeriodicIO.wrist_target_angle));
+    double pidCalc = mWristPIDController.calculate(Math.toRadians(getWristAngle().getValue()),
+        Math.toRadians(mPeriodicIO.wrist_target_angle));
 
     double ffCalc = mWristFeedForward.calculate(Math.toRadians(getWristAngle().getValue()),
-       Math.toRadians(mWristPIDController.getSetpoint().velocity));
-    
+        Math.toRadians(mWristPIDController.getSetpoint().velocity));
+
     mPeriodicIO.wrist_voltage = pidCalc + ffCalc;
 
     mWristMotor.setVoltage(mPeriodicIO.wrist_voltage);
     mIntakeMotor.set(mPeriodicIO.intake_power);
 
-    
-     // mWristMotor.setVoltage(mWristFeedForward.calculate(Math.toRadians(getWristAngle().getValue()), 0));
-
-    
-    
+    // mWristMotor.setVoltage(mWristFeedForward.calculate(Math.toRadians(getWristAngle().getValue()), 0));
 
   }
 
@@ -175,12 +172,12 @@ public class Algae extends PARTsSubsystem {
   }
 
   public void score() {
-      mPeriodicIO.intake_power = Constants.Algae.kEjectSpeed;
+    mPeriodicIO.intake_power = Constants.Algae.kEjectSpeed;
   }
 
   public void groundIntake() {
     mPeriodicIO.wrist_target_angle = Constants.Algae.kGroundIntakeAngle;
-   mPeriodicIO.intake_power = Constants.Algae.kGroundIntakeSpeed;
+    mPeriodicIO.intake_power = Constants.Algae.kGroundIntakeSpeed;
 
     mPeriodicIO.state = IntakeState.GROUND;
   }

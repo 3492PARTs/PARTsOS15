@@ -1,18 +1,22 @@
 package frc.robot.util;
 
+import java.util.ArrayList;
+
 import au.grapplerobotics.LaserCan;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 public class PARTsDashboard {
-    private static DashboardState state = DashboardState.AUTONOMOUS;
+    private static DashboardTab state = DashboardTab.AUTONOMOUS;
 
-    public enum DashboardState {
+    public enum DashboardTab {
         AUTONOMOUS("Autonomous"),
         TEHEOPERATED("Teleoperated"),
         DEBUG("Dashboard");
 
         String tabName;
 
-        DashboardState(String s) {
+        DashboardTab(String s) {
             this.tabName = s;
         }
     }
@@ -20,7 +24,15 @@ public class PARTsDashboard {
     public PARTsDashboard() {
     }
 
-    public static void setDashboard(DashboardState dashboardState) {
+    public static void setSubsystems(ArrayList<PARTsSubsystem> subsystems) {
+        subsystems.forEach(s -> SmartDashboard.putData(s));
+    }
+
+    public static void setCommandScheduler() {
+        SmartDashboard.putData(CommandScheduler.getInstance());
+    }
+
+    public static void setTab(DashboardTab dashboardState) {
         state = dashboardState;
         Elastic.selectTab(state.tabName);
     }

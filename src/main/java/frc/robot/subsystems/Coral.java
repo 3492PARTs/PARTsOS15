@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.subsystems.Candle.CandleState;
+import frc.robot.util.PARTsSubsystem;
 
 public class Coral extends PARTsSubsystem {
   private Elevator elevator;

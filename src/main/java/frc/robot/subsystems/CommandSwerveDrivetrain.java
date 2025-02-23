@@ -20,10 +20,13 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -40,10 +43,10 @@ import frc.robot.util.PARTsUnit.PARTsUnitType;
 public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Subsystem {
     private SwerveDrivePoseEstimator m_poseEstimator;
 
-    private SwerveModule frontRight;
-    private SwerveModule frontLeft;
-    private SwerveModule backRight;
-    private SwerveModule backLeft;
+    private SwerveModule frontRightModule;
+    private SwerveModule frontLeftModule;
+    private SwerveModule backRightModule;
+    private SwerveModule backLeftModule;
 
     private boolean doRejectUpdate = false;
 
@@ -103,26 +106,23 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * importing the log to SysId.
      */
     private final SysIdRoutine m_sysIdRoutineRotation = new SysIdRoutine(
-        new SysIdRoutine.Config(
-            /* This is in radians per second^2, but SysId only supports "volts per second" */
-            Volts.of(Math.PI / 6).per(Second),
-            /* This is in radians per second, but SysId only supports "volts" */
-            Volts.of(Math.PI),
-            null, // Use default timeout (10 s)
-            // Log state with SignalLogger class
-            state -> SignalLogger.writeString("SysIdRotation_State", state.toString())
-        ),
-        new SysIdRoutine.Mechanism(
-            output -> {
-                /* output is actually radians per second, but SysId only supports "volts" */
-                setControl(m_rotationCharacterization.withRotationalRate(output.in(Volts)));
-                /* also log the requested output for SysId */
-                SignalLogger.writeDouble("Rotational_Rate", output.in(Volts));
-            },
-            null,
-            this
-        )
-    );
+            new SysIdRoutine.Config(
+                    /* This is in radians per second^2, but SysId only supports "volts per second" */
+                    Volts.of(Math.PI / 6).per(Second),
+                    /* This is in radians per second, but SysId only supports "volts" */
+                    Volts.of(Math.PI),
+                    null, // Use default timeout (10 s)
+                    // Log state with SignalLogger class
+                    state -> SignalLogger.writeString("SysIdRotation_State", state.toString())),
+            new SysIdRoutine.Mechanism(
+                    output -> {
+                        /* output is actually radians per second, but SysId only supports "volts" */
+                        setControl(m_rotationCharacterization.withRotationalRate(output.in(Volts)));
+                        /* also log the requested output for SysId */
+                        SignalLogger.writeDouble("Rotational_Rate", output.in(Volts));
+                    },
+                    null,
+                    this));
 
     /* The SysId routine to test */
     private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineTranslation;
@@ -149,6 +149,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
 
         initializePoseEstimator();
+        sendToDashboard();
     }
 
     /**
@@ -176,6 +177,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
 
         initializePoseEstimator();
+        sendToDashboard();
     }
 
     /**
@@ -214,6 +216,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
 
         initializePoseEstimator();
+        sendToDashboard();
     }
 
     /**
@@ -290,19 +293,19 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     private void initializePoseEstimator() {
 
-        frontLeft = getModule(0);
-        frontRight = getModule(1);
-        backLeft = getModule(2);
-        backRight = getModule(3);
+        frontLeftModule = getModule(0);
+        frontRightModule = getModule(1);
+        backLeftModule = getModule(2);
+        backRightModule = getModule(3);
 
         m_poseEstimator = new SwerveDrivePoseEstimator(
                 getKinematics(),
                 getRotation3d().toRotation2d(),
                 new SwerveModulePosition[] {
-                        frontLeft.getPosition(doRejectUpdate),
-                        frontRight.getPosition(doRejectUpdate),
-                        backLeft.getPosition(doRejectUpdate),
-                        backRight.getPosition(doRejectUpdate)
+                        frontLeftModule.getPosition(doRejectUpdate),
+                        frontRightModule.getPosition(doRejectUpdate),
+                        backLeftModule.getPosition(doRejectUpdate),
+                        backRightModule.getPosition(doRejectUpdate)
 
                 },
                 new Pose2d(),
@@ -315,10 +318,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         m_poseEstimator.update(
                 getPigeon2().getRotation2d(),
                 new SwerveModulePosition[] {
-                        frontLeft.getPosition(doRejectUpdate),
-                        frontRight.getPosition(doRejectUpdate),
-                        backLeft.getPosition(doRejectUpdate),
-                        backRight.getPosition(doRejectUpdate)
+                        frontLeftModule.getPosition(doRejectUpdate),
+                        frontRightModule.getPosition(doRejectUpdate),
+                        backLeftModule.getPosition(doRejectUpdate),
+                        backRightModule.getPosition(doRejectUpdate)
                 });
     }
 
@@ -372,5 +375,39 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
 
         return m_poseEstimator.getEstimatedPosition();
+    }
+
+    private void sendToDashboard() {
+        SmartDashboard.putData("Swerve Drive", new Sendable() {
+            @Override
+            public void initSendable(SendableBuilder builder) {
+                builder.setSmartDashboardType("SwerveDrive");
+
+                builder.addDoubleProperty("Front Left Angle",
+                        () -> frontLeftModule.getCurrentState().angle.getRadians(), null);
+                builder.addDoubleProperty("Front Left Velocity",
+                        () -> frontLeftModule.getCurrentState().speedMetersPerSecond, null);
+
+                builder.addDoubleProperty("Front Right Angle",
+                        () -> frontRightModule.getCurrentState().angle.getRadians(), null);
+                builder.addDoubleProperty("Front Right Velocity",
+                        () -> frontRightModule.getCurrentState().speedMetersPerSecond, null);
+
+                builder.addDoubleProperty("Back Left Angle", () -> backLeftModule.getCurrentState().angle.getRadians(),
+                        null);
+                builder.addDoubleProperty("Back Left Velocity",
+                        () -> backLeftModule.getCurrentState().speedMetersPerSecond, null);
+
+                builder.addDoubleProperty("Back Right Angle",
+                        () -> backRightModule.getCurrentState().angle.getRadians(), null);
+                builder.addDoubleProperty("Back Right Velocity",
+                        () -> backRightModule.getCurrentState().speedMetersPerSecond, null);
+
+                builder.addDoubleProperty("Robot Angle",
+                        () -> new PARTsUnit(getPigeon2().getYaw().getValueAsDouble(), PARTsUnitType.Angle)
+                                .to(PARTsUnitType.Radian),
+                        null);
+            }
+        });
     }
 }
