@@ -16,11 +16,8 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
-import frc.robot.cmds.elevator.ZeroElevatorEncoderCmdSeq;
 import frc.robot.subsystems.Candle.CandleState;
-import frc.robot.subsystems.Candle.Color;
 
 public class Elevator extends PARTsSubsystem {
 
@@ -300,10 +297,6 @@ public class Elevator extends PARTsSubsystem {
 
   public boolean isPositionControl() {
     return mPeriodicIO.is_elevator_pos_control;
-  }
-
-  public boolean isNotPositionControl() {
-    return !mPeriodicIO.is_elevator_pos_control;
   }
 
   public boolean getBottomLimit() {

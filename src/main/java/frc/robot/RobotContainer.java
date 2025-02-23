@@ -9,33 +9,24 @@ import static edu.wpi.first.units.Units.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.opencv.core.Mat;
-
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.cmds.algae.AlgaeWrist;
-import frc.robot.cmds.coral.CoralAction;
-import frc.robot.cmds.elevator.ElevatorJoystick;
-import frc.robot.cmds.elevator.ZeroElevatorEncoderCmdSeq;
 import frc.robot.subsystems.Algae;
 import frc.robot.subsystems.Candle;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.Candle.CandleState;
-import frc.robot.subsystems.Candle.Color;
 import frc.robot.subsystems.sysid.AlgaeSysId;
 import frc.robot.subsystems.sysid.ElevatorSysId;
 import frc.robot.util.PARTsUnit;
