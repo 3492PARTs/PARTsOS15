@@ -63,7 +63,11 @@ public class Candle extends PARTsSubsystem {
         INTAKE_ERROR,
         FINE_GRAIN_DRIVE,
         CORAL_ENTERING,
-        HAS_CORAL
+        HAS_CORAL,
+        ELEVATOR_STOW,
+        ELEVATOR_L2,
+        ELEVATOR_L3,
+        ELEVATOR_L4
     }
 
     private static class PeriodicIO {
@@ -118,6 +122,14 @@ public class Candle extends PARTsSubsystem {
             runBlinkAnimation(Color.RED);
         else if (mPeriodicIO.robotStates.contains(CandleState.INTAKE_ERROR))
             runBlinkAnimation(Color.ORANGE);
+        /*else if (mPeriodicIO.robotStates.contains(CandleState.ELEVATOR_L4))
+            runBurnyBurnAnimation();
+        else if (mPeriodicIO.robotStates.contains(CandleState.ELEVATOR_L3))
+            runBlinkAnimation(Color.ORANGE);
+        else if (mPeriodicIO.robotStates.contains(CandleState.ELEVATOR_L2))
+            runBlinkAnimation(Color.ORANGE);
+        else if (mPeriodicIO.robotStates.contains(CandleState.ELEVATOR_STOW))
+            runRainbowAnimation();*/
         else if (mPeriodicIO.robotStates.contains(CandleState.IDLE))
             runFadeAnimation(Color.BLUE);
         else if (mPeriodicIO.robotStates.contains(CandleState.DISABLED))

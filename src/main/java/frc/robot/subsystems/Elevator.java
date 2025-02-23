@@ -15,7 +15,9 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.subsystems.Candle.CandleState;
 
@@ -39,6 +41,37 @@ public class Elevator extends PARTsSubsystem {
 
   private DigitalInput lowerLimitSwitch;
   private LaserCan upperLimitLaserCAN;
+
+  public enum ElevatorState {
+    ERROR,
+    NONE,
+    STOW,
+    L2,
+    L3,
+    L4,
+    A1,
+    A2
+  }
+
+  private static class PeriodicIO {
+    double elevator_previous_position = 0.0;
+    int elevator_position_debounce = 0;
+
+    double elevator_target = 0.0;
+    double elevator_power = 0.0;
+    LaserCan.Measurement elevator_measurement = null;
+
+    boolean is_elevator_pos_control = false;
+    boolean error = false;
+    boolean gantry_blocked = false;
+
+    ElevatorState state = ElevatorState.STOW;
+
+    boolean useLaserCan = false;
+
+    boolean elevator_bottom_limit_error = false;
+    int elevator_bottom_limit_debounce = 0;
+  }
 
   public Elevator(Candle candle) {
     super("Elevator");
@@ -97,39 +130,27 @@ public class Elevator extends PARTsSubsystem {
         Constants.Elevator.kG,
         Constants.Elevator.kV,
         Constants.Elevator.kA);
+
+    /* 
+    new Trigger(() -> getElevatorPosition() < Constants.Elevator.L2Height)
+    .onTrue(Commands.runOnce(() -> candle.addState(CandleState.ELEVATOR_STOW)))
+    .onFalse(Commands.runOnce(() -> candle.removeState(CandleState.ELEVATOR_STOW)));
+    
+    new Trigger(() -> getElevatorPosition() >= Constants.Elevator.L2Height &&
+    getElevatorPosition() < Constants.Elevator.L3Height)
+    .onTrue(Commands.runOnce(() -> candle.addState(CandleState.ELEVATOR_L2)))
+    .onFalse(Commands.runOnce(() -> candle.removeState(CandleState.ELEVATOR_L2)));
+    
+    new Trigger(() -> getElevatorPosition() >= Constants.Elevator.L3Height &&
+    getElevatorPosition() < Constants.Elevator.L4Height)
+    .onTrue(Commands.runOnce(() -> candle.addState(CandleState.ELEVATOR_L3)))
+    .onFalse(Commands.runOnce(() -> candle.removeState(CandleState.ELEVATOR_L3)));
+    
+    new Trigger(() -> getElevatorPosition() >= Constants.Elevator.L4Height)
+    .onTrue(Commands.runOnce(() -> candle.addState(CandleState.ELEVATOR_L4)))
+    .onFalse(Commands.runOnce(() -> candle.removeState(CandleState.ELEVATOR_L4)));
+    */
   }
-
-  public enum ElevatorState {
-    ERROR,
-    NONE,
-    STOW,
-    L2,
-    L3,
-    L4,
-    A1,
-    A2
-  }
-
-  private static class PeriodicIO {
-    double elevator_previous_position = 0.0;
-    int elevator_position_debounce = 0;
-
-    double elevator_target = 0.0;
-    double elevator_power = 0.0;
-    LaserCan.Measurement elevator_measurement = null;
-
-    boolean is_elevator_pos_control = false;
-    boolean error = false;
-    boolean gantry_blocked = false;
-
-    ElevatorState state = ElevatorState.STOW;
-
-    boolean useLaserCan = false;
-
-    boolean elevator_bottom_limit_error = false;
-    int elevator_bottom_limit_debounce = 0;
-  }
-
   /*-------------------------------- Generic Subsystem Functions --------------------------------*/
 
   @Override
