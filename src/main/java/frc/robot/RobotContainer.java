@@ -54,6 +54,9 @@ public class RobotContainer {
 
     private final Telemetry telemetryLogger = new Telemetry(MaxSpeed);
 
+    private final CommandXboxController driveController = new CommandXboxController(0);
+    private final CommandXboxController operatorController = new CommandXboxController(1);
+
     /**Subsystems */
     public final Candle candle = new Candle();
 
@@ -63,14 +66,12 @@ public class RobotContainer {
     private final Algae algae = new Algae();
     //private final AlgaeSysId algae = new AlgaeSysId();
 
-    private final Coral coral = new Coral(candle, elevator);
+    private final Coral coral = new Coral(candle, elevator, operatorController);
 
     private final ArrayList<PARTsSubsystem> subsystems = new ArrayList<>(Arrays.asList(candle, algae, coral, elevator));
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-    /**End Subsystems */
 
-    private final CommandXboxController driveController = new CommandXboxController(0);
-    private final CommandXboxController operatorController = new CommandXboxController(1);
+    /**End Subsystems */
 
     /*
      * NetworkTableInstance inst = NetworkTableInstance.getDefault();

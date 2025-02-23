@@ -119,10 +119,14 @@ public class Coral extends PARTsSubsystem {
 
     // Trigger sub system error if exists
     // if there was an error but there isn't now remove error
-    if (mPeriodicIO.laserMeasurement == null || mPeriodicIO.laserMeasurement.status != 0 || !canandcolor.isConnected())
+    if (mPeriodicIO.laserMeasurement == null || mPeriodicIO.laserMeasurement.status != 0
+        || !canandcolor.isConnected()) {
       mPeriodicIO.state = IntakeState.ERROR;
-    else if (mPeriodicIO.state == IntakeState.ERROR)
+      candle.addState(CandleState.INTAKE_ERROR);
+    } else if (mPeriodicIO.state == IntakeState.ERROR) {
       mPeriodicIO.state = IntakeState.NONE;
+      candle.removeState(CandleState.INTAKE_ERROR);
+    }
 
     if (mPeriodicIO.state != IntakeState.ERROR) {
       elevator.setGantryBlock(isCoralInEntry());
@@ -131,7 +135,6 @@ public class Coral extends PARTsSubsystem {
       mLeftMotor.set(mPeriodicIO.rpm - mPeriodicIO.speed_diff);
       mRightMotor.set(-mPeriodicIO.rpm);
     } else {
-      candle.addState(CandleState.INTAKE_ERROR);
       elevator.setGantryBlock(false);
 
       double speed = controller.getLeftY();
