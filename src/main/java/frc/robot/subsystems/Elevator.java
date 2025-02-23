@@ -176,7 +176,7 @@ public class Elevator extends PARTsSubsystem {
     }
     // Error controls
     else {
-      candle.addState(CandleState.ERROR);
+      candle.addState(CandleState.ELEVATOR_ERROR);
       if (Math.abs(mPeriodicIO.elevator_power) > 0)
         setSpeed(mPeriodicIO.elevator_power);
       else

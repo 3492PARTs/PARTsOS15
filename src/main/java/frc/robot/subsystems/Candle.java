@@ -64,7 +64,8 @@ public class Candle extends PARTsSubsystem {
     public enum CandleState {
         IDLE,
         DISABLED,
-        ERROR,
+        ELEVATOR_ERROR,
+        INTAKE_ERROR,
         FINE_GRAIN_DRIVE,
         CORAL_ENTERING,
         HAS_CORAL
@@ -112,8 +113,10 @@ public class Candle extends PARTsSubsystem {
     }
 
     private void setState() {
-        if (mPeriodicIO.robotStates.contains(CandleState.ERROR))
-            runFadeAnimation(Color.RED);
+        if (mPeriodicIO.robotStates.contains(CandleState.ELEVATOR_ERROR))
+            runBlinkAnimation(Color.RED);
+        if (mPeriodicIO.robotStates.contains(CandleState.INTAKE_ERROR))
+            runBlinkAnimation(Color.ORANGE);
         else if (mPeriodicIO.robotStates.contains(CandleState.FINE_GRAIN_DRIVE))
             runFadeAnimation(Color.YELLOW);
         else if (mPeriodicIO.robotStates.contains(CandleState.CORAL_ENTERING))

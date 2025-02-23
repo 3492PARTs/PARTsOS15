@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.subsystems.Candle.CandleState;
@@ -33,7 +34,7 @@ public class Coral extends PARTsSubsystem {
 
   /*-------------------------------- Private instance variables ---------------------------------*/
   private PeriodicIO mPeriodicIO;
-  public final Candle mCandle;
+  public final Candle candle;
 
   public enum IntakeState {
     NONE,
@@ -41,7 +42,8 @@ public class Coral extends PARTsSubsystem {
     REVERSE,
     INDEX,
     READY,
-    SCORE
+    SCORE,
+    ERROR
   }
 
   private SparkMax mLeftMotor;
@@ -50,11 +52,14 @@ public class Coral extends PARTsSubsystem {
   private LaserCan laserCAN;
   private Canandcolor canandcolor;
 
-  public Coral(Candle candle, Elevator elevator) {
+  private CommandXboxController controller;
+
+  public Coral(Candle candle, Elevator elevator, CommandXboxController controller) {
     super("Coral");
 
-    this.mCandle = candle;
+    this.candle = candle;
     this.elevator = elevator;
+    this.controller = controller;
 
     mPeriodicIO = new PeriodicIO();
 
@@ -112,11 +117,33 @@ public class Coral extends PARTsSubsystem {
     mPeriodicIO.laserMeasurement = laserCAN.getMeasurement();
     mPeriodicIO.colorMeasurement = canandcolor.getProximity();
 
-    elevator.setGantryBlock(isCoralInEntry());
+    // Trigger sub system error if exists
+    // if there was an error but there isn't now remove error
+    if (mPeriodicIO.laserMeasurement == null || mPeriodicIO.laserMeasurement.status != 0 || !canandcolor.isConnected())
+      mPeriodicIO.state = IntakeState.ERROR;
+    else if (mPeriodicIO.state == IntakeState.ERROR)
+      mPeriodicIO.state = IntakeState.NONE;
 
-    checkAutoTasks();
-    mLeftMotor.set(mPeriodicIO.rpm - mPeriodicIO.speed_diff);
-    mRightMotor.set(-mPeriodicIO.rpm);
+    if (mPeriodicIO.state != IntakeState.ERROR) {
+      elevator.setGantryBlock(isCoralInEntry());
+
+      checkAutoTasks();
+      mLeftMotor.set(mPeriodicIO.rpm - mPeriodicIO.speed_diff);
+      mRightMotor.set(-mPeriodicIO.rpm);
+    } else {
+      candle.addState(CandleState.INTAKE_ERROR);
+      elevator.setGantryBlock(false);
+
+      double speed = controller.getLeftY();
+      if (Math.abs(speed) > .1) {
+        mLeftMotor.set(speed);
+        mRightMotor.set(-speed);
+      } else {
+        mLeftMotor.set(0);
+        mRightMotor.set(0);
+      }
+    }
+
   }
 
   @Override
