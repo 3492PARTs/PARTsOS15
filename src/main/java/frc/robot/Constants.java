@@ -119,9 +119,9 @@ public final class Constants {
     public static final double kSpeedDifference = kL1Speed * 0.5;
   }
 
-  public static class LED {
-    public static final int LED_PORT = 1000;
-    public static final int LED_LENGTH = 1001;
+  public static class Candle {
+    public static final int candleId = 1000;
+    public static final int ledLength = 1001;
   }
 
   public enum ElevatorState {

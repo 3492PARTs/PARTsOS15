@@ -8,8 +8,6 @@
 
 package frc.robot.subsystems;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,13 +18,10 @@ import com.ctre.phoenix.led.RainbowAnimation;
 import com.ctre.phoenix.led.SingleFadeAnimation;
 import com.ctre.phoenix.led.StrobeAnimation;
 
-import au.grapplerobotics.LaserCan;
-
 import com.ctre.phoenix.led.CANdle.LEDStripType;
 import com.ctre.phoenix.led.CANdle.VBatOutputMode;
 import com.ctre.phoenix.led.CANdleConfiguration;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -34,7 +29,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class Candle extends PARTsSubsystem {
     //https://github.com/CrossTheRoadElec/Phoenix5-Examples/blob/master/Java%20General/CANdle%20MultiAnimation/src/main/java/frc/robot/subsystems/CANdleSystem.java
     private static CANdle candle;
-    private final int LED_LENGTH = Constants.LED.LED_LENGTH;
+    private final int LED_LENGTH = Constants.Candle.ledLength;
     private Animation animation = null;
 
     private PeriodicIO mPeriodicIO;
@@ -78,7 +73,7 @@ public class Candle extends PARTsSubsystem {
 
     /** Creates a new light. */
     public Candle() {
-        candle = new CANdle(Constants.LED.LED_PORT, "rio");
+        candle = new CANdle(Constants.Candle.candleId, "rio");
 
         CANdleConfiguration configAll = new CANdleConfiguration();
         configAll.statusLedOffWhenActive = true;
