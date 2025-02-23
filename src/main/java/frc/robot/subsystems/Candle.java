@@ -233,8 +233,8 @@ public class Candle extends PARTsSubsystem {
 
     @Override
     public void outputTelemetry() {
-        // TODO Auto-generated method stub
-        //throw new UnsupportedOperationException("Unimplemented method 'outputTelemetry'");
+        super.partsNT.setString("State", mPeriodicIO.state.toString());
+        super.partsNT.setString("Animation", animation.toString());
     }
 
     @Override
