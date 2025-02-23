@@ -164,8 +164,7 @@ public class RobotContainer {
 
         operatorController.b().onTrue(elevator.goToElevatorL4());
 
-        //TODO: UNCOMMENT THIS LATEr I'M OUT OF BUTTONS
-        //operatorController.leftBumper().onTrue(elevator.interrupt());
+        //operatorController.leftBumper().onTrue(elevator.zeroElevatorCommand());
 
         /* 
           if (getWantsElevatorStow()) {

@@ -100,19 +100,14 @@ public class Elevator extends PARTsSubsystem {
   }
 
   public enum ElevatorState {
-    NONE(0),
-    STOW(0),
-    L2(Constants.Elevator.L2Height),
-    L3(Constants.Elevator.L3Height),
-    L4(Constants.Elevator.L4Height),
-    A1(Constants.Elevator.LowAlgaeHeight),
-    A2(Constants.Elevator.HighAlgaeHeight);
-
-    double height;
-
-    ElevatorState(double i) {
-      height = i;
-    }
+    ERROR,
+    NONE,
+    STOW,
+    L2,
+    L3,
+    L4,
+    A1,
+    A2
   }
 
   private static class PeriodicIO {
@@ -128,16 +123,50 @@ public class Elevator extends PARTsSubsystem {
     boolean gantry_blocked = false;
 
     ElevatorState state = ElevatorState.STOW;
+
+    boolean useLaserCan = false;
+
+    boolean elevator_bottom_limit_error = false;
+    int elevator_bottom_limit_debounce = 0;
   }
 
   /*-------------------------------- Generic Subsystem Functions --------------------------------*/
 
   @Override
   public void periodic() {
-    // top and bottom limit triggered at same time, this is impossible
-    if (!mPeriodicIO.error) {
-      mPeriodicIO.error = getBottomLimit() && getTopLimit();
-      setSpeed(0);
+    /* Error Conditions 
+     * Bottom and top limit hit at same time
+     * Laser can in use and the measurement is null or status is not good
+     * The bottom limit is hit for more than 10 loop runs and we are reporting a current position higher than the margin of error
+    */
+
+    mPeriodicIO.elevator_bottom_limit_error = (getBottomLimit()
+        && getElevatorPosition() > Constants.Elevator.bottomLimitPositionErrorMargin);
+    if (mPeriodicIO.elevator_bottom_limit_error)
+      mPeriodicIO.elevator_bottom_limit_debounce++;
+    else
+      mPeriodicIO.elevator_bottom_limit_debounce = 0;
+
+    if ((getBottomLimit() && getTopLimit()) ||
+        (mPeriodicIO.useLaserCan
+            && (mPeriodicIO.elevator_measurement == null || mPeriodicIO.elevator_measurement.status != 0))
+        || (mPeriodicIO.elevator_bottom_limit_error && mPeriodicIO.elevator_bottom_limit_debounce >= 10)) {
+      // If there wasn't an error report it.
+      if (!mPeriodicIO.error) {
+        mPeriodicIO.error = true;
+
+        setElevatorPower(0);
+        mPeriodicIO.state = ElevatorState.ERROR;
+        candle.addState(CandleState.ELEVATOR_ERROR);
+      }
+    } else {
+      // If there was an error remove it
+      if (mPeriodicIO.error) {
+        mPeriodicIO.error = false;
+        mPeriodicIO.state = ElevatorState.NONE;
+        candle.removeState(CandleState.ELEVATOR_ERROR);
+        zeroElevatorCommand().schedule();
+      }
     }
 
     mPeriodicIO.elevator_measurement = upperLimitLaserCAN.getMeasurement();
@@ -171,12 +200,11 @@ public class Elevator extends PARTsSubsystem {
         setVoltage(mElevatorFeedForward.calculate(0));
 
       //reset encoders, only do if lower than 30 to keep coral falls from triggering.
-      if (getBottomLimit() && getElevatorPosition() <= 30)
-        reset();
+      if (getBottomLimit() && getElevatorPosition() <= Constants.Elevator.bottomLimitPositionErrorMargin)
+        resetEncoder();
     }
     // Error controls
     else {
-      candle.addState(CandleState.ELEVATOR_ERROR);
       if (Math.abs(mPeriodicIO.elevator_power) > 0)
         setSpeed(mPeriodicIO.elevator_power);
       else
@@ -184,16 +212,12 @@ public class Elevator extends PARTsSubsystem {
     }
   }
 
-  public double getElevatorPosition() {
-    return mLeftEncoder.getPosition();
-  }
-
   @Override
   public void stop() {
     mPeriodicIO.is_elevator_pos_control = false;
     mPeriodicIO.elevator_power = 0.0;
 
-    mLeftMotor.set(0.0);
+    setSpeedWithoutLimits(0.0);
   }
 
   @Override
@@ -229,7 +253,7 @@ public class Elevator extends PARTsSubsystem {
 
   @Override
   public void reset() {
-    mLeftEncoder.setPosition(0.0);
+    resetEncoder();
   }
 
   @Override
@@ -239,6 +263,10 @@ public class Elevator extends PARTsSubsystem {
   }
 
   /*---------------------------------- Custom Public Functions ----------------------------------*/
+  public double getElevatorPosition() {
+    return mLeftEncoder.getPosition();
+  }
+
   public void setGantryBlock(boolean b) {
     mPeriodicIO.gantry_blocked = b;
   }
@@ -311,6 +339,12 @@ public class Elevator extends PARTsSubsystem {
     });
   }
 
+  public Command zeroElevatorCommand() {
+    return this.run(() -> setSpeedWithoutLimits(Constants.Elevator.homingSpeed))
+        .unless(() -> mPeriodicIO.gantry_blocked).until(this::getBottomLimit)
+        .andThen(() -> stop());
+  }
+
   /*
   public Command interrupt() {
     return this.runOnce(() -> {
@@ -331,8 +365,9 @@ public class Elevator extends PARTsSubsystem {
   }
 
   public boolean getTopLimit() {
-    return getElevatorPosition() >= Constants.Elevator.maxHeight;
-    //return mPeriodicIO.elevator_measurement != null ? mPeriodicIO.elevator_measurement.distance_mm <= 40 : false;
+    return mPeriodicIO.useLaserCan && mPeriodicIO.elevator_measurement != null
+        ? mPeriodicIO.elevator_measurement.distance_mm <= Constants.Elevator.maxLaserCanHeight
+        : getElevatorPosition() >= Constants.Elevator.maxHeight;
   }
 
   /*---------------------------------- Custom Private Functions ---------------------------------*/
@@ -340,12 +375,16 @@ public class Elevator extends PARTsSubsystem {
   private void setSpeed(double speed) {
     // Full control in limits
     if (!getBottomLimit() && !getTopLimit())
-      mLeftMotor.set(speed);
+      setSpeedWithoutLimits(speed);
     // Directional control at limits
     else if ((getBottomLimit() && speed > 0) || (getTopLimit() && speed < 0))
-      mLeftMotor.set(speed);
+      setSpeedWithoutLimits(speed);
     else
       stop();
+  }
+
+  private void setSpeedWithoutLimits(double speed) {
+    mLeftMotor.set(speed);
   }
 
   private void setVoltage(double voltage) {
@@ -359,4 +398,7 @@ public class Elevator extends PARTsSubsystem {
       stop();
   }
 
+  private void resetEncoder() {
+    mLeftEncoder.setPosition(0.0);
+  }
 }

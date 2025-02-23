@@ -63,7 +63,10 @@ public final class Constants {
     public static final double kA = 0.0022395;
     public static final double maxSpeed = 0.5;
     public static final double maxHeight = 72.5;
+    public static final double maxLaserCanHeight = 40;
     public static final double gearRatio = 16 / 1;
+    public static final double homingSpeed = -0.1;
+    public static final double bottomLimitPositionErrorMargin = 30;
   }
 
   public static class Algae {
