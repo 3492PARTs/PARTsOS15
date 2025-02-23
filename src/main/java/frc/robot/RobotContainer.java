@@ -220,8 +220,7 @@ public class RobotContainer {
         operatorController.leftTrigger().onTrue(new RunCommand(() -> {
             algae.reset();
         }, algae));
-
-        operatorController.leftBumper().onTrue(new RunCommand(() -> {
+        operatorController.leftBumper().whileTrue(new RunCommand(() -> {
             algae.score();
         }, algae));
         
