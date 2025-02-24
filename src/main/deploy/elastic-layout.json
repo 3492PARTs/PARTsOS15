@@ -1,14 +1,7 @@
 {
   "version": 1.0,
-  "grid_size": 128,
+  "grid_size": 100,
   "tabs": [
-    {
-      "name": "Autonomous",
-      "grid_layout": {
-        "layouts": [],
-        "containers": []
-      }
-    },
     {
       "name": "Teleoperated",
       "grid_layout": {
@@ -44,6 +37,13 @@
             }
           }
         ]
+      }
+    },
+    {
+      "name": "Autonomous",
+      "grid_layout": {
+        "layouts": [],
+        "containers": []
       }
     },
     {
@@ -1051,6 +1051,23 @@
             },
             "children": [
               {
+                "title": "Using LaserCan",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 200.0,
+                "height": 200.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/PARTs/Elevator/Using LaserCan",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              },
+              {
                 "title": "Gantry Blocked",
                 "x": 0.0,
                 "y": 0.0,
@@ -1085,6 +1102,20 @@
                 }
               },
               {
+                "title": "State",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 200.0,
+                "height": 200.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/Elevator/State",
+                  "period": 0.06,
+                  "data_type": "string",
+                  "show_submit_button": false
+                }
+              },
+              {
                 "title": "Power",
                 "x": 0.0,
                 "y": 0.0,
@@ -1109,20 +1140,6 @@
                   "topic": "/PARTs/Elevator/RPS",
                   "period": 0.06,
                   "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "State",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 200.0,
-                "height": 200.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/PARTs/Elevator/State",
-                  "period": 0.06,
-                  "data_type": "string",
                   "show_submit_button": false
                 }
               }

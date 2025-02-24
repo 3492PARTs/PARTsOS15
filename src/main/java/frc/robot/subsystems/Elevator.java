@@ -286,66 +286,64 @@ public class Elevator extends PARTsSubsystem {
   }
 
   public Command joystickElevatorControl(CommandXboxController controller) {
-    Command c =  this.run(() -> {
+    return super.commandFactory("joystickElevatorControl", this.run(() -> {
       double speed = -controller.getRightY() * Constants.Elevator.maxSpeed;
       setElevatorPower(speed);
-    }).until(() -> Math.abs(controller.getRightY()) < 0.1).andThen(() -> setElevatorPower(0));
-    c.setName("JoystickElevatorControl");
-    return c;
+    }).until(() -> Math.abs(controller.getRightY()) < 0.1).andThen(() -> setElevatorPower(0)));
   }
 
   public Command goToElevatorStow() {
-    return this.runOnce(() -> {
+    return super.commandFactory("goToElevatorStow", this.runOnce(() -> {
       mPeriodicIO.is_elevator_pos_control = true;
       mPeriodicIO.elevator_target = Constants.Elevator.StowHeight;
       mPeriodicIO.state = ElevatorState.STOW;
-    });
+    }));
   }
 
   public Command goToElevatorL2() {
-    return this.runOnce(() -> {
+    return super.commandFactory("goToElevatorL2", this.runOnce(() -> {
       mPeriodicIO.is_elevator_pos_control = true;
       mPeriodicIO.elevator_target = Constants.Elevator.L2Height;
       mPeriodicIO.state = ElevatorState.L2;
-    });
+    }));
   }
 
   public Command goToElevatorL3() {
-    return this.runOnce(() -> {
+    return super.commandFactory("goToElevatorL3", this.runOnce(() -> {
       mPeriodicIO.is_elevator_pos_control = true;
       mPeriodicIO.elevator_target = Constants.Elevator.L3Height;
       mPeriodicIO.state = ElevatorState.L3;
-    });
+    }));
   }
 
   public Command goToElevatorL4() {
-    return this.runOnce(() -> {
+    return super.commandFactory("goToElevatorL4", this.runOnce(() -> {
       mPeriodicIO.is_elevator_pos_control = true;
       mPeriodicIO.elevator_target = Constants.Elevator.L4Height;
       mPeriodicIO.state = ElevatorState.L4;
-    });
+    }));
   }
 
   public Command goToAlgaeLow() {
-    return this.runOnce(() -> {
+    return super.commandFactory("goToAlgaeLow", this.runOnce(() -> {
       mPeriodicIO.is_elevator_pos_control = true;
       mPeriodicIO.elevator_target = Constants.Elevator.LowAlgaeHeight;
       mPeriodicIO.state = ElevatorState.A1;
-    });
+    }));
   }
 
   public Command goToAlgaeHigh() {
-    return this.runOnce(() -> {
+    return super.commandFactory("goToAlgaeHigh", this.runOnce(() -> {
       mPeriodicIO.is_elevator_pos_control = true;
       mPeriodicIO.elevator_target = Constants.Elevator.HighAlgaeHeight;
       mPeriodicIO.state = ElevatorState.A2;
-    });
+    }));
   }
 
   public Command zeroElevatorCommand() {
-    return this.run(() -> setSpeedWithoutLimits(Constants.Elevator.homingSpeed))
+    return super.commandFactory("zeroElevatorCommand", this.run(() -> setSpeedWithoutLimits(Constants.Elevator.homingSpeed))
         .unless(() -> mPeriodicIO.gantry_blocked).until(this::getBottomLimit)
-        .andThen(() -> stop());
+        .andThen(() -> stop()));
   }
 
   public boolean isPositionControl() {

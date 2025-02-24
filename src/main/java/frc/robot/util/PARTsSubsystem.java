@@ -4,6 +4,7 @@
 
 package frc.robot.util;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public abstract class PARTsSubsystem extends SubsystemBase implements IPARTsSubsystem {
@@ -37,4 +38,8 @@ public abstract class PARTsSubsystem extends SubsystemBase implements IPARTsSubs
     partsLogger = new PARTsLogger(className);
   }
 
+  public Command commandFactory(String name, Command c) {
+    c.setName(name);
+    return c;
+  }
 }
