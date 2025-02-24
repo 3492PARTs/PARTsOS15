@@ -152,6 +152,7 @@ public class Elevator extends PARTsSubsystem {
     */
 
     PARTsNT.putSmartDashboardSendable("Elevator PID", mElevatorPIDController);
+    PARTsNT.putSmartDashboardSendable("Elevator Zero Command", zeroElevatorCommand());
   }
   /*-------------------------------- Generic Subsystem Functions --------------------------------*/
 
@@ -240,6 +241,7 @@ public class Elevator extends PARTsSubsystem {
     super.partsNT.setDouble("Power", mPeriodicIO.elevator_power);
     super.partsNT.setString("State", mPeriodicIO.state.toString());
     super.partsNT.setBoolean("Is Position Control", mPeriodicIO.is_elevator_pos_control);
+    super.partsNT.setBoolean("Gantry Blocked", mPeriodicIO.gantry_blocked);
   }
 
   @Override

@@ -29,6 +29,19 @@
               "red_start_time": 15,
               "yellow_start_time": 30
             }
+          },
+          {
+            "title": "Elevator Zero Command",
+            "x": 500.0,
+            "y": 200.0,
+            "width": 300.0,
+            "height": 200.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Elevator Zero Command",
+              "period": 0.06,
+              "show_type": true
+            }
           }
         ]
       }
@@ -49,6 +62,23 @@
             },
             "children": [
               {
+                "title": "Gantry Blocked",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 200.0,
+                "height": 200.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/PARTs/Elevator/Gantry Blocked",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              },
+              {
                 "title": "Is Position Control",
                 "x": 0.0,
                 "y": 0.0,
@@ -63,6 +93,20 @@
                   "false_color": 4294198070,
                   "true_icon": "None",
                   "false_icon": "None"
+                }
+              },
+              {
+                "title": "State",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/Elevator/State",
+                  "period": 0.06,
+                  "data_type": "string",
+                  "show_submit_button": false
                 }
               },
               {
@@ -90,20 +134,6 @@
                   "topic": "/PARTs/Elevator/RPS",
                   "period": 0.06,
                   "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "State",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/PARTs/Elevator/State",
-                  "period": 0.06,
-                  "data_type": "string",
                   "show_submit_button": false
                 }
               }
@@ -741,78 +771,6 @@
       "grid_layout": {
         "layouts": [
           {
-            "title": "Elevator",
-            "x": 0.0,
-            "y": 0.0,
-            "width": 200.0,
-            "height": 400.0,
-            "type": "List Layout",
-            "properties": {
-              "label_position": "TOP"
-            },
-            "children": [
-              {
-                "title": "Is Position Control",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Boolean Box",
-                "properties": {
-                  "topic": "/PARTs/Elevator/Is Position Control",
-                  "period": 0.06,
-                  "data_type": "boolean",
-                  "true_color": 4283215696,
-                  "false_color": 4294198070,
-                  "true_icon": "None",
-                  "false_icon": "None"
-                }
-              },
-              {
-                "title": "Power",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/PARTs/Elevator/Power",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "RPS",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/PARTs/Elevator/RPS",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "State",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/PARTs/Elevator/State",
-                  "period": 0.06,
-                  "data_type": "string",
-                  "show_submit_button": false
-                }
-              }
-            ]
-          },
-          {
             "title": "Candle",
             "x": 0.0,
             "y": 500.0,
@@ -1080,6 +1038,95 @@
                 }
               }
             ]
+          },
+          {
+            "title": "Elevator",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 200.0,
+            "height": 500.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "Gantry Blocked",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 200.0,
+                "height": 200.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/PARTs/Elevator/Gantry Blocked",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              },
+              {
+                "title": "Is Position Control",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 200.0,
+                "height": 200.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/PARTs/Elevator/Is Position Control",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              },
+              {
+                "title": "Power",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 200.0,
+                "height": 200.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/Elevator/Power",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "RPS",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 200.0,
+                "height": 200.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/Elevator/RPS",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "State",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 200.0,
+                "height": 200.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/Elevator/State",
+                  "period": 0.06,
+                  "data_type": "string",
+                  "show_submit_button": false
+                }
+              }
+            ]
           }
         ],
         "containers": [
@@ -1105,6 +1152,19 @@
             "properties": {
               "topic": "/SmartDashboard/Elevator PID",
               "period": 0.06
+            }
+          },
+          {
+            "title": "Elevator Zero Command",
+            "x": 1000.0,
+            "y": 200.0,
+            "width": 400.0,
+            "height": 200.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Elevator Zero Command",
+              "period": 0.06,
+              "show_type": true
             }
           }
         ]

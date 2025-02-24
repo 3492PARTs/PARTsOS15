@@ -166,8 +166,6 @@ public class RobotContainer {
 
         operatorController.b().onTrue(elevator.goToElevatorL4());
 
-        //operatorController.leftBumper().onTrue(elevator.zeroElevatorCommand());
-
         /* 
           if (getWantsElevatorStow()) {
           elevator.goToElevatorStow();
