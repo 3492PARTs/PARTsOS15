@@ -68,7 +68,8 @@ public class Elevator extends PARTsSubsystem {
 
     ElevatorState state = ElevatorState.STOW;
 
-    boolean useLaserCan = false;
+    boolean useLaserCan = true;
+    int lasercan_error_debounce = 0;
 
     boolean elevator_bottom_limit_error = false;
     int elevator_bottom_limit_debounce = 0;
@@ -248,6 +249,7 @@ public class Elevator extends PARTsSubsystem {
     super.partsNT.setString("State", mPeriodicIO.state.toString());
     super.partsNT.setBoolean("Is Position Control", mPeriodicIO.is_elevator_pos_control);
     super.partsNT.setBoolean("Gantry Blocked", mPeriodicIO.gantry_blocked);
+    super.partsNT.setBoolean("Using LaserCan", mPeriodicIO.useLaserCan);
   }
 
   @Override
@@ -415,14 +417,23 @@ public class Elevator extends PARTsSubsystem {
             && (mPeriodicIO.elevator_measurement == null || mPeriodicIO.elevator_measurement.status != 0))
         || (mPeriodicIO.elevator_bottom_limit_error && mPeriodicIO.elevator_bottom_limit_debounce >= 10)) {
       // If there wasn't an error report it.
+      mPeriodicIO.lasercan_error_debounce++;
+      
       if (!mPeriodicIO.error) {
         mPeriodicIO.error = true;
+        
 
         setElevatorPower(0);
         mPeriodicIO.state = ElevatorState.SENSOR_ERROR;
         candle.addState(CandleState.ELEVATOR_ERROR);
       }
+
+      if (mPeriodicIO.lasercan_error_debounce > 10)
+          mPeriodicIO.useLaserCan = false;
     } else {
+      //mPeriodicIO.lasercan_error_debounce = 0;
+      //mPeriodicIO.useLaserCan = true; dont turn back on. originally thought i would
+
       // If there was an error remove it
       if (mPeriodicIO.error && mPeriodicIO.state != ElevatorState.POS_CTL_TRAVEL_ERROR) {
         mPeriodicIO.error = false;
