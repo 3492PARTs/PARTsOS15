@@ -87,7 +87,6 @@ public class RobotContainer {
 
     public RobotContainer() {
         configureBindings();
-        DataLogManager.start();
     }
 
     private void configureBindings() {
@@ -207,6 +206,8 @@ public class RobotContainer {
         // operatorController.leftTrigger().whileTrue(getAutonomousCommand()));
         algae.setDefaultCommand(new AlgaeWrist(algae, operatorController));
 
+        //TODO: Please migrate from run command, example Elevator.java - public Command goToElevatorL4()
+        // TODO: We are migrating to command factory structure. (i.e. creating and using a command though a function call)
         operatorController.povUp().onTrue(new RunCommand(() -> {
             algae.stow();
         }, algae));

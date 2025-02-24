@@ -5,6 +5,9 @@ import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.util.datalog.StringLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.shuffleboard.EventImportance;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants;
 
 public class PARTsLogger {
@@ -57,5 +60,25 @@ public class PARTsLogger {
             return true;
         } else
             return false;
+    }
+
+    public void logCommandScheduler() {
+
+        // Set the scheduler to log events for command initialize, interrupt, finish
+        CommandScheduler.getInstance()
+                .onCommandInitialize(
+                        command -> {
+                            logString(command.getName(), "Command initialized");
+                        });
+        CommandScheduler.getInstance()
+                .onCommandInterrupt(
+                        command -> {
+                            logString(command.getName(), "Command interrupted");
+                        });
+        CommandScheduler.getInstance()
+                .onCommandFinish(
+                        command -> {
+                            logString(command.getName(), "Command finished");
+                        });
     }
 }

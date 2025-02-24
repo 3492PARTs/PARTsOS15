@@ -6,6 +6,7 @@ package frc.robot;
 
 import au.grapplerobotics.CanBridge;
 import edu.wpi.first.net.WebServer;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -29,39 +30,15 @@ public class Robot extends TimedRobot {
       CanBridge.runTCP();
     }
 
+    DataLogManager.start();
+    WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
+
     partsNT = new PARTsNT(this);
     partsLogger = new PARTsLogger();
     m_robotContainer = new RobotContainer();
     m_robotContainer.constructDashboard();
 
-    WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
-    /* 
-    // Set the scheduler to log Shuffleboard events for command initialize, interrupt, finish
-    CommandScheduler.getInstance()
-        .onCommandInitialize(
-            command -> {
-              partsLogger.logString(command.getName(), "Command initialized");
-              Shuffleboard.addEventMarker(
-                  "Command initialized", command.getName(), EventImportance.kNormal);
-              //System.out.println("Command initialized " + command.getName());
-            });
-    CommandScheduler.getInstance()
-        .onCommandInterrupt(
-            command -> {
-              partsLogger.logString(command.getName(), "Command interrupted");
-              Shuffleboard.addEventMarker(
-                  "Command interrupted", command.getName(), EventImportance.kNormal);
-              //System.out.println("Command interrupted " + command.getName());
-            });
-    CommandScheduler.getInstance()
-        .onCommandFinish(
-            command -> {
-              partsLogger.logString(command.getName(), "Command finished");
-              Shuffleboard.addEventMarker(
-                  "Command finished", command.getName(), EventImportance.kNormal);
-              //System.out.println("Command finished " + command.getName());
-            });
-            */
+    partsLogger.logCommandScheduler();
   }
 
   @Override
@@ -69,6 +46,7 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
     partsNT.setDouble("Match Time", DriverStation.getMatchTime());
     m_robotContainer.outputTelemetry();
+    m_robotContainer.log();
   }
 
   @Override

@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
+import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
@@ -73,8 +74,9 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
     @Override
     public void stop() {
-        // TODO Auto-generated method stub
-        //throw new UnsupportedOperationException("Unimplemented method 'stop'");
+        applyRequest(() -> new SwerveRequest.RobotCentric().withVelocityX(0)
+                .withVelocityY(0)
+                .withRotationalRate(0));
     }
 
     @Override
@@ -87,29 +89,6 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
     public void log() {
         // TODO Auto-generated method stub
         //throw new UnsupportedOperationException("Unimplemented method 'log'");
-    }
-
-    private void initializePoseEstimator() {
-
-        frontLeftModule = getModule(0);
-        frontRightModule = getModule(1);
-        backLeftModule = getModule(2);
-        backRightModule = getModule(3);
-
-        m_poseEstimator = new SwerveDrivePoseEstimator(
-                getKinematics(),
-                getRotation3d().toRotation2d(),
-                new SwerveModulePosition[] {
-                        frontLeftModule.getPosition(doRejectUpdate),
-                        frontRightModule.getPosition(doRejectUpdate),
-                        backLeftModule.getPosition(doRejectUpdate),
-                        backRightModule.getPosition(doRejectUpdate)
-
-                },
-                new Pose2d(),
-                VecBuilder.fill(0.05, 0.05, new PARTsUnit(5, PARTsUnitType.Angle).to(PARTsUnitType.Radian)),
-                VecBuilder.fill(0.5, 0.5, new PARTsUnit(30, PARTsUnitType.Angle).to(PARTsUnitType.Radian)));
-
     }
 
     /*---------------------------------- Custom Public Functions ----------------------------------*/
@@ -211,6 +190,29 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                         null);
             }
         });
+    }
+
+    private void initializePoseEstimator() {
+
+        frontLeftModule = getModule(0);
+        frontRightModule = getModule(1);
+        backLeftModule = getModule(2);
+        backRightModule = getModule(3);
+
+        m_poseEstimator = new SwerveDrivePoseEstimator(
+                getKinematics(),
+                getRotation3d().toRotation2d(),
+                new SwerveModulePosition[] {
+                        frontLeftModule.getPosition(doRejectUpdate),
+                        frontRightModule.getPosition(doRejectUpdate),
+                        backLeftModule.getPosition(doRejectUpdate),
+                        backRightModule.getPosition(doRejectUpdate)
+
+                },
+                new Pose2d(),
+                VecBuilder.fill(0.05, 0.05, new PARTsUnit(5, PARTsUnitType.Angle).to(PARTsUnitType.Radian)),
+                VecBuilder.fill(0.5, 0.5, new PARTsUnit(30, PARTsUnitType.Angle).to(PARTsUnitType.Radian)));
+
     }
 
     /*---------------------------------- Interface Functions ----------------------------------*/
