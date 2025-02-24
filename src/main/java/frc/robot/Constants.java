@@ -100,7 +100,7 @@ public final class Constants {
     // INTAKE
     public static final int kMaxIntakeCurrent = 20;
 
-    public static final double kIntakeSpeed = 0.6;
+    public static final double kReefIntakeSpeed = 0.6;
     public static final double kEjectSpeed = 0.3;
     public static final double kGroundIntakeSpeed = -0.3;
   }

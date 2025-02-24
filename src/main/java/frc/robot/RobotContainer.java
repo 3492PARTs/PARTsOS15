@@ -201,11 +201,12 @@ public class RobotContainer {
         //operatorController.leftBumper().whileTrue(new AlgaeIntake(algae, operatorController));
         // operatorController.leftTrigger().whileTrue(getAutonomousCommand()));
         algae.setDefaultCommand(new AlgaeWrist(algae, operatorController));
+
         operatorController.povUp().onTrue(new RunCommand(() -> {
             algae.stow();
         }, algae));
         operatorController.povDown().onTrue(new RunCommand(() -> {
-            algae.grabAlgae();
+            algae.grabReefAlgae();
         }, algae));
         operatorController.povRight().onTrue(new RunCommand(() -> {
             algae.groundIntake();
@@ -219,6 +220,7 @@ public class RobotContainer {
         operatorController.leftBumper().whileTrue(new RunCommand(() -> {
             algae.score();
         }, algae));
+
 
         // =============================================================================================
         // ------------------------------------- SysID

@@ -16,6 +16,7 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.PARTsSubsystem;
@@ -109,8 +110,6 @@ public class Algae extends PARTsSubsystem {
 
   @Override
   public void periodic() {
-
-    //mWristPIDController.setGoal(mPeriodicIO.wrist_target_angle);
     double pidCalc = mWristPIDController.calculate(Math.toRadians(getWristAngle().getValue()),
         Math.toRadians(mPeriodicIO.wrist_target_angle));
 
@@ -121,9 +120,6 @@ public class Algae extends PARTsSubsystem {
 
     mWristMotor.setVoltage(mPeriodicIO.wrist_voltage);
     mIntakeMotor.set(mPeriodicIO.intake_power);
-
-    // mWristMotor.setVoltage(mWristFeedForward.calculate(Math.toRadians(getWristAngle().getValue()), 0));
-
   }
 
   @Override
@@ -164,22 +160,47 @@ public class Algae extends PARTsSubsystem {
     mPeriodicIO.intake_power = 0.0;
   }
 
-  public void grabAlgae() {
+  public void grabReefAlgae() {
     mPeriodicIO.wrist_target_angle = Constants.Algae.kDeAlgaeAngle;
-    mPeriodicIO.intake_power = Constants.Algae.kIntakeSpeed;
+    mPeriodicIO.intake_power = Constants.Algae.kReefIntakeSpeed;
 
     mPeriodicIO.state = IntakeState.DEALGAE;
+  }
+
+  public Command grabReefAlgae1() {
+    return this.run(() -> {
+      mPeriodicIO.wrist_target_angle = Constants.Algae.kDeAlgaeAngle;
+      mPeriodicIO.intake_power = Constants.Algae.kReefIntakeSpeed;
+      mPeriodicIO.state = IntakeState.DEALGAE;
+    }).until(() -> mIntakeMotor.getOutputCurrent() > 100); //TODO; check output current
   }
 
   public void score() {
     mPeriodicIO.intake_power = Constants.Algae.kEjectSpeed;
   }
 
+  public Command score1() {
+    return this.run(() -> {
+      //TODO: check negations
+      if (mPeriodicIO.state == IntakeState.DEALGAE) 
+        mPeriodicIO.intake_power = Constants.Algae.kReefIntakeSpeed;
+      else
+        mPeriodicIO.intake_power = Constants.Algae.kEjectSpeed;
+    }).until(() -> mIntakeMotor.getOutputCurrent() > 100); //TODO: Check output current when no ball
+  }
+
   public void groundIntake() {
     mPeriodicIO.wrist_target_angle = Constants.Algae.kGroundIntakeAngle;
     mPeriodicIO.intake_power = Constants.Algae.kGroundIntakeSpeed;
+    mPeriodicIO.state = IntakeState.GROUND; 
+  }
 
-    mPeriodicIO.state = IntakeState.GROUND;
+  public Command groundIntake1() {
+    return this.run(() -> {
+      mPeriodicIO.wrist_target_angle = Constants.Algae.kGroundIntakeAngle;
+      mPeriodicIO.intake_power = Constants.Algae.kGroundIntakeSpeed;
+      mPeriodicIO.state = IntakeState.GROUND;
+    }).until(() -> mIntakeMotor.getOutputCurrent() > 100); //TODO: Check output current and then add
   }
 
   public void stopAlgae() {
