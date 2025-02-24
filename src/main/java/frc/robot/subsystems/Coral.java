@@ -113,7 +113,7 @@ public class Coral extends PARTsSubsystem {
     // if there was an error but there isn't now remove error
     if (mPeriodicIO.laserMeasurement == null || mPeriodicIO.laserMeasurement.status != 0
         || !canandcolor.isConnected()) {
-      if (!mPeriodicIO.error) {
+      if (!mPeriodicIO.error && mPeriodicIO.state != IntakeState.ERROR) {
         mPeriodicIO.error = true;
         mPeriodicIO.state = IntakeState.ERROR;
         candle.addState(CandleState.CORAL_ERROR);
@@ -157,6 +157,12 @@ public class Coral extends PARTsSubsystem {
 
     super.partsNT.setBoolean("Laser/hasCoral", isCoralInEntry());
 
+    super.partsNT.setDouble("Current/Left", mLeftMotor.getOutputCurrent());
+    super.partsNT.setDouble("Current/Right", mRightMotor.getOutputCurrent());
+
+    super.partsNT.setDouble("Output/Left", mLeftMotor.getAppliedOutput());
+    super.partsNT.setDouble("Output/Right", mRightMotor.getAppliedOutput());
+    
     super.partsNT.setBoolean("Canandcolor/hasCoral", isCoralInExit());
     super.partsNT.setDouble("Canandcolor/distance", mPeriodicIO.colorMeasurement);
     super.partsNT.setBoolean("Canandcolor/Connection", canandcolor.isConnected());

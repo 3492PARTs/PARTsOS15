@@ -1376,6 +1376,88 @@
                 }
               }
             ]
+          },
+          {
+            "title": "Current",
+            "x": 500.0,
+            "y": 300.0,
+            "width": 200.0,
+            "height": 200.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "Left",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 200.0,
+                "height": 200.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/Coral/Current/Left",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Right",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 200.0,
+                "height": 200.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/Coral/Current/Right",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              }
+            ]
+          },
+          {
+            "title": "Output",
+            "x": 700.0,
+            "y": 300.0,
+            "width": 200.0,
+            "height": 200.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "Left",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 200.0,
+                "height": 200.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/Coral/Output/Left",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Right",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 200.0,
+                "height": 200.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/Coral/Output/Right",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              }
+            ]
           }
         ],
         "containers": [
