@@ -13,6 +13,8 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringEntry;
 import edu.wpi.first.networktables.StringTopic;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * PARTs NetworkTables Easy API.<p>
@@ -32,7 +34,9 @@ public class PARTsNT {
     private class EasyGenericEntry {
         /** The NetworkTables topic name. */
         public String topicName;
-        public EasyGenericEntry() {}
+
+        public EasyGenericEntry() {
+        }
     }
 
     class EasyBooleanEntry extends EasyGenericEntry {
@@ -205,7 +209,7 @@ public class PARTsNT {
      */
     private void addEntryToList(EasyGenericEntry entry) {
         // Check if the entry already exists in the list.
-        for (int i=0; i<topicsList.size(); i++) {
+        for (int i = 0; i < topicsList.size(); i++) {
             if (topicsList.get(i).topicName == entry.topicName) {
                 return; // It exists so we abort adding it to avoid dupes.
             }
@@ -221,7 +225,8 @@ public class PARTsNT {
      */
     private EasyGenericEntry getEntry(String name) {
         for (EasyGenericEntry entry : topicsList) {
-            if (entry.topicName == name) return entry;
+            if (entry.topicName == name)
+                return entry;
         }
         return null;
     }
@@ -297,7 +302,8 @@ public class PARTsNT {
      */
     public boolean getBoolean(String name) {
         EasyBooleanEntry entry = getBooleanEntry(name);
-        if (entry == null) return false;
+        if (entry == null)
+            return false;
         entry.cachedValue = entry.entry.get();
         return entry.cachedValue;
     }
@@ -327,7 +333,8 @@ public class PARTsNT {
      */
     public int getInteger(String name) {
         EasyIntegerEntry entry = getIntegerEntry(name);
-        if (entry == null) return 0;
+        if (entry == null)
+            return 0;
         entry.cachedValue = Math.toIntExact(entry.entry.get());
         return entry.cachedValue;
     }
@@ -357,11 +364,12 @@ public class PARTsNT {
      */
     public double getDouble(String name) {
         EasyDoubleEntry entry = (EasyDoubleEntry) getDoubleEntry(name);
-        if (entry == null) return 0.0;
+        if (entry == null)
+            return 0.0;
         entry.cachedValue = entry.entry.get();
         return entry.cachedValue;
     }
-    
+
     /**
      * Sets the double value for the requested entry.
      * @param name The name of the entry.
@@ -387,7 +395,8 @@ public class PARTsNT {
      */
     public String getString(String name) {
         EasyStringEntry entry = (EasyStringEntry) getStringEntry(name);
-        if (entry == null) return "";
+        if (entry == null)
+            return "";
         entry.cachedValue = entry.entry.get();
         return entry.cachedValue;
     }
@@ -414,8 +423,8 @@ public class PARTsNT {
      * Removes all previously created entries.
      */
     public void removeAllEntries() {
-        for (int i=0; i < masterList.size(); i++) {
-            for (int j=0; j < masterList.get(i).size(); j++) {
+        for (int i = 0; i < masterList.size(); i++) {
+            for (int j = 0; j < masterList.get(i).size(); j++) {
                 masterList.get(i).set(j, null);
                 masterList.get(i).remove(j);
             }
@@ -427,13 +436,21 @@ public class PARTsNT {
      * @param name The name of the entry to remove.
      */
     public void removeEntry(String name) {
-        for (int i=0; i < masterList.size(); i++) {
-            for (int j=0; j < masterList.get(i).size(); j++) {
+        for (int i = 0; i < masterList.size(); i++) {
+            for (int j = 0; j < masterList.get(i).size(); j++) {
                 if (((EasyGenericEntry) masterList.get(i).get(j)).topicName == name) {
                     masterList.get(i).set(j, null);
                     masterList.get(i).remove(j);
                 }
             }
         }
+    }
+
+    /**
+     * Adds a sendable to smart dashboard network table entry.
+     * @param data The sendable to add.
+     */
+    public static void putSmartDashboardSendable(String key, Sendable data) {
+        SmartDashboard.putData(key, data);
     }
 }

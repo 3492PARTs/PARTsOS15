@@ -7,49 +7,27 @@ import java.util.function.Supplier;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
-import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.util.sendable.Sendable;
-import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.generated.TunerConstants;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
-import frc.robot.util.LimelightHelpers;
-import frc.robot.util.PARTsUnit;
-import frc.robot.util.PARTsUnit.PARTsUnitType;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements
  * Subsystem so it can easily be used in command-based projects.
  */
 public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Subsystem {
-    private SwerveDrivePoseEstimator m_poseEstimator;
-
-    private SwerveModule frontRightModule;
-    private SwerveModule frontLeftModule;
-    private SwerveModule backRightModule;
-    private SwerveModule backLeftModule;
-
-    private boolean doRejectUpdate = false;
-
     private static final double kSimLoopPeriod = 0.005; // 5 ms
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
@@ -147,9 +125,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (Utils.isSimulation()) {
             startSimThread();
         }
-
-        initializePoseEstimator();
-        sendToDashboard();
     }
 
     /**
@@ -175,9 +150,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (Utils.isSimulation()) {
             startSimThread();
         }
-
-        initializePoseEstimator();
-        sendToDashboard();
     }
 
     /**
@@ -214,9 +186,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (Utils.isSimulation()) {
             startSimThread();
         }
-
-        initializePoseEstimator();
-        sendToDashboard();
     }
 
     /**
@@ -289,125 +258,5 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             updateSimState(deltaTime, RobotController.getBatteryVoltage());
         });
         m_simNotifier.startPeriodic(kSimLoopPeriod);
-    }
-
-    private void initializePoseEstimator() {
-
-        frontLeftModule = getModule(0);
-        frontRightModule = getModule(1);
-        backLeftModule = getModule(2);
-        backRightModule = getModule(3);
-
-        m_poseEstimator = new SwerveDrivePoseEstimator(
-                getKinematics(),
-                getRotation3d().toRotation2d(),
-                new SwerveModulePosition[] {
-                        frontLeftModule.getPosition(doRejectUpdate),
-                        frontRightModule.getPosition(doRejectUpdate),
-                        backLeftModule.getPosition(doRejectUpdate),
-                        backRightModule.getPosition(doRejectUpdate)
-
-                },
-                new Pose2d(),
-                VecBuilder.fill(0.05, 0.05, new PARTsUnit(5, PARTsUnitType.Angle).to(PARTsUnitType.Radian)),
-                VecBuilder.fill(0.5, 0.5, new PARTsUnit(30, PARTsUnitType.Angle).to(PARTsUnitType.Radian)));
-
-    }
-
-    public void updatePoseEstimator() {
-        m_poseEstimator.update(
-                getPigeon2().getRotation2d(),
-                new SwerveModulePosition[] {
-                        frontLeftModule.getPosition(doRejectUpdate),
-                        frontRightModule.getPosition(doRejectUpdate),
-                        backLeftModule.getPosition(doRejectUpdate),
-                        backRightModule.getPosition(doRejectUpdate)
-                });
-    }
-
-    public Rotation2d getEstimatedRotation2d() {
-        LimelightHelpers.SetRobotOrientation("", m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0,
-                0, 0,
-                0, 0);
-        LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
-
-        if (mt2 != null) {
-            if (Math.abs(getPigeon2().getRate()) > 720) // if our angular velocity is greater than 720 degrees per
-                                                        // second, ignore vision updates
-            {
-                doRejectUpdate = true;
-            }
-            if (mt2.tagCount == 0) {
-                doRejectUpdate = true;
-            }
-            if (!doRejectUpdate) {
-                m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
-                m_poseEstimator.addVisionMeasurement(
-                        mt2.pose,
-                        mt2.timestampSeconds);
-            }
-        }
-
-        return mt2 != null ? m_poseEstimator.getEstimatedPosition().getRotation() : null;
-    }
-
-    public Pose2d getEstimatedPose() {
-        LimelightHelpers.SetRobotOrientation("", m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0,
-                0, 0,
-                0, 0);
-        LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
-
-        if (mt2 != null) {
-            if (Math.abs(getPigeon2().getRate()) > 720) // if our angular velocity is greater than 720 degrees per
-                                                        // second, ignore vision updates
-            {
-                doRejectUpdate = true;
-            }
-            if (mt2.tagCount == 0) {
-                doRejectUpdate = true;
-            }
-            if (!doRejectUpdate) {
-                m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
-                m_poseEstimator.addVisionMeasurement(
-                        mt2.pose,
-                        mt2.timestampSeconds);
-            }
-        }
-
-        return m_poseEstimator.getEstimatedPosition();
-    }
-
-    private void sendToDashboard() {
-        SmartDashboard.putData("Swerve Drive", new Sendable() {
-            @Override
-            public void initSendable(SendableBuilder builder) {
-                builder.setSmartDashboardType("SwerveDrive");
-
-                builder.addDoubleProperty("Front Left Angle",
-                        () -> frontLeftModule.getCurrentState().angle.getRadians(), null);
-                builder.addDoubleProperty("Front Left Velocity",
-                        () -> frontLeftModule.getCurrentState().speedMetersPerSecond, null);
-
-                builder.addDoubleProperty("Front Right Angle",
-                        () -> frontRightModule.getCurrentState().angle.getRadians(), null);
-                builder.addDoubleProperty("Front Right Velocity",
-                        () -> frontRightModule.getCurrentState().speedMetersPerSecond, null);
-
-                builder.addDoubleProperty("Back Left Angle", () -> backLeftModule.getCurrentState().angle.getRadians(),
-                        null);
-                builder.addDoubleProperty("Back Left Velocity",
-                        () -> backLeftModule.getCurrentState().speedMetersPerSecond, null);
-
-                builder.addDoubleProperty("Back Right Angle",
-                        () -> backRightModule.getCurrentState().angle.getRadians(), null);
-                builder.addDoubleProperty("Back Right Velocity",
-                        () -> backRightModule.getCurrentState().speedMetersPerSecond, null);
-
-                builder.addDoubleProperty("Robot Angle",
-                        () -> new PARTsUnit(getPigeon2().getYaw().getValueAsDouble(), PARTsUnitType.Angle)
-                                .to(PARTsUnitType.Radian),
-                        null);
-            }
-        });
     }
 }

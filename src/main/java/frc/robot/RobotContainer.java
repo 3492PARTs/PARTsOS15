@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.VisionConstants;
@@ -29,12 +30,14 @@ import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.Candle.CandleState;
 import frc.robot.subsystems.sysid.AlgaeSysId;
 import frc.robot.subsystems.sysid.ElevatorSysId;
+import frc.robot.util.IPARTsSubsystem;
 import frc.robot.util.PARTsDashboard;
 import frc.robot.util.PARTsSubsystem;
 import frc.robot.util.PARTsUnit;
 import frc.robot.util.PARTsUnit.PARTsUnitType;
 import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.PARTsDrivetrain;
 
 public class RobotContainer {
     private boolean fineGrainDrive = false;
@@ -49,16 +52,16 @@ public class RobotContainer {
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
-    private final Vision visionSubsystem = new Vision(VisionConstants.DRIVETRAIN_LIMELIGHT,
-            new PARTsUnit(VisionConstants.LIMELIGHT_ANGLE, PARTsUnitType.Angle),
-            new PARTsUnit(VisionConstants.LIMELIGHT_LENS_HEIGHT, PARTsUnitType.Inch));
-
     private final Telemetry telemetryLogger = new Telemetry(MaxSpeed);
 
     private final CommandXboxController driveController = new CommandXboxController(0);
     private final CommandXboxController operatorController = new CommandXboxController(1);
 
     /**Subsystems */
+    private final Vision visionSubsystem = new Vision(VisionConstants.DRIVETRAIN_LIMELIGHT,
+            new PARTsUnit(VisionConstants.LIMELIGHT_ANGLE, PARTsUnitType.Angle),
+            new PARTsUnit(VisionConstants.LIMELIGHT_LENS_HEIGHT, PARTsUnitType.Inch));
+
     public final Candle candle = new Candle();
 
     private final Elevator elevator = new Elevator(candle);
@@ -69,8 +72,11 @@ public class RobotContainer {
 
     private final Coral coral = new Coral(candle, elevator);
 
-    private final ArrayList<PARTsSubsystem> subsystems = new ArrayList<>(Arrays.asList(candle, algae, coral, elevator));
-    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    public final PARTsDrivetrain drivetrain = new PARTsDrivetrain(TunerConstants.DrivetrainConstants,
+            TunerConstants.FrontLeft, TunerConstants.FrontRight, TunerConstants.BackLeft, TunerConstants.BackRight);
+
+    private final ArrayList<IPARTsSubsystem> subsystems = new ArrayList<IPARTsSubsystem>(
+            Arrays.asList(candle, algae, coral, elevator, drivetrain));
 
     /**End Subsystems */
 
@@ -220,7 +226,6 @@ public class RobotContainer {
         operatorController.leftBumper().whileTrue(new RunCommand(() -> {
             algae.score();
         }, algae));
-
 
         // =============================================================================================
         // ------------------------------------- SysID

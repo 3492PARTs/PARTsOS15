@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.PARTsDrivetrain;
 import frc.robot.subsystems.Vision;
 import frc.robot.util.PARTsUnit;
 import frc.robot.util.PARTsUnit.PARTsUnitType;
@@ -38,7 +39,7 @@ public class AlignCommand extends Command {
   private boolean kill = false;
 
   private final Vision m_Vision;
-  private final CommandSwerveDrivetrain m_drivetrain;
+  private final PARTsDrivetrain m_drivetrain;
   private final SwerveRequest.RobotCentric m_alignRequest;
 
   private final Pose2d holdDistance;
@@ -84,7 +85,7 @@ public class AlignCommand extends Command {
   BooleanLogEntry L_RangeGoalY;
   BooleanLogEntry L_ThetaGoal;
 
-  public AlignCommand(Vision vision, CommandSwerveDrivetrain swerve, Pose2d holdDistance) {
+  public AlignCommand(Vision vision, PARTsDrivetrain swerve, Pose2d holdDistance) {
     m_Vision = vision;
     m_drivetrain = swerve;
     this.holdDistance = holdDistance;

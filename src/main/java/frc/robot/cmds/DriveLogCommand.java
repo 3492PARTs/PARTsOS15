@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.LimelightData;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.PARTsDrivetrain;
 import frc.robot.subsystems.Vision;
 import frc.robot.util.LimelightHelpers;
 import frc.robot.util.PARTsUnit;
@@ -44,7 +45,7 @@ public class DriveLogCommand extends Command {
   double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
   double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 
-  final CommandSwerveDrivetrain drivetrain;
+  final PARTsDrivetrain drivetrain;
   private final SwerveRequest.RobotCentric drive = new SwerveRequest.RobotCentric()
       .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
@@ -107,7 +108,7 @@ public class DriveLogCommand extends Command {
   boolean doRejectUpdate = false;
 
   /** Creates a new DriveLog. */
-  public DriveLogCommand(CommandSwerveDrivetrain drivetrain, CommandXboxController joystick, Vision vision) {
+  public DriveLogCommand(PARTsDrivetrain drivetrain, CommandXboxController joystick, Vision vision) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.drivetrain = drivetrain;
     this.joystick = joystick;
@@ -211,7 +212,7 @@ public class DriveLogCommand extends Command {
 
     // logCurrRobotX.append(drivetrain.getState().Pose.getX());
     // logCurrRobotY.append(drivetrain.getState().Pose.getY());
-    
+
     drivetrain.updatePoseEstimator();
 
     // logCurrLLRotationX.append(m_poseEstimator.getEstimatedPosition().getX());

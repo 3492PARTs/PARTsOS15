@@ -15,10 +15,9 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.util.PARTsNT;
 import frc.robot.util.PARTsSubsystem;
 import frc.robot.util.PARTsUnit;
 import frc.robot.util.PARTsUnit.PARTsUnitType;
@@ -95,6 +94,8 @@ public class Algae extends PARTsSubsystem {
         PersistMode.kPersistParameters);
 
     reset();
+
+    PARTsNT.putSmartDashboardSendable("Algae Wrist PID", mWristPIDController);
   }
 
   private static class PeriodicIO {
@@ -144,6 +145,8 @@ public class Algae extends PARTsSubsystem {
     super.partsNT.setDouble("Intake/Current", mIntakeMotor.getOutputCurrent());
     super.partsNT.setDouble("Intake/Output", mIntakeMotor.getAppliedOutput());
     super.partsNT.setDouble("Intake/Power", mPeriodicIO.intake_power);
+
+    super.partsNT.setString("State", mPeriodicIO.state.toString());
   }
 
   @Override
@@ -182,21 +185,21 @@ public class Algae extends PARTsSubsystem {
   public Command score1() {
     return this.run(() -> {
       //TODO: check negations
-      if (mPeriodicIO.state == IntakeState.DEALGAE) 
+      if (mPeriodicIO.state == IntakeState.DEALGAE)
         mPeriodicIO.intake_power = Constants.Algae.kReefIntakeSpeed;
       else
         mPeriodicIO.intake_power = Constants.Algae.kEjectSpeed;
     }).until(() -> mIntakeMotor.getOutputCurrent() > 100); //TODO: Check output current when no ball
-    
+
     /* .andThen(() -> mPeriodicIO.wrist_target_angle = Constants.Algae.kStowAngle)
     .andThen(() -> mPeriodicIO.state = IntakeState.STOW); 
-    */ 
+    */
   }
 
   public void groundIntake() {
     mPeriodicIO.wrist_target_angle = Constants.Algae.kGroundIntakeAngle;
     mPeriodicIO.intake_power = Constants.Algae.kGroundIntakeSpeed;
-    mPeriodicIO.state = IntakeState.GROUND; 
+    mPeriodicIO.state = IntakeState.GROUND;
   }
 
   public Command groundIntake1() {

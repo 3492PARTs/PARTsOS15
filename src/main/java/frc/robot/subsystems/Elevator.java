@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.subsystems.Candle.CandleState;
+import frc.robot.util.PARTsNT;
 import frc.robot.util.PARTsSubsystem;
 
 public class Elevator extends PARTsSubsystem {
@@ -152,6 +153,8 @@ public class Elevator extends PARTsSubsystem {
     .onTrue(Commands.runOnce(() -> candle.addState(CandleState.ELEVATOR_L4)))
     .onFalse(Commands.runOnce(() -> candle.removeState(CandleState.ELEVATOR_L4)));
     */
+
+    PARTsNT.putSmartDashboardSendable("Elevator PID", mElevatorPIDController);
   }
   /*-------------------------------- Generic Subsystem Functions --------------------------------*/
 

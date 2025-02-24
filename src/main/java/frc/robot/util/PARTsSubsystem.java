@@ -6,7 +6,7 @@ package frc.robot.util;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public abstract class PARTsSubsystem extends SubsystemBase {
+public abstract class PARTsSubsystem extends SubsystemBase implements IPARTsSubsystem {
   protected PARTsNT partsNT;
   protected PARTsLogger partsLogger;
 
@@ -36,13 +36,5 @@ public abstract class PARTsSubsystem extends SubsystemBase {
     partsNT = new PARTsNT(className);
     partsLogger = new PARTsLogger(className);
   }
-
-  public abstract void outputTelemetry();
-
-  public abstract void stop();
-
-  public abstract void reset();
-
-  public abstract void log();
 
 }
