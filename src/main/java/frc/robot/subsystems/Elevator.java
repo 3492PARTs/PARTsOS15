@@ -43,7 +43,8 @@ public class Elevator extends PARTsSubsystem {
   private LaserCan upperLimitLaserCAN;
 
   public enum ElevatorState {
-    ERROR,
+    SENSOR_ERROR,
+    POS_CTL_TRAVEL_ERROR,
     NONE,
     STOW,
     L2,
@@ -181,6 +182,8 @@ public class Elevator extends PARTsSubsystem {
           mPeriodicIO.elevator_position_debounce = 0;
           if (getElevatorPosition() - mPeriodicIO.elevator_previous_position == 0) {
             mPeriodicIO.error = true;
+            mPeriodicIO.state = ElevatorState.POS_CTL_TRAVEL_ERROR;
+            candle.addState(CandleState.ELEVATOR_ERROR);
             setSpeed(0);
           }
           mPeriodicIO.elevator_previous_position = getElevatorPosition();
@@ -278,10 +281,12 @@ public class Elevator extends PARTsSubsystem {
   }
 
   public Command joystickElevatorControl(CommandXboxController controller) {
-    return this.run(() -> {
+    Command c =  this.run(() -> {
       double speed = -controller.getRightY() * Constants.Elevator.maxSpeed;
       setElevatorPower(speed);
     }).until(() -> Math.abs(controller.getRightY()) < 0.1).andThen(() -> setElevatorPower(0));
+    c.setName("JoystickElevatorControl");
+    return c;
   }
 
   public Command goToElevatorStow() {
@@ -337,13 +342,6 @@ public class Elevator extends PARTsSubsystem {
         .unless(() -> mPeriodicIO.gantry_blocked).until(this::getBottomLimit)
         .andThen(() -> stop());
   }
-
-  /*
-  public Command interrupt() {
-    return this.runOnce(() -> {
-      mPeriodicIO.is_elevator_pos_control = false;
-    });
-  }*/
 
   public boolean isPositionControl() {
     return mPeriodicIO.is_elevator_pos_control;
@@ -418,12 +416,12 @@ public class Elevator extends PARTsSubsystem {
         mPeriodicIO.error = true;
 
         setElevatorPower(0);
-        mPeriodicIO.state = ElevatorState.ERROR;
+        mPeriodicIO.state = ElevatorState.SENSOR_ERROR;
         candle.addState(CandleState.ELEVATOR_ERROR);
       }
     } else {
       // If there was an error remove it
-      if (mPeriodicIO.error) {
+      if (mPeriodicIO.error && mPeriodicIO.state != ElevatorState.POS_CTL_TRAVEL_ERROR) {
         mPeriodicIO.error = false;
         mPeriodicIO.state = ElevatorState.NONE;
         candle.removeState(CandleState.ELEVATOR_ERROR);

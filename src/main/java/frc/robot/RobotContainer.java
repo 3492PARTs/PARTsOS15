@@ -17,9 +17,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.VisionConstants;
-import frc.robot.commands.algae.AlgaeWrist;
+import frc.robot.cmds.algae.AlgaeWrist;
 import frc.robot.subsystems.Algae;
 import frc.robot.subsystems.Candle;
 import frc.robot.generated.TunerConstants;
@@ -155,7 +156,7 @@ public class RobotContainer {
         }, elevator));*/
 
         // While the joystick is moving control the elevator in manual, and when done stop
-        operatorController.axisMagnitudeGreaterThan(1, 0.1)
+        operatorController.axisMagnitudeGreaterThan(5, 0.1)
                 .onTrue(elevator.joystickElevatorControl(operatorController));
 
         operatorController.a().onTrue(elevator.goToElevatorStow());
