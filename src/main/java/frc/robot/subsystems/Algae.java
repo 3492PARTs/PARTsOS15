@@ -154,6 +154,12 @@ public class Algae extends PARTsSubsystem {
     mWristRelEncoder.setPosition(0);
   }
 
+  @Override
+  public void log() {
+    // TODO Auto-generated method stub
+    //throw new UnsupportedOperationException("Unimplemented method 'log'");
+  }
+
   /*---------------------------------- Custom Public Functions ----------------------------------*/
 
   public void stow() {
@@ -215,8 +221,6 @@ public class Algae extends PARTsSubsystem {
     //mPeriodicIO.wrist_target_angle = Constants.Algae.kStowAngle;
   }
 
-  /*---------------------------------- Custom Private Functions ---------------------------------*/
-
   public PARTsUnit getWristAngle() {
 
     return new PARTsUnit(new PARTsUnit(mWristRelEncoder.getPosition(), PARTsUnitType.Rotations).to(PARTsUnitType.Angle)
@@ -243,10 +247,6 @@ public class Algae extends PARTsSubsystem {
     return mWristRelEncoder.getVelocity() * 60 / Constants.Algae.wristGearRatio; // 16 is the gear reduction
   }
 
-  @Override
-  public void log() {
-    // TODO Auto-generated method stub
-    //throw new UnsupportedOperationException("Unimplemented method 'log'");
-  }
+  /*---------------------------------- Custom Private Functions ---------------------------------*/
 
 }

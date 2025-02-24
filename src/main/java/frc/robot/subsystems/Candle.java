@@ -95,25 +95,7 @@ public class Candle extends PARTsSubsystem {
         publishDashboardValues();
     }
 
-    public void addState(CandleState state) {
-        mPeriodicIO.robotStates.add(state);
-
-        setState();
-    }
-
-    public void removeState(CandleState state) {
-        mPeriodicIO.robotStates.remove(state);
-
-        setState();
-    }
-
-    public void disable() {
-        mPeriodicIO.robotStates.clear();
-        mPeriodicIO.robotStates.add(CandleState.DISABLED);
-
-        setState();
-    }
-
+    /*---------------------------------- Custom Private Functions ---------------------------------*/
     private void setState() {
         if (mPeriodicIO.robotStates.contains(CandleState.FINE_GRAIN_DRIVE))
             mPeriodicIO.state = CandleState.FINE_GRAIN_DRIVE;
@@ -225,6 +207,26 @@ public class Candle extends PARTsSubsystem {
         animation = a;
     }
 
+    /*---------------------------------- Custom Public Functions ----------------------------------*/
+    public void addState(CandleState state) {
+        mPeriodicIO.robotStates.add(state);
+
+        setState();
+    }
+
+    public void removeState(CandleState state) {
+        mPeriodicIO.robotStates.remove(state);
+
+        setState();
+    }
+
+    public void disable() {
+        mPeriodicIO.robotStates.clear();
+        mPeriodicIO.robotStates.add(CandleState.DISABLED);
+
+        setState();
+    }
+
     /* Wrappers so we can access the CANdle from the subsystem */
     public double getVbat() {
         return candle.getBusVoltage();
@@ -258,6 +260,7 @@ public class Candle extends PARTsSubsystem {
         candle.configStatusLedState(offWhenActive, 0);
     }
 
+    /*-------------------------------- Generic Subsystem Functions --------------------------------*/
     @Override
     public void periodic() {
         // This method will be called once per scheduler run

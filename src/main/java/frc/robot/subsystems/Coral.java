@@ -28,7 +28,7 @@ public class Coral extends PARTsSubsystem {
 
   /*-------------------------------- Private instance variables ---------------------------------*/
   private PeriodicIO mPeriodicIO;
-  public final Candle candle;
+  private final Candle candle;
 
   public enum IntakeState {
     NONE,

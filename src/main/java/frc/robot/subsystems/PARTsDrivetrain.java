@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
@@ -19,11 +18,11 @@ import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.util.IPARTsSubsystem;
 import frc.robot.util.LimelightHelpers;
-import frc.robot.util.PARTsSubsystem;
 import frc.robot.util.PARTsUnit;
 import frc.robot.util.PARTsUnit.PARTsUnitType;
 
 public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSubsystem {
+    /*-------------------------------- Private instance variables ---------------------------------*/
     private SwerveDrivePoseEstimator m_poseEstimator;
 
     private SwerveModule frontRightModule;
@@ -65,6 +64,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         sendToDashboard();
     }
 
+    /*-------------------------------- Generic Subsystem Functions --------------------------------*/
     @Override
     public void outputTelemetry() {
         // TODO Auto-generated method stub
@@ -112,6 +112,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
     }
 
+    /*---------------------------------- Custom Public Functions ----------------------------------*/
     public void updatePoseEstimator() {
         m_poseEstimator.update(
                 getPigeon2().getRotation2d(),
@@ -175,6 +176,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         return m_poseEstimator.getEstimatedPosition();
     }
 
+    /*---------------------------------- Custom Private Functions ---------------------------------*/
     private void sendToDashboard() {
         SendableRegistry.addLW(this, getName());
 
@@ -211,6 +213,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         });
     }
 
+    /*---------------------------------- Interface Functions ----------------------------------*/
     @Override
     public void initSendable(SendableBuilder builder) {
         builder.setSmartDashboardType("Subsystem");

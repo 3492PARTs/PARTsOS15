@@ -4,13 +4,9 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.apriltag.AprilTag;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.LimelightData;
 import frc.robot.util.AprilTagData;
 import frc.robot.util.LimelightHelpers;
 import frc.robot.util.PARTsSubsystem;
@@ -20,6 +16,7 @@ import frc.robot.util.PARTsUnit.PARTsUnitType;
 
 public class Vision extends PARTsSubsystem {
 
+  /*-------------------------------- Private instance variables ---------------------------------*/
   private final String LIMELIGHT_NAME;
   private final double LIMELIGHT_ANGLE;
   private final double LIMELIGHT_LENS_HEIGHT;
@@ -37,12 +34,38 @@ public class Vision extends PARTsSubsystem {
     // Vision array of limelight data objects.
   }
 
+  /*-------------------------------- Generic Subsystem Functions --------------------------------*/
   @Override
   public void periodic() {
     if (!isTarget())
       return;
   }
 
+  @Override
+  public void outputTelemetry() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'outputTelemetry'");
+  }
+
+  @Override
+  public void stop() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'stop'");
+  }
+
+  @Override
+  public void reset() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'reset'");
+  }
+
+  @Override
+  public void log() {
+    // TODO Auto-generated method stub
+    //throw new UnsupportedOperationException("Unimplemented method 'log'");
+  }
+
+  /*---------------------------------- Custom Public Functions ----------------------------------*/
   /**
    * Gets distance of robot in meters.
    * @param goalHeight The height of the apriltag in inches.
@@ -168,27 +191,5 @@ public class Vision extends PARTsSubsystem {
     return new Rotation2d(-rotation.getRadians());
   }
 
-  @Override
-  public void outputTelemetry() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'outputTelemetry'");
-  }
-
-  @Override
-  public void stop() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'stop'");
-  }
-
-  @Override
-  public void reset() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'reset'");
-  }
-
-  @Override
-  public void log() {
-    // TODO Auto-generated method stub
-    //throw new UnsupportedOperationException("Unimplemented method 'log'");
-  }
+  /*---------------------------------- Custom Private Functions ---------------------------------*/
 }
