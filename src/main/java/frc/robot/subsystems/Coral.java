@@ -99,6 +99,7 @@ public class Coral extends PARTsSubsystem {
     double colorMeasurement;
 
     IntakeState state = IntakeState.NONE;
+    boolean error = false;
   }
 
   /*-------------------------------- Generic Subsystem Functions --------------------------------*/
@@ -112,11 +113,18 @@ public class Coral extends PARTsSubsystem {
     // if there was an error but there isn't now remove error
     if (mPeriodicIO.laserMeasurement == null || mPeriodicIO.laserMeasurement.status != 0
         || !canandcolor.isConnected()) {
-      mPeriodicIO.state = IntakeState.ERROR;
-      candle.addState(CandleState.INTAKE_ERROR);
-    } else if (mPeriodicIO.state == IntakeState.ERROR) {
-      mPeriodicIO.state = IntakeState.NONE;
-      candle.removeState(CandleState.INTAKE_ERROR);
+      if (!mPeriodicIO.error) {
+        mPeriodicIO.error = true;
+        mPeriodicIO.state = IntakeState.ERROR;
+        candle.addState(CandleState.CORAL_ERROR);
+      }
+
+    } else {
+      if (mPeriodicIO.error) {
+        mPeriodicIO.error = false;
+        mPeriodicIO.state = IntakeState.NONE;
+        candle.removeState(CandleState.CORAL_ERROR);
+      }
     }
 
     if (mPeriodicIO.state != IntakeState.ERROR) {

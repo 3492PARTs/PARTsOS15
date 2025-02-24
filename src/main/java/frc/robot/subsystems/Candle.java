@@ -60,7 +60,7 @@ public class Candle extends PARTsSubsystem {
         IDLE,
         DISABLED,
         ELEVATOR_ERROR,
-        INTAKE_ERROR,
+        CORAL_ERROR,
         FINE_GRAIN_DRIVE,
         CORAL_ENTERING,
         HAS_CORAL,
@@ -92,6 +92,7 @@ public class Candle extends PARTsSubsystem {
         candle.configAllSettings(configAll, 100);
 
         setColor(Color.OFF);
+        publishDashboardValues();
     }
 
     public void addState(CandleState state) {
@@ -115,27 +116,59 @@ public class Candle extends PARTsSubsystem {
 
     private void setState() {
         if (mPeriodicIO.robotStates.contains(CandleState.FINE_GRAIN_DRIVE))
-            runFadeAnimation(Color.YELLOW);
+            mPeriodicIO.state = CandleState.FINE_GRAIN_DRIVE;
         else if (mPeriodicIO.robotStates.contains(CandleState.CORAL_ENTERING))
-            runFadeAnimation(Color.PURPLE);
+            mPeriodicIO.state = CandleState.CORAL_ENTERING;
         else if (mPeriodicIO.robotStates.contains(CandleState.HAS_CORAL))
-            runFadeAnimation(Color.GREEN);
+            mPeriodicIO.state = CandleState.HAS_CORAL;
         else if (mPeriodicIO.robotStates.contains(CandleState.ELEVATOR_ERROR))
-            runBlinkAnimation(Color.RED);
-        else if (mPeriodicIO.robotStates.contains(CandleState.INTAKE_ERROR))
-            runBlinkAnimation(Color.ORANGE);
+            mPeriodicIO.state = CandleState.ELEVATOR_ERROR;
+        else if (mPeriodicIO.robotStates.contains(CandleState.CORAL_ERROR))
+            mPeriodicIO.state = CandleState.CORAL_ERROR;
         /*else if (mPeriodicIO.robotStates.contains(CandleState.ELEVATOR_L4))
-            runBurnyBurnAnimation();
+            mPeriodicIO.state = CandleState.ELEVATOR_L4;
         else if (mPeriodicIO.robotStates.contains(CandleState.ELEVATOR_L3))
-            runBlinkAnimation(Color.ORANGE);
+            mPeriodicIO.state = CandleState.ELEVATOR_L3;
         else if (mPeriodicIO.robotStates.contains(CandleState.ELEVATOR_L2))
-            runBlinkAnimation(Color.ORANGE);
+            mPeriodicIO.state = CandleState.ELEVATOR_L2;
         else if (mPeriodicIO.robotStates.contains(CandleState.ELEVATOR_STOW))
-            runRainbowAnimation();*/
+            mPeriodicIO.state = CandleState.ELEVATOR_STOW;;*/
         else if (mPeriodicIO.robotStates.contains(CandleState.IDLE))
-            runFadeAnimation(Color.BLUE);
+            mPeriodicIO.state = CandleState.IDLE;
         else if (mPeriodicIO.robotStates.contains(CandleState.DISABLED))
-            setColor(Color.BLUE);
+            mPeriodicIO.state = CandleState.DISABLED;
+
+        setStateAnimation();
+    }
+
+    private void setStateAnimation() {
+        switch (mPeriodicIO.state) {
+            case FINE_GRAIN_DRIVE:
+                runFadeAnimation(Color.YELLOW);
+                break;
+            case CORAL_ENTERING:
+                runFadeAnimation(Color.PURPLE);
+                break;
+            case HAS_CORAL:
+                runFadeAnimation(Color.GREEN);
+                break;
+            case ELEVATOR_ERROR:
+                runFadeAnimation(Color.RED);
+                break;
+            case CORAL_ERROR:
+                runBlinkAnimation(Color.ORANGE);
+                break;
+            case IDLE:
+                runFadeAnimation(Color.BLUE);
+                break;
+            case DISABLED:
+                setColor(Color.BLUE);
+                break;
+            default:
+                break;
+        }
+
+        publishDashboardValues();
     }
 
     private void setColor(Color color) {
@@ -235,8 +268,13 @@ public class Candle extends PARTsSubsystem {
 
     @Override
     public void outputTelemetry() {
+
+    }
+
+    private void publishDashboardValues() {
         super.partsNT.setString("State", mPeriodicIO.state.toString());
-        super.partsNT.setString("Animation", animation.toString());
+        if (animation != null)
+            super.partsNT.setString("Animation", animation.toString().replace("com.ctre.phoenix.led.", ""));
     }
 
     @Override
