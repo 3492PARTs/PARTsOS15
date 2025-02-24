@@ -95,18 +95,19 @@ public class RobotContainer {
 
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
-        drivetrain.setDefaultCommand(
-                // Drivetrain will execute this command periodically
-                drivetrain.applyRequest(() -> {
-                    double limit = MaxSpeed;
-                    if (elevator.getElevatorPosition() > Constants.Elevator.L2Height)
-                        limit = 0.5;
-                    else if (fineGrainDrive)
-                        limit = 0.5;
-                    return drive.withVelocityX(-driveController.getLeftY() * limit) // Drive forward with negative Y (forward)
-                            .withVelocityY(-driveController.getLeftX() * limit) // Drive left with negative X (left)
-                            .withRotationalRate(-driveController.getRightX() * MaxAngularRate); // Drive counterclockwise with negative X (left)
-                }));
+        Command driveCommand = drivetrain.applyRequest(() -> {
+            double limit = MaxSpeed;
+            if (elevator.getElevatorPosition() > Constants.Elevator.L2Height)
+                limit = 0.5;
+            else if (fineGrainDrive)
+                limit = 0.5;
+            return drive.withVelocityX(-driveController.getLeftY() * limit) // Drive forward with negative Y (forward)
+                    .withVelocityY(-driveController.getLeftX() * limit) // Drive left with negative X (left)
+                    .withRotationalRate(-driveController.getRightX() * MaxAngularRate); // Drive counterclockwise with negative X (left)
+        });
+        driveCommand.setName("DefaultDrive");
+        // Drivetrain will execute this command periodically
+        drivetrain.setDefaultCommand(driveCommand);
 
         // fine grain controls
         driveController.rightBumper().onTrue(Commands.runOnce(() -> {

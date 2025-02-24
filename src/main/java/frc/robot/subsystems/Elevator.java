@@ -154,6 +154,8 @@ public class Elevator extends PARTsSubsystem {
 
     PARTsNT.putSmartDashboardSendable("Elevator PID", mElevatorPIDController);
     PARTsNT.putSmartDashboardSendable("Elevator Zero Command", zeroElevatorCommand());
+
+    mPeriodicIO.elevator_previous_position = getElevatorPosition();
   }
   /*-------------------------------- Generic Subsystem Functions --------------------------------*/
 
@@ -180,7 +182,8 @@ public class Elevator extends PARTsSubsystem {
         // Check to make sure we move, or trigger error
         if (mPeriodicIO.elevator_position_debounce > 10) {
           mPeriodicIO.elevator_position_debounce = 0;
-          if (getElevatorPosition() - mPeriodicIO.elevator_previous_position == 0) {
+          double position = getElevatorPosition();
+          if (mPeriodicIO.elevator_previous_position - position == 0) {
             mPeriodicIO.error = true;
             mPeriodicIO.state = ElevatorState.POS_CTL_TRAVEL_ERROR;
             candle.addState(CandleState.ELEVATOR_ERROR);
