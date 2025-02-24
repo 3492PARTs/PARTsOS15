@@ -187,6 +187,10 @@ public class Algae extends PARTsSubsystem {
       else
         mPeriodicIO.intake_power = Constants.Algae.kEjectSpeed;
     }).until(() -> mIntakeMotor.getOutputCurrent() > 100); //TODO: Check output current when no ball
+    
+    /* .andThen(() -> mPeriodicIO.wrist_target_angle = Constants.Algae.kStowAngle)
+    .andThen(() -> mPeriodicIO.state = IntakeState.STOW); 
+    */ 
   }
 
   public void groundIntake() {
@@ -200,7 +204,7 @@ public class Algae extends PARTsSubsystem {
       mPeriodicIO.wrist_target_angle = Constants.Algae.kGroundIntakeAngle;
       mPeriodicIO.intake_power = Constants.Algae.kGroundIntakeSpeed;
       mPeriodicIO.state = IntakeState.GROUND;
-    }).until(() -> mIntakeMotor.getOutputCurrent() > 100); //TODO: Check output current and then add
+    }).until(() -> mIntakeMotor.getOutputCurrent() > 100); //TODO: Check output current and then add, may default to stow angle with ball
   }
 
   public void stopAlgae() {
