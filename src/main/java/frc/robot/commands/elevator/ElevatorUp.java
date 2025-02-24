@@ -2,13 +2,14 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.cmds.elevator;
+package frc.robot.commands.elevator;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class ElevatorDown extends SubsystemBase {
-  /** Creates a new ElevatorDown. */
-  public ElevatorDown() {}
+public class ElevatorUp extends SubsystemBase {
+  /** Creates a new ElevatorUp. */
+  public ElevatorUp() {
+  }
 
   @Override
   public void periodic() {
