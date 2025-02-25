@@ -89,10 +89,10 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
-        // =============================================================================================
-        // ------------------------------------- DriveTrain
-        // -------------------------------------------
-        // ---------------------------------------------------------------------------------------------
+        //* */ =============================================================================================
+        //* */ ------------------------------------- DriveTrain
+        //* */ -------------------------------------------
+        //* */ ---------------------------------------------------------------------------------------------
 
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
@@ -137,15 +137,17 @@ public class RobotContainer {
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
+        /* 
         driveController.back().and(driveController.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
         driveController.back().and(driveController.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
         driveController.start().and(driveController.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         driveController.start().and(driveController.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        */
 
-        // =============================================================================================
-        // ------------------------------------- Elevator
-        // -------------------------------------------
-        // ---------------------------------------------------------------------------------------------
+        //* */ =============================================================================================
+        //* */ ------------------------------------- Elevator
+        //* */ -------------------------------------------
+        //* */ ---------------------------------------------------------------------------------------------
         /*
         elevator.setDefaultCommand(new RunCommand(() -> {
             double speed = -operatorController.getRightY() * Constants.Elevator.maxSpeed;
@@ -183,20 +185,20 @@ public class RobotContainer {
           }
           */
 
-        // =============================================================================================
-        // ------------------------------------- Coral Controls
-        // -------------------------------------------
-        // ---------------------------------------------------------------------------------------------
+        //* */ =============================================================================================
+        //* */ ------------------------------------- Coral Controls
+        //* */ -------------------------------------------
+        //* */ ---------------------------------------------------------------------------------------------
 
         operatorController.rightTrigger().onTrue(coral.intake());
         operatorController.rightBumper().onTrue(coral.reverse());
         operatorController.leftTrigger().onTrue(coral.stopCoral());
         operatorController.leftBumper().onTrue(coral.scoreCommand());
 
-        // =============================================================================================
-        // ------------------------------------- Algae Control
-        // -------------------------------------------
-        // ---------------------------------------------------------------------------------------------
+        //* */ =============================================================================================
+        //* */ ------------------------------------- Algae Control
+        //* */ -------------------------------------------
+        //* */ ---------------------------------------------------------------------------------------------
 
         //operatorController.leftBumper().whileTrue(new AlgaeIntake(algae, operatorController));
         // operatorController.leftTrigger().whileTrue(getAutonomousCommand()));
