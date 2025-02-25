@@ -67,7 +67,8 @@ public class Candle extends PARTsSubsystem {
         ELEVATOR_STOW,
         ELEVATOR_L2,
         ELEVATOR_L3,
-        ELEVATOR_L4
+        ELEVATOR_L4,
+        SCORING
     }
 
     private static class PeriodicIO {
@@ -97,7 +98,9 @@ public class Candle extends PARTsSubsystem {
 
     /*---------------------------------- Custom Private Functions ---------------------------------*/
     private void setState() {
-        if (mPeriodicIO.robotStates.contains(CandleState.FINE_GRAIN_DRIVE))
+        if (mPeriodicIO.robotStates.contains(CandleState.SCORING))
+            mPeriodicIO.state = CandleState.SCORING;
+        else if (mPeriodicIO.robotStates.contains(CandleState.FINE_GRAIN_DRIVE))
             mPeriodicIO.state = CandleState.FINE_GRAIN_DRIVE;
         else if (mPeriodicIO.robotStates.contains(CandleState.CORAL_ENTERING))
             mPeriodicIO.state = CandleState.CORAL_ENTERING;
@@ -145,6 +148,9 @@ public class Candle extends PARTsSubsystem {
                 break;
             case DISABLED:
                 setColor(Color.BLUE);
+                break;
+            case SCORING:
+                runRainbowAnimation();
                 break;
             default:
                 break;
@@ -225,6 +231,14 @@ public class Candle extends PARTsSubsystem {
         mPeriodicIO.robotStates.add(CandleState.DISABLED);
 
         setState();
+    }
+
+    public Command addStateCommand(CandleState state) {
+        return super.commandFactory("addStateCommand", this.runOnce(() -> addStateCommand(state)));
+    }
+
+    public Command removeStateCommand(CandleState state) {
+        return super.commandFactory("removeStateCommand", this.runOnce(() -> removeState(state)));
     }
 
     /* Wrappers so we can access the CANdle from the subsystem */

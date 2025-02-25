@@ -124,16 +124,6 @@ public final class Constants {
     public static final int ledLength = 1001;
   }
 
-  public enum ElevatorState {
-    NONE,
-    STOW,
-    L2,
-    L3,
-    L4,
-    A1,
-    A2
-  }
-
   public static class Debug {
     public static boolean logging = true;
     public static boolean debug = true;

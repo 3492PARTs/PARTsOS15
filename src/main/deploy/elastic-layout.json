@@ -1815,23 +1815,39 @@
                 }
               }
             ]
+          },
+          {
+            "title": "vision",
+            "x": 700.0,
+            "y": 500.0,
+            "width": 200.0,
+            "height": 200.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "MT2 Status",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 200.0,
+                "height": 200.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/PARTs/PARTsDrivetrain/align/vision/MT2 Status",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              }
+            ]
           }
         ],
         "containers": [
-          {
-            "title": "Swerve Drive",
-            "x": 1000.0,
-            "y": 300.0,
-            "width": 400.0,
-            "height": 400.0,
-            "type": "SwerveDrive",
-            "properties": {
-              "topic": "/SmartDashboard/Swerve Drive",
-              "period": 0.06,
-              "show_robot_rotation": true,
-              "rotation_unit": "Radians"
-            }
-          },
           {
             "title": "Pose",
             "x": 0.0,
@@ -1862,6 +1878,33 @@
             "properties": {
               "topic": "/SmartDashboard/PARTsDrivetrain",
               "period": 0.06
+            }
+          },
+          {
+            "title": "Swerve Drive",
+            "x": 1000.0,
+            "y": 200.0,
+            "width": 400.0,
+            "height": 400.0,
+            "type": "SwerveDrive",
+            "properties": {
+              "topic": "/SmartDashboard/PARTsDrivetrain/Swerve Drive",
+              "period": 0.06,
+              "show_robot_rotation": true,
+              "rotation_unit": "Radians"
+            }
+          },
+          {
+            "title": "Align",
+            "x": 400.0,
+            "y": 500.0,
+            "width": 300.0,
+            "height": 200.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/PARTsDrivetrain/Align",
+              "period": 0.06,
+              "show_type": false
             }
           }
         ]

@@ -192,7 +192,7 @@ public class RobotContainer {
         operatorController.rightTrigger().onTrue(coral.intake());
         operatorController.rightBumper().onTrue(coral.reverse());
         operatorController.leftTrigger().onTrue(coral.stopCoral());
-        operatorController.leftBumper().onTrue(coral.score());
+        operatorController.leftBumper().onTrue(coral.scoreCommand());
 
         // =============================================================================================
         // ------------------------------------- Algae Control

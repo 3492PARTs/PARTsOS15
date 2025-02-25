@@ -18,6 +18,8 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.subsystems.Candle.CandleState;
@@ -162,7 +164,7 @@ public class Coral extends PARTsSubsystem {
 
     super.partsNT.setDouble("Output/Left", mLeftMotor.getAppliedOutput());
     super.partsNT.setDouble("Output/Right", mRightMotor.getAppliedOutput());
-    
+
     super.partsNT.setBoolean("Canandcolor/hasCoral", isCoralInExit());
     super.partsNT.setDouble("Canandcolor/distance", mPeriodicIO.colorMeasurement);
     super.partsNT.setBoolean("Canandcolor/Connection", canandcolor.isConnected());
@@ -249,6 +251,7 @@ public class Coral extends PARTsSubsystem {
 
   public Command score() {
     return this.runOnce(() -> {
+      candle.addState(CandleState.SCORING);
       switch (elevator.getState()) {
         case STOW:
           scoreL1().schedule();
@@ -258,6 +261,11 @@ public class Coral extends PARTsSubsystem {
           break;
       }
     });
+  }
+
+  public Command scoreCommand() {
+    return score().andThen(new WaitUntilCommand(() -> mPeriodicIO.state == IntakeState.NONE))
+        .andThen(elevator.goToElevatorStow());
   }
 
   /*---------------------------------- Custom Private Functions ---------------------------------*/
@@ -292,7 +300,7 @@ public class Coral extends PARTsSubsystem {
           if (mPeriodicIO.index_debounce > 10) {
             mPeriodicIO.index_debounce = 0;
             stopCoral().schedule();
-            elevator.goToElevatorStow().schedule();
+            candle.removeState(CandleState.SCORING);
           }
         }
         break;

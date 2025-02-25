@@ -15,6 +15,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants;
 import frc.robot.subsystems.Candle.CandleState;
@@ -43,15 +44,21 @@ public class Elevator extends PARTsSubsystem {
   private LaserCan upperLimitLaserCAN;
 
   public enum ElevatorState {
-    SENSOR_ERROR,
-    POS_CTL_TRAVEL_ERROR,
-    NONE,
-    STOW,
-    L2,
-    L3,
-    L4,
-    A1,
-    A2
+    SENSOR_ERROR(-1),
+    POS_CTL_TRAVEL_ERROR(-1),
+    NONE(-1),
+    STOW(Constants.Elevator.StowHeight),
+    L2(Constants.Elevator.L2Height),
+    L3(Constants.Elevator.L3Height),
+    L4(Constants.Elevator.L4Height),
+    A1(Constants.Elevator.LowAlgaeHeight),
+    A2(Constants.Elevator.HighAlgaeHeight);
+
+    double height;
+
+    ElevatorState(double height) {
+      this.height = height;
+    }
   }
 
   private static class PeriodicIO {
@@ -291,6 +298,16 @@ public class Elevator extends PARTsSubsystem {
       double speed = -controller.getRightY() * Constants.Elevator.maxSpeed;
       setElevatorPower(speed);
     }).until(() -> Math.abs(controller.getRightY()) < 0.1).andThen(() -> setElevatorPower(0)));
+  }
+
+  public Command elevatorToLevelCommand(ElevatorState state) {
+    return super.commandFactory("elevatorToStateCommand", this.runOnce(() -> {
+      if (state.height == -1) {
+        mPeriodicIO.is_elevator_pos_control = true;
+        mPeriodicIO.elevator_target = state.height;
+        mPeriodicIO.state = state;
+      }
+    }).andThen(new WaitUntilCommand(() -> mElevatorPIDController.atGoal() || mPeriodicIO.error)));
   }
 
   public Command goToElevatorStow() {
