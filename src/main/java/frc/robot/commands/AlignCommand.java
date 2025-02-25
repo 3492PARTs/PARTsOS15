@@ -31,6 +31,7 @@ import frc.robot.util.PARTsUnit.PARTsUnitType;
  * Command that aligns the robot to the nearest detected AprilTag.
  * Interrupts if no AprilTag is found.
  */
+@Deprecated
 public class AlignCommand extends Command {
   private boolean kill = false;
 
