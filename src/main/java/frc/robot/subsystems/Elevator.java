@@ -429,6 +429,7 @@ public class Elevator extends PARTsSubsystem {
 
     mPeriodicIO.elevator_bottom_limit_error = (getBottomLimit()
         && getElevatorPosition() > Constants.Elevator.bottomLimitPositionErrorMargin);
+        
     if (mPeriodicIO.elevator_bottom_limit_error)
       mPeriodicIO.elevator_bottom_limit_debounce++;
     else

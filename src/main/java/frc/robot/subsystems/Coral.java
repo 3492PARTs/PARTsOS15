@@ -84,11 +84,9 @@ public class Coral extends PARTsSubsystem {
       System.out.println("Configuration failed! " + e);
     }
 
-    new Trigger(this::isCoralInEntry).onTrue(Commands.runOnce(() -> candle.addState(CandleState.CORAL_ENTERING)));
-    new Trigger(() -> !isCoralInEntry()).onTrue(Commands.runOnce(() -> candle.removeState(CandleState.CORAL_ENTERING)));
+    new Trigger(this::isCoralInEntry).onTrue(Commands.runOnce(() -> candle.addState(CandleState.CORAL_ENTERING))).onFalse(Commands.runOnce(() -> candle.removeState(CandleState.CORAL_ENTERING)));
 
-    new Trigger(this::isCoralInExit).onTrue(Commands.runOnce(() -> candle.addState(CandleState.HAS_CORAL)));
-    new Trigger(() -> !isCoralInExit()).onTrue(Commands.runOnce(() -> candle.removeState(CandleState.HAS_CORAL)));
+    new Trigger(this::isCoralInExit).onTrue(Commands.runOnce(() -> candle.addState(CandleState.HAS_CORAL))).onFalse(Commands.runOnce(() -> candle.removeState(CandleState.HAS_CORAL)));
   }
 
   private static class PeriodicIO {

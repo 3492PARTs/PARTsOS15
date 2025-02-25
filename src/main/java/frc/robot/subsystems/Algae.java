@@ -162,18 +162,23 @@ public class Algae extends PARTsSubsystem {
 
   /*---------------------------------- Custom Public Functions ----------------------------------*/
 
-  public void stow() {
-    mPeriodicIO.wrist_target_angle = Constants.Algae.kStowAngle;
+  public Command stow() {
+    return this.commandFactory("stow", this.runOnce(() -> {
+      mPeriodicIO.wrist_target_angle = Constants.Algae.kStowAngle;
 
-    mPeriodicIO.state = IntakeState.STOW;
-    mPeriodicIO.intake_power = 0.0;
+      mPeriodicIO.state = IntakeState.STOW;
+      mPeriodicIO.intake_power = 0.0;
+    }));
+
   }
 
-  public void grabReefAlgae() {
-    mPeriodicIO.wrist_target_angle = Constants.Algae.kDeAlgaeAngle;
-    mPeriodicIO.intake_power = Constants.Algae.kReefIntakeSpeed;
-
-    mPeriodicIO.state = IntakeState.DEALGAE;
+  public Command grabReefAlgae() {
+    return super.commandFactory("grabReefAlgae", this.runOnce(() -> {
+      mPeriodicIO.wrist_target_angle = Constants.Algae.kDeAlgaeAngle;
+      mPeriodicIO.intake_power = Constants.Algae.kReefIntakeSpeed;
+  
+      mPeriodicIO.state = IntakeState.DEALGAE;
+    }));    
   }
 
   public Command grabReefAlgae1() {
@@ -184,8 +189,8 @@ public class Algae extends PARTsSubsystem {
     }).until(() -> mIntakeMotor.getOutputCurrent() > 100); //TODO; check output current
   }
 
-  public void score() {
-    mPeriodicIO.intake_power = Constants.Algae.kEjectSpeed;
+  public Command score() {
+    return this.commandFactory("score", this.runOnce(() -> mPeriodicIO.intake_power = Constants.Algae.kEjectSpeed));
   }
 
   public Command score1() {
@@ -202,10 +207,12 @@ public class Algae extends PARTsSubsystem {
     */
   }
 
-  public void groundIntake() {
-    mPeriodicIO.wrist_target_angle = Constants.Algae.kGroundIntakeAngle;
+  public Command groundIntake() {
+    return super.commandFactory("groundIntake", this.runOnce(() -> {
+      mPeriodicIO.wrist_target_angle = Constants.Algae.kGroundIntakeAngle;
     mPeriodicIO.intake_power = Constants.Algae.kGroundIntakeSpeed;
     mPeriodicIO.state = IntakeState.GROUND;
+    }));    
   }
 
   public Command groundIntake1() {
@@ -216,9 +223,11 @@ public class Algae extends PARTsSubsystem {
     }).until(() -> mIntakeMotor.getOutputCurrent() > 100); //TODO: Check output current and then add, may default to stow angle with ball
   }
 
-  public void stopAlgae() {
-    mPeriodicIO.intake_power = 0.0;
+  public Command stopAlgae() {
+    return this.commandFactory("stopAlgae", this.runOnce(() -> {
+      mPeriodicIO.intake_power = 0.0;
     //mPeriodicIO.wrist_target_angle = Constants.Algae.kStowAngle;
+    }));    
   }
 
   public PARTsUnit getWristAngle() {
