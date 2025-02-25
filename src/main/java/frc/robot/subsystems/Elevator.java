@@ -153,8 +153,9 @@ public class Elevator extends PARTsSubsystem {
     .onFalse(Commands.runOnce(() -> candle.removeState(CandleState.ELEVATOR_L4)));
     */
 
-    PARTsNT.putSmartDashboardSendable("Elevator PID", mElevatorPIDController);
-    PARTsNT.putSmartDashboardSendable("Elevator Zero Command", zeroElevatorCommand());
+    super.partsNT.putSmartDashboardSendable("PID", mElevatorPIDController);
+    super.partsNT.putSmartDashboardSendable("Zero Elevator", zeroElevatorCommand());
+    super.partsNT.putSmartDashboardSendable("Toggle LaserCan Active", toggleLaserCanActive());
 
     mPeriodicIO.elevator_previous_position = getElevatorPosition();
   }
@@ -341,9 +342,10 @@ public class Elevator extends PARTsSubsystem {
   }
 
   public Command zeroElevatorCommand() {
-    return super.commandFactory("zeroElevatorCommand", this.run(() -> setSpeedWithoutLimits(Constants.Elevator.homingSpeed))
-        .unless(() -> mPeriodicIO.gantry_blocked).until(this::getBottomLimit)
-        .andThen(() -> stop()));
+    return super.commandFactory("zeroElevatorCommand",
+        this.run(() -> setSpeedWithoutLimits(Constants.Elevator.homingSpeed))
+            .unless(() -> mPeriodicIO.gantry_blocked).until(this::getBottomLimit)
+            .andThen(() -> stop()));
   }
 
   public boolean isPositionControl() {
@@ -396,6 +398,11 @@ public class Elevator extends PARTsSubsystem {
     mLeftEncoder.setPosition(0.0);
   }
 
+  private Command toggleLaserCanActive() {
+    return super.commandFactory("toggleLaserCanActive",
+        this.runOnce(() -> mPeriodicIO.useLaserCan = !mPeriodicIO.useLaserCan));
+  }
+
   private void errorTasks() {
     /* Error Conditions 
      * Bottom and top limit hit at same time
@@ -416,10 +423,9 @@ public class Elevator extends PARTsSubsystem {
         || (mPeriodicIO.elevator_bottom_limit_error && mPeriodicIO.elevator_bottom_limit_debounce >= 10)) {
       // If there wasn't an error report it.
       mPeriodicIO.lasercan_error_debounce++;
-      
+
       if (!mPeriodicIO.error) {
         mPeriodicIO.error = true;
-        
 
         setElevatorPower(0);
         mPeriodicIO.state = ElevatorState.SENSOR_ERROR;
@@ -427,7 +433,7 @@ public class Elevator extends PARTsSubsystem {
       }
 
       if (mPeriodicIO.lasercan_error_debounce > 10)
-          mPeriodicIO.useLaserCan = false;
+        mPeriodicIO.useLaserCan = false;
     } else {
       //mPeriodicIO.lasercan_error_debounce = 0;
       //mPeriodicIO.useLaserCan = true; dont turn back on. originally thought i would

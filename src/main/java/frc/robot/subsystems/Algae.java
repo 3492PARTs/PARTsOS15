@@ -95,7 +95,7 @@ public class Algae extends PARTsSubsystem {
 
     reset();
 
-    PARTsNT.putSmartDashboardSendable("Algae Wrist PID", mWristPIDController);
+    super.partsNT.putSmartDashboardSendable("Wrist PID", mWristPIDController);
   }
 
   private static class PeriodicIO {
