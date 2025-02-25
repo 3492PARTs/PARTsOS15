@@ -12,6 +12,7 @@ import java.util.Arrays;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -127,12 +128,10 @@ public class RobotContainer {
 
         // reset the field-centric heading on left bumper press
         driveController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-        /* 
-        driveController.leftTrigger().onTrue(new AlignCommand(
-                visionSubsystem,
-                drivetrain,
-                new Pose2d(-1, 0, new Rotation2d())));
-        */
+
+        driveController.leftTrigger()
+                .onTrue(drivetrain.alignCommand(new Pose2d(-1, 0, new Rotation2d()), driveController));
+
         // logging
         drivetrain.registerTelemetry(telemetryLogger::telemeterize);
 
