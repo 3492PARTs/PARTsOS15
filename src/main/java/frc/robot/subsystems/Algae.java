@@ -30,7 +30,7 @@ public class Algae extends PARTsSubsystem {
   public enum IntakeState {
     NONE,
     STOW,
-    DEALGAE,
+    REEFALGAE,
     GROUND
   }
 
@@ -177,7 +177,7 @@ public class Algae extends PARTsSubsystem {
       mPeriodicIO.wrist_target_angle = Constants.Algae.kDeAlgaeAngle;
       mPeriodicIO.intake_power = Constants.Algae.kReefIntakeSpeed;
   
-      mPeriodicIO.state = IntakeState.DEALGAE;
+      mPeriodicIO.state = IntakeState.REEFALGAE;
     }));    
   }
 
@@ -185,7 +185,7 @@ public class Algae extends PARTsSubsystem {
     return this.run(() -> {
       mPeriodicIO.wrist_target_angle = Constants.Algae.kDeAlgaeAngle;
       mPeriodicIO.intake_power = Constants.Algae.kReefIntakeSpeed;
-      mPeriodicIO.state = IntakeState.DEALGAE;
+      mPeriodicIO.state = IntakeState.REEFALGAE;
     }).until(() -> mIntakeMotor.getOutputCurrent() > 100); //TODO; check output current
   }
 
@@ -196,7 +196,7 @@ public class Algae extends PARTsSubsystem {
   public Command score1() {
     return this.run(() -> {
       //TODO: check negations
-      if (mPeriodicIO.state == IntakeState.DEALGAE)
+      if (mPeriodicIO.state == IntakeState.REEFALGAE)
         mPeriodicIO.intake_power = Constants.Algae.kReefIntakeSpeed;
       else
         mPeriodicIO.intake_power = Constants.Algae.kEjectSpeed;

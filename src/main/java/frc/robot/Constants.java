@@ -5,6 +5,7 @@
 package frc.robot;
 
 import frc.robot.util.PARTsUnit;
+import frc.robot.util.PARTsUnit.PARTsUnitType;
 
 /**
  * Constants class to hold constants.
@@ -76,10 +77,10 @@ public final class Constants {
     public static final double maxWristSpeed = .5;
     public static final int kMaxWristCurrent = 10;
 
-    public static final double kWristP = 5.0;
+    public static final double kWristP = 10.0;
     public static final double kWristI = 0.0;
     public static final double kWristD = 0.0;
-    public static final double kTolerance = 1.0;
+    public static final double kTolerance = new PARTsUnit(1, PARTsUnitType.Angle).to(PARTsUnitType.Radian);
 
     public static final double kWristKS = 0.25008;
     public static final double kWristKG = 0.10667;
