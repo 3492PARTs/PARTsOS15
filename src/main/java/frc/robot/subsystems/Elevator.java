@@ -75,7 +75,7 @@ public class Elevator extends PARTsSubsystem {
 
     ElevatorState state = ElevatorState.STOW;
 
-    boolean useLaserCan = true;
+    boolean useLaserCan = false;
     int lasercan_error_debounce = 0;
 
     boolean elevator_bottom_limit_error = false;
@@ -189,7 +189,7 @@ public class Elevator extends PARTsSubsystem {
         mPeriodicIO.elevator_position_debounce++;
 
         // Check to make sure we move, or trigger error
-        if (mPeriodicIO.elevator_position_debounce > 10) {
+        if (mPeriodicIO.elevator_position_debounce > 100 && false) {
           mPeriodicIO.elevator_position_debounce = 0;
           double position = getElevatorPosition();
           if (mPeriodicIO.elevator_previous_position - position == 0) {
@@ -427,8 +427,8 @@ public class Elevator extends PARTsSubsystem {
      * The bottom limit is hit for more than 10 loop runs and we are reporting a current position higher than the margin of error
     */
 
-    mPeriodicIO.elevator_bottom_limit_error = (getBottomLimit()
-        && getElevatorPosition() > Constants.Elevator.bottomLimitPositionErrorMargin);
+    //mPeriodicIO.elevator_bottom_limit_error = (getBottomLimit()
+        //&& getElevatorPosition() > Constants.Elevator.bottomLimitPositionErrorMargin);
         
     if (mPeriodicIO.elevator_bottom_limit_error)
       mPeriodicIO.elevator_bottom_limit_debounce++;
