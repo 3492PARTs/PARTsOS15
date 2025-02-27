@@ -2,13 +2,14 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.util;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.PARTsNT;
 
-public abstract class PARTsSubsystem extends SubsystemBase {
-  PARTsNT partsNT;
+public abstract class PARTsSubsystem extends SubsystemBase implements IPARTsSubsystem {
+  protected PARTsNT partsNT;
+  protected PARTsLogger partsLogger;
 
   /**
    * Creates a new PARTsSubsystem.
@@ -16,6 +17,7 @@ public abstract class PARTsSubsystem extends SubsystemBase {
    */
   public PARTsSubsystem() {
     partsNT = new PARTsNT();
+    partsLogger = new PARTsLogger();
   }
 
   /**
@@ -24,6 +26,7 @@ public abstract class PARTsSubsystem extends SubsystemBase {
    */
   public PARTsSubsystem(Object o) {
     partsNT = new PARTsNT(o);
+    partsLogger = new PARTsLogger(o);
   }
 
   /**
@@ -32,10 +35,11 @@ public abstract class PARTsSubsystem extends SubsystemBase {
    */
   public PARTsSubsystem(String className) {
     partsNT = new PARTsNT(className);
+    partsLogger = new PARTsLogger(className);
   }
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
+  public Command commandFactory(String name, Command c) {
+    c.setName(name);
+    return c;
   }
 }
