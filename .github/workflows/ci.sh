@@ -10,5 +10,5 @@ sim_pid=$!
 # Wait for simulation to start.
 sleep 10
 
-# Kill the simulation
+# Kill the simulation.
 kill $sim_pid
