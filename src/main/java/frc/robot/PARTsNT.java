@@ -296,11 +296,9 @@ public class PARTsNT {
     public void setBoolean(String name, boolean value) {
         EasyBooleanEntry entry = getBooleanEntry(name);
         if (entry == null) {
-            entry = new EasyBooleanEntry(name, value);
-            booleanEntries.add(entry);
+            booleanEntries.add(new EasyBooleanEntry(name, value));
         } else if (entry.cachedValue != value) {
-            entry.cachedValue = value;
-            entry.entry.set(value);
+            entry.entry.set((entry.cachedValue = value));
         }
     }
 
@@ -324,11 +322,9 @@ public class PARTsNT {
     public void setInteger(String name, int value) {
         EasyIntegerEntry entry = getIntegerEntry(name);
         if (entry == null) {
-            entry = new EasyIntegerEntry(name, value);
-            integerEntries.add(entry);
+            integerEntries.add(new EasyIntegerEntry(name, value));
         } else if (entry.cachedValue != value) {
-            entry.cachedValue = value;
-            entry.entry.set(value);
+            entry.entry.set((entry.cachedValue = value));
         }
     }
 
@@ -343,9 +339,7 @@ public class PARTsNT {
      */
     public double getDouble(String name) {
         EasyDoubleEntry entry = getDoubleEntry(name);
-        if (entry == null) return 0.0;
-        entry.cachedValue = entry.entry.get();
-        return entry.cachedValue;
+        return (entry == null) ? 0 : (entry.cachedValue = entry.entry.get());
     }
     
     /**
@@ -356,11 +350,9 @@ public class PARTsNT {
     public void setDouble(String name, double value) {
         EasyDoubleEntry entry = getDoubleEntry(name);
         if (entry == null) {
-            entry = new EasyDoubleEntry(name, value);
-            doubleEntries.add(entry);
+            doubleEntries.add(new EasyDoubleEntry(name, value));
         } else if (entry.cachedValue != value) {
-            entry.cachedValue = value;
-            entry.entry.set(value);
+            entry.entry.set((entry.cachedValue = value));
         }
     }
 
@@ -373,9 +365,7 @@ public class PARTsNT {
      */
     public String getString(String name) {
         EasyStringEntry entry = getStringEntry(name);
-        if (entry == null) return "";
-        entry.cachedValue = entry.entry.get();
-        return entry.cachedValue;
+        return (entry == null) ? "" : (entry.cachedValue = entry.entry.get());
     }
 
     /**
@@ -386,11 +376,9 @@ public class PARTsNT {
     public void setString(String name, String value) {
         EasyStringEntry entry = getStringEntry(name);
         if (entry == null) {
-            entry = new EasyStringEntry(name, value);
-            stringEntries.add(entry);
+            stringEntries.add(new EasyStringEntry(name, value));
         } else if (entry.cachedValue != value) {
-            entry.cachedValue = value;
-            entry.entry.set(value);
+            entry.entry.set((entry.cachedValue = value));
         }
     }
 
