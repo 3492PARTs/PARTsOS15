@@ -70,7 +70,7 @@ public class RobotContainer {
 
     private final Coral coral = new Coral(candle, elevator);
 
-    public final PARTsDrivetrain drivetrain = new PARTsDrivetrain(TunerConstants.DrivetrainConstants,
+    public final PARTsDrivetrain drivetrain = new PARTsDrivetrain(visionSubsystem, TunerConstants.DrivetrainConstants,
             TunerConstants.FrontLeft, TunerConstants.FrontRight, TunerConstants.BackLeft, TunerConstants.BackRight);
 
     private final ArrayList<IPARTsSubsystem> subsystems = new ArrayList<IPARTsSubsystem>(

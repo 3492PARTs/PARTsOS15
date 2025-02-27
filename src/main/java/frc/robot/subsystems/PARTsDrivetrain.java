@@ -9,9 +9,13 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
+import org.ejml.equation.IntegerSequence.Range;
+
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.estimator.PoseEstimator;
+import edu.wpi.first.math.estimator.PoseEstimator3d;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -30,6 +34,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants;
+import frc.robot.Constants.VisionConstants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.IPARTsSubsystem;
 import frc.robot.util.LimelightHelpers;
@@ -78,24 +83,26 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
     private Pose3d initialRobotPose3d;
     private Pose3d currentRobotPose3d;
 
-    public PARTsDrivetrain(
+    public PARTsDrivetrain(Vision vision,
             SwerveDrivetrainConstants drivetrainConstants,
             SwerveModuleConstants<?, ?, ?>... modules) {
         super(drivetrainConstants, modules);
+        this.m_Vision = vision;
 
         initialize();
     }
 
-    public PARTsDrivetrain(
+    public PARTsDrivetrain(Vision vision,
             SwerveDrivetrainConstants drivetrainConstants,
             double odometryUpdateFrequency,
             SwerveModuleConstants<?, ?, ?>... modules) {
         super(drivetrainConstants, odometryUpdateFrequency, modules);
+        this.m_Vision = vision;
 
         initialize();
     }
 
-    public PARTsDrivetrain(
+    public PARTsDrivetrain(Vision vision,
             SwerveDrivetrainConstants drivetrainConstants,
             double odometryUpdateFrequency,
             Matrix<N3, N1> odometryStandardDeviation,
@@ -103,6 +110,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
             SwerveModuleConstants<?, ?, ?>... modules) {
         super(drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation,
                 modules);
+        this.m_Vision = vision;
 
         initialize();
     }
@@ -112,6 +120,9 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
     public void outputTelemetry() {
         // TODO Auto-generated method stub
         //throw new UnsupportedOperationException("Unimplemented method 'outputTelemetry'");
+        partsNT.setDouble("Vision/Vision x", m_Vision.getPose3d().getX());
+        partsNT.setDouble("Vision/Vision y", m_Vision.getPose3d().getY());
+        partsNT.setDouble("Vision/Vision z", m_Vision.getPose3d().getZ());
     }
 
     @Override
