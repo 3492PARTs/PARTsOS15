@@ -249,10 +249,6 @@ public class Algae extends PARTsSubsystem {
     mWristMotor.set(speed);
   }
 
-  public void setIntakeSpeed(double speed) {
-    mIntakeMotor.set(speed);
-  }
-
   public double getRPS() {
     return mWristRelEncoder.getVelocity() * 60 / Constants.Algae.wristGearRatio; // 16 is the gear reduction
   }
