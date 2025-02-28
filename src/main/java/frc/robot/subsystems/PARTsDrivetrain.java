@@ -286,9 +286,13 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
             partsNT.setBoolean("align/Goal/rangeControllerX", xRangeController.atGoal());
             partsNT.setBoolean("align/Goal/rangeControllerY", yRangeController.atGoal());
 
-            partsLogger.logDouble("align/Output/distanceErrorX", holdDistance.getX() - currentRobotPose3d.getX());
-            partsLogger.logDouble("align/Output/distanceErrorY", holdDistance.getY() - currentRobotPose3d.getY());
-            partsLogger.logDouble("align/Output/thetaError", holdDistance.getRotation().getRadians() - currentRobotPose3d.getRotation().getAngle());
+            partsLogger.logDouble("align/Output/PosErrorX", xRangeController.getPositionError());
+            partsLogger.logDouble("align/Output/PosErrorY", yRangeController.getPositionError());
+            partsLogger.logDouble("align/Output/thetaPosError", thetaController.getPositionError());
+
+            partsLogger.logDouble("align/Output/velocityErrorX", xRangeController.getVelocityError());
+            partsLogger.logDouble("align/Output/velocityErrorY", yRangeController.getVelocityError());
+            partsLogger.logDouble("align/Output/thetaVelocityError", thetaController.getVelocityError());
 
             updatePoseEstimator();
             super.setControl(alignRequest
