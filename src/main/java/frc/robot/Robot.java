@@ -87,7 +87,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     if (!Constants.Debug.debug) {
-      PARTsDashboard.setTab(DashboardTab.TEHEOPERATED);
+      PARTsDashboard.setTab(DashboardTab.TELEOPERATED);
     }
     m_robotContainer.setIdleCandleState();
     if (m_autonomousCommand != null) {

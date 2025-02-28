@@ -24,7 +24,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.VisionConstants;
-import frc.robot.commands.algae.AlgaeWrist;
+//import frc.robot.commands.algae.AlgaeWrist;
 import frc.robot.subsystems.Algae;
 import frc.robot.subsystems.Candle;
 import frc.robot.generated.TunerConstants;
@@ -34,6 +34,8 @@ import frc.robot.subsystems.sysid.AlgaeSysId;
 import frc.robot.subsystems.sysid.ElevatorSysId;
 import frc.robot.util.IPARTsSubsystem;
 import frc.robot.util.PARTsDashboard;
+import frc.robot.util.PARTsNT;
+import frc.robot.util.PARTsSubsystem;
 import frc.robot.util.PARTsUnit;
 import frc.robot.util.PARTsUnit.PARTsUnitType;
 import frc.robot.subsystems.Coral;
@@ -192,7 +194,7 @@ public class RobotContainer {
 
         //operatorController.leftBumper().whileTrue(new AlgaeIntake(algae, operatorController));
         // operatorController.leftTrigger().whileTrue(getAutonomousCommand()));
-        algae.setDefaultCommand(new AlgaeWrist(algae, operatorController));
+       // algae.setDefaultCommand(new AlgaeWrist(algae, operatorController));
 
         //TODO: Please migrate from run command, example Elevator.java - public Command goToElevatorL4()
         // TODO: We are migrating to command factory structure. (i.e. creating and using a command though a function call)
@@ -229,17 +231,10 @@ public class RobotContainer {
         .whileTrue(algae.sysIdDynamic(SysIdRoutine.Direction.kReverse));
         */
     }
-    public void configureAutonomousCommands() {
-        boolean isCompetition = true;
 
-        // Build an auto chooser. This will use Commands.none() as the default option.
-        // As an example, this will only show autos that start with "comp" while at
-        // competition as defined by the programmer
-        autoChooser = AutoBuilder.buildAutoChooserWithOptionsModifier(
-          (stream) -> isCompetition
-            ? stream.filter(auto -> auto.getName().startsWith("comp"))
-            : stream
-        );
+    //TODO: CONFIG ROBOT CONFIG ON PPLANNER BEFORE TESTING
+    public void configureAutonomousCommands() {
+        autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
     }
 
