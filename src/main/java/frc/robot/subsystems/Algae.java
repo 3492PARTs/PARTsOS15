@@ -120,8 +120,8 @@ public class Algae extends PARTsSubsystem {
 
     mPeriodicIO.wrist_voltage = pidCalc + ffCalc;
 
-    mWristMotor.setVoltage(mPeriodicIO.wrist_voltage);
-    mIntakeMotor.set(mPeriodicIO.intake_power);
+    setWristVoltage(mPeriodicIO.wrist_voltage);
+    setIntakeSpeed(mPeriodicIO.intake_power);
   }
 
   @Override
@@ -129,8 +129,8 @@ public class Algae extends PARTsSubsystem {
     mPeriodicIO.wrist_voltage = 0.0;
     mPeriodicIO.wrist_target_angle = Constants.Algae.kStowAngle;
 
-    mWristMotor.set(0.0);
-    mIntakeMotor.set(0.0);
+    setWristSpeed(0);
+    setIntakeSpeed(0);
   }
 
   @Override
@@ -247,6 +247,14 @@ public class Algae extends PARTsSubsystem {
 
   public void setWristSpeed(double speed) {
     mWristMotor.set(speed);
+  }
+
+  public void setWristVoltage(double v) {
+    mWristMotor.setVoltage(v);
+  }
+
+  public void setIntakeSpeed(double speed) {
+    mIntakeMotor.set(speed);
   }
 
   public double getRPS() {
