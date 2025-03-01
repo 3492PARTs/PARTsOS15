@@ -34,6 +34,26 @@ public class Buttonbox extends PARTsSubsystem {
     super.partsNT.setBoolean("MAP", joystick.getRawButton(6));
     super.partsNT.setBoolean("LIGHT ON ", joystick.getRawButton(7));
     super.partsNT.setBoolean("TALK ON  ", joystick.getRawButton(8));
+    super.partsNT.setBoolean("ESC ", joystick.getRawButton(9));
+    super.partsNT.setBoolean("ENTER  ", joystick.getRawButton(10));
+    super.partsNT.setBoolean("ENGINESTART ", joystick.getRawButton(11));
+    super.partsNT.setBoolean("NUKE  ", joystick.getRawButton(12));
+    super.partsNT.setBoolean("POSITIVE-1", joystick.getRawButton(13));
+    super.partsNT.setBoolean("NEGATIVE-1", joystick.getRawButton(14));
+    super.partsNT.setBoolean("POSITIVE-2", joystick.getRawButton(15));
+    super.partsNT.setBoolean("NEGATIVE-2", joystick.getRawButton(16));
+    super.partsNT.setBoolean("POSITIVE-3", joystick.getRawButton(17));
+    super.partsNT.setBoolean("NEGATIVE-3", joystick.getRawButton(18));
+    super.partsNT.setBoolean("POSITIVE-4", joystick.getRawButton(19));
+    super.partsNT.setBoolean("NEGATIVE-4", joystick.getRawButton(20));
+    super.partsNT.setBoolean("ABS-RIGHT", joystick.getRawButton(21));
+    super.partsNT.setBoolean("ABS-LEFT", joystick.getRawButton(22));
+    super.partsNT.setBoolean("TC-RIGHT", joystick.getRawButton(23));
+    super.partsNT.setBoolean("TC-LEFT", joystick.getRawButton(24));
+    super.partsNT.setBoolean("ABS-CLICK", joystick.getRawButton(25));
+    super.partsNT.setBoolean("TC-CLICK", joystick.getRawButton(26));
+    super.partsNT.setInteger("Joystick",joystick.getPOV(0));
+    
     
     // TODO Auto-generated method stub
 

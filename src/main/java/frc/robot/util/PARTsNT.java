@@ -422,4 +422,14 @@ public class PARTsNT {
     public void putSmartDashboardSendable(String key, Sendable data) {
         SmartDashboard.putData(String.format("%s/%s", name, key), data);
     }
+
+    public void setBoolean(String name2, int pov) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setBoolean'");
+    }
+
+    public void setBoolean(String name2, double rawAxis) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setBoolean'");
+    }
 }
