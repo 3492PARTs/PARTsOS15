@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public abstract class PARTsSubsystem extends SubsystemBase implements IPARTsSubsystem {
   protected PARTsNT partsNT;
   protected PARTsLogger partsLogger;
+  protected PARTsPreferences partsPrefrences;
 
   /**
    * Creates a new PARTsSubsystem.
@@ -18,6 +19,7 @@ public abstract class PARTsSubsystem extends SubsystemBase implements IPARTsSubs
   public PARTsSubsystem() {
     partsNT = new PARTsNT();
     partsLogger = new PARTsLogger();
+    partsPrefrences = new PARTsPreferences();
   }
 
   /**
@@ -27,6 +29,7 @@ public abstract class PARTsSubsystem extends SubsystemBase implements IPARTsSubs
   public PARTsSubsystem(Object o) {
     partsNT = new PARTsNT(o);
     partsLogger = new PARTsLogger(o);
+    partsPrefrences = new PARTsPreferences();
   }
 
   /**
@@ -36,6 +39,7 @@ public abstract class PARTsSubsystem extends SubsystemBase implements IPARTsSubs
   public PARTsSubsystem(String className) {
     partsNT = new PARTsNT(className);
     partsLogger = new PARTsLogger(className);
+    partsPrefrences = new PARTsPreferences();
   }
 
   public Command commandFactory(String name, Command c) {
