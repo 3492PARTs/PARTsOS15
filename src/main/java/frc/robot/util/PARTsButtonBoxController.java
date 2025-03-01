@@ -95,6 +95,33 @@ public class PARTsButtonBoxController {
     public Trigger tcclickTrigger(){
         return new Trigger(() -> joystick.getRawButton(26));
     }
+    public Trigger povTrigger1(){
+        return new Trigger(()  -> joystick.getPOV(0)== -1);  //this one is negitive 
+    }
+    public Trigger povTrigger0(){
+        return new Trigger(()  -> joystick.getPOV(0)== 0);
+    }
+    public Trigger povTrigger45(){
+        return new Trigger(()  -> joystick.getPOV(0)== 45);
+    }
+    public Trigger povTrigger90(){
+        return new Trigger(()  -> joystick.getPOV(0)== 90);
+    }
+    public Trigger povTrigger135(){
+        return new Trigger(()  -> joystick.getPOV(0)==135);
+    }
+    public Trigger povTrigger180(){
+        return new Trigger(()  -> joystick.getPOV(0)==180);
+    }
+    public Trigger povTrigger225(){
+        return new Trigger(()  -> joystick.getPOV(0)==225);
+    }
+    public Trigger povTrigger270(){
+        return new Trigger(()  -> joystick.getPOV(0)==270);
+    }
+    public Trigger povTrigger315(){
+        return new Trigger(()  -> joystick.getPOV(0)==315);
+    }
     }
     
     
