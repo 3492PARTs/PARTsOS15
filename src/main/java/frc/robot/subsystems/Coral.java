@@ -286,12 +286,17 @@ public class Coral extends PARTsSubsystem {
         }
         break;
       case INDEX:
-        // pulls in slowly till we pass th sensor, stop after
+        // pulls in slowly till we pass the sensor, stop after
         if (!isCoralInEntry()) {
-          stopCoral().schedule();
+          mPeriodicIO.index_debounce++;
+          if (mPeriodicIO.index_debounce > 5) {
+            mPeriodicIO.index_debounce = 0;
+            stopCoral().schedule();
+            mPeriodicIO.state = IntakeState.READY;
 
-          mPeriodicIO.state = IntakeState.READY;
+
         }
+      }
         break;
       case SCORE:
         // stop after the coral leaves the bot
