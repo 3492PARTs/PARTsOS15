@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.IPARTsSubsystem;
 import frc.robot.util.LimelightHelpers;
+import frc.robot.util.PARTsDashboard;
 import frc.robot.util.PARTsLogger;
 import frc.robot.util.PARTsNT;
 import frc.robot.util.PARTsUnit;
@@ -211,12 +212,11 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         public Command alignCommand(Pose2d holdDistance, CommandXboxController controller) {
                 Command c = new FunctionalCommand(
                                 () -> {
-
-                                        updatePoseEstimator();
-
+                                        
+                                        
                                         // Get init. distance from camera.
                                         estRot2d = getEstimatedRotation2d();
-                                        partsNT.setBoolean("align/vision/MT2 Status", estRot2d == null);
+                                        partsNT.setBoolean("align/vision/MT2 Status", estRot2d != null);
                                         if (estRot2d != null) {
                                                 Rotation3d rotation = new Rotation3d(estRot2d);
 
@@ -224,6 +224,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                                 rotation);
 
                                                 super.resetPose(initialRobotPose3d.toPose2d());
+                                                updatePoseEstimator();
                                                 partsNT.setDouble("align/startMS", System.currentTimeMillis());
 
                                                 partsLogger.logDouble("align/llPoseX", initialRobotPose3d.getX());
@@ -258,6 +259,9 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                 yRangeController.reset(initialRobotPose3d.getY()); // Center to target.
                                                 yRangeController.setGoal(holdDistance.getY()); // Center to target.
                                                 yRangeController.setTolerance(0.1);
+
+                                                partsLogger.logDouble("align/thetaControllerSetpoint",thetaController.getSetpoint().position);
+                                                partsNT.setDouble("align/thetaControllerSetpoint",thetaController.getSetpoint().position);
                                         }
                                 },
                                 () -> {
