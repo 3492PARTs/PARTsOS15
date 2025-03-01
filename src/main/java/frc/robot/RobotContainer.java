@@ -12,9 +12,11 @@ import java.util.Arrays;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -104,7 +106,7 @@ public class RobotContainer {
 
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
-        /*Command driveCommand = drivetrain.applyRequest(() -> {
+        Command driveCommand = drivetrain.applyRequest(() -> {
             double limit = MaxSpeed;
             if (elevator.getElevatorPosition() > Constants.Elevator.L2Height)
                 limit = 0.5;
@@ -137,20 +139,22 @@ public class RobotContainer {
         // reset the field-centric heading on left bumper press
         driveController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        driveController.leftTrigger()
-                .onTrue(drivetrain.alignCommand(new Pose2d(-1, 0, new Rotation2d()), driveController));
+      //  driveController.leftTrigger()
+               // .onTrue(drivetrain.alignCommand(new Pose2d(-1, 0, new Rotation2d()), driveController));
+        //TODO: uncomment to test
+        driveController.rightTrigger().whileTrue(drivetrain.snapTo180());
 
         // logging
         drivetrain.registerTelemetry(telemetryLogger::telemeterize);
-        */
+        
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
          
-        driveController.a().whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        /*driveController.a().whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
         driveController.x().whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
         driveController.y().whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         driveController.b().whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-        
+        */
 
         //* */ =============================================================================================
         //* */ ------------------------------------- Elevator
