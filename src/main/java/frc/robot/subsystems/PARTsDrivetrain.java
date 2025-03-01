@@ -208,7 +208,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         return m_poseEstimator.getEstimatedPosition();
     }
 
-    public Command alignCommand(Pose2d holdDistance, CommandXboxController controller) {
+   /*  public Command alignCommand(Pose2d holdDistance, CommandXboxController controller) {
         updatePoseEstimator();
 
         // Get init. distance from camera.
@@ -246,6 +246,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
             yRangeController.setGoal(holdDistance.getY()); // Center to target.
             yRangeController.setTolerance(0.1);
         }
+            
 
         Command c = this.run(() -> {
             currentRobotPose3d = new Pose3d(super.getState().Pose);
@@ -316,6 +317,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         c.setName("align");
         return c;
     }
+        */
 
     /*---------------------------------- Custom Private Functions ---------------------------------*/
     private void initialize() {
@@ -360,7 +362,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
             }
         });
 
-        partsNT.putSmartDashboardSendable("Align", alignCommand(new Pose2d(-1, 0, new Rotation2d()), null));
+        //partsNT.putSmartDashboardSendable("Align", alignCommand(new Pose2d(-1, 0, new Rotation2d()), null));
     }
 
     private void initializePoseEstimator() {

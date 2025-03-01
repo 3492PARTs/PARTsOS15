@@ -11,9 +11,12 @@ import java.util.Arrays;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -21,7 +24,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.VisionConstants;
-import frc.robot.commands.algae.AlgaeWrist;
+//import frc.robot.commands.algae.AlgaeWrist;
 import frc.robot.subsystems.Algae;
 import frc.robot.subsystems.Candle;
 import frc.robot.generated.TunerConstants;
@@ -31,6 +34,8 @@ import frc.robot.subsystems.sysid.AlgaeSysId;
 import frc.robot.subsystems.sysid.ElevatorSysId;
 import frc.robot.util.IPARTsSubsystem;
 import frc.robot.util.PARTsDashboard;
+import frc.robot.util.PARTsNT;
+import frc.robot.util.PARTsSubsystem;
 import frc.robot.util.PARTsUnit;
 import frc.robot.util.PARTsUnit.PARTsUnitType;
 import frc.robot.subsystems.Coral;
@@ -76,6 +81,8 @@ public class RobotContainer {
     private final ArrayList<IPARTsSubsystem> subsystems = new ArrayList<IPARTsSubsystem>(
             Arrays.asList(candle, algae, coral, elevator, drivetrain));
 
+    private SendableChooser<Command> autoChooser;
+
     /**End Subsystems */
 
     /*
@@ -85,6 +92,7 @@ public class RobotContainer {
      */
 
     public RobotContainer() {
+        configureAutonomousCommands();
         configureBindings();
     }
 
@@ -96,7 +104,7 @@ public class RobotContainer {
 
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
-        Command driveCommand = drivetrain.applyRequest(() -> {
+        /*Command driveCommand = drivetrain.applyRequest(() -> {
             double limit = MaxSpeed;
             if (elevator.getElevatorPosition() > Constants.Elevator.L2Height)
                 limit = 0.5;
@@ -134,15 +142,15 @@ public class RobotContainer {
 
         // logging
         drivetrain.registerTelemetry(telemetryLogger::telemeterize);
-
+        */
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        /* 
-        driveController.back().and(driveController.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        driveController.back().and(driveController.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        driveController.start().and(driveController.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        driveController.start().and(driveController.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-        */
+         
+        driveController.a().whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        driveController.x().whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        driveController.y().whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        driveController.b().whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        
 
         //* */ =============================================================================================
         //* */ ------------------------------------- Elevator
@@ -186,7 +194,7 @@ public class RobotContainer {
 
         //operatorController.leftBumper().whileTrue(new AlgaeIntake(algae, operatorController));
         // operatorController.leftTrigger().whileTrue(getAutonomousCommand()));
-        algae.setDefaultCommand(new AlgaeWrist(algae, operatorController));
+       // algae.setDefaultCommand(new AlgaeWrist(algae, operatorController));
 
         //TODO: Please migrate from run command, example Elevator.java - public Command goToElevatorL4()
         // TODO: We are migrating to command factory structure. (i.e. creating and using a command though a function call)
@@ -224,8 +232,14 @@ public class RobotContainer {
         */
     }
 
+    //TODO: CONFIG ROBOT CONFIG ON PPLANNER BEFORE TESTING
+    public void configureAutonomousCommands() {
+        autoChooser = AutoBuilder.buildAutoChooser();
+        SmartDashboard.putData("Auto Chooser", autoChooser);
+    }
+
     public Command getAutonomousCommand() {
-        return Commands.print("No autonomous command configured");
+        return autoChooser.getSelected();
     }
 
     public void outputTelemetry() {
