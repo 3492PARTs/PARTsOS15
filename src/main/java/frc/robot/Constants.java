@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.util.PARTsUnit;
 import frc.robot.util.PARTsUnit.PARTsUnitType;
 
@@ -104,6 +106,9 @@ public final class Constants {
     public static final double kReefIntakeSpeed = 0.6;
     public static final double kEjectSpeed = 0.3;
     public static final double kGroundIntakeSpeed = -0.3;
+
+    public static final Pose2d deAlgaeDistance = new Pose2d(0.5,0,new Rotation2d());
+    
   }
 
   public static class Coral {

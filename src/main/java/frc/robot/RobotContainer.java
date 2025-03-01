@@ -75,6 +75,7 @@ public class RobotContainer {
     public final PARTsDrivetrain drivetrain = new PARTsDrivetrain(visionSubsystem, TunerConstants.DrivetrainConstants,
             TunerConstants.FrontLeft, TunerConstants.FrontRight, TunerConstants.BackLeft, TunerConstants.BackRight);
 
+    //TODO: add algae to list later
     private final ArrayList<IPARTsSubsystem> subsystems = new ArrayList<IPARTsSubsystem>(
             Arrays.asList(candle, algae, coral, elevator, drivetrain));
 
@@ -138,7 +139,9 @@ public class RobotContainer {
         // .whileTrue(drivetrain.alignCommand(new Pose2d(-1, 0, new Rotation2d()),
         // driveController));
 
-        driveController.leftTrigger().whileTrue(new ScoreCoral(new Pose2d(0, new PARTsUnit(-2, PARTsUnitType.Inch).to(PARTsUnitType.Meter), new Rotation2d()), ElevatorState.L2,
+        driveController.leftTrigger().whileTrue(new ScoreCoral(
+                new Pose2d(0, new PARTsUnit(-2, PARTsUnitType.Inch).to(PARTsUnitType.Meter), new Rotation2d()),
+                ElevatorState.L2,
                 drivetrain, elevator, coral, candle));
 
         // logging
@@ -208,7 +211,7 @@ public class RobotContainer {
         // operatorController.leftBumper().whileTrue(new AlgaeIntake(algae,
         // operatorController));
         // operatorController.leftTrigger().whileTrue(getAutonomousCommand()));
-        algae.setDefaultCommand(new AlgaeWrist(algae, operatorController));
+        //algae.setDefaultCommand(new AlgaeWrist(algae, operatorController));
 
         // TODO: Please migrate from run command, example Elevator.java - public Command
         // goToElevatorL4()
