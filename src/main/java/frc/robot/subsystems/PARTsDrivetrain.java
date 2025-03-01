@@ -9,13 +9,9 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
-import org.ejml.equation.IntegerSequence.Range;
-
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.estimator.PoseEstimator;
-import edu.wpi.first.math.estimator.PoseEstimator3d;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -29,12 +25,9 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.util.sendable.SendableRegistry;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Constants;
-import frc.robot.Constants.VisionConstants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.IPARTsSubsystem;
 import frc.robot.util.LimelightHelpers;
@@ -56,6 +49,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
         private PARTsNT partsNT;
         private PARTsLogger partsLogger;
+
+        private Rotation2d estRot2d = null;
 
         // Vision Variables
         private Vision m_Vision;
@@ -214,137 +209,159 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         }
 
         public Command alignCommand(Pose2d holdDistance, CommandXboxController controller) {
-                updatePoseEstimator();
+                Command c = new FunctionalCommand(
+                                () -> {
 
-                // Get init. distance from camera.
-                Rotation2d estRot = getEstimatedRotation2d();
+                                        updatePoseEstimator();
 
-                if (estRot == null) {
-                        partsNT.setBoolean("align/vision/MT2 Status", false);
-                        return new WaitCommand(0);
-                } else {
-                        Command c = this.runOnce(() -> {
-                                partsNT.setBoolean("align/vision/MT2 Status", true);
-                                Rotation3d rotation = new Rotation3d(estRot);
+                                        // Get init. distance from camera.
+                                        estRot2d = getEstimatedRotation2d();
+                                        partsNT.setBoolean("align/vision/MT2 Status", estRot2d == null);
+                                        if (estRot2d != null) {
+                                                Rotation3d rotation = new Rotation3d(estRot2d);
 
-                                initialRobotPose3d = m_Vision.convertToKnownSpace(m_Vision.getPose3d(), rotation);
+                                                initialRobotPose3d = m_Vision.convertToKnownSpace(m_Vision.getPose3d(),
+                                                                rotation);
 
-                                super.resetPose(initialRobotPose3d.toPose2d());
-                                partsNT.setDouble("align/startMS", System.currentTimeMillis());
+                                                super.resetPose(initialRobotPose3d.toPose2d());
+                                                partsNT.setDouble("align/startMS", System.currentTimeMillis());
 
-                                partsLogger.logDouble("align/llPoseX", initialRobotPose3d.getX());
-                                partsLogger.logDouble("align/llPoseY", initialRobotPose3d.getY());
-                                partsLogger.logDouble("align/llPoseRot", initialRobotPose3d.getRotation().getAngle());
+                                                partsLogger.logDouble("align/llPoseX", initialRobotPose3d.getX());
+                                                partsLogger.logDouble("align/llPoseY", initialRobotPose3d.getY());
+                                                partsLogger.logDouble("align/llPoseRot",
+                                                                initialRobotPose3d.getRotation().getAngle());
 
-                                partsNT.setDouble("align/llPoseX", initialRobotPose3d.getX());
-                                partsNT.setDouble("align/llPoseY", initialRobotPose3d.getY());
-                                partsNT.setDouble("align/llPoseRot", initialRobotPose3d.getRotation().getAngle());
+                                                partsNT.setDouble("align/llPoseX", initialRobotPose3d.getX());
+                                                partsNT.setDouble("align/llPoseY", initialRobotPose3d.getY());
+                                                partsNT.setDouble("align/llPoseRot",
+                                                                initialRobotPose3d.getRotation().getAngle());
 
-                                // Initialize the aim controller.
-                                thetaController.reset(
-                                                new PARTsUnit(initialRobotPose3d.getRotation().getAngle(),
-                                                                PARTsUnitType.Angle)
-                                                                .to(PARTsUnitType.Radian));
-                                thetaController.setGoal(holdDistance.getRotation().getRadians()); // tx=0 is centered.
-                                thetaController.setTolerance(
-                                                new PARTsUnit(2, PARTsUnitType.Angle).to(PARTsUnitType.Radian));
+                                                // Initialize the aim controller.
+                                                thetaController.reset(
+                                                                new PARTsUnit(initialRobotPose3d.getRotation()
+                                                                                .getAngle(),
+                                                                                PARTsUnitType.Angle)
+                                                                                .to(PARTsUnitType.Radian));
+                                                thetaController.setGoal(holdDistance.getRotation().getRadians()); // tx=0
+                                                                                                                  // is
+                                                                                                                  // centered.
+                                                thetaController.setTolerance(
+                                                                new PARTsUnit(2, PARTsUnitType.Angle)
+                                                                                .to(PARTsUnitType.Radian));
 
-                                // Initialize the x-range controller.
-                                xRangeController.reset(initialRobotPose3d.getX());
-                                xRangeController.setGoal(holdDistance.getX());
-                                xRangeController.setTolerance(0.1);
+                                                // Initialize the x-range controller.
+                                                xRangeController.reset(initialRobotPose3d.getX());
+                                                xRangeController.setGoal(holdDistance.getX());
+                                                xRangeController.setTolerance(0.1);
 
-                                // Initialize the y-range controller.
-                                yRangeController.reset(initialRobotPose3d.getY()); // Center to target.
-                                yRangeController.setGoal(holdDistance.getY()); // Center to target.
-                                yRangeController.setTolerance(0.1);
-                        }).andThen(this.run(() -> {
-                                currentRobotPose3d = new Pose3d(super.getState().Pose);
+                                                // Initialize the y-range controller.
+                                                yRangeController.reset(initialRobotPose3d.getY()); // Center to target.
+                                                yRangeController.setGoal(holdDistance.getY()); // Center to target.
+                                                yRangeController.setTolerance(0.1);
+                                        }
+                                },
+                                () -> {
+                                        currentRobotPose3d = new Pose3d(super.getState().Pose);
 
-                                partsLogger.logDouble("align/rPoseX", currentRobotPose3d.getX());
-                                partsLogger.logDouble("align/rPoseY", currentRobotPose3d.getY());
-                                partsLogger.logDouble("align/rPoseRot", currentRobotPose3d.getRotation().getAngle());
+                                        partsLogger.logDouble("align/rPoseX", currentRobotPose3d.getX());
+                                        partsLogger.logDouble("align/rPoseY", currentRobotPose3d.getY());
+                                        partsLogger.logDouble("align/rPoseRot",
+                                                        currentRobotPose3d.getRotation().getAngle());
 
-                                partsNT.setDouble("align/rPoseX", currentRobotPose3d.getX());
-                                partsNT.setDouble("align/rPoseY", currentRobotPose3d.getY());
-                                partsNT.setDouble("align/rPoseRot", currentRobotPose3d.getRotation().getAngle());
+                                        partsNT.setDouble("align/rPoseX", currentRobotPose3d.getX());
+                                        partsNT.setDouble("align/rPoseY", currentRobotPose3d.getY());
+                                        partsNT.setDouble("align/rPoseRot",
+                                                        currentRobotPose3d.getRotation().getAngle());
 
-                                Rotation2d thetaOutput = new Rotation2d(
-                                                thetaController.calculate(currentRobotPose3d.getRotation()
-                                                                .toRotation2d().getRadians()));
+                                        Rotation2d thetaOutput = new Rotation2d(
+                                                        thetaController.calculate(currentRobotPose3d.getRotation()
+                                                                        .toRotation2d().getRadians()));
 
-                                Pose2d rangeOutput = new Pose2d(
-                                                xRangeController.calculate(currentRobotPose3d.getX(),
-                                                                holdDistance.getX()),
-                                                yRangeController.calculate(currentRobotPose3d.getY(),
-                                                                holdDistance.getY()),
-                                                null);
+                                        Pose2d rangeOutput = new Pose2d(
+                                                        xRangeController.calculate(currentRobotPose3d.getX(),
+                                                                        holdDistance.getX()),
+                                                        yRangeController.calculate(currentRobotPose3d.getY(),
+                                                                        holdDistance.getY()),
+                                                        null);
 
-                                // Get dist. from drivetrain.
+                                        // Get dist. from drivetrain.
 
-                                Translation2d translation = new Translation2d(rangeOutput.getX(), rangeOutput.getY());
+                                        Translation2d translation = new Translation2d(rangeOutput.getX(),
+                                                        rangeOutput.getY());
 
-                                partsLogger.logDouble("align/Output/thetaController", thetaOutput.getDegrees());
-                                partsLogger.logDouble("align/Output/rangeControllerX", rangeOutput.getX());
-                                partsLogger.logDouble("align/Output/rangeControllerY", rangeOutput.getY());
+                                        partsLogger.logDouble("align/Output/thetaController", thetaOutput.getDegrees());
+                                        partsLogger.logDouble("align/Output/rangeControllerX", rangeOutput.getX());
+                                        partsLogger.logDouble("align/Output/rangeControllerY", rangeOutput.getY());
 
-                                partsNT.setDouble("align/Output/thetaController", thetaOutput.getDegrees());
-                                partsNT.setDouble("align/Output/rangeControllerX", rangeOutput.getX());
-                                partsNT.setDouble("align/Output/rangeControllerY", rangeOutput.getY());
+                                        partsNT.setDouble("align/Output/thetaController", thetaOutput.getDegrees());
+                                        partsNT.setDouble("align/Output/rangeControllerX", rangeOutput.getX());
+                                        partsNT.setDouble("align/Output/rangeControllerY", rangeOutput.getY());
 
-                                partsLogger.logBoolean("align/Goal/thetaController", thetaController.atGoal());
-                                partsLogger.logBoolean("align/Goal/rangeControllerX", xRangeController.atGoal());
-                                partsLogger.logBoolean("align/Goal/rangeControllerYGoal", yRangeController.atGoal());
+                                        partsLogger.logBoolean("align/Goal/thetaController", thetaController.atGoal());
+                                        partsLogger.logBoolean("align/Goal/rangeControllerX",
+                                                        xRangeController.atGoal());
+                                        partsLogger.logBoolean("align/Goal/rangeControllerYGoal",
+                                                        yRangeController.atGoal());
 
-                                partsNT.setBoolean("align/Goal/thetaController", thetaController.atGoal());
-                                partsNT.setBoolean("align/Goal/rangeControllerX", xRangeController.atGoal());
-                                partsNT.setBoolean("align/Goal/rangeControllerY", yRangeController.atGoal());
+                                        partsNT.setBoolean("align/Goal/thetaController", thetaController.atGoal());
+                                        partsNT.setBoolean("align/Goal/rangeControllerX", xRangeController.atGoal());
+                                        partsNT.setBoolean("align/Goal/rangeControllerY", yRangeController.atGoal());
 
-                                partsLogger.logDouble("align/Output/PosErrorX", xRangeController.getPositionError());
-                                partsLogger.logDouble("align/Output/PosErrorY", yRangeController.getPositionError());
-                                partsLogger.logDouble("align/Output/thetaPosError", thetaController.getPositionError());
+                                        partsLogger.logDouble("align/Output/PosErrorX",
+                                                        xRangeController.getPositionError());
+                                        partsLogger.logDouble("align/Output/PosErrorY",
+                                                        yRangeController.getPositionError());
+                                        partsLogger.logDouble("align/Output/thetaPosError",
+                                                        thetaController.getPositionError());
 
-                                partsLogger.logDouble("align/Output/velocityErrorX",
-                                                xRangeController.getVelocityError());
-                                partsLogger.logDouble("align/Output/velocityErrorY",
-                                                yRangeController.getVelocityError());
-                                partsLogger.logDouble("align/Output/thetaVelocityError",
-                                                thetaController.getVelocityError());
+                                        partsLogger.logDouble("align/Output/velocityErrorX",
+                                                        xRangeController.getVelocityError());
+                                        partsLogger.logDouble("align/Output/velocityErrorY",
+                                                        yRangeController.getVelocityError());
+                                        partsLogger.logDouble("align/Output/thetaVelocityError",
+                                                        thetaController.getVelocityError());
 
-                                partsNT.setDouble("align/Output/PosErrorX", xRangeController.getPositionError());
-                                partsNT.setDouble("align/Output/PosErrorY", yRangeController.getPositionError());
-                                partsNT.setDouble("align/Output/thetaPosError", thetaController.getPositionError());
+                                        partsNT.setDouble("align/Output/PosErrorX",
+                                                        xRangeController.getPositionError());
+                                        partsNT.setDouble("align/Output/PosErrorY",
+                                                        yRangeController.getPositionError());
+                                        partsNT.setDouble("align/Output/thetaPosError",
+                                                        thetaController.getPositionError());
 
-                                partsNT.setDouble("align/Output/velocityErrorX", xRangeController.getVelocityError());
-                                partsNT.setDouble("align/Output/velocityErrorY", yRangeController.getVelocityError());
-                                partsNT.setDouble("align/Output/thetaVelocityError",
-                                                thetaController.getVelocityError());
+                                        partsNT.setDouble("align/Output/velocityErrorX",
+                                                        xRangeController.getVelocityError());
+                                        partsNT.setDouble("align/Output/velocityErrorY",
+                                                        yRangeController.getVelocityError());
+                                        partsNT.setDouble("align/Output/thetaVelocityError",
+                                                        thetaController.getVelocityError());
 
-                                updatePoseEstimator();
-                                super.setControl(alignRequest
-                                                .withVelocityX(translation.getX() * 0.5)
-                                                .withVelocityY(translation.getY() * 0.5)
-                                                .withRotationalRate(thetaOutput.getRadians()));
-                        })
-                                        .onlyIf(() -> m_Vision.isTarget())
-                                        .until(() -> (xRangeController.atGoal() &&
-                                                        yRangeController.atGoal() &&
-                                                        thetaController.atGoal())
-                                                        || (controller != null &&
-                                                                        (Math.abs(controller.getLeftX()) > 0.1 ||
-                                                                                        Math.abs(controller
-                                                                                                        .getLeftY()) > 0.1
-                                                                                        ||
-                                                                                        Math.abs(controller
-                                                                                                        .getRightX()) > 0.1)))
-                                        .andThen(this.runOnce(() -> super.setControl(alignRequest
+                                        updatePoseEstimator();
+                                        super.setControl(alignRequest
+                                                        .withVelocityX(translation.getX() * 0.5)
+                                                        .withVelocityY(translation.getY() * 0.5)
+                                                        .withRotationalRate(thetaOutput.getRadians()));
+
+                                },
+                                (Boolean b) -> {
+                                        super.setControl(alignRequest
                                                         .withVelocityX(0)
                                                         .withVelocityY(0)
-                                                        .withRotationalRate(0)))));
-                        c.setName("align");
-                        return c;
-                }
+                                                        .withRotationalRate(0));
 
+                                },
+                                () -> (estRot2d == null || (xRangeController.atGoal() &&
+                                                yRangeController.atGoal() &&
+                                                thetaController.atGoal())
+                                                || (controller != null &&
+                                                                (Math.abs(controller.getLeftX()) > 0.1 ||
+                                                                                Math.abs(controller
+                                                                                                .getLeftY()) > 0.1
+                                                                                ||
+                                                                                Math.abs(controller
+                                                                                                .getRightX()) > 0.1))),
+                                this);
+                c.setName("align");
+                return c;
         }
 
         /*---------------------------------- Custom Private Functions ---------------------------------*/
