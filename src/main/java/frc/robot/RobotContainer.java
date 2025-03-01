@@ -65,7 +65,7 @@ public class RobotContainer {
     private final Elevator elevator = new Elevator(candle);
     //private final ElevatorSysId elevator = new ElevatorSysId();
 
-    private final Algae algae = new Algae();
+    //private final Algae algae = new Algae();
     //private final AlgaeSysId algae = new AlgaeSysId();
 
     private final Coral coral = new Coral(candle, elevator);
@@ -73,8 +73,11 @@ public class RobotContainer {
     public final PARTsDrivetrain drivetrain = new PARTsDrivetrain(visionSubsystem, TunerConstants.DrivetrainConstants,
             TunerConstants.FrontLeft, TunerConstants.FrontRight, TunerConstants.BackLeft, TunerConstants.BackRight);
 
+    //TODO: add algae to list later
     private final ArrayList<IPARTsSubsystem> subsystems = new ArrayList<IPARTsSubsystem>(
-            Arrays.asList(candle, algae, coral, elevator, drivetrain));
+            Arrays.asList(candle, coral, elevator, drivetrain));
+
+    
 
     /**End Subsystems */
 
@@ -186,16 +189,18 @@ public class RobotContainer {
 
         //operatorController.leftBumper().whileTrue(new AlgaeIntake(algae, operatorController));
         // operatorController.leftTrigger().whileTrue(getAutonomousCommand()));
-        algae.setDefaultCommand(new AlgaeWrist(algae, operatorController));
+        //algae.setDefaultCommand(new AlgaeWrist(algae, operatorController));
 
         //TODO: Please migrate from run command, example Elevator.java - public Command goToElevatorL4()
         // TODO: We are migrating to command factory structure. (i.e. creating and using a command though a function call)
+        /* 
         operatorController.povUp().onTrue(algae.stow());
         operatorController.povDown().onTrue(algae.grabReefAlgae());
         operatorController.povRight().onTrue(algae.groundIntake());
         operatorController.povLeft().onTrue(algae.stopAlgae());
         operatorController.leftTrigger().onTrue(Commands.runOnce(algae::reset));
         operatorController.leftBumper().whileTrue(algae.score());
+         
 
         // =============================================================================================
         // ------------------------------------- SysID
