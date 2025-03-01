@@ -25,10 +25,15 @@ public class Buttonbox extends PARTsSubsystem {
   @Override
   public void outputTelemetry() {
     super.partsNT.setInteger("button count", joystick.getButtonCount()); 
-    super.partsNT.setBoolean("Button zero", joystick.getRawButton(0));
-    super.partsNT.setBoolean("Button one", joystick.getRawButton(1));
-    super.partsNT.setBoolean("Button two", joystick.getRawButton(2));
-    super.partsNT.setBoolean("Button three", joystick.getRawButton(3));
+   // super.partsNT.setBoolean("Button zero", joystick.getRawButton(0)); keep in case for copying
+    super.partsNT.setBoolean("HANDLE", joystick.getRawButton(1));
+    super.partsNT.setBoolean("CRUISE", joystick.getRawButton(2));
+    super.partsNT.setBoolean("FLASH", joystick.getRawButton(3));
+    super.partsNT.setBoolean("AUDIO", joystick.getRawButton(4));
+    super.partsNT.setBoolean("WIPERS", joystick.getRawButton(5));
+    super.partsNT.setBoolean("MAP", joystick.getRawButton(6));
+    super.partsNT.setBoolean("LIGHT ON ", joystick.getRawButton(7));
+    super.partsNT.setBoolean("TALK ON  ", joystick.getRawButton(8));
     
     // TODO Auto-generated method stub
 
