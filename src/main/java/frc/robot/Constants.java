@@ -13,7 +13,20 @@ import frc.robot.util.PARTsUnit.PARTsUnitType;
 public final class Constants {
   public static class Drivetrain {
     public static final double kMaxAngularSpeed = Math.PI / 4; // Radians
-    public static final double kMaxSpeed = .5; // Meters per seco
+    public static final double kMaxSpeed = .5; // Meters per second
+
+    public static final double MAX_AIM_VELOCITY = 1.5 * Math.PI; // radd/s
+    public static final double MAX_AIM_ACCELERATION = Math.PI / 2; // rad/s^2
+    public static final double MAX_RANGE_VELOCITY = 1.0; // m/s
+    public static final double MAX_RANGE_ACCELERATION = 1.5; // 0.5; // m/2^s
+
+    public static final double THETA_P = 1.8; // Proprotinal
+    public static final double THETA_I = 0.01; // 0.01; //Gradual corretction
+    public static final double THETA_D = 0.05; // 0.05; //Smooth oscilattions
+
+    public static final double RANGE_P = 2.0;//1.6;// 0.8;
+    public static final double RANGE_I = 0.04;
+    public static final double RANGE_D = 0.1;
   }
 
   public static class LimelightData {
