@@ -21,7 +21,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.VisionConstants;
-import frc.robot.commands.algae.AlgaeWrist;
 import frc.robot.subsystems.Algae;
 import frc.robot.subsystems.Candle;
 import frc.robot.generated.TunerConstants;
@@ -186,7 +185,7 @@ public class RobotContainer {
 
         //operatorController.leftBumper().whileTrue(new AlgaeIntake(algae, operatorController));
         // operatorController.leftTrigger().whileTrue(getAutonomousCommand()));
-        algae.setDefaultCommand(new AlgaeWrist(algae, operatorController));
+        //algae.setDefaultCommand(new AlgaeWrist(algae, operatorController));
 
         //TODO: Please migrate from run command, example Elevator.java - public Command goToElevatorL4()
         // TODO: We are migrating to command factory structure. (i.e. creating and using a command though a function call)
