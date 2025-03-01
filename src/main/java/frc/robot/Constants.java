@@ -122,9 +122,12 @@ public final class Constants {
   }
 
   public static class Candle {
-    public static final int candleId = 1000;
-    public static final int ledLength = 1001;
+    public static final int candleId = 33;
+    public static final int ledLength = 1000;
   }
+  public static class Climber {
+    public static final int climberId = 34;
+  } 
 
   public static class Debug {
     public static boolean logging = true;

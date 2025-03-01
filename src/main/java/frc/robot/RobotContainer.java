@@ -32,6 +32,7 @@ import frc.robot.subsystems.Candle;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.Candle.CandleState;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.sysid.AlgaeSysId;
 import frc.robot.subsystems.sysid.ElevatorSysId;
 import frc.robot.util.IPARTsSubsystem;
@@ -76,12 +77,14 @@ public class RobotContainer {
     //private final AlgaeSysId algae = new AlgaeSysId();
 
     private final Coral coral = new Coral(candle, elevator);
-
+    
     public final PARTsDrivetrain drivetrain = new PARTsDrivetrain(TunerConstants.DrivetrainConstants,
             TunerConstants.FrontLeft, TunerConstants.FrontRight, TunerConstants.BackLeft, TunerConstants.BackRight);
 
+    private final Climber climber = new Climber();
+
     private final ArrayList<IPARTsSubsystem> subsystems = new ArrayList<IPARTsSubsystem>(
-            Arrays.asList(candle, algae, coral, elevator, drivetrain));
+            Arrays.asList(candle, algae, coral, elevator, drivetrain, climber));
 
     private SendableChooser<Command> autoChooser;
 
@@ -146,15 +149,6 @@ public class RobotContainer {
 
         // logging
         drivetrain.registerTelemetry(telemetryLogger::telemeterize);
-        
-        // Run SysId routines when holding back/start and X/Y.
-        // Note that each routine should be run exactly once in a single log.
-         
-        /*driveController.a().whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        driveController.x().whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        driveController.y().whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        driveController.b().whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-        */
 
         //* */ =============================================================================================
         //* */ ------------------------------------- Elevator
@@ -202,13 +196,22 @@ public class RobotContainer {
 
         //TODO: Please migrate from run command, example Elevator.java - public Command goToElevatorL4()
         // TODO: We are migrating to command factory structure. (i.e. creating and using a command though a function call)
-        operatorController.povUp().onTrue(algae.stow());
+        //TODO: UNCOMMENT ALGAE STUFF I RAN OUT OF BUTTONS
+       /*  operatorController.povUp().onTrue(algae.stow());
         operatorController.povDown().onTrue(algae.grabReefAlgae());
         operatorController.povRight().onTrue(algae.groundIntake());
         operatorController.povLeft().onTrue(algae.stopAlgae());
         operatorController.leftTrigger().onTrue(Commands.runOnce(algae::reset));
         operatorController.leftBumper().whileTrue(algae.score());
+        */
 
+        // =============================================================================================
+        // ------------------------------------- Climber
+        // -------------------------------------------
+        // ---------------------------------------------------------------------------------------------
+
+        operatorController.povUp().whileTrue(Commands.run(() -> climber.setSpeed(-.3))).whileFalse(Commands.run(() -> climber.setSpeed(0)));
+        operatorController.povDown().whileTrue(Commands.run(() -> climber.setSpeed(.3))).whileFalse(Commands.run(() -> climber.setSpeed(0)));
         // =============================================================================================
         // ------------------------------------- SysID
         // -------------------------------------------
@@ -233,6 +236,15 @@ public class RobotContainer {
         .whileTrue(algae.sysIdDynamic(SysIdRoutine.Direction.kForward));
         operatorController.y().and(operatorController.rightBumper())
         .whileTrue(algae.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        */
+
+        // Run SysId routines when holding back/start and X/Y.
+        // Note that each routine should be run exactly once in a single log.
+         
+        /*driveController.a().whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        driveController.x().whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        driveController.y().whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        driveController.b().whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
         */
     }
 

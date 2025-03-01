@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix6.SignalLogger;
 
 import au.grapplerobotics.CanBridge;
@@ -94,7 +95,7 @@ public class Robot extends TimedRobot {
     m_robotContainer.setIdleCandleState();
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
-    }
+    }    
   }
 
   @Override

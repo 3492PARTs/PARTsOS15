@@ -24,6 +24,7 @@ import com.ctre.phoenix.led.CANdleConfiguration;
 
 import frc.robot.Constants;
 import frc.robot.util.PARTsSubsystem;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class Candle extends PARTsSubsystem {
@@ -80,7 +81,7 @@ public class Candle extends PARTsSubsystem {
     public Candle() {
         super("Candle");
         mPeriodicIO = new PeriodicIO();
-        candle = new CANdle(Constants.Candle.candleId, "rio");
+        candle = new CANdle(Constants.Candle.candleId, "Default Name");
 
         CANdleConfiguration configAll = new CANdleConfiguration();
         configAll.statusLedOffWhenActive = true;
@@ -144,7 +145,8 @@ public class Candle extends PARTsSubsystem {
                 runBlinkAnimation(Color.ORANGE);
                 break;
             case IDLE:
-                runFadeAnimation(Color.BLUE);
+                //runFadeAnimation(Color.BLUE);
+                setColor(Color.PURPLE);
                 break;
             case DISABLED:
                 setColor(Color.BLUE);
