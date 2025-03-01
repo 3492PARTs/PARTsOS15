@@ -40,7 +40,64 @@ public class PARTsButtonBoxController {
     public Trigger talkonTrigger(){
         return new Trigger(() -> joystick.getRawButton(8));
     }
-        }
+    public Trigger escTrigger(){
+        return new Trigger(() -> joystick.getRawButton(9));
+    }
+    public Trigger enterTrigger(){
+        return new Trigger(() -> joystick.getRawButton(10));
+    }
+    public Trigger enginestartTrigger(){
+        return new Trigger(() -> joystick.getRawButton(11));
+    }
+    public Trigger nukeTrigger(){
+        return new Trigger(() -> joystick.getRawButton(12));
+    }
+    public Trigger positive1Trigger(){
+        return new Trigger(() -> joystick.getRawButton(13));
+    }
+    public Trigger negative1Trigger(){
+        return new Trigger(() -> joystick.getRawButton(14));
+    }
+    public Trigger positive2Trigger(){
+        return new Trigger(() -> joystick.getRawButton(15));
+
+    }
+    public Trigger negative2Trigger(){
+        return new Trigger(() -> joystick.getRawButton(16));
+    }
+    public Trigger positive3Trigger(){
+        return new Trigger(() -> joystick.getRawButton(17));
+    }
+    public Trigger negative3Trigger(){
+        return new Trigger(() -> joystick.getRawButton(18));
+    }
+    public Trigger positive4Trigger(){
+        return new Trigger(() -> joystick.getRawButton(19));
+    }
+    public Trigger negative4Trigger(){
+        return new Trigger(() -> joystick.getRawButton(20));
+    }
+    public Trigger absrightTrigger(){
+        return new Trigger(() -> joystick.getRawButton(21));
+    }
+    public Trigger absleftTrigger(){
+        return new Trigger (() -> joystick.getRawButton(22));
+    }
+    public Trigger tcrightTrigger(){
+        return new Trigger (() -> joystick.getRawButton(23));
+    }
+    public Trigger tcleftTrigger(){
+        return new Trigger(() -> joystick.getRawButton(24));
+    }
+    public Trigger absclickTrigger(){
+        return new Trigger(() -> joystick.getRawButton(25));
+    }
+    public Trigger tcclickTrigger(){
+        return new Trigger(() -> joystick.getRawButton(26));
+    }
+    }
+    
+    
     
     
     
