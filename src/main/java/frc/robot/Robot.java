@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.SignalLogger;
+
 import au.grapplerobotics.CanBridge;
 import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -30,6 +32,7 @@ public class Robot extends TimedRobot {
       CanBridge.runTCP();
     }
 
+    SignalLogger.start();
     DataLogManager.start();
     WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
 
@@ -53,6 +56,7 @@ public class Robot extends TimedRobot {
   public void disabledInit() {
     m_robotContainer.stop();
     m_robotContainer.setCandleDisabledState();
+    SignalLogger.stop();
   }
 
   @Override

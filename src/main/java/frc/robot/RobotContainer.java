@@ -104,7 +104,7 @@ public class RobotContainer {
 
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
-        Command driveCommand = drivetrain.applyRequest(() -> {
+        /*Command driveCommand = drivetrain.applyRequest(() -> {
             double limit = MaxSpeed;
             if (elevator.getElevatorPosition() > Constants.Elevator.L2Height)
                 limit = 0.5;
@@ -142,15 +142,15 @@ public class RobotContainer {
 
         // logging
         drivetrain.registerTelemetry(telemetryLogger::telemeterize);
-
+        */
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        /* 
-        driveController.back().and(driveController.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        driveController.back().and(driveController.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        driveController.start().and(driveController.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        driveController.start().and(driveController.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-        */
+         
+        driveController.a().whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        driveController.x().whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        driveController.y().whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        driveController.b().whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        
 
         //* */ =============================================================================================
         //* */ ------------------------------------- Elevator
