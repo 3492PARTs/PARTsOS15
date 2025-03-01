@@ -130,7 +130,7 @@ public class RobotContainer {
         driveController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         driveController.leftTrigger()
-                .onTrue(drivetrain.alignCommand(new Pose2d(-1, 0, new Rotation2d()), driveController));
+                .whileTrue(drivetrain.alignCommand(new Pose2d(-1, 0, new Rotation2d()), driveController));
 
         // logging
         drivetrain.registerTelemetry(telemetryLogger::telemeterize);
