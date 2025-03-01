@@ -252,12 +252,12 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                 // Initialize the x-range controller.
                                                 xRangeController.reset(initialRobotPose3d.getX());
                                                 xRangeController.setGoal(holdDistance.getX());
-                                                xRangeController.setTolerance(0.1);
+                                                xRangeController.setTolerance(0.4);
 
                                                 // Initialize the y-range controller.
                                                 yRangeController.reset(initialRobotPose3d.getY()); // Center to target.
                                                 yRangeController.setGoal(holdDistance.getY()); // Center to target.
-                                                yRangeController.setTolerance(0.1);
+                                                yRangeController.setTolerance(0.2);
 
                                                 partsLogger.logDouble("align/thetaControllerSetpoint",thetaController.getSetpoint().position);
                                                 partsNT.setDouble("align/thetaControllerSetpoint",thetaController.getSetpoint().position);
