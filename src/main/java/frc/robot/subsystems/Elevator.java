@@ -301,7 +301,7 @@ public class Elevator extends PARTsSubsystem {
 
   public Command elevatorToLevelCommand(ElevatorState state) {
     return super.commandFactory("elevatorToStateCommand", this.runOnce(() -> {
-      if (state.height == -1) {
+      if (state.height != -1) {
         mPeriodicIO.is_elevator_pos_control = true;
         mPeriodicIO.elevator_target = state.height;
         mPeriodicIO.state = state;

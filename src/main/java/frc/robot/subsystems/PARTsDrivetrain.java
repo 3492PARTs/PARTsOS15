@@ -70,7 +70,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         private double THETA_I = 0.01; // 0.01; //Gradual corretction
         private double THETA_D = 0.05; // 0.05; //Smooth oscilattions
 
-        private double RANGE_P = 2.0;// 1.6;// 0.8;
+        private double RANGE_P = 2.8;// 1.6;// 0.8;
         private double RANGE_I = 0.04;
         private double RANGE_D = 0.1; // ? ~10x P to prevent oscillation(?)
 
