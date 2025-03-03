@@ -77,6 +77,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         // Robot poses.
         private Pose3d initialRobotPose3d;
         private Pose3d currentRobotPose3d;
+        private Rotation2d initialRobotRotation2d;
 
         public PARTsDrivetrain(Vision vision,
                         SwerveDrivetrainConstants drivetrainConstants,
@@ -211,12 +212,13 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         public Command alignCommand(Pose2d holdDistance, CommandXboxController controller) {
                 Command c = new FunctionalCommand(
                                 () -> {
-                                        
-                                        
+
                                         // Get init. distance from camera.
                                         estRot2d = getEstimatedRotation2d();
                                         partsNT.setBoolean("align/vision/MT2 Status", estRot2d != null);
                                         if (estRot2d != null) {
+                                                initialRobotRotation2d = super.getRotation3d().toRotation2d();
+
                                                 Rotation3d rotation = new Rotation3d(estRot2d);
 
                                                 initialRobotPose3d = m_Vision.convertToKnownSpace(m_Vision.getPose3d(),
@@ -259,8 +261,10 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                 yRangeController.setGoal(holdDistance.getY()); // Center to target.
                                                 yRangeController.setTolerance(0.2);
 
-                                                partsLogger.logDouble("align/thetaControllerSetpoint",thetaController.getSetpoint().position);
-                                                partsNT.setDouble("align/thetaControllerSetpoint",thetaController.getSetpoint().position);
+                                                partsLogger.logDouble("align/thetaControllerSetpoint",
+                                                                thetaController.getSetpoint().position);
+                                                partsNT.setDouble("align/thetaControllerSetpoint",
+                                                                thetaController.getSetpoint().position);
                                         }
                                 },
                                 () -> {
@@ -344,12 +348,18 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                         .withVelocityY(translation.getY() * 0.5)
                                                         .withRotationalRate(thetaOutput.getRadians()));
 
+                                        super.setOperatorPerspectiveForward(thetaOutput);
+
                                 },
                                 (Boolean b) -> {
                                         super.setControl(alignRequest
                                                         .withVelocityX(0)
                                                         .withVelocityY(0)
                                                         .withRotationalRate(0));
+
+                                        super.resetRotation(
+                                                        initialRobotRotation2d.plus(super.getRotation3d().toRotation2d()
+                                                                        .minus(initialRobotRotation2d)));
 
                                 },
                                 () -> (estRot2d == null || (xRangeController.atGoal() &&
