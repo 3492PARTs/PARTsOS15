@@ -141,6 +141,13 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 // throw new UnsupportedOperationException("Unimplemented method 'log'");
         }
 
+        @Override
+        public void periodic() {
+                super.periodic();
+                // Get init. distance from camera.
+                estRot2d = getEstimatedRotation2d();
+        }
+
         /*---------------------------------- Custom Public Functions ----------------------------------*/
         public void updatePoseEstimator() {
                 m_poseEstimator.update(
@@ -212,9 +219,6 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         public Command alignCommand(Pose2d holdDistance, CommandXboxController controller) {
                 Command c = new FunctionalCommand(
                                 () -> {
-
-                                        // Get init. distance from camera.
-                                        estRot2d = getEstimatedRotation2d();
                                         partsNT.setBoolean("align/vision/MT2 Status", estRot2d != null);
                                         if (estRot2d != null) {
                                                 initialRobotRotation2d = super.getRotation3d().toRotation2d();
