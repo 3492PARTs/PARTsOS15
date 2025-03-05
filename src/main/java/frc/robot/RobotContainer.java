@@ -138,7 +138,7 @@ public class RobotContainer {
         // .whileTrue(drivetrain.alignCommand(new Pose2d(-1, 0, new Rotation2d()),
         // driveController));
 
-        driveController.leftTrigger().onTrue(new ScoreCoral(new Pose2d(0, new PARTsUnit(-10, PARTsUnitType.Inch).to(PARTsUnitType.Meter), new Rotation2d()), ElevatorState.L2,
+        driveController.leftTrigger().whileTrue(new ScoreCoral(new Pose2d(0, new PARTsUnit(-10, PARTsUnitType.Inch).to(PARTsUnitType.Meter), new Rotation2d()), ElevatorState.L2,
                 drivetrain, elevator, coral, candle));
 
         // logging

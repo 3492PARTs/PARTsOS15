@@ -211,8 +211,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         public Command alignCommand(Pose2d holdDistance, CommandXboxController controller) {
                 Command c = new FunctionalCommand(
                                 () -> {
-                                        
-                                        
+                                        updatePoseEstimator();
                                         // Get init. distance from camera.
                                         estRot2d = getEstimatedRotation2d();
                                         partsNT.setBoolean("align/vision/MT2 Status", estRot2d != null);
