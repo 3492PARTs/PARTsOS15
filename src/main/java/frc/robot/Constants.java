@@ -126,7 +126,7 @@ public final class Constants {
   }
 
   public static class Candle {
-    public static final int candleId = 1000;
+    public static final int candleId = 33;
     public static final int ledLength = 1001;
   }
 
