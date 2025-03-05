@@ -19,7 +19,7 @@ public class Climber extends PARTsSubsystem {
 
   public Climber() {
     //TODO; change to Default Name
-    climberMotor = new TalonFX(Constants.Climber.climberId);
+    climberMotor = new TalonFX(Constants.Climber.climberId, "rio");
     climberMotor.setNeutralMode(NeutralModeValue.Brake);
   }
 
