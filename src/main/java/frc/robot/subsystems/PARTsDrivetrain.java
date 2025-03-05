@@ -78,6 +78,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         private Pose3d initialRobotPose3d;
         private Pose3d currentRobotPose3d;
 
+        private Rotation2d initialAngle;
+
         public PARTsDrivetrain(Vision vision,
                         SwerveDrivetrainConstants drivetrainConstants,
                         SwerveModuleConstants<?, ?, ?>... modules) {
@@ -210,9 +212,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
         public Command alignCommand(Pose2d holdDistance, CommandXboxController controller) {
                 Command c = new FunctionalCommand(
-                                () -> {
-                                        
-                                        
+                                () -> { 
                                         // Get init. distance from camera.
                                         estRot2d = getEstimatedRotation2d();
                                         partsNT.setBoolean("align/vision/MT2 Status", estRot2d != null);
@@ -221,6 +221,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
                                                 initialRobotPose3d = m_Vision.convertToKnownSpace(m_Vision.getPose3d(),
                                                                 rotation);
+
+                                                initialAngle = initialRobotPose3d.getRotation().toRotation2d();
 
                                                 super.resetPose(initialRobotPose3d.toPose2d());
                                                 updatePoseEstimator();
@@ -265,6 +267,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 },
                                 () -> {
                                         currentRobotPose3d = new Pose3d(super.getState().Pose);
+
+                                        initialAngle.minus(currentRobotPose3d.getRotation().toRotation2d());
 
                                         partsLogger.logDouble("align/rPoseX", currentRobotPose3d.getX());
                                         partsLogger.logDouble("align/rPoseY", currentRobotPose3d.getY());
@@ -350,6 +354,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                         .withVelocityX(0)
                                                         .withVelocityY(0)
                                                         .withRotationalRate(0));
+                                        super.resetRotation(initialAngle);
 
                                 },
                                 () -> (estRot2d == null || (xRangeController.atGoal() &&
@@ -362,6 +367,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                                                 ||
                                                                                 Math.abs(controller
                                                                                                 .getRightX()) > 0.1))),
+                                                                                                
                                 this);
                 c.setName("align");
                 return c;
