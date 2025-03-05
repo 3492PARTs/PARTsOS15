@@ -1,6 +1,7 @@
 package frc.robot.util;
 
-import frc.robot.util.PARTsUnit.PARTsUnitType;
+import frc.lib.PARTsLib.PARTsUnit;
+import frc.lib.PARTsLib.PARTsUnit.PARTsUnitType;
 
 public final class AprilTagData {
     public static enum AprilTagType {
@@ -115,11 +116,11 @@ public final class AprilTagData {
     }
 
     /**
-     * Gets the height of the AprilTag as a {@link frc.robot.util.PARTsUnit PARTsUnit}.
+     * Gets the height of the AprilTag as a {@link frc.lib.PARTsLib.PARTsUnit PARTsUnit}.
      * <p>
      * If the ID is not valid, a runtime exception will be thrown.
      * @param targetID The ID of the requested AprilTag.
-     * @return The height of the AprilTag as a {@link frc.robot.util.PARTsUnit PARTsUnit}.
+     * @return The height of the AprilTag as a {@link frc.lib.PARTsLib.PARTsUnit PARTsUnit}.
      */
     public static PARTsUnit getAprilTagHeight(int targetID) {
         return APRILTAG_TAG_OBJECTS[targetID].height;

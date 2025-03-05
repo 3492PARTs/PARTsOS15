@@ -12,9 +12,10 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.lib.PARTsLib.PARTsLogger;
+import frc.lib.PARTsLib.PARTsNT;
+import frc.lib.PARTsLib.CheckPARTs.CheckPARTs;
 import frc.robot.util.PARTsDashboard;
-import frc.robot.util.PARTsLogger;
-import frc.robot.util.PARTsNT;
 import frc.robot.util.PARTsDashboard.DashboardTab;
 
 public class Robot extends TimedRobot {
@@ -36,6 +37,7 @@ public class Robot extends TimedRobot {
     partsNT = new PARTsNT(this);
     partsLogger = new PARTsLogger();
     m_robotContainer = new RobotContainer();
+
     m_robotContainer.constructDashboard();
 
     partsLogger.logCommandScheduler();

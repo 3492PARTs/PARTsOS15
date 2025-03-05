@@ -33,15 +33,18 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.lib.PARTsLib.IPARTsSubsystem;
+import frc.lib.PARTsLib.PARTsLogger;
+import frc.lib.PARTsLib.PARTsNT;
+import frc.lib.PARTsLib.PARTsUnit;
+import frc.lib.PARTsLib.PARTsUnit.PARTsUnitType;
+import frc.lib.PARTsLib.CheckPARTs.CheckPARTs;
+import frc.lib.PARTsLib.CheckPARTs.PARTsError;
+import frc.lib.PARTsLib.CheckPARTs.PARTsError.PartStatus;
 import frc.robot.Constants;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.generated.TunerConstants;
-import frc.robot.util.IPARTsSubsystem;
 import frc.robot.util.LimelightHelpers;
-import frc.robot.util.PARTsLogger;
-import frc.robot.util.PARTsNT;
-import frc.robot.util.PARTsUnit;
-import frc.robot.util.PARTsUnit.PARTsUnitType;
 
 public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSubsystem {
     /*-------------------------------- Private instance variables ---------------------------------*/
@@ -423,4 +426,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 null);
     }
 
+    @Override
+    public void report(PARTsError error) {
+        CheckPARTs.getInstance().getReport(error);
+    }
 }

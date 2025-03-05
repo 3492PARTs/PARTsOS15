@@ -17,10 +17,12 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.lib.PARTsLib.PARTsNT;
+import frc.lib.PARTsLib.PARTsSubsystem;
+import frc.lib.PARTsLib.CheckPARTs.CheckPARTs;
+import frc.lib.PARTsLib.CheckPARTs.PARTsError;
 import frc.robot.Constants;
 import frc.robot.subsystems.Candle.CandleState;
-import frc.robot.util.PARTsNT;
-import frc.robot.util.PARTsSubsystem;
 
 public class Elevator extends PARTsSubsystem {
 
@@ -464,5 +466,10 @@ public class Elevator extends PARTsSubsystem {
         zeroElevatorCommand().schedule();
       }
     }
+  }
+
+  @Override
+  public void report(PARTsError error) {
+    CheckPARTs.getInstance().getReport(error);
   }
 }

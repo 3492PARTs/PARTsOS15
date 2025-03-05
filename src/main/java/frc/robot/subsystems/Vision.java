@@ -7,12 +7,14 @@ package frc.robot.subsystems;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import frc.lib.PARTsLib.PARTsSubsystem;
+import frc.lib.PARTsLib.PARTsUnit;
+import frc.lib.PARTsLib.PARTsUnit.PARTsUnitType;
+import frc.lib.PARTsLib.CheckPARTs.CheckPARTs;
+import frc.lib.PARTsLib.CheckPARTs.PARTsError;
 import frc.robot.util.AprilTagData;
 import frc.robot.util.LimelightHelpers;
-import frc.robot.util.PARTsSubsystem;
-import frc.robot.util.PARTsUnit;
 import frc.robot.util.AprilTagData.AprilTagType;
-import frc.robot.util.PARTsUnit.PARTsUnitType;
 
 public class Vision extends PARTsSubsystem {
 
@@ -69,7 +71,7 @@ public class Vision extends PARTsSubsystem {
   /**
    * Gets distance of robot in meters.
    * @param goalHeight The height of the apriltag in inches.
-   * @return The distance from the apriltag as a {@link frc.robot.util.PARTsUnit PARTsUnit} in Meters.
+   * @return The distance from the apriltag as a {@link frc.lib.PARTsLib.PARTsUnit PARTsUnit} in Meters.
    * @deprecated Please do not use this to get distance. Zero will always be returned.
    */
   public PARTsUnit getDistance(double goalHeight) {
@@ -92,7 +94,7 @@ public class Vision extends PARTsSubsystem {
 
   /**
    * Gets the horizontal offset from the crosshair to the target in degrees.
-   * @return Horizontal offset angle in degrees as a {@link frc.robot.util.PARTsUnit PARTsUnit}.
+   * @return Horizontal offset angle in degrees as a {@link frc.lib.PARTsLib.PARTsUnit PARTsUnit}.
    */
   public PARTsUnit getTX() {
     return new PARTsUnit(LimelightHelpers.getTX(LIMELIGHT_NAME), PARTsUnitType.Angle);
@@ -100,7 +102,7 @@ public class Vision extends PARTsSubsystem {
 
   /**
    * Gets the vertical offset from the crosshair to the target in degrees.
-   * @return Vertical offset angle in degrees as a {@link frc.robot.util.PARTsUnit PARTsUnit}.
+   * @return Vertical offset angle in degrees as a {@link frc.lib.PARTsLib.PARTsUnit PARTsUnit}.
    */
   public PARTsUnit getTY() {
     return new PARTsUnit(LimelightHelpers.getTY(LIMELIGHT_NAME), PARTsUnitType.Angle);
@@ -108,7 +110,7 @@ public class Vision extends PARTsSubsystem {
 
   /**
    * Gets the target area as a percentage of the image. (0% - 100%)
-   * @return Limelight TA percentage as a {@link frc.robot.util.PARTsUnit PARTsUnit}.
+   * @return Limelight TA percentage as a {@link frc.lib.PARTsLib.PARTsUnit PARTsUnit}.
    */
   public PARTsUnit getTA() {
     return new PARTsUnit(LimelightHelpers.getTA(LIMELIGHT_NAME), PARTsUnitType.Percent);
@@ -189,6 +191,11 @@ public class Vision extends PARTsSubsystem {
 
   public Rotation2d flipRotation2d(Rotation2d rotation) {
     return new Rotation2d(-rotation.getRadians());
+  }
+
+  @Override
+  public void report(PARTsError error) {
+    CheckPARTs.getInstance().getReport(error);
   }
 
   /*---------------------------------- Custom Private Functions ---------------------------------*/

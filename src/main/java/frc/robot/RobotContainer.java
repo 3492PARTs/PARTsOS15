@@ -20,6 +20,10 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.lib.PARTsLib.IPARTsSubsystem;
+import frc.lib.PARTsLib.PARTsUnit;
+import frc.lib.PARTsLib.PARTsUnit.PARTsUnitType;
+import frc.lib.PARTsLib.CheckPARTs.CheckPARTs;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.algae.AlgaeWrist;
 import frc.robot.subsystems.Algae;
@@ -29,10 +33,7 @@ import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.Candle.CandleState;
 import frc.robot.subsystems.sysid.AlgaeSysId;
 import frc.robot.subsystems.sysid.ElevatorSysId;
-import frc.robot.util.IPARTsSubsystem;
 import frc.robot.util.PARTsDashboard;
-import frc.robot.util.PARTsUnit;
-import frc.robot.util.PARTsUnit.PARTsUnitType;
 import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.PARTsDrivetrain;
@@ -85,6 +86,11 @@ public class RobotContainer {
      */
 
     public RobotContainer() {
+        /*
+        for (IPARTsSubsystem subsystem : subsystems) {
+            subsystem.init(CheckPARTs.getInstance());
+        }
+        */
         configureBindings();
     }
 

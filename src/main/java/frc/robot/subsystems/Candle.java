@@ -22,8 +22,11 @@ import com.ctre.phoenix.led.CANdle.LEDStripType;
 import com.ctre.phoenix.led.CANdle.VBatOutputMode;
 import com.ctre.phoenix.led.CANdleConfiguration;
 
+import frc.lib.PARTsLib.PARTsSubsystem;
+import frc.lib.PARTsLib.CheckPARTs.CheckPARTs;
+import frc.lib.PARTsLib.CheckPARTs.PARTsError;
+import frc.lib.PARTsLib.CheckPARTs.PARTsError.PartStatus;
 import frc.robot.Constants;
-import frc.robot.util.PARTsSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class Candle extends PARTsSubsystem {
@@ -79,21 +82,25 @@ public class Candle extends PARTsSubsystem {
     /** Creates a new light. */
     public Candle() {
         super("Candle");
-        mPeriodicIO = new PeriodicIO();
-        candle = new CANdle(Constants.Candle.candleId, "rio");
+        try {
+            mPeriodicIO = new PeriodicIO();
+            candle = new CANdle(Constants.Candle.candleId, "rio");
 
-        CANdleConfiguration configAll = new CANdleConfiguration();
-        configAll.statusLedOffWhenActive = true;
-        configAll.disableWhenLOS = false;
-        //TODo: See if this fixes the red and green being swapped
-        //configAll.stripType = LEDStripType.RGB;
-        configAll.stripType = LEDStripType.GRB;
-        configAll.brightnessScalar = 0.5;
-        configAll.vBatOutputMode = VBatOutputMode.Modulated; // does this do anything?
-        candle.configAllSettings(configAll, 100);
+            CANdleConfiguration configAll = new CANdleConfiguration();
+            configAll.statusLedOffWhenActive = true;
+            configAll.disableWhenLOS = false;
+            //TODo: See if this fixes the red and green being swapped
+            //configAll.stripType = LEDStripType.RGB;
+            configAll.stripType = LEDStripType.GRB;
+            configAll.brightnessScalar = 0.5;
+            configAll.vBatOutputMode = VBatOutputMode.Modulated; // does this do anything?
+            candle.configAllSettings(configAll, 100);
 
-        setColor(Color.OFF);
-        publishDashboardValues();
+            setColor(Color.OFF);
+            publishDashboardValues();
+        } catch(Exception e) {
+            report(new PARTsError(this.getName(), PartStatus.FAILURE, e.getMessage()));
+        }
     }
 
     /*---------------------------------- Custom Private Functions ---------------------------------*/
@@ -122,7 +129,7 @@ public class Candle extends PARTsSubsystem {
             mPeriodicIO.state = CandleState.IDLE;
         else if (mPeriodicIO.robotStates.contains(CandleState.DISABLED))
             mPeriodicIO.state = CandleState.DISABLED;
-
+        
         setStateAnimation();
     }
 
@@ -310,5 +317,10 @@ public class Candle extends PARTsSubsystem {
     public void log() {
         // TODO Auto-generated method stub
         //throw new UnsupportedOperationException("Unimplemented method 'log'");
+    }
+
+    @Override
+    public void report(PARTsError error) {
+        CheckPARTs.getInstance().getReport(error);
     }
 }

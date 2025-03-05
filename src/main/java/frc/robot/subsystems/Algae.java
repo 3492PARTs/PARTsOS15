@@ -16,11 +16,13 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.lib.PARTsLib.PARTsNT;
+import frc.lib.PARTsLib.PARTsSubsystem;
+import frc.lib.PARTsLib.PARTsUnit;
+import frc.lib.PARTsLib.PARTsUnit.PARTsUnitType;
+import frc.lib.PARTsLib.CheckPARTs.CheckPARTs;
+import frc.lib.PARTsLib.CheckPARTs.PARTsError;
 import frc.robot.Constants;
-import frc.robot.util.PARTsNT;
-import frc.robot.util.PARTsSubsystem;
-import frc.robot.util.PARTsUnit;
-import frc.robot.util.PARTsUnit.PARTsUnitType;
 
 public class Algae extends PARTsSubsystem {
 
@@ -255,6 +257,11 @@ public class Algae extends PARTsSubsystem {
 
   public double getRPS() {
     return mWristRelEncoder.getVelocity() * 60 / Constants.Algae.wristGearRatio; // 16 is the gear reduction
+  }
+
+  @Override
+  public void report(PARTsError error) {
+    CheckPARTs.getInstance().getReport(error);
   }
 
   /*---------------------------------- Custom Private Functions ---------------------------------*/

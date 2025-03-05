@@ -21,9 +21,11 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.lib.PARTsLib.PARTsSubsystem;
+import frc.lib.PARTsLib.CheckPARTs.CheckPARTs;
+import frc.lib.PARTsLib.CheckPARTs.PARTsError;
 import frc.robot.Constants;
 import frc.robot.subsystems.Candle.CandleState;
-import frc.robot.util.PARTsSubsystem;
 
 public class Coral extends PARTsSubsystem {
   private Elevator elevator;
@@ -325,4 +327,8 @@ public class Coral extends PARTsSubsystem {
     }
   }
 
+  @Override
+  public void report(PARTsError error) {
+    CheckPARTs.getInstance().getReport(error);
+  }
 }
