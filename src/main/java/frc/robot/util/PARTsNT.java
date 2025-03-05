@@ -11,8 +11,6 @@ import edu.wpi.first.networktables.IntegerEntry;
 import edu.wpi.first.networktables.IntegerTopic;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.RawEntry;
-import edu.wpi.first.networktables.RawTopic;
 import edu.wpi.first.networktables.StringEntry;
 import edu.wpi.first.networktables.StringTopic;
 import edu.wpi.first.util.sendable.Sendable;

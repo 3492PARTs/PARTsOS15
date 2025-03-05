@@ -18,7 +18,6 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
@@ -199,71 +198,89 @@ public class Coral extends PARTsSubsystem {
   }
 
   public Command intake() {
-    return this.runOnce(() -> {
-      mPeriodicIO.speed_diff = 0.0;
-      mPeriodicIO.rpm = Constants.Coral.kIntakeSpeed;
-      mPeriodicIO.state = IntakeState.INTAKE;
-    });
+    return super.commandFactory("coralIntake",
+      this.runOnce(() -> {
+        mPeriodicIO.speed_diff = 0.0;
+        mPeriodicIO.rpm = Constants.Coral.kIntakeSpeed;
+        mPeriodicIO.state = IntakeState.INTAKE;
+      }
+    ));
   }
 
   public Command reverse() {
-    return this.runOnce(() -> {
-      mPeriodicIO.speed_diff = 0.0;
-      mPeriodicIO.rpm = Constants.Coral.kReverseSpeed;
-      mPeriodicIO.state = IntakeState.REVERSE;
-    });
+    return super.commandFactory("coralReverse",
+      this.runOnce(() -> {
+        mPeriodicIO.speed_diff = 0.0;
+        mPeriodicIO.rpm = Constants.Coral.kReverseSpeed;
+        mPeriodicIO.state = IntakeState.REVERSE;
+      }
+    ));
   }
 
   public Command index() {
-    return this.runOnce(() -> {
-      mPeriodicIO.speed_diff = 0.0;
-      mPeriodicIO.rpm = Constants.Coral.kIndexSpeed;
-      mPeriodicIO.state = IntakeState.INDEX;
-    });
+    return super.commandFactory("coralIndex",
+      this.runOnce(() -> {
+        mPeriodicIO.speed_diff = 0.0;
+        mPeriodicIO.rpm = Constants.Coral.kIndexSpeed;
+        mPeriodicIO.state = IntakeState.INDEX;
+      }
+    ));
   }
 
   public Command scoreL1() {
-    return this.runOnce(() -> {
-      mPeriodicIO.speed_diff = Constants.Coral.kSpeedDifference;
-      mPeriodicIO.rpm = Constants.Coral.kL1Speed;
-      mPeriodicIO.state = IntakeState.SCORE;
-    });
+    return super.commandFactory("coralScoreL1",
+      this.runOnce(() -> {
+        mPeriodicIO.speed_diff = Constants.Coral.kSpeedDifference;
+        mPeriodicIO.rpm = Constants.Coral.kL1Speed;
+        mPeriodicIO.state = IntakeState.SCORE;
+      }
+    ));
   }
 
+  /**
+   * Score L2 - L4
+   * @return The score command.
+   */
   public Command scoreL24() {
-    return this.runOnce(() -> {
-      mPeriodicIO.speed_diff = 0.0;
-      mPeriodicIO.rpm = Constants.Coral.kL24Speed;
-      mPeriodicIO.state = IntakeState.SCORE;
-    });
+    return super.commandFactory("coralScoreL24",
+      this.runOnce(() -> {
+        mPeriodicIO.speed_diff = 0.0;
+        mPeriodicIO.rpm = Constants.Coral.kL24Speed;
+        mPeriodicIO.state = IntakeState.SCORE;
+      }
+    ));
   }
 
   public Command stopCoral() {
-    return this.runOnce(() -> {
-      mPeriodicIO.rpm = 0.0;
-      mPeriodicIO.speed_diff = 0.0;
-      mPeriodicIO.state = IntakeState.NONE;
-    });
+    return super.commandFactory("coralStop",
+      this.runOnce(() -> {
+        mPeriodicIO.rpm = 0.0;
+        mPeriodicIO.speed_diff = 0.0;
+        mPeriodicIO.state = IntakeState.NONE;
+      }
+    ));
 
   }
 
   public Command score() {
-    return this.runOnce(() -> {
-      candle.addState(CandleState.SCORING);
-      switch (elevator.getState()) {
-        case STOW:
-          scoreL1().schedule();
-          break;
-        default:
-          scoreL24().schedule();
-          break;
+    return super.commandFactory("coralScore",
+      this.runOnce(() -> {
+        candle.addState(CandleState.SCORING);
+        switch (elevator.getState()) {
+          case STOW:
+            scoreL1().schedule();
+            break;
+          default:
+            scoreL24().schedule();
+            break;
+        }
       }
-    });
+    ));
   }
 
   public Command scoreCommand() {
-    return score().andThen(new WaitUntilCommand(() -> mPeriodicIO.state == IntakeState.NONE))
-        .andThen(elevator.goToElevatorStow());
+    return super.commandFactory("coralScoreCmd", score().andThen(new WaitUntilCommand(() -> mPeriodicIO.state == IntakeState.NONE))
+    .andThen(elevator.goToElevatorStow()));
   }
 
   /*---------------------------------- Custom Private Functions ---------------------------------*/
@@ -282,12 +299,17 @@ public class Coral extends PARTsSubsystem {
         }
         break;
       case INDEX:
-        // pulls in slowly till we pass th sensor, stop after
+        // pulls in slowly till we pass the sensor, stop after
         if (!isCoralInEntry()) {
-          stopCoral().schedule();
+          mPeriodicIO.index_debounce++;
+          if (mPeriodicIO.index_debounce > 5) {
+            mPeriodicIO.index_debounce = 0;
+            stopCoral().schedule();
+            mPeriodicIO.state = IntakeState.READY;
 
-          mPeriodicIO.state = IntakeState.READY;
+
         }
+      }
         break;
       case SCORE:
         // stop after the coral leaves the bot

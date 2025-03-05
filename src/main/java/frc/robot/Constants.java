@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.util.PARTsUnit;
 import frc.robot.util.PARTsUnit.PARTsUnitType;
 
@@ -104,6 +106,9 @@ public final class Constants {
     public static final double kReefIntakeSpeed = 0.6;
     public static final double kEjectSpeed = 0.3;
     public static final double kGroundIntakeSpeed = -0.3;
+
+    public static final Pose2d deAlgaeDistance = new Pose2d(0.5,0,new Rotation2d());
+    
   }
 
   public static class Coral {
@@ -112,11 +117,11 @@ public final class Constants {
     public static final int laserCanId = 30;
     public static final int canAndColorId = 31;
 
-    public static final double kIntakeSpeed = -0.3;
+    public static final double kIntakeSpeed = -0.2;//-0.3;
     public static final double kReverseSpeed = 0.6;
     public static final double kL1Speed = -0.4;
     public static final double kL24Speed = -0.4;
-    public static final double kIndexSpeed = -0.1;
+    public static final double kIndexSpeed = -0.11;
     public static final double kSpeedDifference = kL1Speed * 0.5;
   }
 
