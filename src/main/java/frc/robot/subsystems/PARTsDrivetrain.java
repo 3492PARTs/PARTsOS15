@@ -268,8 +268,6 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 () -> {
                                         currentRobotPose3d = new Pose3d(super.getState().Pose);
 
-                                        initialAngle.minus(currentRobotPose3d.getRotation().toRotation2d());
-
                                         partsLogger.logDouble("align/rPoseX", currentRobotPose3d.getX());
                                         partsLogger.logDouble("align/rPoseY", currentRobotPose3d.getY());
                                         partsLogger.logDouble("align/rPoseRot",
@@ -354,7 +352,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                         .withVelocityX(0)
                                                         .withVelocityY(0)
                                                         .withRotationalRate(0));
-                                        super.resetRotation(initialAngle);
+                                        super.resetRotation(initialAngle.minus(currentRobotPose3d.getRotation().toRotation2d()));
 
                                 },
                                 () -> (estRot2d == null || (xRangeController.atGoal() &&
