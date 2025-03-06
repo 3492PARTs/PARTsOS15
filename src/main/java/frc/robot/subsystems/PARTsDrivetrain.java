@@ -31,7 +31,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.IPARTsSubsystem;
 import frc.robot.util.LimelightHelpers;
-import frc.robot.util.PARTsDashboard;
 import frc.robot.util.PARTsLogger;
 import frc.robot.util.PARTsNT;
 import frc.robot.util.PARTsUnit;
@@ -63,15 +62,15 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
         private double MAX_AIM_VELOCITY = 1.5 * Math.PI; // radd/s
         private double MAX_AIM_ACCELERATION = Math.PI / 2; // rad/s^2
-        private double MAX_RANGE_VELOCITY = 1.0; // m/s
-        private double MAX_RANGE_ACCELERATION = 1.5; // 0.5; // m/2^s
+        private double MAX_RANGE_VELOCITY = 5.0; // m/s
+        private double MAX_RANGE_ACCELERATION = 5.0; // 0.5; // m/2^s
 
         // Todo - Tune later
-        private double THETA_P = 1.8; // Proprotinal
+        private double THETA_P = 8; // Proprotinal
         private double THETA_I = 0.01; // 0.01; //Gradual corretction
         private double THETA_D = 0.05; // 0.05; //Smooth oscilattions
 
-        private double RANGE_P = 2.0;// 1.6;// 0.8;
+        private double RANGE_P = 6;// 1.6;// 0.8;
         private double RANGE_I = 0.04;
         private double RANGE_D = 0.1; // ? ~10x P to prevent oscillation(?)
 
@@ -212,8 +211,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         public Command alignCommand(Pose2d holdDistance, CommandXboxController controller) {
                 Command c = new FunctionalCommand(
                                 () -> {
-                                        
-                                        
+                                        updatePoseEstimator();
                                         // Get init. distance from camera.
                                         estRot2d = getEstimatedRotation2d();
                                         partsNT.setBoolean("align/vision/MT2 Status", estRot2d != null);
@@ -253,15 +251,17 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                 // Initialize the x-range controller.
                                                 xRangeController.reset(initialRobotPose3d.getX());
                                                 xRangeController.setGoal(holdDistance.getX());
-                                                xRangeController.setTolerance(0.1);
+                                                xRangeController.setTolerance(0.4);
 
                                                 // Initialize the y-range controller.
                                                 yRangeController.reset(initialRobotPose3d.getY()); // Center to target.
                                                 yRangeController.setGoal(holdDistance.getY()); // Center to target.
-                                                yRangeController.setTolerance(0.1);
+                                                yRangeController.setTolerance(0.2);
 
-                                                partsLogger.logDouble("align/thetaControllerSetpoint",thetaController.getSetpoint().position);
-                                                partsNT.setDouble("align/thetaControllerSetpoint",thetaController.getSetpoint().position);
+                                                partsLogger.logDouble("align/thetaControllerSetpoint",
+                                                                thetaController.getSetpoint().position);
+                                                partsNT.setDouble("align/thetaControllerSetpoint",
+                                                                thetaController.getSetpoint().position);
                                         }
                                 },
                                 () -> {
@@ -270,12 +270,14 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                         partsLogger.logDouble("align/rPoseX", currentRobotPose3d.getX());
                                         partsLogger.logDouble("align/rPoseY", currentRobotPose3d.getY());
                                         partsLogger.logDouble("align/rPoseRot",
-                                                        currentRobotPose3d.getRotation().getAngle());
+                                                        new PARTsUnit(currentRobotPose3d.getRotation().getAngle(),
+                                                                        PARTsUnitType.Radian).to(PARTsUnitType.Angle));
 
                                         partsNT.setDouble("align/rPoseX", currentRobotPose3d.getX());
                                         partsNT.setDouble("align/rPoseY", currentRobotPose3d.getY());
                                         partsNT.setDouble("align/rPoseRot",
-                                                        currentRobotPose3d.getRotation().getAngle());
+                                                        new PARTsUnit(currentRobotPose3d.getRotation().getAngle(),
+                                                                        PARTsUnitType.Radian).to(PARTsUnitType.Angle));
 
                                         Rotation2d thetaOutput = new Rotation2d(
                                                         thetaController.calculate(currentRobotPose3d.getRotation()
@@ -341,8 +343,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
                                         updatePoseEstimator();
                                         super.setControl(alignRequest
-                                                        .withVelocityX(translation.getX() * 0.5)
-                                                        .withVelocityY(translation.getY() * 0.5)
+                                                        .withVelocityX(translation.getX())
+                                                        .withVelocityY(translation.getY())
                                                         .withRotationalRate(thetaOutput.getRadians()));
 
                                 },

@@ -22,12 +22,11 @@ public class ScoreCoral extends SequentialCommandGroup {
   /** Creates a new ScoreCoral. */
   public ScoreCoral(Pose2d holdDistance, ElevatorState level, PARTsDrivetrain drivetrain, Elevator elevator,
       Coral coral, Candle candle) {
-    addRequirements(drivetrain, elevator, coral);
 
     addCommands(
         candle.addStateCommand(CandleState.SCORING),
         new ParallelCommandGroup(drivetrain.alignCommand(holdDistance, null), elevator.elevatorToLevelCommand(level)),
-        coral.scoreCommand(),
+        coral.score(),
         candle.removeStateCommand(CandleState.SCORING));
   }
 }
