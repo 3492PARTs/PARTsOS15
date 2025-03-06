@@ -12,11 +12,11 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.lib.PARTsLib.PARTsDashboard;
 import frc.lib.PARTsLib.PARTsLogger;
 import frc.lib.PARTsLib.PARTsNT;
 import frc.lib.PARTsLib.CheckPARTs.CheckPARTs;
-import frc.robot.util.PARTsDashboard;
-import frc.robot.util.PARTsDashboard.DashboardTab;
+import frc.lib.PARTsLib.PARTsDashboard.DashboardTab;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
