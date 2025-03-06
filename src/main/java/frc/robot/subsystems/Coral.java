@@ -83,9 +83,11 @@ public class Coral extends PARTsSubsystem {
       System.out.println("Configuration failed! " + e);
     }
 
-    new Trigger(this::isCoralInEntry).onTrue(Commands.runOnce(() -> candle.addState(CandleState.CORAL_ENTERING))).onFalse(Commands.runOnce(() -> candle.removeState(CandleState.CORAL_ENTERING)));
+    new Trigger(this::isCoralInEntry).onTrue(Commands.runOnce(() -> candle.addState(CandleState.CORAL_ENTERING)))
+        .onFalse(Commands.runOnce(() -> candle.removeState(CandleState.CORAL_ENTERING)));
 
-    new Trigger(this::isCoralInExit).onTrue(Commands.runOnce(() -> candle.addState(CandleState.HAS_CORAL))).onFalse(Commands.runOnce(() -> candle.removeState(CandleState.HAS_CORAL)));
+    new Trigger(this::isCoralInExit).onTrue(Commands.runOnce(() -> candle.addState(CandleState.HAS_CORAL)))
+        .onFalse(Commands.runOnce(() -> candle.removeState(CandleState.HAS_CORAL)));
   }
 
   private static class PeriodicIO {
@@ -199,88 +201,73 @@ public class Coral extends PARTsSubsystem {
 
   public Command intake() {
     return super.commandFactory("coralIntake",
-      this.runOnce(() -> {
-        mPeriodicIO.speed_diff = 0.0;
-        mPeriodicIO.rpm = Constants.Coral.kIntakeSpeed;
-        mPeriodicIO.state = IntakeState.INTAKE;
-      }
-    ));
+        this.runOnce(() -> {
+          mPeriodicIO.speed_diff = 0.0;
+          mPeriodicIO.rpm = Constants.Coral.kIntakeSpeed;
+          mPeriodicIO.state = IntakeState.INTAKE;
+        }));
   }
 
   public Command reverse() {
     return super.commandFactory("coralReverse",
-      this.runOnce(() -> {
-        mPeriodicIO.speed_diff = 0.0;
-        mPeriodicIO.rpm = Constants.Coral.kReverseSpeed;
-        mPeriodicIO.state = IntakeState.REVERSE;
-      }
-    ));
+        this.runOnce(() -> {
+          mPeriodicIO.speed_diff = 0.0;
+          mPeriodicIO.rpm = Constants.Coral.kReverseSpeed;
+          mPeriodicIO.state = IntakeState.REVERSE;
+        }));
   }
 
   public Command index() {
     return super.commandFactory("coralIndex",
-      this.runOnce(() -> {
-        mPeriodicIO.speed_diff = 0.0;
-        mPeriodicIO.rpm = Constants.Coral.kIndexSpeed;
-        mPeriodicIO.state = IntakeState.INDEX;
-      }
-    ));
+        this.runOnce(() -> {
+          mPeriodicIO.speed_diff = 0.0;
+          mPeriodicIO.rpm = Constants.Coral.kIndexSpeed;
+          mPeriodicIO.state = IntakeState.INDEX;
+        }));
   }
 
-  public Command scoreL1() {
-    return super.commandFactory("coralScoreL1",
-      this.runOnce(() -> {
-        mPeriodicIO.speed_diff = Constants.Coral.kSpeedDifference;
-        mPeriodicIO.rpm = Constants.Coral.kL1Speed;
-        mPeriodicIO.state = IntakeState.SCORE;
-      }
-    ));
+  public void scoreL1() {
+    //return this.runOnce(() -> {
+    mPeriodicIO.speed_diff = Constants.Coral.kSpeedDifference;
+    mPeriodicIO.rpm = Constants.Coral.kL1Speed;
+    mPeriodicIO.state = IntakeState.SCORE;
   }
 
-  /**
-   * Score L2 - L4
-   * @return The score command.
-   */
-  public Command scoreL24() {
-    return super.commandFactory("coralScoreL24",
-      this.runOnce(() -> {
-        mPeriodicIO.speed_diff = 0.0;
-        mPeriodicIO.rpm = Constants.Coral.kL24Speed;
-        mPeriodicIO.state = IntakeState.SCORE;
-      }
-    ));
+  public void scoreL24() {
+    //return this.runOnce(() -> {
+    mPeriodicIO.speed_diff = 0.0;
+    mPeriodicIO.rpm = Constants.Coral.kL24Speed;
+    mPeriodicIO.state = IntakeState.SCORE;
   }
 
   public Command stopCoral() {
     return super.commandFactory("coralStop",
-      this.runOnce(() -> {
-        mPeriodicIO.rpm = 0.0;
-        mPeriodicIO.speed_diff = 0.0;
-        mPeriodicIO.state = IntakeState.NONE;
-      }
-    ));
+        this.runOnce(() -> {
+          mPeriodicIO.rpm = 0.0;
+          mPeriodicIO.speed_diff = 0.0;
+          mPeriodicIO.state = IntakeState.NONE;
+        }));
 
   }
 
   public Command score() {
-    return super.commandFactory("coralScore",
-      this.runOnce(() -> {
-        candle.addState(CandleState.SCORING);
-        switch (elevator.getState()) {
-          case STOW:
-            scoreL1().schedule();
-            break;
-          default:
-            scoreL24().schedule();
-            break;
-        }
+    return this.runOnce(() -> {
+      candle.addState(CandleState.SCORING);
+      switch (elevator.getState()) {
+        case STOW:
+          scoreL1();
+          break;
+        default:
+          scoreL24();
+          break;
       }
-    ));
+    });
   }
 
   public Command scoreCommand() {
-    return super.commandFactory("coralScoreCmd", score().andThen(new WaitUntilCommand(() -> mPeriodicIO.state == IntakeState.NONE))
-    .andThen(elevator.goToElevatorStow()));
+    return super.commandFactory("coralScoreCmd",
+        score().andThen(new WaitUntilCommand(() -> mPeriodicIO.state == IntakeState.NONE))
+            .andThen(elevator.goToElevatorStow()));
   }
 
   /*---------------------------------- Custom Private Functions ---------------------------------*/
@@ -307,9 +294,8 @@ public class Coral extends PARTsSubsystem {
             stopCoral().schedule();
             mPeriodicIO.state = IntakeState.READY;
 
-
+          }
         }
-      }
         break;
       case SCORE:
         // stop after the coral leaves the bot

@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
@@ -16,10 +12,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.coral.ScoreCoral;
 import frc.robot.subsystems.Algae;
@@ -31,6 +24,7 @@ import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.sysid.AlgaeSysId;
 import frc.robot.subsystems.sysid.ElevatorSysId;
 import frc.robot.util.IPARTsSubsystem;
+import frc.robot.util.PARTsButtonBoxController;
 import frc.robot.util.PARTsDashboard;
 import frc.robot.util.PARTsUnit;
 import frc.robot.util.PARTsUnit.PARTsUnitType;
@@ -55,6 +49,7 @@ public class RobotContainer {
 
     private final CommandXboxController driveController = new CommandXboxController(0);
     private final CommandXboxController operatorController = new CommandXboxController(1);
+    private final PARTsButtonBoxController buttonBoxController = new PARTsButtonBoxController(2);
 
     /** Subsystems */
     private final Vision visionSubsystem = new Vision(VisionConstants.DRIVETRAIN_LIMELIGHT,
@@ -76,7 +71,9 @@ public class RobotContainer {
 
     //TODO: add algae to list later
     private final ArrayList<IPARTsSubsystem> subsystems = new ArrayList<IPARTsSubsystem>(
-            Arrays.asList(candle, algae, coral, elevator, drivetrain));
+            Arrays.asList(candle, coral, elevator, drivetrain));
+
+    
 
     /** End Subsystems */
 
@@ -103,9 +100,9 @@ public class RobotContainer {
         Command driveCommand = drivetrain.applyRequest(() -> {
             double limit = MaxSpeed;
             if (elevator.getElevatorPosition() > Constants.Elevator.L2Height)
-                limit *= 0.5;
+                limit *= 0.25;
             else if (fineGrainDrive)
-                limit *= 0.5;
+                limit *= 0.25;
             return drive.withVelocityX(-driveController.getLeftY() * limit) // Drive forward with negative Y (forward)
                     .withVelocityY(-driveController.getLeftX() * limit) // Drive left with negative X (left)
                     .withRotationalRate(-driveController.getRightX() * MaxAngularRate); // Drive counterclockwise with
@@ -138,7 +135,9 @@ public class RobotContainer {
         // .whileTrue(drivetrain.alignCommand(new Pose2d(-1, 0, new Rotation2d()),
         // driveController));
 
-        driveController.leftTrigger().onTrue(new ScoreCoral(new Pose2d(0, new PARTsUnit(-10, PARTsUnitType.Inch).to(PARTsUnitType.Meter), new Rotation2d()), ElevatorState.L2,
+        driveController.leftTrigger().whileTrue(new ScoreCoral(
+                new Pose2d(0, new PARTsUnit(-2, PARTsUnitType.Inch).to(PARTsUnitType.Meter), new Rotation2d()),
+                ElevatorState.L2,
                 drivetrain, elevator, coral, candle));
 
         // logging
@@ -209,14 +208,17 @@ public class RobotContainer {
         // operatorController));
         // operatorController.leftTrigger().whileTrue(getAutonomousCommand()));
         //algae.setDefaultCommand(new AlgaeWrist(algae, operatorController));
+        //algae.setDefaultCommand(new AlgaeWrist(algae, operatorController));
 
         // TODO: Please migrate from run command, example Elevator.java - public Command
         // goToElevatorL4()
         // TODO: We are migrating to command factory structure. (i.e. creating and using
         // a command though a function call)
+
         //TODO: Please migrate from run command, example Elevator.java - public Command goToElevatorL4()
         // TODO: We are migrating to command factory structure. (i.e. creating and using a command though a function call)
         /* 
+>>>>>>>>> Temporary merge branch 2
         operatorController.povUp().onTrue(algae.stow());
         operatorController.povDown().onTrue(algae.grabReefAlgae());
         operatorController.povRight().onTrue(algae.groundIntake());
@@ -279,4 +281,5 @@ public class RobotContainer {
         PARTsDashboard.setSubsystems(subsystems);
         PARTsDashboard.setCommandScheduler();
     }
+
 }

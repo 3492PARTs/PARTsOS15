@@ -28,6 +28,7 @@ import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.IPARTsSubsystem;
 import frc.robot.util.LimelightHelpers;
@@ -59,20 +60,6 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         private ProfiledPIDController thetaController;
         private ProfiledPIDController xRangeController;
         private ProfiledPIDController yRangeController;
-
-        private double MAX_AIM_VELOCITY = 1.5 * Math.PI; // radd/s
-        private double MAX_AIM_ACCELERATION = Math.PI / 2; // rad/s^2
-        private double MAX_RANGE_VELOCITY = 1.0; // m/s
-        private double MAX_RANGE_ACCELERATION = 1.5; // 0.5; // m/2^s
-
-        // Todo - Tune later
-        private double THETA_P = 1.8; // Proprotinal
-        private double THETA_I = 0.01; // 0.01; //Gradual corretction
-        private double THETA_D = 0.05; // 0.05; //Smooth oscilattions
-
-        private double RANGE_P = 2.8;// 1.6;// 0.8;
-        private double RANGE_I = 0.04;
-        private double RANGE_D = 0.1; // ? ~10x P to prevent oscillation(?)
 
         // Robot poses.
         private Pose3d initialRobotPose3d;
@@ -212,7 +199,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
         public Command alignCommand(Pose2d holdDistance, CommandXboxController controller) {
                 Command c = new FunctionalCommand(
-                                () -> { 
+                                () -> {
+                                        updatePoseEstimator();
                                         // Get init. distance from camera.
                                         estRot2d = getEstimatedRotation2d();
                                         partsNT.setBoolean("align/vision/MT2 Status", estRot2d != null);
@@ -261,8 +249,10 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                 yRangeController.setGoal(holdDistance.getY()); // Center to target.
                                                 yRangeController.setTolerance(0.2);
 
-                                                partsLogger.logDouble("align/thetaControllerSetpoint",thetaController.getSetpoint().position);
-                                                partsNT.setDouble("align/thetaControllerSetpoint",thetaController.getSetpoint().position);
+                                                partsLogger.logDouble("align/thetaControllerSetpoint",
+                                                                thetaController.getSetpoint().position);
+                                                partsNT.setDouble("align/thetaControllerSetpoint",
+                                                                thetaController.getSetpoint().position);
                                         }
                                 },
                                 () -> {
@@ -271,12 +261,14 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                         partsLogger.logDouble("align/rPoseX", currentRobotPose3d.getX());
                                         partsLogger.logDouble("align/rPoseY", currentRobotPose3d.getY());
                                         partsLogger.logDouble("align/rPoseRot",
-                                                        currentRobotPose3d.getRotation().getAngle());
+                                                        new PARTsUnit(currentRobotPose3d.getRotation().getAngle(),
+                                                                        PARTsUnitType.Radian).to(PARTsUnitType.Angle));
 
                                         partsNT.setDouble("align/rPoseX", currentRobotPose3d.getX());
                                         partsNT.setDouble("align/rPoseY", currentRobotPose3d.getY());
                                         partsNT.setDouble("align/rPoseRot",
-                                                        currentRobotPose3d.getRotation().getAngle());
+                                                        new PARTsUnit(currentRobotPose3d.getRotation().getAngle(),
+                                                                        PARTsUnitType.Radian).to(PARTsUnitType.Angle));
 
                                         Rotation2d thetaOutput = new Rotation2d(
                                                         thetaController.calculate(currentRobotPose3d.getRotation()
@@ -342,8 +334,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
                                         updatePoseEstimator();
                                         super.setControl(alignRequest
-                                                        .withVelocityX(translation.getX() * 0.5)
-                                                        .withVelocityY(translation.getY() * 0.5)
+                                                        .withVelocityX(translation.getX())
+                                                        .withVelocityY(translation.getY())
                                                         .withRotationalRate(thetaOutput.getRadians()));
 
                                 },
@@ -449,14 +441,20 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 .withDeadband(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * 0.1)
                                 .withRotationalDeadband(0.1);
 
-                thetaController = new ProfiledPIDController(THETA_P, THETA_I, THETA_D,
-                                new TrapezoidProfile.Constraints(MAX_AIM_VELOCITY, MAX_AIM_ACCELERATION));
+                thetaController = new ProfiledPIDController(Constants.Drivetrain.THETA_P, Constants.Drivetrain.THETA_I,
+                                Constants.Drivetrain.THETA_D,
+                                new TrapezoidProfile.Constraints(Constants.Drivetrain.MAX_AIM_VELOCITY,
+                                                Constants.Drivetrain.MAX_AIM_ACCELERATION));
                 thetaController.enableContinuousInput(-Math.PI, Math.PI); // Wrpa from -pi to ip
 
-                xRangeController = new ProfiledPIDController(RANGE_P, RANGE_I, RANGE_D,
-                                new TrapezoidProfile.Constraints(MAX_RANGE_VELOCITY, MAX_RANGE_ACCELERATION));
-                yRangeController = new ProfiledPIDController(RANGE_P, RANGE_I, RANGE_D,
-                                new TrapezoidProfile.Constraints(MAX_RANGE_VELOCITY, MAX_RANGE_ACCELERATION));
+                xRangeController = new ProfiledPIDController(Constants.Drivetrain.RANGE_P, Constants.Drivetrain.RANGE_I,
+                                Constants.Drivetrain.RANGE_D,
+                                new TrapezoidProfile.Constraints(Constants.Drivetrain.MAX_RANGE_VELOCITY,
+                                                Constants.Drivetrain.MAX_RANGE_ACCELERATION));
+                yRangeController = new ProfiledPIDController(Constants.Drivetrain.RANGE_P, Constants.Drivetrain.RANGE_I,
+                                Constants.Drivetrain.RANGE_D,
+                                new TrapezoidProfile.Constraints(Constants.Drivetrain.MAX_RANGE_VELOCITY,
+                                                Constants.Drivetrain.MAX_RANGE_ACCELERATION));
 
         }
 
