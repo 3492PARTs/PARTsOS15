@@ -1,6 +1,5 @@
 package frc.robot;
 
-
 import static edu.wpi.first.units.Units.*;
 
 import java.util.ArrayList;
@@ -11,17 +10,12 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.coral.ScoreCoral;
 import frc.robot.subsystems.Algae;
-import frc.robot.subsystems.Buttonbox;
 import frc.robot.subsystems.Candle;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Vision;
@@ -30,6 +24,7 @@ import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.sysid.AlgaeSysId;
 import frc.robot.subsystems.sysid.ElevatorSysId;
 import frc.robot.util.IPARTsSubsystem;
+import frc.robot.util.PARTsButtonBoxController;
 import frc.robot.util.PARTsDashboard;
 import frc.robot.util.PARTsUnit;
 import frc.robot.util.PARTsUnit.PARTsUnitType;
@@ -54,6 +49,7 @@ public class RobotContainer {
 
     private final CommandXboxController driveController = new CommandXboxController(0);
     private final CommandXboxController operatorController = new CommandXboxController(1);
+    private final PARTsButtonBoxController buttonBoxController = new PARTsButtonBoxController(2);
 
     /** Subsystems */
     private final Vision visionSubsystem = new Vision(VisionConstants.DRIVETRAIN_LIMELIGHT,
@@ -72,12 +68,10 @@ public class RobotContainer {
 
     public final PARTsDrivetrain drivetrain = new PARTsDrivetrain(visionSubsystem, TunerConstants.DrivetrainConstants,
             TunerConstants.FrontLeft, TunerConstants.FrontRight, TunerConstants.BackLeft, TunerConstants.BackRight);
-            Joystick joystick = new Joystick(0);
-            private final Buttonbox buttonbox = new Buttonbox(joystick);
 
     //TODO: add algae to list later
     private final ArrayList<IPARTsSubsystem> subsystems = new ArrayList<IPARTsSubsystem>(
-            Arrays.asList(candle, algae, coral, elevator, drivetrain, buttonbox));
+            Arrays.asList(candle, algae, coral, elevator, drivetrain));
 
     /** End Subsystems */
 
