@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.subsystems.testing;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -10,6 +10,7 @@ import frc.robot.util.PARTsSubsystem;
 
 public class Buttonbox extends PARTsSubsystem {
   private Joystick joystick;
+
   /** Creates a new Buttonbox. */
   public Buttonbox(Joystick joystick) {
     super("Buttonbox");
@@ -24,8 +25,8 @@ public class Buttonbox extends PARTsSubsystem {
 
   @Override
   public void outputTelemetry() {
-    super.partsNT.setInteger("button count", joystick.getButtonCount()); 
-   // super.partsNT.setBoolean("Button zero", joystick.getRawButton(0)); keep in case for copying
+    super.partsNT.setInteger("button count", joystick.getButtonCount());
+    // super.partsNT.setBoolean("Button zero", joystick.getRawButton(0)); keep in case for copying
     super.partsNT.setBoolean("HANDLE", joystick.getRawButton(1));
     super.partsNT.setBoolean("CRUISE", joystick.getRawButton(2));
     super.partsNT.setBoolean("FLASH", joystick.getRawButton(3));
@@ -52,11 +53,9 @@ public class Buttonbox extends PARTsSubsystem {
     super.partsNT.setBoolean("TC-LEFT", joystick.getRawButton(24));
     super.partsNT.setBoolean("ABS-CLICK", joystick.getRawButton(25));
     super.partsNT.setBoolean("TC-CLICK", joystick.getRawButton(26));
-    super.partsNT.setInteger("Joystick",joystick.getPOV(0));
-    
-    
-    // TODO Auto-generated method stub
+    super.partsNT.setInteger("Joystick", joystick.getPOV(0));
 
+    // TODO Auto-generated method stub
 
   }
 
