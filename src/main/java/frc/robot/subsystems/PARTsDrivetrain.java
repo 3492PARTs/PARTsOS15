@@ -66,7 +66,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         private double MAX_RANGE_ACCELERATION = 1.5; // 0.5; // m/2^s
 
         // Todo - Tune later
-        private double THETA_P = 1.8; // Proprotinal
+        private double THETA_P = 8; // Proprotinal
         private double THETA_I = 0.01; // 0.01; //Gradual corretction
         private double THETA_D = 0.05; // 0.05; //Smooth oscilattions
 
@@ -258,8 +258,10 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                 yRangeController.setGoal(holdDistance.getY()); // Center to target.
                                                 yRangeController.setTolerance(0.2);
 
-                                                partsLogger.logDouble("align/thetaControllerSetpoint",thetaController.getSetpoint().position);
-                                                partsNT.setDouble("align/thetaControllerSetpoint",thetaController.getSetpoint().position);
+                                                partsLogger.logDouble("align/thetaControllerSetpoint",
+                                                                thetaController.getSetpoint().position);
+                                                partsNT.setDouble("align/thetaControllerSetpoint",
+                                                                thetaController.getSetpoint().position);
                                         }
                                 },
                                 () -> {
@@ -268,12 +270,14 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                         partsLogger.logDouble("align/rPoseX", currentRobotPose3d.getX());
                                         partsLogger.logDouble("align/rPoseY", currentRobotPose3d.getY());
                                         partsLogger.logDouble("align/rPoseRot",
-                                                        currentRobotPose3d.getRotation().getAngle());
+                                                        new PARTsUnit(currentRobotPose3d.getRotation().getAngle(),
+                                                                        PARTsUnitType.Radian).to(PARTsUnitType.Angle));
 
                                         partsNT.setDouble("align/rPoseX", currentRobotPose3d.getX());
                                         partsNT.setDouble("align/rPoseY", currentRobotPose3d.getY());
                                         partsNT.setDouble("align/rPoseRot",
-                                                        currentRobotPose3d.getRotation().getAngle());
+                                                        new PARTsUnit(currentRobotPose3d.getRotation().getAngle(),
+                                                                        PARTsUnitType.Radian).to(PARTsUnitType.Angle));
 
                                         Rotation2d thetaOutput = new Rotation2d(
                                                         thetaController.calculate(currentRobotPose3d.getRotation()
@@ -339,8 +343,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
                                         updatePoseEstimator();
                                         super.setControl(alignRequest
-                                                        .withVelocityX(translation.getX() * 0.5)
-                                                        .withVelocityY(translation.getY() * 0.5)
+                                                        .withVelocityX(translation.getX() * 0)
+                                                        .withVelocityY(translation.getY() * 0)
                                                         .withRotationalRate(thetaOutput.getRadians()));
 
                                 },
