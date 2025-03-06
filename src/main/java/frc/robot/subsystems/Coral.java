@@ -294,9 +294,8 @@ public class Coral extends PARTsSubsystem {
             stopCoral().schedule();
             mPeriodicIO.state = IntakeState.READY;
 
-
+          }
         }
-      }
         break;
       case SCORE:
         // stop after the coral leaves the bot

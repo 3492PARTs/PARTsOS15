@@ -71,7 +71,7 @@ public class RobotContainer {
 
     //TODO: add algae to list later
     private final ArrayList<IPARTsSubsystem> subsystems = new ArrayList<IPARTsSubsystem>(
-            Arrays.asList(candle, algae, coral, elevator, drivetrain));
+            Arrays.asList(candle, coral, elevator, drivetrain));
 
     /** End Subsystems */
 
@@ -205,6 +205,7 @@ public class RobotContainer {
         // operatorController.leftBumper().whileTrue(new AlgaeIntake(algae,
         // operatorController));
         // operatorController.leftTrigger().whileTrue(getAutonomousCommand()));
+        //algae.setDefaultCommand(new AlgaeWrist(algae, operatorController));
         //algae.setDefaultCommand(new AlgaeWrist(algae, operatorController));
 
         // TODO: Please migrate from run command, example Elevator.java - public Command
