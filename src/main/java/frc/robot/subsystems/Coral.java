@@ -226,18 +226,20 @@ public class Coral extends PARTsSubsystem {
         }));
   }
 
-  public void scoreL1() {
-    //return this.runOnce(() -> {
+  public Command scoreL1() {
+    return this.runOnce(() -> {
     mPeriodicIO.speed_diff = Constants.Coral.kSpeedDifference;
     mPeriodicIO.rpm = Constants.Coral.kL1Speed;
     mPeriodicIO.state = IntakeState.SCORE;
+    });
   }
 
-  public void scoreL24() {
-    //return this.runOnce(() -> {
+  public Command scoreL24() {
+    return this.runOnce(() -> {
     mPeriodicIO.speed_diff = 0.0;
     mPeriodicIO.rpm = Constants.Coral.kL24Speed;
     mPeriodicIO.state = IntakeState.SCORE;
+    });
   }
 
   public Command stopCoral() {
@@ -255,10 +257,10 @@ public class Coral extends PARTsSubsystem {
       candle.addState(CandleState.SCORING);
       switch (elevator.getState()) {
         case STOW:
-          scoreL1();
+          scoreL1().schedule();;
           break;
         default:
-          scoreL24();
+          scoreL24().schedule();;
           break;
       }
     });

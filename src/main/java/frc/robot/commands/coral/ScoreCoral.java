@@ -26,7 +26,7 @@ public class ScoreCoral extends SequentialCommandGroup {
     addCommands(
         candle.addStateCommand(CandleState.SCORING),
         new ParallelCommandGroup(drivetrain.alignCommand(holdDistance, null), elevator.elevatorToLevelCommand(level)),
-        coral.score(),
+        coral.scoreCommand(),
         candle.removeStateCommand(CandleState.SCORING));
   }
 }
