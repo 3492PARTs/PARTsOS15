@@ -2,10 +2,8 @@ package frc.lib.PARTsLib.CheckPARTs;
 
 import java.util.ArrayList;
 
-import edu.wpi.first.hal.DriverStationJNI;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.lib.PARTsLib.PARTsLibConstants;
 import frc.lib.PARTsLib.CheckPARTs.PARTsError.PartStatus;
 
 public class CheckPARTs {
@@ -23,23 +21,11 @@ public class CheckPARTs {
     }
 
     public void getReport(PARTsError report) {
-        if (report.currentStatus == PartStatus.OK) { System.out.print(report); return; }
+        if (report.currentStatus == PartStatus.OK) { System.out.print(report.message); return; }
         CommandScheduler.getInstance().cancelAll();
         CommandScheduler.getInstance().disable();
-        System.err.println("PARTs Checker: Error in subsystem!\nThe subsystem: " + report.name + "\nThe Message: " + report.message + "\nThe program will now exit.");
-        System.exit(1);
-    }
-
-    /**
-     * @deprecated Non-functional method.
-     * @return
-     */
-    public ArrayList<PARTsError> testUnits() {
-        ArrayList<PARTsError> results = new ArrayList<>();
-
-        for (ICheckPARTs part : partsList) {
-        }
-        
-        return results;
+        System.err.println("PARTs Checker: Error in subsystem!\nThe scope: " + report.name + "\nThe Message: " + report.message + (PARTsLibConstants.CheckPARTsConstants.QUIT_ROBOT_CODE ? "\nThe robot code will now exit." : ""));
+        if (PARTsLibConstants.CheckPARTsConstants.QUIT_ROBOT_CODE)
+            System.exit(1);
     }
 }
