@@ -34,7 +34,9 @@ public class PARTsNT {
     private class EasyGenericEntry {
         /** The NetworkTables topic name. */
         public String topicName;
-        public EasyGenericEntry() {}
+
+        public EasyGenericEntry() {
+        }
     }
 
     class EasyBooleanEntry extends EasyGenericEntry {
@@ -207,7 +209,7 @@ public class PARTsNT {
      */
     private void addEntryToList(EasyGenericEntry entry) {
         // Check if the entry already exists in the list.
-        for (int i=0; i<topicsList.size(); i++) {
+        for (int i = 0; i < topicsList.size(); i++) {
             if (topicsList.get(i).topicName == entry.topicName) {
                 return; // It exists so we abort adding it to avoid dupes.
             }
@@ -223,7 +225,8 @@ public class PARTsNT {
      */
     private EasyGenericEntry getEntry(String name) {
         for (EasyGenericEntry entry : topicsList) {
-            if (entry.topicName == name) return entry;
+            if (entry.topicName == name)
+                return entry;
         }
         return null;
     }
@@ -237,7 +240,8 @@ public class PARTsNT {
      */
     private EasyBooleanEntry getBooleanEntry(String name) {
         for (EasyBooleanEntry entry : booleanEntries) {
-            if (entry.topicName == name) return entry;
+            if (entry.topicName == name)
+                return entry;
         }
         return null;
     }
@@ -249,7 +253,8 @@ public class PARTsNT {
      */
     private EasyIntegerEntry getIntegerEntry(String name) {
         for (EasyIntegerEntry entry : integerEntries) {
-            if (entry.topicName.equals(name)) return entry;
+            if (entry.topicName.equals(name))
+                return entry;
         }
         return null;
     }
@@ -261,7 +266,8 @@ public class PARTsNT {
      */
     private EasyDoubleEntry getDoubleEntry(String name) {
         for (EasyDoubleEntry entry : doubleEntries) {
-            if (entry.topicName.equals(name)) return entry;
+            if (entry.topicName.equals(name))
+                return entry;
         }
         return null;
     }
@@ -273,7 +279,8 @@ public class PARTsNT {
      */
     private EasyStringEntry getStringEntry(String name) {
         for (EasyStringEntry entry : stringEntries) {
-            if (entry.topicName == name) return entry;
+            if (entry.topicName == name)
+                return entry;
         }
         return null;
     }
@@ -330,8 +337,6 @@ public class PARTsNT {
         }
     }
 
-    
-
     //* -------- DOUBLE FUNCTIONS -------- *//
 
     /**
@@ -343,7 +348,7 @@ public class PARTsNT {
         EasyDoubleEntry entry = getDoubleEntry(name);
         return (entry == null) ? 0 : (entry.cachedValue = entry.entry.get());
     }
-    
+
     /**
      * Sets the double value for the requested entry.
      * @param name The name of the entry.
@@ -390,8 +395,8 @@ public class PARTsNT {
      * Removes all previously created entries.
      */
     public void removeAllEntries() {
-        for (int i=0; i < masterList.size(); i++) {
-            for (int j=0; j < masterList.get(i).size(); j++) {
+        for (int i = 0; i < masterList.size(); i++) {
+            for (int j = 0; j < masterList.get(i).size(); j++) {
                 masterList.get(i).set(j, null);
                 masterList.get(i).remove(j);
             }
@@ -403,8 +408,8 @@ public class PARTsNT {
      * @param name The name of the entry to remove.
      */
     public void removeEntry(String name) {
-        for (int i=0; i < masterList.size(); i++) {
-            for (int j=0; j < masterList.get(i).size(); j++) {
+        for (int i = 0; i < masterList.size(); i++) {
+            for (int j = 0; j < masterList.get(i).size(); j++) {
                 if (((EasyGenericEntry) masterList.get(i).get(j)).topicName == name) {
                     masterList.get(i).set(j, null);
                     masterList.get(i).remove(j);
@@ -412,22 +417,12 @@ public class PARTsNT {
             }
         }
     }
-    
+
     /**
      * Adds a sendable to smart dashboard network table entry.
      * @param data The sendable to add.
      */
     public void putSmartDashboardSendable(String key, Sendable data) {
         SmartDashboard.putData(String.format("%s/%s", name, key), data);
-    }
-
-    public void setBoolean(String name2, int pov) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setBoolean'");
-    }
-
-    public void setBoolean(String name2, double rawAxis) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setBoolean'");
     }
 }
