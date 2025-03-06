@@ -62,15 +62,15 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
         private double MAX_AIM_VELOCITY = 1.5 * Math.PI; // radd/s
         private double MAX_AIM_ACCELERATION = Math.PI / 2; // rad/s^2
-        private double MAX_RANGE_VELOCITY = 1.0; // m/s
-        private double MAX_RANGE_ACCELERATION = 1.5; // 0.5; // m/2^s
+        private double MAX_RANGE_VELOCITY = 5.0; // m/s
+        private double MAX_RANGE_ACCELERATION = 5.0; // 0.5; // m/2^s
 
         // Todo - Tune later
         private double THETA_P = 8; // Proprotinal
         private double THETA_I = 0.01; // 0.01; //Gradual corretction
         private double THETA_D = 0.05; // 0.05; //Smooth oscilattions
 
-        private double RANGE_P = 2.8;// 1.6;// 0.8;
+        private double RANGE_P = 6;// 1.6;// 0.8;
         private double RANGE_I = 0.04;
         private double RANGE_D = 0.1; // ? ~10x P to prevent oscillation(?)
 
@@ -343,8 +343,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
                                         updatePoseEstimator();
                                         super.setControl(alignRequest
-                                                        .withVelocityX(translation.getX() * 0)
-                                                        .withVelocityY(translation.getY() * 0)
+                                                        .withVelocityX(translation.getX())
+                                                        .withVelocityY(translation.getY())
                                                         .withRotationalRate(thetaOutput.getRadians()));
 
                                 },
