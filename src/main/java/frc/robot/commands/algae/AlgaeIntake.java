@@ -6,7 +6,7 @@ package frc.robot.commands.algae;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Constants;
+import frc.robot.Climber;
 import frc.robot.subsystems.Algae;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -29,7 +29,7 @@ public class AlgaeIntake extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_algaeIntake.setIntakeSpeed(Constants.Algae.algaeIntakeSpeed);
+    m_algaeIntake.setIntakeSpeed(Climber.Algae.algaeIntakeSpeed);
   }
 
   // Called once the command ends or is interrupted.

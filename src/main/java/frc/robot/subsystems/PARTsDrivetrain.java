@@ -16,6 +16,7 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -37,7 +38,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Constants;
+import frc.robot.Climber;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.IPARTsSubsystem;
 import frc.robot.util.LimelightHelpers;
@@ -447,17 +448,22 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         }
     }
     
-    public Command snapTo180() {
-        try{
-              // Load the path you want to follow using its name in the GUI
-            PathPlannerPath path = PathPlannerPath.fromPathFile("180 Path");
-      
-              // Create a path following command using AutoBuilder. This will also trigger event markers.
-              return AutoBuilder.followPath(path);
-          } catch (Exception e) {
-              DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
-              return Commands.none();
-          }
-        }
+    public Command snapToAngle(double angle) {
+    
+        PARTsUnit currentRobotAngle = new PARTsUnit(getRotation3d().getAngle(), PARTsUnitType.Angle);
+        PARTsUnit goalAngle = new PARTsUnit(currentRobotAngle.to(PARTsUnitType.Angle) + angle, PARTsUnitType.Angle);
+        thetaController.setGoal(goalAngle.to(PARTsUnitType.Radian));
+
+       //double pidCalc = thetaController.calculate(currentRobotAngle, goalAngle);
+        Rotation2d thetaOutput = new Rotation2d(
+                    thetaController.calculate(currentRobotAngle.to(PARTsUnitType.Radian), goalAngle.to(PARTsUnitType.Radian)));
+
+        return this.runOnce(() -> super.setControl(alignRequest
+        .withVelocityX(0)
+        .withVelocityY(0)
+        .withRotationalRate(thetaOutput.getRadians()))).until(() -> (thetaController.atGoal()));
+        
+          
+    }
 
 }

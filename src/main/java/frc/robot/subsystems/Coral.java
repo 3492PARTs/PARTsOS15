@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants;
+import frc.robot.Climber;
 import frc.robot.subsystems.Candle.CandleState;
 import frc.robot.util.PARTsSubsystem;
 
@@ -56,8 +56,8 @@ public class Coral extends PARTsSubsystem {
 
     mPeriodicIO = new PeriodicIO();
 
-    mLeftMotor = new SparkMax(Constants.Coral.coralLeftMotorId, MotorType.kBrushless);
-    mRightMotor = new SparkMax(Constants.Coral.coralRightMotorId, MotorType.kBrushless);
+    mLeftMotor = new SparkMax(Climber.Coral.coralLeftMotorId, MotorType.kBrushless);
+    mRightMotor = new SparkMax(Climber.Coral.coralRightMotorId, MotorType.kBrushless);
 
     SparkMaxConfig coralConfig = new SparkMaxConfig();
 
@@ -72,10 +72,10 @@ public class Coral extends PARTsSubsystem {
         ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
 
-    canandcolor = new Canandcolor(Constants.Coral.canAndColorId);
+    canandcolor = new Canandcolor(Climber.Coral.canAndColorId);
     canandcolor.setLampLEDBrightness(0);
 
-    laserCAN = new LaserCan(Constants.Coral.laserCanId);
+    laserCAN = new LaserCan(Climber.Coral.laserCanId);
     try {
       laserCAN.setRangingMode(LaserCan.RangingMode.SHORT);
       laserCAN.setRegionOfInterest(new LaserCan.RegionOfInterest(4, 4, 4, 4));
@@ -201,7 +201,7 @@ public class Coral extends PARTsSubsystem {
   public Command intake() {
     return this.runOnce(() -> {
       mPeriodicIO.speed_diff = 0.0;
-      mPeriodicIO.rpm = Constants.Coral.kIntakeSpeed;
+      mPeriodicIO.rpm = Climber.Coral.kIntakeSpeed;
       mPeriodicIO.state = IntakeState.INTAKE;
     });
   }
@@ -209,7 +209,7 @@ public class Coral extends PARTsSubsystem {
   public Command reverse() {
     return this.runOnce(() -> {
       mPeriodicIO.speed_diff = 0.0;
-      mPeriodicIO.rpm = Constants.Coral.kReverseSpeed;
+      mPeriodicIO.rpm = Climber.Coral.kReverseSpeed;
       mPeriodicIO.state = IntakeState.REVERSE;
     });
   }
@@ -217,15 +217,15 @@ public class Coral extends PARTsSubsystem {
   public Command index() {
     return this.runOnce(() -> {
       mPeriodicIO.speed_diff = 0.0;
-      mPeriodicIO.rpm = Constants.Coral.kIndexSpeed;
+      mPeriodicIO.rpm = Climber.Coral.kIndexSpeed;
       mPeriodicIO.state = IntakeState.INDEX;
     });
   }
 
   public Command scoreL1() {
     return this.runOnce(() -> {
-      mPeriodicIO.speed_diff = Constants.Coral.kSpeedDifference;
-      mPeriodicIO.rpm = Constants.Coral.kL1Speed;
+      mPeriodicIO.speed_diff = Climber.Coral.kSpeedDifference;
+      mPeriodicIO.rpm = Climber.Coral.kL1Speed;
       mPeriodicIO.state = IntakeState.SCORE;
     });
   }
@@ -233,7 +233,7 @@ public class Coral extends PARTsSubsystem {
   public Command scoreL24() {
     return this.runOnce(() -> {
       mPeriodicIO.speed_diff = 0.0;
-      mPeriodicIO.rpm = Constants.Coral.kL24Speed;
+      mPeriodicIO.rpm = Climber.Coral.kL24Speed;
       mPeriodicIO.state = IntakeState.SCORE;
     });
   }

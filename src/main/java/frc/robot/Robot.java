@@ -29,7 +29,7 @@ public class Robot extends TimedRobot {
   private final RobotContainer m_robotContainer;
 
   public Robot() {
-    if (Constants.Debug.debug) {
+    if (Climber.Debug.debug) {
       CanBridge.runTCP();
     }
 
@@ -68,7 +68,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    if (!Constants.Debug.debug) {
+    if (!Climber.Debug.debug) {
       PARTsDashboard.setTab(DashboardTab.AUTONOMOUS);
     }
     m_robotContainer.setIdleCandleState();
@@ -89,7 +89,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    if (!Constants.Debug.debug) {
+    if (!Climber.Debug.debug) {
       PARTsDashboard.setTab(DashboardTab.TELEOPERATED);
     }
     m_robotContainer.setIdleCandleState();

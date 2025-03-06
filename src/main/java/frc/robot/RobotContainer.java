@@ -25,7 +25,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.Constants.VisionConstants;
+import frc.robot.Climber.VisionConstants;
 //import frc.robot.commands.algae.AlgaeWrist;
 import frc.robot.subsystems.Algae;
 import frc.robot.subsystems.Candle;
@@ -145,7 +145,7 @@ public class RobotContainer {
       //  driveController.leftTrigger()
                // .onTrue(drivetrain.alignCommand(new Pose2d(-1, 0, new Rotation2d()), driveController));
         //TODO: uncomment to test
-        driveController.rightTrigger().whileTrue(drivetrain.snapTo180());
+        driveController.rightTrigger().whileTrue(drivetrain.snapToAngle(180));
 
         // logging
         drivetrain.registerTelemetry(telemetryLogger::telemeterize);
