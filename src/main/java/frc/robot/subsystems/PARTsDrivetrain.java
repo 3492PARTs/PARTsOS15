@@ -206,7 +206,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         return m_poseEstimator.getEstimatedPosition();
     }
 
-   /*  public Command alignCommand(Pose2d holdDistance, CommandXboxController controller) {
+  public Command alignCommand(Pose2d holdDistance, CommandXboxController controller) {
         updatePoseEstimator();
 
         // Get init. distance from camera.
@@ -307,7 +307,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         c.setName("align");
         return c;
     }
-        */
+        
 
     /*---------------------------------- Custom Private Functions ---------------------------------*/
     private void initialize() {

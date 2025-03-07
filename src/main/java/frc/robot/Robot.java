@@ -5,7 +5,6 @@
 package frc.robot;
 
 import com.ctre.phoenix.led.CANdle;
-import com.ctre.phoenix6.SignalLogger;
 
 import au.grapplerobotics.CanBridge;
 import edu.wpi.first.net.WebServer;

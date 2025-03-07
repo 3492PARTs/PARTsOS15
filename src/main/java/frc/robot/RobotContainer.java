@@ -144,8 +144,6 @@ public class RobotContainer {
 
       //  driveController.leftTrigger()
                // .onTrue(drivetrain.alignCommand(new Pose2d(-1, 0, new Rotation2d()), driveController));
-        //TODO: uncomment to test
-        driveController.rightTrigger().whileTrue(drivetrain.snapToAngle(180));
 
         // logging
         drivetrain.registerTelemetry(telemetryLogger::telemeterize);
