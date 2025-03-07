@@ -19,15 +19,15 @@ import frc.robot.subsystems.Candle.CandleState;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ScoreCoral extends SequentialCommandGroup {
 
-  /** Creates a new ScoreCoral. */
-  public ScoreCoral(Pose2d holdDistance, ElevatorState level, PARTsDrivetrain drivetrain, Elevator elevator,
-      Coral coral, Candle candle) {
-    addRequirements(drivetrain, elevator, coral);
+        /** Creates a new ScoreCoral. */
+        public ScoreCoral(Pose2d holdDistance, ElevatorState level, PARTsDrivetrain drivetrain, Elevator elevator,
+                        Coral coral, Candle candle) {
 
-    addCommands(
-        candle.addStateCommand(CandleState.SCORING),
-        //new ParallelCommandGroup(drivetrain.alignCommand(holdDistance, null), elevator.elevatorToLevelCommand(level)),
-        coral.scoreCommand(),
-        candle.removeStateCommand(CandleState.SCORING));
-  }
+                addCommands(
+                                candle.addStateCommand(CandleState.SCORING),
+                                new ParallelCommandGroup(drivetrain.alignCommand(holdDistance, null),
+                                                elevator.elevatorToLevelCommand(level)),
+                                coral.score(),
+                                candle.removeStateCommand(CandleState.SCORING));
+        }
 }

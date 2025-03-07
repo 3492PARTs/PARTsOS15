@@ -6,7 +6,10 @@ package frc.robot;
 
 import com.pathplanner.lib.config.RobotConfig;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.util.PARTsUnit;
+import frc.robot.util.PARTsUnit.PARTsUnitType;
 
 /**
  * Constants class to hold constants.
@@ -14,7 +17,20 @@ import frc.robot.util.PARTsUnit;
 public final class Constants {
   public static class Drivetrain {
     public static final double kMaxAngularSpeed = Math.PI / 4; // Radians
-    public static final double kMaxSpeed = .5; // Meters per seco
+    public static final double kMaxSpeed = .5; // Meters per second
+
+    public static final double MAX_AIM_VELOCITY = 1.5 * Math.PI; // radd/s
+    public static final double MAX_AIM_ACCELERATION = Math.PI / 2; // rad/s^2
+    public static final double MAX_RANGE_VELOCITY = 5.0; // m/s
+    public static final double MAX_RANGE_ACCELERATION = 5.0; // 0.5; // m/2^s
+
+    public static final double THETA_P = 8; // Proprotinal
+    public static final double THETA_I = 0.01; // 0.01; //Gradual corretction
+    public static final double THETA_D = 0.05; // 0.05; //Smooth oscilattions
+
+    public static final double RANGE_P = 6.0;//1.6;// 0.8;
+    public static final double RANGE_I = 0.04;
+    public static final double RANGE_D = 0.1;
   }
 
   public static class LimelightData {
@@ -51,7 +67,7 @@ public final class Constants {
     public static final double LowAlgaeHeight = 0;
     public static final double HighAlgaeHeight = 0;
     public static final int L_SWITCH_PORT = 0;
-    public static final double kP = 0.3;
+    public static final double kP = 1;
     public static final double kI = 0;
     public static final double kD = 0;
     public static final double kTolerance = 0.5;
@@ -78,10 +94,10 @@ public final class Constants {
     public static final double maxWristSpeed = .5;
     public static final int kMaxWristCurrent = 10;
 
-    public static final double kWristP = 5.0;
+    public static final double kWristP = 10.0;
     public static final double kWristI = 0.0;
     public static final double kWristD = 0.0;
-    public static final double kTolerance = 1.0;
+    public static final double kTolerance = new PARTsUnit(1, PARTsUnitType.Angle).to(PARTsUnitType.Radian);
 
     public static final double kWristKS = 0.25008;
     public static final double kWristKG = 0.10667;
@@ -105,6 +121,9 @@ public final class Constants {
     public static final double kReefIntakeSpeed = 0.6;
     public static final double kEjectSpeed = 0.3;
     public static final double kGroundIntakeSpeed = -0.3;
+
+    public static final Pose2d deAlgaeDistance = new Pose2d(0.5, 0, new Rotation2d());
+
   }
 
   public static class Coral {
@@ -113,11 +132,11 @@ public final class Constants {
     public static final int laserCanId = 30;
     public static final int canAndColorId = 31;
 
-    public static final double kIntakeSpeed = -0.3;
+    public static final double kIntakeSpeed = -0.2;//-0.3;
     public static final double kReverseSpeed = 0.6;
     public static final double kL1Speed = -0.4;
     public static final double kL24Speed = -0.4;
-    public static final double kIndexSpeed = -0.1;
+    public static final double kIndexSpeed = -0.11;
     public static final double kSpeedDifference = kL1Speed * 0.5;
   }
 
@@ -125,9 +144,10 @@ public final class Constants {
     public static final int candleId = 33;
     public static final int ledLength = 1000;
   }
+
   public static class Climber {
     public static final int climberId = 34;
-  } 
+  }
 
   public static class Debug {
     public static boolean logging = true;
