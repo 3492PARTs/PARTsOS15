@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.Climber.VisionConstants;
+import frc.robot.Constants.VisionConstants;
 import frc.robot.cmds.coral.ScoreCoral;
 //import frc.robot.commands.algae.AlgaeWrist;
 import frc.robot.subsystems.Algae;
@@ -63,9 +63,9 @@ public class RobotContainer {
         private final PARTsButtonBoxController buttonBoxController = new PARTsButtonBoxController(2);
 
         /** Subsystems */
-        private final Vision visionSubsystem = new Vision(VisionConstants.DRIVETRAIN_LIMELIGHT,
-                        new PARTsUnit(VisionConstants.LIMELIGHT_ANGLE, PARTsUnitType.Angle),
-                        new PARTsUnit(VisionConstants.LIMELIGHT_LENS_HEIGHT, PARTsUnitType.Inch));
+        private final Vision visionSubsystem = new Vision(Constants.VisionConstants.DRIVETRAIN_LIMELIGHT,
+                        new PARTsUnit(Constants.VisionConstants.LIMELIGHT_ANGLE, PARTsUnitType.Angle),
+                        new PARTsUnit(Constants.VisionConstants.LIMELIGHT_LENS_HEIGHT, PARTsUnitType.Inch));
 
         public final Candle candle = new Candle();
 

@@ -22,7 +22,7 @@ import com.ctre.phoenix.led.CANdle.LEDStripType;
 import com.ctre.phoenix.led.CANdle.VBatOutputMode;
 import com.ctre.phoenix.led.CANdleConfiguration;
 
-import frc.robot.Climber;
+import frc.robot.Constants;
 import frc.robot.util.PARTsSubsystem;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -30,7 +30,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class Candle extends PARTsSubsystem {
     //https://github.com/CrossTheRoadElec/Phoenix5-Examples/blob/master/Java%20General/CANdle%20MultiAnimation/src/main/java/frc/robot/subsystems/CANdleSystem.java
     private static CANdle candle;
-    private final int LED_LENGTH = Climber.Candle.ledLength;
+    private final int LED_LENGTH = Constants.Candle.ledLength;
     private Animation animation = null;
 
     private PeriodicIO mPeriodicIO;
@@ -81,7 +81,7 @@ public class Candle extends PARTsSubsystem {
     public Candle() {
         super("Candle");
         mPeriodicIO = new PeriodicIO();
-        candle = new CANdle(Climber.Candle.candleId, "Default Name");
+        candle = new CANdle(Constants.Candle.candleId, "Default Name");
 
         CANdleConfiguration configAll = new CANdleConfiguration();
         configAll.statusLedOffWhenActive = true;

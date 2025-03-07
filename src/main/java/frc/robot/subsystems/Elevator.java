@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
-import frc.robot.Climber;
 import frc.robot.subsystems.Candle.CandleState;
 import frc.robot.util.PARTsSubsystem;
 
@@ -49,12 +48,12 @@ public class Elevator extends PARTsSubsystem {
     SENSOR_ERROR(-1),
     POS_CTL_TRAVEL_ERROR(-1),
     NONE(-1),
-    STOW(Climber.Elevator.StowHeight),
-    L2(Climber.Elevator.L2Height),
-    L3(Climber.Elevator.L3Height),
-    L4(Climber.Elevator.L4Height),
-    A1(Climber.Elevator.LowAlgaeHeight),
-    A2(Climber.Elevator.HighAlgaeHeight);
+    STOW(Constants.Elevator.StowHeight),
+    L2(Constants.Elevator.L2Height),
+    L3(Constants.Elevator.L3Height),
+    L4(Constants.Elevator.L4Height),
+    A1(Constants.Elevator.LowAlgaeHeight),
+    A2(Constants.Elevator.HighAlgaeHeight);
 
     double height;
 
@@ -92,7 +91,7 @@ public class Elevator extends PARTsSubsystem {
 
     lowerLimitSwitch = new DigitalInput(Constants.Elevator.L_SWITCH_PORT);
 
-    upperLimitLaserCAN = new LaserCan(Climber.Elevator.laserCanId);
+    upperLimitLaserCAN = new LaserCan(Constants.Elevator.laserCanId);
     try {
       upperLimitLaserCAN.setRangingMode(LaserCan.RangingMode.SHORT);
       upperLimitLaserCAN.setRegionOfInterest(new LaserCan.RegionOfInterest(4, 4, 4, 4));
@@ -103,13 +102,13 @@ public class Elevator extends PARTsSubsystem {
 
     SparkMaxConfig elevatorConfig = new SparkMaxConfig();
 
-    elevatorConfig.smartCurrentLimit(Climber.Elevator.kMaxCurrent);
+    elevatorConfig.smartCurrentLimit(Constants.Elevator.kMaxCurrent);
 
     elevatorConfig.idleMode(IdleMode.kBrake);
     elevatorConfig.limitSwitch.reverseLimitSwitchEnabled(true);
 
     // LEFT ELEVATOR MOTOR
-    mLeftMotor = new SparkMax(Climber.Elevator.leftElevatorId, MotorType.kBrushless);
+    mLeftMotor = new SparkMax(Constants.Elevator.leftElevatorId, MotorType.kBrushless);
     mLeftEncoder = mLeftMotor.getEncoder();
     mLeftMotor.configure(
         elevatorConfig,
@@ -117,7 +116,7 @@ public class Elevator extends PARTsSubsystem {
         PersistMode.kPersistParameters);
 
     // RIGHT ELEVATOR MOTOR
-    mRightMotor = new SparkMax(Climber.Elevator.rightElevatorId, MotorType.kBrushless);
+    mRightMotor = new SparkMax(Constants.Elevator.rightElevatorId, MotorType.kBrushless);
     mRightEncoder = mRightMotor.getEncoder();
     mRightMotor.configure(
         elevatorConfig.follow(mLeftMotor, true),
@@ -126,14 +125,14 @@ public class Elevator extends PARTsSubsystem {
 
     // Elevator PID
     mElevatorPIDController = new ProfiledPIDController(
-        Climber.Elevator.kP,
-        Climber.Elevator.kI,
-        Climber.Elevator.kD,
+        Constants.Elevator.kP,
+        Constants.Elevator.kI,
+        Constants.Elevator.kD,
         new TrapezoidProfile.Constraints(
-            Climber.Elevator.kMaxVelocity,
-            Climber.Elevator.kMaxAcceleration));
+            Constants.Elevator.kMaxVelocity,
+            Constants.Elevator.kMaxAcceleration));
 
-    mElevatorPIDController.setTolerance(Climber.Elevator.kTolerance);
+    mElevatorPIDController.setTolerance(Constants.Elevator.kTolerance);
 
     // Elevator Feedforward
     mElevatorFeedForward = new ElevatorFeedforward(
@@ -286,7 +285,7 @@ public class Elevator extends PARTsSubsystem {
   }
 
   public double getRPS() {
-    return mLeftEncoder.getVelocity() * 60 / Climber.Elevator.gearRatio; // 16 is the gear reduction
+    return mLeftEncoder.getVelocity() * 60 / Constants.Elevator.gearRatio; // 16 is the gear reduction
   }
 
   public ElevatorState getState() {
@@ -300,7 +299,7 @@ public class Elevator extends PARTsSubsystem {
 
   public Command joystickElevatorControl(CommandXboxController controller) {
     return super.commandFactory("joystickElevatorControl", this.run(() -> {
-      double speed = -controller.getRightY() * Climber.Elevator.maxSpeed;
+      double speed = -controller.getRightY() * Constants.Elevator.maxSpeed;
       setElevatorPower(speed);
     }).until(() -> Math.abs(controller.getRightY()) < 0.1).andThen(() -> setElevatorPower(0)));
   }
@@ -318,7 +317,7 @@ public class Elevator extends PARTsSubsystem {
   public Command goToElevatorStow() {
     return super.commandFactory("goToElevatorStow", this.runOnce(() -> {
       mPeriodicIO.is_elevator_pos_control = true;
-      mPeriodicIO.elevator_target = Climber.Elevator.StowHeight;
+      mPeriodicIO.elevator_target = Constants.Elevator.StowHeight;
       mPeriodicIO.state = ElevatorState.STOW;
     }));
   }
@@ -326,7 +325,7 @@ public class Elevator extends PARTsSubsystem {
   public Command goToElevatorL2() {
     return super.commandFactory("goToElevatorL2", this.runOnce(() -> {
       mPeriodicIO.is_elevator_pos_control = true;
-      mPeriodicIO.elevator_target = Climber.Elevator.L2Height;
+      mPeriodicIO.elevator_target = Constants.Elevator.L2Height;
       mPeriodicIO.state = ElevatorState.L2;
     }));
   }
@@ -334,7 +333,7 @@ public class Elevator extends PARTsSubsystem {
   public Command goToElevatorL3() {
     return super.commandFactory("goToElevatorL3", this.runOnce(() -> {
       mPeriodicIO.is_elevator_pos_control = true;
-      mPeriodicIO.elevator_target = Climber.Elevator.L3Height;
+      mPeriodicIO.elevator_target = Constants.Elevator.L3Height;
       mPeriodicIO.state = ElevatorState.L3;
     }));
   }
@@ -342,7 +341,7 @@ public class Elevator extends PARTsSubsystem {
   public Command goToElevatorL4() {
     return super.commandFactory("goToElevatorL4", this.runOnce(() -> {
       mPeriodicIO.is_elevator_pos_control = true;
-      mPeriodicIO.elevator_target = Climber.Elevator.L4Height;
+      mPeriodicIO.elevator_target = Constants.Elevator.L4Height;
       mPeriodicIO.state = ElevatorState.L4;
     }));
   }
@@ -350,7 +349,7 @@ public class Elevator extends PARTsSubsystem {
   public Command goToAlgaeLow() {
     return super.commandFactory("goToAlgaeLow", this.runOnce(() -> {
       mPeriodicIO.is_elevator_pos_control = true;
-      mPeriodicIO.elevator_target = Climber.Elevator.LowAlgaeHeight;
+      mPeriodicIO.elevator_target = Constants.Elevator.LowAlgaeHeight;
       mPeriodicIO.state = ElevatorState.A1;
     }));
   }
@@ -358,14 +357,14 @@ public class Elevator extends PARTsSubsystem {
   public Command goToAlgaeHigh() {
     return super.commandFactory("goToAlgaeHigh", this.runOnce(() -> {
       mPeriodicIO.is_elevator_pos_control = true;
-      mPeriodicIO.elevator_target = Climber.Elevator.HighAlgaeHeight;
+      mPeriodicIO.elevator_target = Constants.Elevator.HighAlgaeHeight;
       mPeriodicIO.state = ElevatorState.A2;
     }));
   }
 
   public Command zeroElevatorCommand() {
     return super.commandFactory("zeroElevatorCommand",
-        this.run(() -> setSpeedWithoutLimits(Climber.Elevator.homingSpeed))
+        this.run(() -> setSpeedWithoutLimits(Constants.Elevator.homingSpeed))
             .unless(() -> mPeriodicIO.gantry_blocked).until(this::getBottomLimit)
             .andThen(() -> stop()));
   }
@@ -384,8 +383,8 @@ public class Elevator extends PARTsSubsystem {
 
   public boolean getTopLimit() {
     return mPeriodicIO.useLaserCan && mPeriodicIO.elevator_measurement != null
-        ? mPeriodicIO.elevator_measurement.distance_mm <= Climber.Elevator.maxLaserCanHeight
-        : getElevatorPosition() >= Climber.Elevator.maxHeight;
+        ? mPeriodicIO.elevator_measurement.distance_mm <= Constants.Elevator.maxLaserCanHeight
+        : getElevatorPosition() >= Constants.Elevator.maxHeight;
   }
 
   /*---------------------------------- Custom Private Functions ---------------------------------*/

@@ -16,7 +16,6 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Climber;
 import frc.robot.Constants;
 import frc.robot.util.PARTsNT;
 import frc.robot.util.PARTsSubsystem;
@@ -49,12 +48,12 @@ public class Algae extends PARTsSubsystem {
     mPeriodicIO = new PeriodicIO();
 
     // WRIST
-    mWristMotor = new SparkMax(Climber.Algae.algaeWristId, MotorType.kBrushless);
+    mWristMotor = new SparkMax(Constants.Algae.algaeWristId, MotorType.kBrushless);
     mWristRelEncoder = mWristMotor.getEncoder();
     SparkMaxConfig wristConfig = new SparkMaxConfig();
     wristConfig
         .idleMode(IdleMode.kBrake)
-        .smartCurrentLimit(Climber.Algae.kMaxWristCurrent)
+        .smartCurrentLimit(Constants.Algae.kMaxWristCurrent)
         .inverted(true);
 
     mWristMotor.configure(
@@ -64,29 +63,29 @@ public class Algae extends PARTsSubsystem {
 
     // Wrist PID
     mWristPIDController = new ProfiledPIDController(
-        Climber.Algae.kWristP,
-        Climber.Algae.kWristI,
-        Climber.Algae.kWristD,
+        Constants.Algae.kWristP,
+        Constants.Algae.kWristI,
+        Constants.Algae.kWristD,
         new TrapezoidProfile.Constraints(
-            Climber.Algae.kWristMaxVelocity,
-            Climber.Algae.kWristMaxAcceleration));
+            Constants.Algae.kWristMaxVelocity,
+            Constants.Algae.kWristMaxAcceleration));
 
     // Wrist Feedforward
     mWristFeedForward = new ArmFeedforward(
-        Climber.Algae.kWristKS,
-        Climber.Algae.kWristKG,
-        Climber.Algae.kWristKV,
-        Climber.Algae.kWristKA);
+        Constants.Algae.kWristKS,
+        Constants.Algae.kWristKG,
+        Constants.Algae.kWristKV,
+        Constants.Algae.kWristKA);
 
-    mWristPIDController.setTolerance(Climber.Algae.kTolerance);
+    mWristPIDController.setTolerance(Constants.Algae.kTolerance);
 
     // INTAKE
-    mIntakeMotor = new SparkMax(Climber.Algae.algaeIntakeId, MotorType.kBrushless);
+    mIntakeMotor = new SparkMax(Constants.Algae.algaeIntakeId, MotorType.kBrushless);
     SparkMaxConfig intakeConfig = new SparkMaxConfig();
 
     intakeConfig
         .idleMode(IdleMode.kBrake)
-        .smartCurrentLimit(Climber.Algae.kMaxIntakeCurrent)
+        .smartCurrentLimit(Constants.Algae.kMaxIntakeCurrent)
         .inverted(true);
 
     mIntakeMotor.configure(
@@ -128,7 +127,7 @@ public class Algae extends PARTsSubsystem {
   @Override
   public void stop() {
     mPeriodicIO.wrist_voltage = 0.0;
-    mPeriodicIO.wrist_target_angle = Climber.Algae.kStowAngle;
+    mPeriodicIO.wrist_target_angle = Constants.Algae.kStowAngle;
 
     setWristSpeed(0);
     setIntakeSpeed(0);
@@ -166,7 +165,7 @@ public class Algae extends PARTsSubsystem {
 
   public Command stow() {
     return this.commandFactory("stow", this.runOnce(() -> {
-      mPeriodicIO.wrist_target_angle = Climber.Algae.kStowAngle;
+      mPeriodicIO.wrist_target_angle = Constants.Algae.kStowAngle;
 
       mPeriodicIO.state = IntakeState.STOW;
       mPeriodicIO.intake_power = 0.0;
@@ -176,8 +175,8 @@ public class Algae extends PARTsSubsystem {
 
   public Command grabReefAlgae() {
     return super.commandFactory("grabReefAlgae", this.runOnce(() -> {
-      mPeriodicIO.wrist_target_angle = Climber.Algae.kDeAlgaeAngle;
-      mPeriodicIO.intake_power = Climber.Algae.kReefIntakeSpeed;
+      mPeriodicIO.wrist_target_angle = Constants.Algae.kDeAlgaeAngle;
+      mPeriodicIO.intake_power = Constants.Algae.kReefIntakeSpeed;
 
       mPeriodicIO.state = IntakeState.REEFALGAE;
     }));
@@ -192,7 +191,7 @@ public class Algae extends PARTsSubsystem {
   }
 
   public Command score() {
-    return this.commandFactory("score", this.runOnce(() -> mPeriodicIO.intake_power = Climber.Algae.kEjectSpeed));
+    return this.commandFactory("score", this.runOnce(() -> mPeriodicIO.intake_power = Constants.Algae.kEjectSpeed));
   }
 
   public Command score1() {
@@ -201,7 +200,7 @@ public class Algae extends PARTsSubsystem {
       if (mPeriodicIO.state == IntakeState.REEFALGAE)
         mPeriodicIO.intake_power = Constants.Algae.kReefIntakeSpeed;
       else
-        mPeriodicIO.intake_power = Climber.Algae.kEjectSpeed;
+        mPeriodicIO.intake_power = Constants.Algae.kEjectSpeed;
     }).until(() -> mIntakeMotor.getOutputCurrent() > 100); //TODO: Check output current when no ball
 
     /* .andThen(() -> mPeriodicIO.wrist_target_angle = Constants.Algae.kStowAngle)
@@ -211,16 +210,16 @@ public class Algae extends PARTsSubsystem {
 
   public Command groundIntake() {
     return super.commandFactory("groundIntake", this.runOnce(() -> {
-      mPeriodicIO.wrist_target_angle = Climber.Algae.kGroundIntakeAngle;
-      mPeriodicIO.intake_power = Climber.Algae.kGroundIntakeSpeed;
+      mPeriodicIO.wrist_target_angle = Constants.Algae.kGroundIntakeAngle;
+      mPeriodicIO.intake_power = Constants.Algae.kGroundIntakeSpeed;
       mPeriodicIO.state = IntakeState.GROUND;
     }));
   }
 
   public Command groundIntake1() {
     return this.run(() -> {
-      mPeriodicIO.wrist_target_angle = Climber.Algae.kGroundIntakeAngle;
-      mPeriodicIO.intake_power = Climber.Algae.kGroundIntakeSpeed;
+      mPeriodicIO.wrist_target_angle = Constants.Algae.kGroundIntakeAngle;
+      mPeriodicIO.intake_power = Constants.Algae.kGroundIntakeSpeed;
       mPeriodicIO.state = IntakeState.GROUND;
     }).until(() -> mIntakeMotor.getOutputCurrent() > 100); //TODO: Check output current and then add, may default to stow angle with ball
   }
@@ -235,11 +234,11 @@ public class Algae extends PARTsSubsystem {
   public PARTsUnit getWristAngle() {
 
     return new PARTsUnit(new PARTsUnit(mWristRelEncoder.getPosition(), PARTsUnitType.Rotations).to(PARTsUnitType.Angle)
-        / Climber.Algae.wristGearRatio, PARTsUnitType.Angle);
+        / Constants.Algae.wristGearRatio, PARTsUnitType.Angle);
   }
 
   public double getWristReferenceToHorizontal() {
-    return getWristAngle().getValue() - Climber.Algae.kWristOffset;
+    return getWristAngle().getValue() - Constants.Algae.kWristOffset;
   }
 
   public IntakeState getState() {
@@ -259,7 +258,7 @@ public class Algae extends PARTsSubsystem {
   }
 
   public double getRPS() {
-    return mWristRelEncoder.getVelocity() * 60 / Climber.Algae.wristGearRatio; // 16 is the gear reduction
+    return mWristRelEncoder.getVelocity() * 60 / Constants.Algae.wristGearRatio; // 16 is the gear reduction
   }
 
   /*---------------------------------- Custom Private Functions ---------------------------------*/

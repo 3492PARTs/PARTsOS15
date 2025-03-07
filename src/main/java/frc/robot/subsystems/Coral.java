@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Climber;
 import frc.robot.Constants;
 import frc.robot.subsystems.Candle.CandleState;
 import frc.robot.util.PARTsSubsystem;
@@ -56,8 +55,8 @@ public class Coral extends PARTsSubsystem {
 
     mPeriodicIO = new PeriodicIO();
 
-    mLeftMotor = new SparkMax(Climber.Coral.coralLeftMotorId, MotorType.kBrushless);
-    mRightMotor = new SparkMax(Climber.Coral.coralRightMotorId, MotorType.kBrushless);
+    mLeftMotor = new SparkMax(Constants.Coral.coralLeftMotorId, MotorType.kBrushless);
+    mRightMotor = new SparkMax(Constants.Coral.coralRightMotorId, MotorType.kBrushless);
 
     SparkMaxConfig coralConfig = new SparkMaxConfig();
 
@@ -72,10 +71,10 @@ public class Coral extends PARTsSubsystem {
         ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
 
-    canandcolor = new Canandcolor(Climber.Coral.canAndColorId);
+    canandcolor = new Canandcolor(Constants.Coral.canAndColorId);
     canandcolor.setLampLEDBrightness(0);
 
-    laserCAN = new LaserCan(Climber.Coral.laserCanId);
+    laserCAN = new LaserCan(Constants.Coral.laserCanId);
     try {
       laserCAN.setRangingMode(LaserCan.RangingMode.SHORT);
       laserCAN.setRegionOfInterest(new LaserCan.RegionOfInterest(4, 4, 4, 4));
