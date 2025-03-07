@@ -451,7 +451,7 @@ public class Elevator extends PARTsSubsystem {
       }
 
       if (mPeriodicIO.lasercan_error_debounce > 10)
-        mPeriodicIO.useLaserCan = false;
+        mPeriodicIO.useLaserCan = true;
     } else {
       //mPeriodicIO.lasercan_error_debounce = 0;
       //mPeriodicIO.useLaserCan = true; dont turn back on. originally thought i would
