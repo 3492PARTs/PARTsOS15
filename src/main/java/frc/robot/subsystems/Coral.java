@@ -51,12 +51,6 @@ public class Coral extends PARTsSubsystem {
   private SparkMax mLeftMotor;
   private SparkMax mRightMotor;
 
-  private SparkMaxSim mLeftMotorSim;
-  private SparkMaxSim mRightMotorSim;
-
-  private DCMotor mLeftDCMotorSim;
-  private DCMotor mRightDCMotorSim;
-
   private LaserCan laserCAN;
   private Canandcolor canandcolor;
 
@@ -83,14 +77,6 @@ public class Coral extends PARTsSubsystem {
         coralConfig,
         ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
-    
-    if (Robot.isSimulation()) {
-      // TODO: Get correct motor stats.
-      mLeftDCMotorSim = new DCMotor(0, 0, 0, 0, 0, 0);
-      mRightDCMotorSim = new DCMotor(0, 0, 0, 0, 0, 0);
-      mLeftMotorSim = new SparkMaxSim(mLeftMotor, mLeftDCMotorSim);
-      mRightMotorSim = new SparkMaxSim(mRightMotor, mRightDCMotorSim);
-    }
 
     // Don't need lights if the robot does not exist.
     if (Robot.isReal()) {
