@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Climber.VisionConstants;
+import frc.robot.cmds.coral.ScoreCoral;
 //import frc.robot.commands.algae.AlgaeWrist;
 import frc.robot.subsystems.Algae;
 import frc.robot.subsystems.Candle;
@@ -97,177 +98,180 @@ public class RobotContainer {
          */
 
         public RobotContainer() {
-                configureAutonomousCommands();
+                //configureAutonomousCommands();
                 configureBindings();
         }
 
-    private void configureBindings() {
-        // * */
-        // =============================================================================================
-        // * */ ------------------------------------- DriveTrain
-        // * */ -------------------------------------------
-        // * */
-        // ---------------------------------------------------------------------------------------------
+        private void configureBindings() {
+                // * */
+                // =============================================================================================
+                // * */ ------------------------------------- DriveTrain
+                // * */ -------------------------------------------
+                // * */
+                // ---------------------------------------------------------------------------------------------
 
-        // Note that X is defined as forward according to WPILib convention,
-        // and Y is defined as to the left according to WPILib convention.
-        Command driveCommand = drivetrain.applyRequest(() -> {
-            double limit = MaxSpeed;
-            if (elevator.getElevatorPosition() > Constants.Elevator.L2Height)
-                limit *= 0.25;
-            else if (fineGrainDrive)
-                limit *= 0.25;
-            return drive.withVelocityX(-driveController.getLeftY() * limit) // Drive forward with negative Y (forward)
-                    .withVelocityY(-driveController.getLeftX() * limit) // Drive left with negative X (left)
-                    .withRotationalRate(-driveController.getRightX() * MaxAngularRate); // Drive counterclockwise with
-                                                                                        // negative X (left)
-        });
-        driveCommand.setName("DefaultDrive");
-        // Drivetrain will execute this command periodically
-        drivetrain.setDefaultCommand(driveCommand);
+                // Note that X is defined as forward according to WPILib convention,
+                // and Y is defined as to the left according to WPILib convention.
+                Command driveCommand = drivetrain.applyRequest(() -> {
+                        double limit = MaxSpeed;
+                        if (elevator.getElevatorPosition() > Constants.Elevator.L2Height)
+                                limit *= 0.25;
+                        else if (fineGrainDrive)
+                                limit *= 0.25;
+                        return drive.withVelocityX(-driveController.getLeftY() * limit) // Drive forward with negative Y (forward)
+                                        .withVelocityY(-driveController.getLeftX() * limit) // Drive left with negative X (left)
+                                        .withRotationalRate(-driveController.getRightX() * MaxAngularRate); // Drive counterclockwise with
+                                                                                                            // negative X (left)
+                });
+                driveCommand.setName("DefaultDrive");
+                // Drivetrain will execute this command periodically
+                drivetrain.setDefaultCommand(driveCommand);
 
-        // fine grain controls
-        driveController.rightBumper().onTrue(Commands.runOnce(() -> {
-            fineGrainDrive = !fineGrainDrive;
-            if (fineGrainDrive)
-                candle.addState(CandleState.FINE_GRAIN_DRIVE);
-            else
-                candle.removeState(CandleState.FINE_GRAIN_DRIVE);
-        }));
+                // fine grain controls
+                driveController.rightBumper().onTrue(Commands.runOnce(() -> {
+                        fineGrainDrive = !fineGrainDrive;
+                        if (fineGrainDrive)
+                                candle.addState(CandleState.FINE_GRAIN_DRIVE);
+                        else
+                                candle.removeState(CandleState.FINE_GRAIN_DRIVE);
+                }));
 
-        // brakes swerve, puts modules into x configuration
-        driveController.a().whileTrue(drivetrain.applyRequest(() -> brake));
+                // brakes swerve, puts modules into x configuration
+                driveController.a().whileTrue(drivetrain.applyRequest(() -> brake));
 
-        // manual module direction control
-        driveController.b().whileTrue(drivetrain.applyRequest(() -> point
-                .withModuleDirection(new Rotation2d(-driveController.getLeftY(), -driveController.getLeftX()))));
+                // manual module direction control
+                driveController.b().whileTrue(drivetrain.applyRequest(() -> point
+                                .withModuleDirection(new Rotation2d(-driveController.getLeftY(),
+                                                -driveController.getLeftX()))));
 
-        // reset the field-centric heading on left bumper press
-        driveController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+                // reset the field-centric heading on left bumper press
+                driveController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        // driveController.leftTrigger()
-        // .whileTrue(drivetrain.alignCommand(new Pose2d(-1, 0, new Rotation2d()),
-        // driveController));
+                // driveController.leftTrigger()
+                // .whileTrue(drivetrain.alignCommand(new Pose2d(-1, 0, new Rotation2d()),
+                // driveController));
 
-        driveController.leftTrigger().whileTrue(new ScoreCoral(
-                new Pose2d(0, new PARTsUnit(-2, PARTsUnitType.Inch).to(PARTsUnitType.Meter), new Rotation2d()),
-                ElevatorState.L2,
-                drivetrain, elevator, coral, candle));
+                driveController.leftTrigger().whileTrue(new ScoreCoral(
+                                new Pose2d(0, new PARTsUnit(-2, PARTsUnitType.Inch).to(PARTsUnitType.Meter),
+                                                new Rotation2d()),
+                                ElevatorState.L2,
+                                drivetrain, elevator, coral, candle));
 
-        // logging
-        drivetrain.registerTelemetry(telemetryLogger::telemeterize);
+                // logging
+                drivetrain.registerTelemetry(telemetryLogger::telemeterize);
 
-        // Run SysId routines when holding back/start and X/Y.
-        // Note that each routine should be run exactly once in a single log.
-        /*
-         * driveController.back().and(driveController.y()).whileTrue(drivetrain.
-         * sysIdDynamic(Direction.kForward));
-         * driveController.back().and(driveController.x()).whileTrue(drivetrain.
-         * sysIdDynamic(Direction.kReverse));
-         * driveController.start().and(driveController.y()).whileTrue(drivetrain.
-         * sysIdQuasistatic(Direction.kForward));
-         * driveController.start().and(driveController.x()).whileTrue(drivetrain.
-         * sysIdQuasistatic(Direction.kReverse));
-         */
+                // Run SysId routines when holding back/start and X/Y.
+                // Note that each routine should be run exactly once in a single log.
+                /*
+                 * driveController.back().and(driveController.y()).whileTrue(drivetrain.
+                 * sysIdDynamic(Direction.kForward));
+                 * driveController.back().and(driveController.x()).whileTrue(drivetrain.
+                 * sysIdDynamic(Direction.kReverse));
+                 * driveController.start().and(driveController.y()).whileTrue(drivetrain.
+                 * sysIdQuasistatic(Direction.kForward));
+                 * driveController.start().and(driveController.x()).whileTrue(drivetrain.
+                 * sysIdQuasistatic(Direction.kReverse));
+                 */
 
-        // * */
-        // =============================================================================================
-        // * */ ------------------------------------- Elevator
-        // * */ -------------------------------------------
-        // * */
-        // ---------------------------------------------------------------------------------------------
-        /*
-         * elevator.setDefaultCommand(new RunCommand(() -> {
-         * double speed = -operatorController.getRightY() * Constants.Elevator.maxSpeed;
-         * 
-         * if (Math.abs(speed) < 0.1)
-         * speed = 0;
-         * elevator.setElevatorPower(speed);
-         * }, elevator));
-         */
+                // * */
+                // =============================================================================================
+                // * */ ------------------------------------- Elevator
+                // * */ -------------------------------------------
+                // * */
+                // ---------------------------------------------------------------------------------------------
+                /*
+                 * elevator.setDefaultCommand(new RunCommand(() -> {
+                 * double speed = -operatorController.getRightY() * Constants.Elevator.maxSpeed;
+                 * 
+                 * if (Math.abs(speed) < 0.1)
+                 * speed = 0;
+                 * elevator.setElevatorPower(speed);
+                 * }, elevator));
+                 */
 
-        // While the joystick is moving control the elevator in manual, and when done
-        // stop
-        operatorController.axisMagnitudeGreaterThan(5, 0.1)
-                .onTrue(elevator.joystickElevatorControl(operatorController));
+                // While the joystick is moving control the elevator in manual, and when done
+                // stop
+                operatorController.axisMagnitudeGreaterThan(5, 0.1)
+                                .onTrue(elevator.joystickElevatorControl(operatorController));
 
-        operatorController.a().onTrue(elevator.goToElevatorStow());
+                operatorController.a().onTrue(elevator.goToElevatorStow());
 
-        operatorController.x().onTrue(elevator.goToElevatorL2());
+                operatorController.x().onTrue(elevator.goToElevatorL2());
 
-        operatorController.y().onTrue(elevator.goToElevatorL3());
+                operatorController.y().onTrue(elevator.goToElevatorL3());
 
-        operatorController.b().onTrue(elevator.goToElevatorL4());
+                operatorController.b().onTrue(elevator.goToElevatorL4());
 
-        // * */
-        // =============================================================================================
-        // * */ ------------------------------------- Coral Controls
-        // * */ -------------------------------------------
-        // * */
-        // ---------------------------------------------------------------------------------------------
+                // * */
+                // =============================================================================================
+                // * */ ------------------------------------- Coral Controls
+                // * */ -------------------------------------------
+                // * */
+                // ---------------------------------------------------------------------------------------------
 
-        operatorController.rightTrigger().onTrue(coral.intake());
-        operatorController.rightBumper().onTrue(coral.reverse());
-        operatorController.leftTrigger().onTrue(coral.stopCoral());
-        operatorController.leftBumper().onTrue(coral.scoreCommand());
+                operatorController.rightTrigger().onTrue(coral.intake());
+                operatorController.rightBumper().onTrue(coral.reverse());
+                operatorController.leftTrigger().onTrue(coral.stopCoral());
+                operatorController.leftBumper().onTrue(coral.scoreCommand());
 
-        // * */
-        // =============================================================================================
-        // * */ ------------------------------------- Algae Control
-        // * */ -------------------------------------------
-        // * */
-        // ---------------------------------------------------------------------------------------------
+                // * */
+                // =============================================================================================
+                // * */ ------------------------------------- Algae Control
+                // * */ -------------------------------------------
+                // * */
+                // ---------------------------------------------------------------------------------------------
 
-        // operatorController.leftBumper().whileTrue(new AlgaeIntake(algae,
-        // operatorController));
-        // operatorController.leftTrigger().whileTrue(getAutonomousCommand()));
-       // algae.setDefaultCommand(new AlgaeWrist(algae, operatorController));
+                // operatorController.leftBumper().whileTrue(new AlgaeIntake(algae,
+                // operatorController));
+                // operatorController.leftTrigger().whileTrue(getAutonomousCommand()));
+                // algae.setDefaultCommand(new AlgaeWrist(algae, operatorController));
 
-        // TODO: Please migrate from run command, example Elevator.java - public Command
-        // goToElevatorL4()
-        // TODO: We are migrating to command factory structure. (i.e. creating and using
-        // a command though a function call)
-        operatorController.povUp().onTrue(algae.stow());
-        operatorController.povDown().onTrue(algae.grabReefAlgae());
-        operatorController.povRight().onTrue(algae.groundIntake());
-        operatorController.povLeft().onTrue(algae.stopAlgae());
-        operatorController.leftTrigger().onTrue(Commands.runOnce(algae::reset));
-        operatorController.leftBumper().whileTrue(algae.score());
-        */
+                // TODO: Please migrate from run command, example Elevator.java - public Command
+                // goToElevatorL4()
+                // TODO: We are migrating to command factory structure. (i.e. creating and using
+                // a command though a function call)
+                operatorController.povUp().onTrue(algae.stow());
+                operatorController.povDown().onTrue(algae.grabReefAlgae());
+                operatorController.povRight().onTrue(algae.groundIntake());
+                operatorController.povLeft().onTrue(algae.stopAlgae());
+                operatorController.leftTrigger().onTrue(Commands.runOnce(algae::reset));
+                operatorController.leftBumper().whileTrue(algae.score());
 
-        // =============================================================================================
-        // ------------------------------------- Climber
-        // -------------------------------------------
-        // ---------------------------------------------------------------------------------------------
+                // =============================================================================================
+                // ------------------------------------- Climber
+                // -------------------------------------------
+                // ---------------------------------------------------------------------------------------------
 
-        operatorController.povUp().whileTrue(Commands.run(() -> climber.setSpeed(-.3))).whileFalse(Commands.run(() -> climber.setSpeed(0)));
-        operatorController.povDown().whileTrue(Commands.run(() -> climber.setSpeed(.3))).whileFalse(Commands.run(() -> climber.setSpeed(0)));
-        // =============================================================================================
-        // ------------------------------------- SysID
-        // -------------------------------------------
-        // ---------------------------------------------------------------------------------------------
+                operatorController.povUp().whileTrue(Commands.run(() -> climber.setSpeed(-.3)))
+                                .whileFalse(Commands.run(() -> climber.setSpeed(0)));
+                operatorController.povDown().whileTrue(Commands.run(() -> climber.setSpeed(.3)))
+                                .whileFalse(Commands.run(() -> climber.setSpeed(0)));
+                // =============================================================================================
+                // ------------------------------------- SysID
+                // -------------------------------------------
+                // ---------------------------------------------------------------------------------------------
 
-        /*
-         * operatorController.a().and(operatorController.rightBumper())
-         * .whileTrue(elevator.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-         * operatorController.b().and(operatorController.rightBumper())
-         * .whileTrue(elevator.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-         * operatorController.x().and(operatorController.rightBumper())
-         * .whileTrue(elevator.sysIdDynamic(SysIdRoutine.Direction.kForward));
-         * operatorController.y().and(operatorController.rightBumper())
-         * .whileTrue(elevator.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-         */
-        /*
-         * operatorController.a().and(operatorController.rightBumper())
-         * .whileTrue(algae.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-         * operatorController.b().and(operatorController.rightBumper())
-         * .whileTrue(algae.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-         * operatorController.x().and(operatorController.rightBumper())
-         * .whileTrue(algae.sysIdDynamic(SysIdRoutine.Direction.kForward));
-         * operatorController.y().and(operatorController.rightBumper())
-         * .whileTrue(algae.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-         */
-    }
+                /*
+                 * operatorController.a().and(operatorController.rightBumper())
+                 * .whileTrue(elevator.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+                 * operatorController.b().and(operatorController.rightBumper())
+                 * .whileTrue(elevator.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+                 * operatorController.x().and(operatorController.rightBumper())
+                 * .whileTrue(elevator.sysIdDynamic(SysIdRoutine.Direction.kForward));
+                 * operatorController.y().and(operatorController.rightBumper())
+                 * .whileTrue(elevator.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+                 */
+                /*
+                 * operatorController.a().and(operatorController.rightBumper())
+                 * .whileTrue(algae.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+                 * operatorController.b().and(operatorController.rightBumper())
+                 * .whileTrue(algae.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+                 * operatorController.x().and(operatorController.rightBumper())
+                 * .whileTrue(algae.sysIdDynamic(SysIdRoutine.Direction.kForward));
+                 * operatorController.y().and(operatorController.rightBumper())
+                 * .whileTrue(algae.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+                 */
+        }
 
         public Command getAutonomousCommand() {
                 return autoChooser.getSelected();
