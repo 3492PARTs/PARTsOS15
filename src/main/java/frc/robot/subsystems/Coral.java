@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.sim.SparkMaxSim;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -16,6 +17,8 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -25,6 +28,7 @@ import frc.lib.PARTsLib.PARTsSubsystem;
 import frc.lib.PARTsLib.CheckPARTs.CheckPARTs;
 import frc.lib.PARTsLib.CheckPARTs.PARTsError;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.subsystems.Candle.CandleState;
 
 public class Coral extends PARTsSubsystem {
@@ -46,6 +50,12 @@ public class Coral extends PARTsSubsystem {
 
   private SparkMax mLeftMotor;
   private SparkMax mRightMotor;
+
+  private SparkMaxSim mLeftMotorSim;
+  private SparkMaxSim mRightMotorSim;
+
+  private DCMotor mLeftDCMotorSim;
+  private DCMotor mRightDCMotorSim;
 
   private LaserCan laserCAN;
   private Canandcolor canandcolor;
@@ -73,17 +83,28 @@ public class Coral extends PARTsSubsystem {
         coralConfig,
         ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
+    
+    if (Robot.isSimulation()) {
+      // TODO: Get correct motor stats.
+      mLeftDCMotorSim = new DCMotor(0, 0, 0, 0, 0, 0);
+      mRightDCMotorSim = new DCMotor(0, 0, 0, 0, 0, 0);
+      mLeftMotorSim = new SparkMaxSim(mLeftMotor, mLeftDCMotorSim);
+      mRightMotorSim = new SparkMaxSim(mRightMotor, mRightDCMotorSim);
+    }
 
-    canandcolor = new Canandcolor(Constants.Coral.canAndColorId);
-    canandcolor.setLampLEDBrightness(0);
+    // Don't need lights if the robot does not exist.
+    if (Robot.isReal()) {
+      canandcolor = new Canandcolor(Constants.Coral.canAndColorId);
+      canandcolor.setLampLEDBrightness(0);
 
-    laserCAN = new LaserCan(Constants.Coral.laserCanId);
-    try {
-      laserCAN.setRangingMode(LaserCan.RangingMode.SHORT);
-      laserCAN.setRegionOfInterest(new LaserCan.RegionOfInterest(4, 4, 4, 4));
-      laserCAN.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
-    } catch (ConfigurationFailedException e) {
-      System.out.println("Configuration failed! " + e);
+      laserCAN = new LaserCan(Constants.Coral.laserCanId);
+      try {
+        laserCAN.setRangingMode(LaserCan.RangingMode.SHORT);
+        laserCAN.setRegionOfInterest(new LaserCan.RegionOfInterest(4, 4, 4, 4));
+        laserCAN.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
+      } catch (ConfigurationFailedException e) {
+        System.out.println("Configuration failed! " + e);
+      }
     }
 
     new Trigger(this::isCoralInEntry).onTrue(Commands.runOnce(() -> candle.addState(CandleState.CORAL_ENTERING))).onFalse(Commands.runOnce(() -> candle.removeState(CandleState.CORAL_ENTERING)));
