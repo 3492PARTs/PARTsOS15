@@ -9,15 +9,6 @@ import edu.wpi.first.wpilibj.Preferences;
  * Manager class for each {@link PARTsPreference}.
  */
 public class PARTsPreferences {
-
-    private enum PrefType {
-        Boolean(),
-        Int(),
-        Double(),
-        Float(),
-        String();
-    };
-
     /**
      * Prefrence object that gets assigned to a variable.<p>
      * This class is designed to work with its parent, PARTsPrefrences.<p>
@@ -26,40 +17,34 @@ public class PARTsPreferences {
     public class PARTsPreference {
         public String key;
         public Type type;
-        private PrefType _type;
 
         public PARTsPreference(String key, Boolean value) {
             this.key = key;
             Preferences.initBoolean(key, value);
-            _type = PrefType.Boolean;
             type = value.getClass();
         }
 
         public PARTsPreference(String key, Integer value) {
             this.key = key;
             Preferences.initInt(key, value);
-            _type = PrefType.Boolean;
             type = value.getClass();
         }
         
         public PARTsPreference(String key, Double value) {
             this.key = key;
             Preferences.initDouble(key, value);
-            _type = PrefType.Double;
             type = value.getClass();
         }
 
         public PARTsPreference(String key, Float value) {
             this.key = key;
             Preferences.initFloat(key, value);
-            _type = PrefType.Float;
             type = value.getClass();
         }
 
         public PARTsPreference(String key, String value) {
             this.key = key;
             Preferences.initString(key, value);
-            _type = PrefType.String;
             type = value.getClass();
         }
 
@@ -71,26 +56,46 @@ public class PARTsPreferences {
             return type;
         }
 
-        public Object getValue() {
-            switch (_type) {
-                case Boolean: return Preferences.getBoolean(key, false);
-                case Int: return Preferences.getInt(key, 0);
-                case Double: return Preferences.getDouble(key, 0);
-                case Float: return Preferences.getFloat(key, 0);
-                case String: return Preferences.getString(key, "");
-                default: throw new TypeNotPresentException(_type.name(), new Throwable("Type is an invalid Prefrence type!"));
-            }
+        public Boolean getBoolean() {
+            return Preferences.getBoolean(key, false);
         }
 
-        public void setValue(Object value) {
-            switch (_type) { 
-                case Boolean: Preferences.setBoolean(key, ((Boolean) value));
-                case Int: Preferences.setInt(key, ((Integer) value));
-                case Double: Preferences.setDouble(key, ((Double) value));
-                case Float: Preferences.setFloat(key, ((Float) value));
-                case String: Preferences.setString(key, ((String) value));
-                default: throw new TypeNotPresentException(_type.name(), new Throwable("Type is an invalid Prefrence type!"));
-            }
+        public Integer getInteger() {
+            return Preferences.getInt(key, 0);
+        }
+
+        public Double getDouble() {
+            return Preferences.getDouble(key, 0);
+        }
+
+        public Float getFloat() {
+            return Preferences.getFloat(key, 0);
+        }
+
+        public String getString() {
+            return Preferences.getString(key, key);
+        }
+
+        /* --- Setters --- */
+
+        public void setBoolean(Boolean value) {
+            Preferences.setBoolean(key, value);
+        }
+
+        public void setBoolean(Integer value) {
+            Preferences.setInt(key, value);
+        }
+
+        public void setBoolean(Double value) {
+            Preferences.setDouble(key, value);
+        }
+
+        public void setBoolean(Float value) {
+            Preferences.setFloat(key, value);
+        }
+
+        public void setBoolean(String value) {
+            Preferences.setString(key, value);
         }
     }
 
