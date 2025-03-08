@@ -89,7 +89,6 @@ public class Elevator extends PARTsSubsystem {
     this.candle = candle;
     mPeriodicIO = new PeriodicIO();
 
-    
     lowerLimitSwitch = new DigitalInput(Constants.Elevator.L_SWITCH_PORT);
 
     upperLimitLaserCAN = new LaserCan(Constants.Elevator.laserCanId);
@@ -141,10 +140,11 @@ public class Elevator extends PARTsSubsystem {
         Constants.Elevator.kG,
         Constants.Elevator.kV,
         Constants.Elevator.kA);
-        
-new Trigger(this::getBottomLimit)
-    .onTrue(new WaitCommand(0.2)
-    .andThen(this.runOnce(() -> resetEncoder())).onlyIf(()-> getElevatorPosition() <= Constants.Elevator.bottomLimitPositionErrorMargin));
+
+    new Trigger(this::getBottomLimit)
+        .onTrue(new WaitCommand(0.2)
+            .andThen(this.runOnce(() -> resetEncoder()))
+            .onlyIf(() -> getElevatorPosition() <= Constants.Elevator.bottomLimitPositionErrorMargin));
 
     /* 
     new Trigger(() -> getElevatorPosition() < Constants.Elevator.L2Height)
@@ -220,7 +220,7 @@ new Trigger(this::getBottomLimit)
       else
         setVoltage(mElevatorFeedForward.calculate(0));
     }
-    
+
   }
 
   @Override
@@ -432,8 +432,8 @@ new Trigger(this::getBottomLimit)
     */
 
     //mPeriodicIO.elevator_bottom_limit_error = (getBottomLimit()
-        //&& getElevatorPosition() > Constants.Elevator.bottomLimitPositionErrorMargin);
-        
+    //&& getElevatorPosition() > Constants.Elevator.bottomLimitPositionErrorMargin);
+
     if (mPeriodicIO.elevator_bottom_limit_error)
       mPeriodicIO.elevator_bottom_limit_debounce++;
     else

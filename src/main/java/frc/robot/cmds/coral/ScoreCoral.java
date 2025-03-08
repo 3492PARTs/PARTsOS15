@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.coral;
+package frc.robot.cmds.coral;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -19,15 +19,14 @@ import frc.robot.subsystems.Candle.CandleState;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ScoreCoral extends SequentialCommandGroup {
 
-        /** Creates a new ScoreCoral. */
-        public ScoreCoral(Pose2d holdDistance, ElevatorState level, PARTsDrivetrain drivetrain, Elevator elevator,
-                        Coral coral, Candle candle) {
+  /** Creates a new ScoreCoral. */
+  public ScoreCoral(Pose2d holdDistance, ElevatorState level, PARTsDrivetrain drivetrain, Elevator elevator,
+      Coral coral, Candle candle) {
 
-                addCommands(
-                                candle.addStateCommand(CandleState.SCORING),
-                                new ParallelCommandGroup(drivetrain.alignCommand(holdDistance, null),
-                                                elevator.elevatorToLevelCommand(level)),
-                                coral.score(),
-                                candle.removeStateCommand(CandleState.SCORING));
-        }
+    addCommands(
+        candle.addStateCommand(CandleState.SCORING),
+        new ParallelCommandGroup(drivetrain.alignCommand(holdDistance, null), elevator.elevatorToLevelCommand(level)),
+        coral.score(),
+        candle.removeStateCommand(CandleState.SCORING));
+  }
 }
