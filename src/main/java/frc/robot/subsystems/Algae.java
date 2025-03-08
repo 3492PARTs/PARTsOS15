@@ -17,6 +17,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.util.PARTsNT;
 import frc.robot.util.PARTsSubsystem;
 import frc.robot.util.PARTsUnit;
 import frc.robot.util.PARTsUnit.PARTsUnitType;
@@ -176,9 +177,9 @@ public class Algae extends PARTsSubsystem {
     return super.commandFactory("grabReefAlgae", this.runOnce(() -> {
       mPeriodicIO.wrist_target_angle = Constants.Algae.kDeAlgaeAngle;
       mPeriodicIO.intake_power = Constants.Algae.kReefIntakeSpeed;
-  
+
       mPeriodicIO.state = IntakeState.REEFALGAE;
-    }));    
+    }));
   }
 
   public Command grabReefAlgae1() {
@@ -210,9 +211,9 @@ public class Algae extends PARTsSubsystem {
   public Command groundIntake() {
     return super.commandFactory("groundIntake", this.runOnce(() -> {
       mPeriodicIO.wrist_target_angle = Constants.Algae.kGroundIntakeAngle;
-    mPeriodicIO.intake_power = Constants.Algae.kGroundIntakeSpeed;
-    mPeriodicIO.state = IntakeState.GROUND;
-    }));    
+      mPeriodicIO.intake_power = Constants.Algae.kGroundIntakeSpeed;
+      mPeriodicIO.state = IntakeState.GROUND;
+    }));
   }
 
   public Command groundIntake1() {
@@ -226,8 +227,8 @@ public class Algae extends PARTsSubsystem {
   public Command stopAlgae() {
     return this.commandFactory("stopAlgae", this.runOnce(() -> {
       mPeriodicIO.intake_power = 0.0;
-    //mPeriodicIO.wrist_target_angle = Constants.Algae.kStowAngle;
-    }));    
+      //mPeriodicIO.wrist_target_angle = Constants.Algae.kStowAngle;
+    }));
   }
 
   public PARTsUnit getWristAngle() {
@@ -263,4 +264,3 @@ public class Algae extends PARTsSubsystem {
   /*---------------------------------- Custom Private Functions ---------------------------------*/
 
 }
- 

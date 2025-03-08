@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.config.RobotConfig;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.util.PARTsUnit;
@@ -140,7 +142,11 @@ public final class Constants {
 
   public static class Candle {
     public static final int candleId = 33;
-    public static final int ledLength = 1001;
+    public static final int ledLength = 1000;
+  }
+
+  public static class Climber {
+    public static final int climberId = 34;
   }
 
   public static class Debug {
