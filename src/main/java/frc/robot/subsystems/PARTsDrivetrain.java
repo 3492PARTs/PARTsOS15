@@ -349,9 +349,9 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
                                         updatePoseEstimator();
                                         super.setControl(alignRequest
-                                                        .withVelocityX(translation.getX() * 0)
+                                                        .withVelocityX(translation.getX())
                                                         .withVelocityY(translation.getY())
-                                                        .withRotationalRate(thetaOutput.getRadians() * 0));
+                                                        .withRotationalRate(thetaOutput.getRadians()));
 
                                 },
                                 (Boolean b) -> {
