@@ -81,7 +81,7 @@ public class Candle extends PARTsSubsystem {
     public Candle() {
         super("Candle");
         mPeriodicIO = new PeriodicIO();
-        candle = new CANdle(Constants.Candle.candleId, "Default Name");
+        candle = new CANdle(Constants.Candle.candleId, "rio");
 
         CANdleConfiguration configAll = new CANdleConfiguration();
         configAll.statusLedOffWhenActive = true;
@@ -145,8 +145,7 @@ public class Candle extends PARTsSubsystem {
                 runBlinkAnimation(Color.ORANGE);
                 break;
             case IDLE:
-                //runFadeAnimation(Color.BLUE);
-                setColor(Color.PURPLE);
+                runFadeAnimation(Color.BLUE);
                 break;
             case DISABLED:
                 setColor(Color.BLUE);
