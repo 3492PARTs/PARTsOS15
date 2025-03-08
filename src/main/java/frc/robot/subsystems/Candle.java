@@ -170,11 +170,11 @@ public class Candle extends PARTsSubsystem {
     }
 
     private Command setColorGreenCommand() {
-        return runOnce(() -> setColor(Color.GREEN));
+        return super.commandFactory("CANdleColorGreen", runOnce(() -> setColor(Color.GREEN)));
     }
 
     private Command setNoColorCommand() {
-        return runOnce(() -> setColor(Color.OFF));
+        return super.commandFactory("CANdleColorOff", runOnce(() -> setColor(Color.OFF)));
     }
 
     private FireAnimation getBurnyBurnAnimation() {

@@ -15,11 +15,12 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.subsystems.Candle.CandleState;
-import frc.robot.util.PARTsNT;
 import frc.robot.util.PARTsSubsystem;
 
 public class Elevator extends PARTsSubsystem {
@@ -140,25 +141,34 @@ public class Elevator extends PARTsSubsystem {
         Constants.Elevator.kV,
         Constants.Elevator.kA);
 
-    /* 
-    new Trigger(() -> getElevatorPosition() < Constants.Elevator.L2Height)
-    .onTrue(Commands.runOnce(() -> candle.addState(CandleState.ELEVATOR_STOW)))
-    .onFalse(Commands.runOnce(() -> candle.removeState(CandleState.ELEVATOR_STOW)));
-    
-    new Trigger(() -> getElevatorPosition() >= Constants.Elevator.L2Height &&
-    getElevatorPosition() < Constants.Elevator.L3Height)
-    .onTrue(Commands.runOnce(() -> candle.addState(CandleState.ELEVATOR_L2)))
-    .onFalse(Commands.runOnce(() -> candle.removeState(CandleState.ELEVATOR_L2)));
-    
-    new Trigger(() -> getElevatorPosition() >= Constants.Elevator.L3Height &&
-    getElevatorPosition() < Constants.Elevator.L4Height)
-    .onTrue(Commands.runOnce(() -> candle.addState(CandleState.ELEVATOR_L3)))
-    .onFalse(Commands.runOnce(() -> candle.removeState(CandleState.ELEVATOR_L3)));
-    
-    new Trigger(() -> getElevatorPosition() >= Constants.Elevator.L4Height)
-    .onTrue(Commands.runOnce(() -> candle.addState(CandleState.ELEVATOR_L4)))
-    .onFalse(Commands.runOnce(() -> candle.removeState(CandleState.ELEVATOR_L4)));
-    */
+    new Trigger(this::getBottomLimit)
+        .onTrue(new WaitCommand(0.2)
+            .andThen(this.runOnce(() -> resetEncoder()))
+            .onlyIf(() -> getElevatorPosition() <= Constants.Elevator.bottomLimitPositionErrorMargin));
+
+    /*
+     * new Trigger(() -> getElevatorPosition() < Constants.Elevator.L2Height)
+     * .onTrue(Commands.runOnce(() -> candle.addState(CandleState.ELEVATOR_STOW)))
+     * .onFalse(Commands.runOnce(() ->
+     * candle.removeState(CandleState.ELEVATOR_STOW)));
+     * 
+     * new Trigger(() -> getElevatorPosition() >= Constants.Elevator.L2Height &&
+     * getElevatorPosition() < Constants.Elevator.L3Height)
+     * .onTrue(Commands.runOnce(() -> candle.addState(CandleState.ELEVATOR_L2)))
+     * .onFalse(Commands.runOnce(() ->
+     * candle.removeState(CandleState.ELEVATOR_L2)));
+     * 
+     * new Trigger(() -> getElevatorPosition() >= Constants.Elevator.L3Height &&
+     * getElevatorPosition() < Constants.Elevator.L4Height)
+     * .onTrue(Commands.runOnce(() -> candle.addState(CandleState.ELEVATOR_L3)))
+     * .onFalse(Commands.runOnce(() ->
+     * candle.removeState(CandleState.ELEVATOR_L3)));
+     * 
+     * new Trigger(() -> getElevatorPosition() >= Constants.Elevator.L4Height)
+     * .onTrue(Commands.runOnce(() -> candle.addState(CandleState.ELEVATOR_L4)))
+     * .onFalse(Commands.runOnce(() ->
+     * candle.removeState(CandleState.ELEVATOR_L4)));
+     */
 
     super.partsNT.putSmartDashboardSendable("PID", mElevatorPIDController);
     super.partsNT.putSmartDashboardSendable("Zero Elevator", zeroElevatorCommand());
@@ -170,7 +180,7 @@ public class Elevator extends PARTsSubsystem {
 
   @Override
   public void periodic() {
-    //TODO: TEST
+    // TODO: TEST
     errorTasks();
 
     mPeriodicIO.elevator_measurement = upperLimitLaserCAN.getMeasurement();
@@ -178,12 +188,19 @@ public class Elevator extends PARTsSubsystem {
     if (!mPeriodicIO.error) {
       if (mPeriodicIO.is_elevator_pos_control && !mPeriodicIO.gantry_blocked) {
         mElevatorPIDController.setGoal(mPeriodicIO.elevator_target);
-        double pidCalc = mElevatorPIDController.atGoal() ? 0
-            : mElevatorPIDController.calculate(getElevatorPosition(), mPeriodicIO.elevator_target);
-        double ffCalc = mElevatorFeedForward.calculate(mElevatorPIDController.getSetpoint().velocity);
 
-        mPeriodicIO.elevator_power = pidCalc + ffCalc;
+        if (mPeriodicIO.state == ElevatorState.STOW && !getBottomLimit() && mElevatorPIDController.atGoal()) {
+          mPeriodicIO.elevator_power = Constants.Elevator.homingSpeed;
+        }
+        else if (mPeriodicIO.state == ElevatorState.STOW && getBottomLimit()) {
+          mPeriodicIO.elevator_power = 0;
+        } else {
+          double pidCalc = mElevatorPIDController.atGoal() ? 0
+              : mElevatorPIDController.calculate(getElevatorPosition(), mPeriodicIO.elevator_target);
+          double ffCalc = mElevatorFeedForward.calculate(mElevatorPIDController.getSetpoint().velocity);
 
+          mPeriodicIO.elevator_power = pidCalc + ffCalc;
+        }
         setVoltage(mPeriodicIO.elevator_power);
 
         mPeriodicIO.elevator_position_debounce++;
@@ -206,9 +223,6 @@ public class Elevator extends PARTsSubsystem {
       else
         setVoltage(mElevatorFeedForward.calculate(0));
 
-      //reset encoders, only do if lower than 30 to keep coral falls from triggering.
-      if (getBottomLimit() && getElevatorPosition() <= Constants.Elevator.bottomLimitPositionErrorMargin)
-        resetEncoder();
     }
     // Error controls
     else {
@@ -217,6 +231,7 @@ public class Elevator extends PARTsSubsystem {
       else
         setVoltage(mElevatorFeedForward.calculate(0));
     }
+
   }
 
   @Override
@@ -268,7 +283,7 @@ public class Elevator extends PARTsSubsystem {
   @Override
   public void log() {
     // TODO Auto-generated method stub
-    //throw new UnsupportedOperationException("Unimplemented method 'log'");
+    // throw new UnsupportedOperationException("Unimplemented method 'log'");
   }
 
   /*---------------------------------- Custom Public Functions ----------------------------------*/
@@ -302,7 +317,7 @@ public class Elevator extends PARTsSubsystem {
 
   public Command elevatorToLevelCommand(ElevatorState state) {
     return super.commandFactory("elevatorToStateCommand", this.runOnce(() -> {
-      if (state.height == -1) {
+      if (state.height != -1) {
         mPeriodicIO.is_elevator_pos_control = true;
         mPeriodicIO.elevator_target = state.height;
         mPeriodicIO.state = state;
@@ -421,15 +436,18 @@ public class Elevator extends PARTsSubsystem {
   }
 
   private void errorTasks() {
-    /* Error Conditions 
+    /*
+     * Error Conditions
      * Bottom and top limit hit at same time
      * Laser can in use and the measurement is null or status is not good
-     * The bottom limit is hit for more than 10 loop runs and we are reporting a current position higher than the margin of error
-    */
+     * The bottom limit is hit for more than 10 loop runs and we are reporting a
+     * current position higher than the margin of error
+     */
 
-    //mPeriodicIO.elevator_bottom_limit_error = (getBottomLimit()
-        //&& getElevatorPosition() > Constants.Elevator.bottomLimitPositionErrorMargin);
-        
+    // mPeriodicIO.elevator_bottom_limit_error = (getBottomLimit()
+    // && getElevatorPosition() >
+    // Constants.Elevator.bottomLimitPositionErrorMargin);
+
     if (mPeriodicIO.elevator_bottom_limit_error)
       mPeriodicIO.elevator_bottom_limit_debounce++;
     else
@@ -453,8 +471,8 @@ public class Elevator extends PARTsSubsystem {
       if (mPeriodicIO.lasercan_error_debounce > 10)
         mPeriodicIO.useLaserCan = true;
     } else {
-      //mPeriodicIO.lasercan_error_debounce = 0;
-      //mPeriodicIO.useLaserCan = true; dont turn back on. originally thought i would
+      // mPeriodicIO.lasercan_error_debounce = 0;
+      // mPeriodicIO.useLaserCan = true; dont turn back on. originally thought i would
 
       // If there was an error remove it
       if (mPeriodicIO.error && mPeriodicIO.state != ElevatorState.POS_CTL_TRAVEL_ERROR) {

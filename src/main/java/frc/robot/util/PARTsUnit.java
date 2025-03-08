@@ -65,7 +65,7 @@ public class PARTsUnit {
                     return this.value;
                 throw new RuntimeException(message);
             case Radian:
-                if (unitType == PARTsUnitType.Radian)
+                if (unitType == PARTsUnitType.Angle)
                     return this.value *  180.0 / Math.PI;
                 else if (unitType == this.unitType)
                     return this.value;

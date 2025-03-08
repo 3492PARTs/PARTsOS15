@@ -1,0 +1,55 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "I4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "I2FS"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L4K4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L4K42FS"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L4K4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L4K42FS"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "J4"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
