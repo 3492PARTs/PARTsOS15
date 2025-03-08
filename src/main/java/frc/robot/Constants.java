@@ -4,7 +4,7 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.config.RobotConfig;
+//import com.pathplanner.lib.config.RobotConfig;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -76,7 +76,7 @@ public final class Constants {
     public static final double kP = 1;
     public static final double kI = 0;
     public static final double kD = 0;
-    public static final double kTolerance = 0.5;
+    public static final double kTolerance = 0.25;
     public static final int kIZone = 0;
     public static final int kMaxCurrent = 40;
     public static final int kMaxVelocity = 60;
@@ -138,11 +138,11 @@ public final class Constants {
     public static final int laserCanId = 30;
     public static final int canAndColorId = 31;
 
-    public static final double kIntakeSpeed = -0.2;//-0.3;
+    public static final double kIntakeSpeed = -0.3;//-0.3;
     public static final double kReverseSpeed = 0.6;
     public static final double kL1Speed = -0.4;
     public static final double kL24Speed = -0.4;
-    public static final double kIndexSpeed = -0.11;
+    public static final double kIndexSpeed = -0.15;
     public static final double kSpeedDifference = kL1Speed * 0.5;
   }
 
