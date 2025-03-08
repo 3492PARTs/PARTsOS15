@@ -137,9 +137,9 @@ public class Coral extends PARTsSubsystem {
     mLeftMotor.set(mPeriodicIO.rpm - mPeriodicIO.speed_diff);
     mRightMotor.set(-mPeriodicIO.rpm);
 
-    /*if (!isCoralInEntry()) {
+    if (isCoralInEntry() && mPeriodicIO.state == IntakeState.NONE ) {
       mPeriodicIO.state = IntakeState.INDEX; 
-    } */
+    } 
   }
 
 
