@@ -145,7 +145,9 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         public void periodic() {
                 super.periodic();
                 // Get init. distance from camera.
+                updatePoseEstimator();
                 estRot2d = getEstimatedRotation2d();
+                partsNT.setBoolean("align/vision/MT2 Status", estRot2d != null);
         }
 
         /*---------------------------------- Custom Public Functions ----------------------------------*/
@@ -219,7 +221,6 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         public Command alignCommand(Pose2d holdDistance, CommandXboxController controller) {
                 Command c = new FunctionalCommand(
                                 () -> {
-                                        partsNT.setBoolean("align/vision/MT2 Status", estRot2d != null);
                                         if (estRot2d != null) {
                                                 initialRobotRotation2d = super.getRotation3d().toRotation2d();
 
