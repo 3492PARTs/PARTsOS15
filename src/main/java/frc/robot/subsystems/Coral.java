@@ -136,7 +136,12 @@ public class Coral extends PARTsSubsystem {
 
     mLeftMotor.set(mPeriodicIO.rpm - mPeriodicIO.speed_diff);
     mRightMotor.set(-mPeriodicIO.rpm);
+
+    /*if (!isCoralInEntry()) {
+      mPeriodicIO.state = IntakeState.INDEX; 
+    } */
   }
+
 
   @Override
   public void stop() {
@@ -289,7 +294,7 @@ public class Coral extends PARTsSubsystem {
         // pulls in slowly till we pass the sensor, stop after
         if (!isCoralInEntry()) {
           mPeriodicIO.index_debounce++;
-          if (mPeriodicIO.index_debounce > 5) {
+          if (mPeriodicIO.index_debounce > 0) {
             mPeriodicIO.index_debounce = 0;
             stopCoral().schedule();
             mPeriodicIO.state = IntakeState.READY;
