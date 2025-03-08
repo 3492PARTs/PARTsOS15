@@ -15,8 +15,10 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.subsystems.Candle.CandleState;
 import frc.robot.util.PARTsSubsystem;
@@ -139,6 +141,11 @@ public class Elevator extends PARTsSubsystem {
         Constants.Elevator.kV,
         Constants.Elevator.kA);
 
+    new Trigger(this::getBottomLimit)
+        .onTrue(new WaitCommand(0.2)
+            .andThen(this.runOnce(() -> resetEncoder()))
+            .onlyIf(() -> getElevatorPosition() <= Constants.Elevator.bottomLimitPositionErrorMargin));
+
     /* 
     new Trigger(() -> getElevatorPosition() < Constants.Elevator.L2Height)
     .onTrue(Commands.runOnce(() -> candle.addState(CandleState.ELEVATOR_STOW)))
@@ -205,9 +212,6 @@ public class Elevator extends PARTsSubsystem {
       else
         setVoltage(mElevatorFeedForward.calculate(0));
 
-      //reset encoders, only do if lower than 30 to keep coral falls from triggering.
-      if (getBottomLimit() && getElevatorPosition() <= Constants.Elevator.bottomLimitPositionErrorMargin)
-        resetEncoder();
     }
     // Error controls
     else {
@@ -216,6 +220,7 @@ public class Elevator extends PARTsSubsystem {
       else
         setVoltage(mElevatorFeedForward.calculate(0));
     }
+
   }
 
   @Override
@@ -359,7 +364,10 @@ public class Elevator extends PARTsSubsystem {
 
   public Command zeroElevatorCommand() {
     return super.commandFactory("zeroElevatorCommand",
-        this.run(() -> setSpeedWithoutLimits(Constants.Elevator.homingSpeed))
+        this.run(() -> {
+          setSpeedWithoutLimits(Constants.Elevator.homingSpeed);
+          mPeriodicIO.state = ElevatorState.STOW;
+        })
             .unless(() -> mPeriodicIO.gantry_blocked).until(this::getBottomLimit)
             .andThen(() -> stop()));
   }
@@ -427,8 +435,8 @@ public class Elevator extends PARTsSubsystem {
     */
 
     //mPeriodicIO.elevator_bottom_limit_error = (getBottomLimit()
-        //&& getElevatorPosition() > Constants.Elevator.bottomLimitPositionErrorMargin);
-        
+    //&& getElevatorPosition() > Constants.Elevator.bottomLimitPositionErrorMargin);
+
     if (mPeriodicIO.elevator_bottom_limit_error)
       mPeriodicIO.elevator_bottom_limit_debounce++;
     else

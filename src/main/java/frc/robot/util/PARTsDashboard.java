@@ -10,7 +10,7 @@ public class PARTsDashboard {
 
     public enum DashboardTab {
         AUTONOMOUS("Autonomous"),
-        TEHEOPERATED("Teleoperated"),
+        TELEOPERATED("Teleoperated"),
         DEBUG("Dashboard");
 
         String tabName;
