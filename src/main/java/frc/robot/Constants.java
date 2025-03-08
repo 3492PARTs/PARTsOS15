@@ -116,7 +116,7 @@ public final class Constants {
     public static final double kReverseSpeed = 0.6;
     public static final double kL1Speed = -0.4;
     public static final double kL24Speed = -0.4;
-    public static final double kIndexSpeed = -0.1;
+    public static final double kIndexSpeed = -0.2;
     public static final double kSpeedDifference = kL1Speed * 0.5;
   }
 
