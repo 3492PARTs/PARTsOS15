@@ -142,15 +142,22 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         public void periodic() {
                 super.periodic();
                 // Get init. distance from camera.
+
                 updatePoseEstimator();
                 estRot2d = getEstimatedRotation2d();
+
                 partsNT.setBoolean("align/vision/MT2 Status", estRot2d != null);
+                
+                partsNT.setDouble("robotRotation", super.getPigeon2().getRotation2d().getDegrees());
+                partsNT.setDouble("poseEstRotation", m_poseEstimator.getEstimatedPosition().getRotation().getDegrees());
+                partsNT.setDouble("poseEstRotation3D->2d", getRotation3d().toRotation2d().getDegrees());
+
         }
 
         /*---------------------------------- Custom Public Functions ----------------------------------*/
         public void updatePoseEstimator() {
                 m_poseEstimator.update(
-                                getPigeon2().getRotation2d(),
+                        getRotation3d().toRotation2d(),
                                 new SwerveModulePosition[] {
                                                 frontLeftModule.getPosition(doRejectUpdate),
                                                 frontRightModule.getPosition(doRejectUpdate),
@@ -231,11 +238,11 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         public Command alignCommand(Pose2d holdDistance, CommandXboxController controller) {
                 Command c = new FunctionalCommand(
                                 () -> {
-                                        super.resetRotation(new Rotation2d());
-                                        updatePoseEstimator();
+                                        //super.resetRotation(new Rotation2d());
+                                        //updatePoseEstimator();
                                         // Get init. distance from camera.
-                                        estRot2d = getEstimatedRotation2d();
-                                        partsNT.setBoolean("align/vision/MT2 Status", estRot2d != null);
+                                        //estRot2d = getEstimatedRotation2d();
+                                        //partsNT.setBoolean("align/vision/MT2 Status", estRot2d != null);
                                         if (estRot2d != null) {
                                                 initialRobotRotation2d = super.getRotation3d().toRotation2d();
 
@@ -440,7 +447,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                                         0, new Rotation3d()));
                                                 }
 
-                                                super.resetPose(initialRobotPose3d.toPose2d());
+                                                //super.resetPose(initialRobotPose3d.toPose2d());
                                                 updatePoseEstimator();
                                                 partsNT.setDouble("align/startMS", System.currentTimeMillis());
 
