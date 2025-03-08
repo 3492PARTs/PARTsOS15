@@ -157,15 +157,23 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
 
                 if (mt2 != null) {
-                        if (Math.abs(getPigeon2().getRate()) > 720) // if our angular velocity is greater than 720
+                        partsNT.setDouble("getEstimatedPose/llPoseX", mt2.pose.getX());
+                        partsNT.setDouble("getEstimatedPose/llPoseY", mt2.pose.getY());
+                        partsNT.setDouble("getEstimatedPose/llPoseRot", mt2.pose.getRotation().getDegrees());
+
+                        // if our angular velocity is greater than 720
                                                                     // degrees per
                                                                     // second, ignore vision updates
+                        if (Math.abs(getPigeon2().getRate()) > 720) 
                         {
                                 doRejectUpdate = true;
                         }
                         if (mt2.tagCount == 0) {
                                 doRejectUpdate = true;
                         }
+
+                        partsNT.setBoolean("getEstimatedPose/doRejectUpdate", doRejectUpdate);
+
                         if (!doRejectUpdate) {
                                 m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
                                 m_poseEstimator.addVisionMeasurement(
@@ -175,8 +183,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 }
 
                 return mt2 != null ? m_poseEstimator.getEstimatedPosition().getRotation() : null;
-        }
-
+                }
+/*
         public Pose2d getEstimatedPose() {
                 LimelightHelpers.SetRobotOrientation("",
                                 m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0,
@@ -185,6 +193,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
 
                 if (mt2 != null) {
+                        
+
                         if (Math.abs(getPigeon2().getRate()) > 720) // if our angular velocity is greater than 720
                                                                     // degrees per
                                                                     // second, ignore vision updates
@@ -200,14 +210,18 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                 mt2.pose,
                                                 mt2.timestampSeconds);
                         }
-                }
+                
 
                 return m_poseEstimator.getEstimatedPosition();
         }
 
+        return null;
+        }
+*/
         public Command alignCommand(Pose2d holdDistance, CommandXboxController controller) {
                 Command c = new FunctionalCommand(
                                 () -> {
+                                        super.resetRotation(new Rotation2d());
                                         updatePoseEstimator();
                                         // Get init. distance from camera.
                                         estRot2d = getEstimatedRotation2d();
@@ -408,7 +422,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                                         0, new Rotation3d()));
                                                 }
 
-                                                // super.resetPose(initialRobotPose3d.toPose2d());
+                                                super.resetPose(initialRobotPose3d.toPose2d());
                                                 updatePoseEstimator();
                                                 partsNT.setDouble("align/startMS", System.currentTimeMillis());
 
