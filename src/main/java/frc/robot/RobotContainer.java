@@ -13,8 +13,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.VisionConstants;
-import frc.robot.commands.coral.ScoreCoral;
+import frc.robot.cmds.coral.ScoreCoral;
 import frc.robot.subsystems.Algae;
 import frc.robot.subsystems.Candle;
 import frc.robot.generated.TunerConstants;
@@ -59,7 +60,7 @@ public class RobotContainer {
     public final Candle candle = new Candle();
 
     private final Elevator elevator = new Elevator(candle);
-    // private final ElevatorSysId elevator = new ElevatorSysId();
+    //private final ElevatorSysId elevator = new ElevatorSysId(candle);
 
     private final Algae algae = new Algae();
     // private final AlgaeSysId algae = new AlgaeSysId();
@@ -154,7 +155,7 @@ public class RobotContainer {
          * sysIdQuasistatic(Direction.kReverse));
          */
 
-        // * */
+        //* */
         // =============================================================================================
         // * */ ------------------------------------- Elevator
         // * */ -------------------------------------------
@@ -172,6 +173,7 @@ public class RobotContainer {
 
         // While the joystick is moving control the elevator in manual, and when done
         // stop
+        
         operatorController.axisMagnitudeGreaterThan(5, 0.1)
                 .onTrue(elevator.joystickElevatorControl(operatorController));
 
@@ -190,10 +192,12 @@ public class RobotContainer {
         // * */
         // ---------------------------------------------------------------------------------------------
 
+        
         operatorController.rightTrigger().onTrue(coral.intake());
         operatorController.rightBumper().onTrue(coral.reverse());
         operatorController.leftTrigger().onTrue(coral.stopCoral());
         operatorController.leftBumper().onTrue(coral.scoreCommand());
+        
 
         // * */
         // =============================================================================================
@@ -224,16 +228,16 @@ public class RobotContainer {
         // -------------------------------------------
         // ---------------------------------------------------------------------------------------------
 
-        /*
-         * operatorController.a().and(operatorController.rightBumper())
-         * .whileTrue(elevator.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-         * operatorController.b().and(operatorController.rightBumper())
-         * .whileTrue(elevator.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-         * operatorController.x().and(operatorController.rightBumper())
-         * .whileTrue(elevator.sysIdDynamic(SysIdRoutine.Direction.kForward));
-         * operatorController.y().and(operatorController.rightBumper())
-         * .whileTrue(elevator.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-         */
+        /* 
+          operatorController.a()
+         .whileTrue(elevator.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+         operatorController.b()
+         .whileTrue(elevator.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+         operatorController.x()
+         .whileTrue(elevator.sysIdDynamic(SysIdRoutine.Direction.kForward));
+         operatorController.y()
+         .whileTrue(elevator.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+         
         /*
          * operatorController.a().and(operatorController.rightBumper())
          * .whileTrue(algae.sysIdQuasistatic(SysIdRoutine.Direction.kForward));

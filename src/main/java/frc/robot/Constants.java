@@ -73,10 +73,10 @@ public final class Constants {
     public static final int kMaxCurrent = 40;
     public static final int kMaxVelocity = 60;
     public static final int kMaxAcceleration = 200;
-    public static final double kG = 0.3766;
-    public static final double kS = 0.24105;
-    public static final double kV = 0.020009;
-    public static final double kA = 0.0022395;
+    public static final double kG = 0.18162;//0.3766;
+    public static final double kS = 0.22467;//0.24105;
+    public static final double kV = 0.020157;//0.020009;
+    public static final double kA = 0.0022691;//0.0022395;
     public static final double maxSpeed = 0.5;
     public static final double maxHeight = 72.5;
     public static final double maxLaserCanHeight = 40;
