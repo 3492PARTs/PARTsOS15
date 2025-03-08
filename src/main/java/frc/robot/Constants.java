@@ -35,7 +35,7 @@ public final class Constants {
     public static final PARTsUnit yRControllerTolerance = new PARTsUnit(1, PARTsUnitType.Inch);
     public static final PARTsUnit xRControllerTolerance = new PARTsUnit(1, PARTsUnitType.Inch);
 
-    public static final double leftSideOffset = -10.0;
+    public static final double leftSideOffset = 5.0;
   }
 
   public static class LimelightData {
