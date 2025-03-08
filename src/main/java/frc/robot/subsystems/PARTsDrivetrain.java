@@ -363,7 +363,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
                                         super.resetRotation(
                                                         initialRobotRotation2d.plus(super.getRotation3d().toRotation2d()
-                                                                        .minus(initialRobotRotation2d)));
+                                                                        .minus(initialRobotPose3d.getRotation().toRotation2d())));
 
                                 },
                                 () -> (estRot2d == null || (xRangeController.atGoal() &&
