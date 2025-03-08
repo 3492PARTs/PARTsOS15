@@ -67,8 +67,8 @@ public final class Constants {
     public static final int rightElevatorId = 1;
     public static final int laserCanId = 32;
     public static final int StowHeight = 0;
-    public static final double L2Height = 11.0;
-    public static final double L3Height = 35.0;
+    public static final double L2Height = 8.785;
+    public static final double L3Height = 31.9;
     public static final double L4Height = 72.5;
     public static final double LowAlgaeHeight = 0;
     public static final double HighAlgaeHeight = 0;
