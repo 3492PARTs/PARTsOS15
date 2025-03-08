@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.led.CANdle;
+
 import au.grapplerobotics.CanBridge;
 import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -30,7 +32,6 @@ public class Robot extends TimedRobot {
       CanBridge.runTCP();
     }
 
-    DataLogManager.start();
     WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
 
     partsNT = new PARTsNT(this);
@@ -87,7 +88,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     if (!Constants.Debug.debug) {
-      PARTsDashboard.setTab(DashboardTab.TEHEOPERATED);
+      PARTsDashboard.setTab(DashboardTab.TELEOPERATED);
     }
     m_robotContainer.setIdleCandleState();
     if (m_autonomousCommand != null) {

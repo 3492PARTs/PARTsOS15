@@ -120,8 +120,8 @@ public class Algae extends PARTsSubsystem {
 
     mPeriodicIO.wrist_voltage = pidCalc + ffCalc;
 
-    mWristMotor.setVoltage(mPeriodicIO.wrist_voltage);
-    mIntakeMotor.set(mPeriodicIO.intake_power);
+    setWristVoltage(mPeriodicIO.wrist_voltage);
+    setIntakeSpeed(mPeriodicIO.intake_power);
   }
 
   @Override
@@ -129,8 +129,8 @@ public class Algae extends PARTsSubsystem {
     mPeriodicIO.wrist_voltage = 0.0;
     mPeriodicIO.wrist_target_angle = Constants.Algae.kStowAngle;
 
-    mWristMotor.set(0.0);
-    mIntakeMotor.set(0.0);
+    setWristSpeed(0);
+    setIntakeSpeed(0);
   }
 
   @Override
@@ -177,9 +177,9 @@ public class Algae extends PARTsSubsystem {
     return super.commandFactory("grabReefAlgae", this.runOnce(() -> {
       mPeriodicIO.wrist_target_angle = Constants.Algae.kDeAlgaeAngle;
       mPeriodicIO.intake_power = Constants.Algae.kReefIntakeSpeed;
-  
+
       mPeriodicIO.state = IntakeState.REEFALGAE;
-    }));    
+    }));
   }
 
   public Command grabReefAlgae1() {
@@ -211,9 +211,9 @@ public class Algae extends PARTsSubsystem {
   public Command groundIntake() {
     return super.commandFactory("groundIntake", this.runOnce(() -> {
       mPeriodicIO.wrist_target_angle = Constants.Algae.kGroundIntakeAngle;
-    mPeriodicIO.intake_power = Constants.Algae.kGroundIntakeSpeed;
-    mPeriodicIO.state = IntakeState.GROUND;
-    }));    
+      mPeriodicIO.intake_power = Constants.Algae.kGroundIntakeSpeed;
+      mPeriodicIO.state = IntakeState.GROUND;
+    }));
   }
 
   public Command groundIntake1() {
@@ -227,8 +227,8 @@ public class Algae extends PARTsSubsystem {
   public Command stopAlgae() {
     return this.commandFactory("stopAlgae", this.runOnce(() -> {
       mPeriodicIO.intake_power = 0.0;
-    //mPeriodicIO.wrist_target_angle = Constants.Algae.kStowAngle;
-    }));    
+      //mPeriodicIO.wrist_target_angle = Constants.Algae.kStowAngle;
+    }));
   }
 
   public PARTsUnit getWristAngle() {
@@ -247,6 +247,10 @@ public class Algae extends PARTsSubsystem {
 
   public void setWristSpeed(double speed) {
     mWristMotor.set(speed);
+  }
+
+  public void setWristVoltage(double v) {
+    mWristMotor.setVoltage(v);
   }
 
   public void setIntakeSpeed(double speed) {
