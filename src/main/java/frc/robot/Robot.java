@@ -90,6 +90,7 @@ public class Robot extends TimedRobot {
     if (!Constants.Debug.debug) {
       PARTsDashboard.setTab(DashboardTab.TELEOPERATED);
     }
+
     m_robotContainer.setIdleCandleState();
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();

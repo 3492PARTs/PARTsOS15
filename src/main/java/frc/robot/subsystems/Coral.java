@@ -190,7 +190,7 @@ public class Coral extends PARTsSubsystem {
   /*---------------------------------- Custom Public Functions ----------------------------------*/
 
   public boolean isCoralInExit() {
-    return mPeriodicIO.colorMeasurement <= 0.013;
+    return mPeriodicIO.colorMeasurement <= 0.03;
   }
 
   public boolean isCoralInEntry() {
