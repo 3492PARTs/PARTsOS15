@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.util.PARTsDashboard;
 import frc.robot.util.PARTsLogger;
 import frc.robot.util.PARTsNT;
-import frc.robot.util.PARTsPreferences;
 import frc.robot.util.PARTsDashboard.DashboardTab;
 
 public class Robot extends TimedRobot {
@@ -23,7 +22,6 @@ public class Robot extends TimedRobot {
 
   PARTsNT partsNT;
   PARTsLogger partsLogger;
-  PARTsPreferences partsPreferences;
 
   private final RobotContainer m_robotContainer;
 
