@@ -206,7 +206,7 @@ public class DriveLogCommand extends Command {
     // logCurrRobotX.append(drivetrain.getState().Pose.getX());
     // logCurrRobotY.append(drivetrain.getState().Pose.getY());
 
-    drivetrain.updatePoseEstimator();
+    //drivetrain.updatePoseEstimator();
 
     // logCurrLLRotationX.append(m_poseEstimator.getEstimatedPosition().getX());
     // logCurrLLRotationY.append(m_poseEstimator.getEstimatedPosition().getY());

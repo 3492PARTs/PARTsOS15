@@ -34,7 +34,7 @@ public final class Constants {
 
     public static final PARTsUnit yRControllerTolerance = new PARTsUnit(1, PARTsUnitType.Inch);
     public static final PARTsUnit xRControllerTolerance = new PARTsUnit(2, PARTsUnitType.Inch);
-    public static final PARTsUnit thetaContollerTolerance = new PARTsUnit(2, PARTsUnitType.Angle);
+    public static final PARTsUnit thetaControllerTolerance = new PARTsUnit(2, PARTsUnitType.Angle);
 
     public static final double leftSideOffset = 5.5;
   }
