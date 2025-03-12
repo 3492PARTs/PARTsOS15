@@ -75,6 +75,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         private Rotation2d initialRobotRotation2d;
 
         Pose2d testPose;
+        double turnPosNeg;
 
         public PARTsDrivetrain(Vision vision,
                         SwerveDrivetrainConstants drivetrainConstants,
@@ -149,18 +150,24 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         public Command alignCommand(Pose2d holdDistance, CommandXboxController controller) {
                 Command c = new FunctionalCommand(
                                 () -> {
+                                        
                                         initialRobotRotation2d = super.getRotation3d().toRotation2d();
 
                                         initialRobotPose3d = m_vision.convertToKnownSpace(currentVisionPose3d);
 
-                                        initialRobotPose3d = initialRobotPose3d.plus(new Transform3d(0,
-                                                        new PARTsUnit(Constants.Drivetrain.leftSideOffset,
-                                                                        PARTsUnitType.Inch)
-                                                                        .to(PARTsUnitType.Meter),
-                                                        0, new Rotation3d()));
+                                        turnPosNeg = Math.signum(m_vision.getTX().getValue());
 
+                                        /*
+                                         * initialRobotPose3d = initialRobotPose3d.plus(new Transform3d(0,
+                                         * new PARTsUnit(Constants.Drivetrain.leftSideOffset,
+                                         * PARTsUnitType.Inch)
+                                         * .to(PARTsUnitType.Meter),
+                                         * 0, new Rotation3d()));
+                                         */
+
+                                
                                         testPose = new Pose2d(initialRobotPose3d.getX(), initialRobotPose3d.getY(),
-                                                        new Rotation2d(initialRobotPose3d.getRotation().getAngle()));
+                                                        new Rotation2d(initialRobotPose3d.getRotation().getAngle()*turnPosNeg));
 
                                         // super.resetPose(initialRobotPose3d.toPose2d());
 
@@ -310,6 +317,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 partsNT.setDouble("align/testPoseRot", new PARTsUnit(testPose
                                 .getRotation().getRadians(), PARTsUnitType.Radian)
                                 .to(PARTsUnitType.Angle));
+
+                partsNT.setDouble("align/turnPosNeg", turnPosNeg);
 
         }
 
