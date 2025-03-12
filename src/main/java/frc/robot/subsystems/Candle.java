@@ -36,14 +36,97 @@ public class Candle extends PARTsSubsystem {
 
     public enum Color {
 
-        RED(254, 0, 0),
-        ORANGE(254, 55, 0),
-        YELLOW(254, 254, 0),
-        GREEN(0, 254, 0),
-        BLUE(0, 0, 254),
-        PURPLE(118, 0, 254),
-        WHITE(254, 254, 254),
-        OFF(0, 0, 0);
+        // Basic Colors
+        RED(255, 0, 0),
+        ORANGE(255, 165, 0),
+        YELLOW(255, 255, 0),
+        GREEN(0, 255, 0),
+        CYAN(0, 255, 255),
+        BLUE(0, 0, 255),
+        MAGENTA(255, 0, 255),
+        PURPLE(128, 0, 128),
+        WHITE(255, 255, 255),
+        BLACK(0, 0, 0),
+        GRAY(128, 128, 128),
+        LIGHT_GRAY(211, 211, 211),
+        DARK_GRAY(169, 169, 169),
+
+        // Red and Pink Tones
+        LIGHT_RED(255, 153, 153),
+        DARK_RED(139, 0, 0),
+        CRIMSON(220, 20, 60),
+        SALMON(250, 128, 114),
+        LIGHT_SALMON(255, 160, 122),
+        DARK_SALMON(233, 150, 122),
+        PINK(255, 192, 203),
+        LIGHT_PINK(255, 182, 193),
+        HOT_PINK(255, 105, 180),
+        DEEP_PINK(255, 20, 147),
+        MEDIUM_VIOLET_RED(199, 21, 133),
+
+        // Orange and Brown Tones
+        CORAL(255, 127, 80),
+        TOMATO(255, 99, 71),
+        ORANGE_RED(255, 69, 0),
+        GOLD(255, 215, 0),
+        BROWN(165, 42, 42),
+        SIENNA(160, 82, 45),
+        CHOCOLATE(210, 105, 30),
+        PERU(205, 133, 63),
+        SANDY_BROWN(244, 164, 96),
+        BEIGE(245, 245, 220),
+
+        // Yellow and Beige Tones
+        LIGHT_YELLOW(255, 255, 224),
+        LEMON_CHIFFON(255, 250, 205),
+        LIGHT_GOLDENROD_YELLOW(250, 250, 210),
+        KHAKI(240, 230, 140),
+        PALE_GOLDENROD(238, 232, 170),
+
+        // Green Tones
+        LIME(0, 255, 0),
+        LIME_GREEN(50, 205, 50),
+        LIGHT_GREEN(144, 238, 144),
+        PALE_GREEN(152, 251, 152),
+        DARK_GREEN(0, 100, 0),
+        FOREST_GREEN(34, 139, 34),
+        SEA_GREEN(60, 179, 113),
+        MEDIUM_SEA_GREEN(60, 179, 113),
+        LIGHT_SEA_GREEN(32, 178, 170),
+        SPRING_GREEN(0, 255, 127),
+        MEDIUM_SPRING_GREEN(0, 250, 154),
+
+        // Cyan and Blue Tones
+        AQUA(0, 255, 255),
+        LIGHT_CYAN(224, 255, 255),
+        TURQUOISE(64, 224, 208),
+        MEDIUM_TURQUOISE(72, 209, 204),
+        DARK_TURQUOISE(0, 206, 209),
+        CADET_BLUE(95, 158, 160),
+        STEEL_BLUE(70, 130, 180),
+        LIGHT_STEEL_BLUE(176, 196, 222),
+        POWDER_BLUE(176, 224, 230),
+        LIGHT_BLUE(173, 216, 230),
+        DEEP_SKY_BLUE(0, 191, 255),
+        SKY_BLUE(135, 206, 235),
+        MEDIUM_BLUE(0, 0, 205),
+        DARK_BLUE(0, 0, 139),
+        NAVY(0, 0, 128),
+        MIDNIGHT_BLUE(25, 25, 112),
+
+        // Purple and Violet Tones
+        VIOLET(238, 130, 238),
+        PLUM(221, 160, 221),
+        ORCHID(218, 112, 214),
+        MEDIUM_ORCHID(186, 85, 211),
+        DARK_ORCHID(153, 50, 204),
+        DARK_VIOLET(148, 0, 211),
+        INDIGO(75, 0, 130),
+        MEDIUM_PURPLE(147, 112, 219),
+        SLATE_BLUE(106, 90, 205),
+        DARK_SLATE_BLUE(72, 61, 139),
+        LAVENDER(230, 230, 250),
+        THISTLE(216, 191, 216);
 
         public int r;
         public int g;
@@ -60,7 +143,8 @@ public class Candle extends PARTsSubsystem {
         IDLE,
         DISABLED,
         ELEVATOR_ERROR,
-        CORAL_ERROR,
+        CORAL_CANCOLOR_ERROR,
+        CORAL_LASER_ERROR,
         FINE_GRAIN_DRIVE,
         CORAL_ENTERING,
         HAS_CORAL,
@@ -92,13 +176,17 @@ public class Candle extends PARTsSubsystem {
         configAll.vBatOutputMode = VBatOutputMode.Modulated; // does this do anything?
         candle.configAllSettings(configAll, 100);
 
-        setColor(Color.OFF);
+        setNoColor();
         publishDashboardValues();
     }
 
     /*---------------------------------- Custom Private Functions ---------------------------------*/
     private void setState() {
-        if (mPeriodicIO.robotStates.contains(CandleState.SCORING))
+        if (mPeriodicIO.robotStates.contains(CandleState.CORAL_CANCOLOR_ERROR))
+            mPeriodicIO.state = CandleState.CORAL_CANCOLOR_ERROR;
+        else if (mPeriodicIO.robotStates.contains(CandleState.CORAL_LASER_ERROR))
+            mPeriodicIO.state = CandleState.CORAL_LASER_ERROR;
+        else if (mPeriodicIO.robotStates.contains(CandleState.SCORING))
             mPeriodicIO.state = CandleState.SCORING;
         else if (mPeriodicIO.robotStates.contains(CandleState.FINE_GRAIN_DRIVE))
             mPeriodicIO.state = CandleState.FINE_GRAIN_DRIVE;
@@ -108,8 +196,6 @@ public class Candle extends PARTsSubsystem {
             mPeriodicIO.state = CandleState.HAS_CORAL;
         else if (mPeriodicIO.robotStates.contains(CandleState.ELEVATOR_ERROR))
             mPeriodicIO.state = CandleState.ELEVATOR_ERROR;
-        else if (mPeriodicIO.robotStates.contains(CandleState.CORAL_ERROR))
-            mPeriodicIO.state = CandleState.CORAL_ERROR;
         /*else if (mPeriodicIO.robotStates.contains(CandleState.ELEVATOR_L4))
             mPeriodicIO.state = CandleState.ELEVATOR_L4;
         else if (mPeriodicIO.robotStates.contains(CandleState.ELEVATOR_L3))
@@ -140,8 +226,11 @@ public class Candle extends PARTsSubsystem {
             case ELEVATOR_ERROR:
                 runFadeAnimation(Color.RED);
                 break;
-            case CORAL_ERROR:
-                runBlinkAnimation(Color.ORANGE);
+            case CORAL_CANCOLOR_ERROR:
+                runBlinkAnimation(Color.HOT_PINK);
+                break;
+            case CORAL_LASER_ERROR:
+                runBlinkAnimation(Color.CHOCOLATE);
                 break;
             case IDLE:
                 runFadeAnimation(Color.BLUE);
@@ -166,7 +255,7 @@ public class Candle extends PARTsSubsystem {
     }
 
     private void setNoColor() {
-        setColor(Color.OFF);
+        setColor(Color.BLACK);
     }
 
     private Command setColorGreenCommand() {
@@ -174,7 +263,7 @@ public class Candle extends PARTsSubsystem {
     }
 
     private Command setNoColorCommand() {
-        return super.commandFactory("CANdleColorOff", runOnce(() -> setColor(Color.OFF)));
+        return super.commandFactory("CANdleColorOff", runOnce(() -> setNoColor()));
     }
 
     private FireAnimation getBurnyBurnAnimation() {

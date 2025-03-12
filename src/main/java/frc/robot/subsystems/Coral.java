@@ -117,14 +117,15 @@ public class Coral extends PARTsSubsystem {
       if (!mPeriodicIO.error && mPeriodicIO.state != IntakeState.ERROR) {
         mPeriodicIO.error = true;
         mPeriodicIO.state = IntakeState.ERROR;
-        candle.addState(CandleState.CORAL_ERROR);
+        candle.addState(!canandcolor.isConnected() ? CandleState.CORAL_CANCOLOR_ERROR : CandleState.CORAL_LASER_ERROR);
       }
 
     } else {
       if (mPeriodicIO.error) {
         mPeriodicIO.error = false;
         mPeriodicIO.state = IntakeState.NONE;
-        candle.removeState(CandleState.CORAL_ERROR);
+        candle.removeState(CandleState.CORAL_CANCOLOR_ERROR);
+        candle.removeState(CandleState.CORAL_LASER_ERROR);
       }
     }
 
@@ -137,11 +138,11 @@ public class Coral extends PARTsSubsystem {
     mLeftMotor.set(mPeriodicIO.rpm - mPeriodicIO.speed_diff);
     mRightMotor.set(-mPeriodicIO.rpm);
 
-    if (isCoralInEntry() && mPeriodicIO.state == IntakeState.NONE ) {
-      mPeriodicIO.state = IntakeState.INDEX; 
-    } 
+    // Help us index a little more if its still detected in entry
+    if (isCoralInEntry() && mPeriodicIO.state == IntakeState.NONE) {
+      mPeriodicIO.state = IntakeState.INDEX;
+    }
   }
-
 
   @Override
   public void stop() {
