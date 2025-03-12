@@ -28,6 +28,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.Candle.CandleState;
 import frc.robot.subsystems.Elevator.ElevatorState;
+import frc.robot.subsystems.PARTsDrivetrain;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.sysid.AlgaeSysId;
 import frc.robot.subsystems.sysid.ElevatorSysId;
@@ -41,9 +42,8 @@ import frc.robot.util.PARTsUnit;
 import frc.robot.util.PARTsUnit.PARTsUnitType;
 import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.PARTsDrivetrain;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.path.PathPlannerPath;
+
 
 public class RobotContainer {
         private boolean fineGrainDrive = false;
@@ -105,7 +105,7 @@ public class RobotContainer {
          */
 
         public RobotContainer() {
-                // configureAutonomousCommands();
+                configureAutonomousCommands();
                 configureBindings();
         }
 
@@ -359,6 +359,11 @@ public class RobotContainer {
                  * operatorController.y().and(operatorController.rightBumper())
                  * .whileTrue(algae.sysIdDynamic(SysIdRoutine.Direction.kReverse));
                  */
+        }
+
+        public void configureAutonomousCommands() {         
+                autoChooser = AutoBuilder.buildAutoChooser();
+                SmartDashboard.putData("Auto Chooser", autoChooser);
         }
 
         public Command getAutonomousCommand() {
