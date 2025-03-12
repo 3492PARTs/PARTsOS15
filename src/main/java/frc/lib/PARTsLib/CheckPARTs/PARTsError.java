@@ -1,5 +1,7 @@
 package frc.lib.PARTsLib.CheckPARTs;
 
+import frc.lib.PARTsLib.PARTsLogger;
+
 public class PARTsError {
     public enum PartStatus {
         OK(),
@@ -14,7 +16,7 @@ public class PARTsError {
     String message;
     String name;
 
-    public PARTsError(String name) {
+    public PARTsError(String name, PARTsLogger logger) {
         currentStatus = PartStatus.UNKNOWN;
         message = "";
         this.name = name;
@@ -31,6 +33,8 @@ public class PARTsError {
         this.message = message;
         this.name = name;
     }
+
+
 
     public PartStatus getStatus() {
         return currentStatus;

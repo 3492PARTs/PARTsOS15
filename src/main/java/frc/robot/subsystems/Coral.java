@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.PARTsLib.PARTsSubsystem;
 import frc.lib.PARTsLib.CheckPARTs.CheckPARTs;
 import frc.lib.PARTsLib.CheckPARTs.PARTsError;
+import frc.lib.PARTsLib.CheckPARTs.PARTsError.PartStatus;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.subsystems.Candle.CandleState;
@@ -98,7 +99,7 @@ public class Coral extends PARTsSubsystem {
     new Trigger(this::isCoralInExit).onTrue(Commands.runOnce(() -> candle.addState(CandleState.HAS_CORAL))).onFalse(Commands.runOnce(() -> candle.removeState(CandleState.HAS_CORAL)));
   }
 
-  private static class PeriodicIO {
+  private class PeriodicIO {
     double rpm = 0.0;
     double speed_diff = 0.0;
 
@@ -109,6 +110,14 @@ public class Coral extends PARTsSubsystem {
 
     IntakeState state = IntakeState.NONE;
     boolean error = false;
+
+    LaserCan.Measurement getMeasurement() {
+      LaserCan.Measurement measurement = new LaserCan.Measurement(index_debounce, index_debounce, index_debounce, error, index_debounce, null);
+      if (Robot.isReal()) {
+        measurement = laserCAN.getMeasurement();
+      }
+      return measurement;
+    }
   }
 
   /*-------------------------------- Generic Subsystem Functions --------------------------------*/
@@ -127,6 +136,8 @@ public class Coral extends PARTsSubsystem {
         mPeriodicIO.state = IntakeState.ERROR;
         candle.addState(CandleState.CORAL_ERROR);
       }
+
+      report(new PARTsError("", PartStatus.SENSOR_FAILURE, "LaserCan is non-functional. Is it connected?"));
 
     } else {
       if (mPeriodicIO.error) {
