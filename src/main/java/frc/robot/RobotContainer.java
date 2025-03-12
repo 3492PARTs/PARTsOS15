@@ -164,7 +164,7 @@ public class RobotContainer {
                 // driveController));
 
         driveController.rightTrigger().whileTrue(new ScoreCoral(
-                new Pose2d(0, new PARTsUnit(-2, PARTsUnitType.Inch).to(PARTsUnitType.Meter), new Rotation2d()),
+                new Pose2d(0, new PARTsUnit(-7, PARTsUnitType.Inch).to(PARTsUnitType.Meter), new Rotation2d()),
                 ElevatorState.L2,
                 drivetrain, elevator, coral, candle)); 
         driveController.leftTrigger().whileTrue(drivetrain.alignDebugCommand());

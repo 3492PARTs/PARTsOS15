@@ -76,6 +76,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
         Pose2d testPose;
         double turnPosNeg;
+        double skewVal;
 
         public PARTsDrivetrain(Vision vision,
                         SwerveDrivetrainConstants drivetrainConstants,
@@ -150,12 +151,13 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         public Command alignCommand(Pose2d holdDistance, CommandXboxController controller) {
                 Command c = new FunctionalCommand(
                                 () -> {
-                                        
+                                        double[] botPoseTargetSpace = 
+                                        LimelightHelpers.getLimelightNTDoubleArray("","botpose_targetspace");
                                         initialRobotRotation2d = super.getRotation3d().toRotation2d();
 
                                         initialRobotPose3d = m_vision.convertToKnownSpace(currentVisionPose3d);
 
-                                        turnPosNeg = Math.signum(m_vision.getTX().getValue());
+                                        turnPosNeg = -Math.signum(botPoseTargetSpace[4]);
 
                                         /*
                                          * initialRobotPose3d = initialRobotPose3d.plus(new Transform3d(0,
