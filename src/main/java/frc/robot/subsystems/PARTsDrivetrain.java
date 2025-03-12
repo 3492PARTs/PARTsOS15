@@ -74,6 +74,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         private Pose3d currentVisionPose3d;
         private Rotation2d initialRobotRotation2d;
 
+        Pose2d testPose;
+
         public PARTsDrivetrain(Vision vision,
                         SwerveDrivetrainConstants drivetrainConstants,
                         SwerveModuleConstants<?, ?, ?>... modules) {
@@ -157,7 +159,12 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                                         .to(PARTsUnitType.Meter),
                                                         0, new Rotation3d()));
 
-                                        super.resetPose(initialRobotPose3d.toPose2d());
+                                        testPose = new Pose2d(initialRobotPose3d.getX(), initialRobotPose3d.getY(),
+                                                        new Rotation2d(initialRobotPose3d.getRotation().getAngle()));
+
+                                        // super.resetPose(initialRobotPose3d.toPose2d());
+
+                                        super.resetPose(testPose);
 
                                         // Initialize the aim controller.
                                         thetaController.reset(
@@ -210,7 +217,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                         .withVelocityY(translation.getY())
                                                         .withRotationalRate(thetaOutput.getRadians()));
 
-                                        // TODO: If this breaks our reset heading add back in super.setOperatorPerspectiveForward(thetaOutput);
+                                        // TODO: If this breaks our reset heading add back in
+                                        // super.setOperatorPerspectiveForward(thetaOutput);
                                         alignCommandExecuteTelemetry(thetaOutput, rangeOutput);
                                 },
                                 (Boolean b) -> {
@@ -268,8 +276,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 () -> (true),
                                 this);
 
-                c = alignCommand(null, null);
-                c.until(() -> true);
+                // c = alignCommand(null, null);
+                // c.until(() -> true);
                 c.setName("alignDebug");
                 return c;
         }
@@ -296,6 +304,13 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 thetaController.getSetpoint().position);
                 partsNT.setDouble("align/thetaControllerSetpoint",
                                 thetaController.getSetpoint().position);
+
+                partsNT.setDouble("align/testPoseX", testPose.getX());
+                partsNT.setDouble("align/testPoseY", testPose.getY());
+                partsNT.setDouble("align/testPoseRot", new PARTsUnit(testPose
+                                .getRotation().getRadians(), PARTsUnitType.Radian)
+                                .to(PARTsUnitType.Angle));
+
         }
 
         private void alignCommandExecuteTelemetry(Rotation2d thetaOutput, Pose2d rangeOutput) {
