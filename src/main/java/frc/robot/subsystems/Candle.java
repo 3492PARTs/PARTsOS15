@@ -234,7 +234,7 @@ public class Candle extends PARTsSubsystem {
     }
 
     public Command addStateCommand(CandleState state) {
-        return super.commandFactory("addStateCommand", this.runOnce(() -> addStateCommand(state)));
+        return super.commandFactory("addStateCommand", this.runOnce(() -> addState(state)));
     }
 
     public Command removeStateCommand(CandleState state) {
