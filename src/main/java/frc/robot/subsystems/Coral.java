@@ -269,6 +269,20 @@ public class Coral extends PARTsSubsystem {
     });
   }
 
+  public Command autoScore() {
+    return this.runOnce(() -> {
+      candle.addState(CandleState.SCORING);
+      switch (elevator.getState()) {
+        case STOW:
+          scoreL1();
+          break;
+        default:
+          scoreL24();
+          break;
+      }
+    }).until(() -> !isCoralInEntry());
+  }
+
   public Command scoreCommand() {
     return super.commandFactory("coralScoreCmd",
         score().andThen(new WaitUntilCommand(() -> mPeriodicIO.state == IntakeState.NONE))
