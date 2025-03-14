@@ -151,8 +151,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         public Command alignCommand(Pose2d holdDistance, CommandXboxController controller) {
                 Command c = new FunctionalCommand(
                                 () -> {
-                                        double[] botPoseTargetSpace = 
-                                        LimelightHelpers.getLimelightNTDoubleArray("","botpose_targetspace");
+                                        double[] botPoseTargetSpace = LimelightHelpers.getLimelightNTDoubleArray("",
+                                                        "botpose_targetspace");
                                         initialRobotRotation2d = super.getRotation3d().toRotation2d();
 
                                         initialRobotPose3d = m_vision.convertToKnownSpace(currentVisionPose3d);
@@ -167,9 +167,9 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                          * 0, new Rotation3d()));
                                          */
 
-                                
                                         testPose = new Pose2d(initialRobotPose3d.getX(), initialRobotPose3d.getY(),
-                                                        new Rotation2d(initialRobotPose3d.getRotation().getAngle()*turnPosNeg));
+                                                        new Rotation2d(initialRobotPose3d.getRotation().getAngle()
+                                                                        * turnPosNeg));
 
                                         // super.resetPose(initialRobotPose3d.toPose2d());
 
@@ -390,6 +390,12 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 yRangeController.getVelocityError());
                 partsNT.setDouble("align/Output/thetaVelocityError",
                                 thetaController.getVelocityError());
+
+                partsNT.setDouble("align/InitialRotation", initialRobotRotation2d.getDegrees());
+                partsNT.setDouble("align/currentRotation", super.getRotation3d().toRotation2d().getDegrees());
+                partsNT.setDouble("rotationDiff", super.getRotation3d().toRotation2d()
+                                .minus(initialRobotPose3d.getRotation()
+                                                .toRotation2d()).getDegrees());
         }
 
         private void initialize() {
