@@ -215,10 +215,10 @@ public class Candle extends PARTsSubsystem {
     private void setStateAnimation() {
         switch (mPeriodicIO.state) {
             case CORAL_CANCOLOR_ERROR:
-                runBlinkAnimation(Color.HOT_PINK);
+                runBlinkAnimation(Color.RED);
                 break;
             case CORAL_LASER_ERROR:
-                runBlinkAnimation(Color.CHOCOLATE);
+                runBlinkAnimation(Color.YELLOW);
                 break;
             case FINE_GRAIN_DRIVE:
                 runFadeAnimation(Color.YELLOW, .75);
