@@ -129,22 +129,22 @@ public class Candle extends PARTsSubsystem {
     private void setStateAnimation() {
         switch (mPeriodicIO.state) {
             case FINE_GRAIN_DRIVE:
-                runFadeAnimation(Color.YELLOW);
+                runFadeAnimation(Color.YELLOW, .75);
                 break;
             case CORAL_ENTERING:
-                runFadeAnimation(Color.PURPLE);
+                runFadeAnimation(Color.PURPLE, .75);
                 break;
             case HAS_CORAL:
-                runFadeAnimation(Color.GREEN);
+                runFadeAnimation(Color.GREEN, .75);
                 break;
             case ELEVATOR_ERROR:
-                runFadeAnimation(Color.RED);
+                runFadeAnimation(Color.RED, .75);
                 break;
             case CORAL_ERROR:
                 runBlinkAnimation(Color.ORANGE);
                 break;
             case IDLE:
-                runFadeAnimation(Color.BLUE);
+                runFadeAnimation(Color.BLUE, .75);
                 break;
             case DISABLED:
                 setColor(Color.BLUE);
@@ -190,9 +190,13 @@ public class Candle extends PARTsSubsystem {
     }
 
     private SingleFadeAnimation getFadeAnimation(Color color) {
-        return new SingleFadeAnimation(color.r, color.g, color.b);
+        return new SingleFadeAnimation(color.r, color.g, color.b, 0, 0.5, LED_LENGTH);
     }
 
+    private SingleFadeAnimation getFadeAnimation(Color color, double speed) {
+        return new SingleFadeAnimation(color.r, color.g, color.b, 0, speed, LED_LENGTH);
+    }
+    
     private void runBurnyBurnAnimation() {
         setAnimation(getBurnyBurnAnimation());
     }
@@ -205,8 +209,8 @@ public class Candle extends PARTsSubsystem {
         setAnimation(getBlinkAnimation(color));
     }
 
-    private void runFadeAnimation(Color color) {
-        setAnimation(getFadeAnimation(color));
+    private void runFadeAnimation(Color color, double speed) {
+        setAnimation(getFadeAnimation(color, speed));
     }
 
     private void setAnimation(Animation a) {
