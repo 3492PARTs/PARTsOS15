@@ -45,7 +45,8 @@ public class Coral extends PARTsSubsystem {
   private SparkMax mRightMotor;
 
   private LaserCan laserCAN;
-  private Canandcolor canandcolor;
+  private LaserCan exitSensor;
+  //private Canandcolor canandcolor;
 
   public Coral(Candle candle, Elevator elevator) {
     super("Coral");
@@ -71,14 +72,22 @@ public class Coral extends PARTsSubsystem {
         ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
 
-    canandcolor = new Canandcolor(Constants.Coral.canAndColorId);
-    canandcolor.setLampLEDBrightness(0);
+    /*canandcolor = new Canandcolor(Constants.Coral.canAndColorId);
+    canandcolor.setLampLEDBrightness(0); */
 
     laserCAN = new LaserCan(Constants.Coral.laserCanId);
     try {
       laserCAN.setRangingMode(LaserCan.RangingMode.SHORT);
       laserCAN.setRegionOfInterest(new LaserCan.RegionOfInterest(4, 4, 4, 4));
       laserCAN.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
+    } catch (ConfigurationFailedException e) {
+      System.out.println("Configuration failed! " + e);
+    }
+    exitSensor = new LaserCan(Constants.Coral.laserCan2Id);
+    try {
+      exitSensor.setRangingMode(LaserCan.RangingMode.SHORT);
+      exitSensor.setRegionOfInterest(new LaserCan.RegionOfInterest(4, 4, 4, 4));
+      exitSensor.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
     } catch (ConfigurationFailedException e) {
       System.out.println("Configuration failed! " + e);
     }
@@ -97,7 +106,8 @@ public class Coral extends PARTsSubsystem {
     int index_debounce = 0;
 
     LaserCan.Measurement laserMeasurement = null;
-    double colorMeasurement;
+    LaserCan.Measurement exitLaserMeasurement = null;
+    //double colorMeasurement;
 
     IntakeState state = IntakeState.NONE;
     boolean error = false;
@@ -108,23 +118,25 @@ public class Coral extends PARTsSubsystem {
   @Override
   public void periodic() {
     mPeriodicIO.laserMeasurement = laserCAN.getMeasurement();
-    mPeriodicIO.colorMeasurement = canandcolor.getProximity();
+    mPeriodicIO.exitLaserMeasurement = exitSensor.getMeasurement();
+    //mPeriodicIO.colorMeasurement = canandcolor.getProximity();
 
     // Trigger sub system error if exists
     // if there was an error but there isn't now remove error
     if (mPeriodicIO.laserMeasurement == null || mPeriodicIO.laserMeasurement.status != 0
-        || !canandcolor.isConnected()) {
+        || mPeriodicIO.exitLaserMeasurement == null || mPeriodicIO.exitLaserMeasurement.status != 0
+        ) {
       if (!mPeriodicIO.error && mPeriodicIO.state != IntakeState.ERROR) {
         mPeriodicIO.error = true;
         mPeriodicIO.state = IntakeState.ERROR;
-        candle.addState(!canandcolor.isConnected() ? CandleState.CORAL_CANCOLOR_ERROR : CandleState.CORAL_LASER_ERROR);
+        candle.addState((mPeriodicIO.exitLaserMeasurement == null || mPeriodicIO.exitLaserMeasurement.status != 0) ? CandleState.CORAL_LASER_EXIT_ERROR : CandleState.CORAL_LASER_ERROR);
       }
 
     } else {
       if (mPeriodicIO.error) {
         mPeriodicIO.error = false;
         mPeriodicIO.state = IntakeState.NONE;
-        candle.removeState(CandleState.CORAL_CANCOLOR_ERROR);
+        candle.removeState(CandleState.CORAL_LASER_EXIT_ERROR);
         candle.removeState(CandleState.CORAL_LASER_ERROR);
       }
     }
@@ -169,7 +181,7 @@ public class Coral extends PARTsSubsystem {
       partsLogger.logDouble("Laser/status", -1);
 
     partsLogger.logBoolean("Laser/laserMeasurementExists", (mPeriodicIO.laserMeasurement != null));
-    partsLogger.logBoolean("Canandcolor/Connection", canandcolor.isConnected());
+    //partsLogger.logBoolean("Canandcolor/Connection", canandcolor.isConnected());
 
     super.partsNT.setBoolean("Laser/hasCoral", isCoralInEntry());
 
@@ -179,9 +191,9 @@ public class Coral extends PARTsSubsystem {
     super.partsNT.setDouble("Output/Left", mLeftMotor.getAppliedOutput());
     super.partsNT.setDouble("Output/Right", mRightMotor.getAppliedOutput());
 
-    super.partsNT.setBoolean("Canandcolor/hasCoral", isCoralInExit());
-    super.partsNT.setDouble("Canandcolor/distance", mPeriodicIO.colorMeasurement);
-    super.partsNT.setBoolean("Canandcolor/Connection", canandcolor.isConnected());
+    //super.partsNT.setBoolean("Canandcolor/hasCoral", isCoralInExit());
+    //super.partsNT.setDouble("Canandcolor/distance", mPeriodicIO.colorMeasurement);
+    //super.partsNT.setBoolean("Canandcolor/Connection", canandcolor.isConnected());
 
     super.partsNT.setString("State", mPeriodicIO.state.toString());
   }
@@ -199,7 +211,10 @@ public class Coral extends PARTsSubsystem {
   /*---------------------------------- Custom Public Functions ----------------------------------*/
 
   public boolean isCoralInExit() {
-    return mPeriodicIO.colorMeasurement <= 0.03;
+    if (mPeriodicIO.exitLaserMeasurement != null)
+      return mPeriodicIO.exitLaserMeasurement.distance_mm <= 22;
+    else
+      return false;
   }
 
   public boolean isCoralInEntry() {
