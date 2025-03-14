@@ -232,7 +232,7 @@ public class RobotContainer {
                         
                         else 
                                 new ScoreCoral(
-                                                new Pose2d(0, new PARTsUnit(-2, PARTsUnitType.Inch)
+                                                new Pose2d(0, Constants.Drivetrain.rightAlignDistance
                                                                 .to(PARTsUnitType.Meter),
                                                                 new Rotation2d()),
                                                 ElevatorState.L2, drivetrain, elevator, coral, candle).schedule();
@@ -244,7 +244,7 @@ public class RobotContainer {
                                 elevator.goToElevatorL3().schedule();
                         else
                                 new ScoreCoral(
-                                                new Pose2d(0, new PARTsUnit(-2, PARTsUnitType.Inch)
+                                                new Pose2d(0, Constants.Drivetrain.rightAlignDistance
                                                                 .to(PARTsUnitType.Meter),
                                                                 new Rotation2d()),
                                                 ElevatorState.L3, drivetrain, elevator, coral, candle).schedule();
@@ -256,7 +256,7 @@ public class RobotContainer {
                                 elevator.goToElevatorL4().schedule();
                         else
                                 new ScoreCoral(
-                                                new Pose2d(0, new PARTsUnit(-2, PARTsUnitType.Inch)
+                                                new Pose2d(0, Constants.Drivetrain.rightAlignDistance
                                                                 .to(PARTsUnitType.Meter),
                                                                 new Rotation2d()),
                                                 ElevatorState.L4, drivetrain, elevator, coral, candle).schedule();
@@ -272,7 +272,7 @@ public class RobotContainer {
                                 elevator.goToElevatorL2().schedule();
                         else
                                 new ScoreCoral(
-                                                new Pose2d(0, new PARTsUnit(-2, PARTsUnitType.Inch)
+                                                new Pose2d(0, Constants.Drivetrain.leftAlignDistance
                                                                 .to(PARTsUnitType.Meter),
                                                                 new Rotation2d()),
                                                 ElevatorState.L2, drivetrain, elevator, coral, candle).schedule();
@@ -284,7 +284,7 @@ public class RobotContainer {
                                 elevator.goToElevatorL3().schedule();
                         else
                                 new ScoreCoral(
-                                                new Pose2d(0, new PARTsUnit(-2, PARTsUnitType.Inch)
+                                                new Pose2d(0, Constants.Drivetrain.leftAlignDistance
                                                                 .to(PARTsUnitType.Meter),
                                                                 new Rotation2d()),
                                                 ElevatorState.L3, drivetrain, elevator, coral, candle).schedule();
@@ -296,7 +296,7 @@ public class RobotContainer {
                                 elevator.goToElevatorL4().schedule();
                         else
                                 new ScoreCoral(
-                                                new Pose2d(0, new PARTsUnit(-2, PARTsUnitType.Inch)
+                                                new Pose2d(0, Constants.Drivetrain.leftAlignDistance
                                                                 .to(PARTsUnitType.Meter),
                                                                 new Rotation2d()),
                                                 ElevatorState.L4, drivetrain, elevator, coral, candle).schedule();
