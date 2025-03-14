@@ -13,13 +13,32 @@
         {
           "type": "named",
           "data": {
-            "name": "Intake"
+            "name": "Elevator L2"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "I2FS"
+            "name": "Score"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Elevator Stow"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "I2FS"
+                }
+              }
+            ]
           }
         },
         {
@@ -37,7 +56,13 @@
         {
           "type": "named",
           "data": {
-            "name": "Elevator L2 & Score"
+            "name": "Elevator L2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score"
           }
         }
       ]

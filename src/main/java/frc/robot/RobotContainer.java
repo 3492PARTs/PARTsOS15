@@ -364,8 +364,10 @@ public class RobotContainer {
         }
 
         public void configureAutonomousCommands() {   
-                NamedCommands.registerCommand("Elevator L2 & Score", new ScoreCoral(ElevatorState.L2, drivetrain, elevator, coral, candle));
+                NamedCommands.registerCommand("Elevator L2", elevator.elevatorToLevelCommand(ElevatorState.L2));
                 NamedCommands.registerCommand("Intake", coral.intake());
+                NamedCommands.registerCommand("Score", coral.score());
+                NamedCommands.registerCommand("Elevator Stow", elevator.elevatorToLevelCommand(ElevatorState.STOW));
                 autoChooser = AutoBuilder.buildAutoChooser();
                 SmartDashboard.putData("Auto Chooser", autoChooser);
         }
