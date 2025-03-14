@@ -163,7 +163,11 @@ public class Coral extends PARTsSubsystem {
     }
 
     // Error logging for lasercam and color
-    partsLogger.logDouble("Laser/status", mPeriodicIO.laserMeasurement.status);
+    if (mPeriodicIO.laserMeasurement != null)
+      partsLogger.logDouble("Laser/status", mPeriodicIO.laserMeasurement.status);
+    else
+      partsLogger.logDouble("Laser/status", -1);
+
     partsLogger.logBoolean("Laser/laserMeasurementExists", (mPeriodicIO.laserMeasurement != null));
     partsLogger.logBoolean("Canandcolor/Connection", canandcolor.isConnected());
 
