@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Inch;
+
 //import com.pathplanner.lib.config.RobotConfig;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -37,6 +39,9 @@ public final class Constants {
     public static final PARTsUnit thetaControllerTolerance = new PARTsUnit(2, PARTsUnitType.Angle);
 
     public static final double leftSideOffset = 5.5;
+
+    public static final PARTsUnit leftAlignDistance = new PARTsUnit(2, PARTsUnitType.Inch);
+    public static final PARTsUnit rightAlignDistance = new PARTsUnit(-2, PARTsUnitType.Inch);
   }
 
   public static class LimelightData {
