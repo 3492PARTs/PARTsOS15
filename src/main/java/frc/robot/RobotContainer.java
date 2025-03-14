@@ -163,11 +163,11 @@ public class RobotContainer {
                 // .whileTrue(drivetrain.alignCommand(new Pose2d(-1, 0, new Rotation2d()),
                 // driveController));
 
-                driveController.leftTrigger().whileTrue(new ScoreCoral(
-                                new Pose2d(0, new PARTsUnit(-2, PARTsUnitType.Inch).to(PARTsUnitType.Meter),
-                                                new Rotation2d()),
-                                ElevatorState.L2,
-                                drivetrain, elevator, coral, candle));
+        driveController.rightTrigger().whileTrue(new ScoreCoral(
+                new Pose2d(0, new PARTsUnit(-7, PARTsUnitType.Inch).to(PARTsUnitType.Meter), new Rotation2d()),
+                ElevatorState.L2,
+                drivetrain, elevator, coral, candle)); 
+        driveController.leftTrigger().whileTrue(drivetrain.alignDebugCommand());
 
                 // logging
                 drivetrain.registerTelemetry(telemetryLogger::telemeterize);

@@ -375,7 +375,10 @@ public class Elevator extends PARTsSubsystem {
 
   public Command zeroElevatorCommand() {
     return super.commandFactory("zeroElevatorCommand",
-        this.run(() -> setSpeedWithoutLimits(Constants.Elevator.homingSpeed))
+        this.run(() -> {
+          setSpeedWithoutLimits(Constants.Elevator.homingSpeed);
+          mPeriodicIO.state = ElevatorState.STOW;
+        })
             .unless(() -> mPeriodicIO.gantry_blocked).until(this::getBottomLimit)
             .andThen(() -> stop()));
   }
