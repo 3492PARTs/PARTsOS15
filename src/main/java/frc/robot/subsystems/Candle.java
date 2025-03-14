@@ -214,6 +214,12 @@ public class Candle extends PARTsSubsystem {
 
     private void setStateAnimation() {
         switch (mPeriodicIO.state) {
+            case CORAL_CANCOLOR_ERROR:
+                runBlinkAnimation(Color.HOT_PINK);
+                break;
+            case CORAL_LASER_ERROR:
+                runBlinkAnimation(Color.CHOCOLATE);
+                break;
             case FINE_GRAIN_DRIVE:
                 runFadeAnimation(Color.YELLOW, .75);
                 break;
@@ -225,12 +231,6 @@ public class Candle extends PARTsSubsystem {
                 break;
             case ELEVATOR_ERROR:
                 runFadeAnimation(Color.RED, .75);
-                break;
-            case CORAL_CANCOLOR_ERROR:
-                runBlinkAnimation(Color.HOT_PINK);
-                break;
-            case CORAL_LASER_ERROR:
-                runBlinkAnimation(Color.CHOCOLATE);
                 break;
             case IDLE:
                 runFadeAnimation(Color.BLUE, .75);
@@ -285,7 +285,7 @@ public class Candle extends PARTsSubsystem {
     private SingleFadeAnimation getFadeAnimation(Color color, double speed) {
         return new SingleFadeAnimation(color.r, color.g, color.b, 0, speed, LED_LENGTH);
     }
-    
+
     private void runBurnyBurnAnimation() {
         setAnimation(getBurnyBurnAnimation());
     }
