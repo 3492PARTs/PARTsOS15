@@ -11,6 +11,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -97,6 +98,8 @@ public class RobotContainer {
                         Arrays.asList(candle, coral, elevator, drivetrain, climber));
 
         private SendableChooser<Command> autoChooser;
+
+        private PARTsNT partsNT = new PARTsNT("RobotContainer");
 
         /** End Subsystems */
 
@@ -378,7 +381,9 @@ public class RobotContainer {
 
         public void outputTelemetry() {
                 subsystems.forEach(s -> s.outputTelemetry());
-        }
+                partsNT.setBoolean("Manual Mode", elevatorManualControl);
+                partsNT.setDouble("Battery Voltage", RobotController.getBatteryVoltage());
+        }        
 
         public void stop() {
                 subsystems.forEach(s -> s.stop());

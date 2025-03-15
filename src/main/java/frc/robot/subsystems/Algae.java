@@ -36,7 +36,7 @@ public class Algae extends PARTsSubsystem {
 
   protected SparkMax mWristMotor;
   private final ProfiledPIDController mWristPIDController;
-  private final ArmFeedforward mWristFeedForward;
+  //private final ArmFeedforward mWristFeedForward;
 
   private SparkMax mIntakeMotor;
 
