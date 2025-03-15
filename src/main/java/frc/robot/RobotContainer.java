@@ -366,7 +366,7 @@ public class RobotContainer {
         public void configureAutonomousCommands() {   
                 NamedCommands.registerCommand("Elevator L2", elevator.elevatorToLevelCommand(ElevatorState.L2));
                 NamedCommands.registerCommand("Intake", coral.intake());
-                NamedCommands.registerCommand("Score", coral.score());
+                NamedCommands.registerCommand("Score", coral.autoScore());
                 NamedCommands.registerCommand("Elevator Stow", elevator.elevatorToLevelCommand(ElevatorState.STOW));
                 autoChooser = AutoBuilder.buildAutoChooser();
                 SmartDashboard.putData("Auto Chooser", autoChooser);
