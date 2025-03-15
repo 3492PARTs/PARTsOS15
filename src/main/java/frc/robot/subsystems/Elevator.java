@@ -76,7 +76,7 @@ public class Elevator extends PARTsSubsystem {
 
     ElevatorState state = ElevatorState.STOW;
 
-    boolean useLaserCan = false;
+    boolean useLaserCan = true;
     int lasercan_error_debounce = 0;
 
     boolean elevator_bottom_limit_error = false;
@@ -375,7 +375,10 @@ public class Elevator extends PARTsSubsystem {
 
   public Command zeroElevatorCommand() {
     return super.commandFactory("zeroElevatorCommand",
-        this.run(() -> setSpeedWithoutLimits(Constants.Elevator.homingSpeed))
+        this.run(() -> {
+          setSpeedWithoutLimits(Constants.Elevator.homingSpeed);
+          mPeriodicIO.state = ElevatorState.STOW;
+        })
             .unless(() -> mPeriodicIO.gantry_blocked).until(this::getBottomLimit)
             .andThen(() -> stop()));
   }
