@@ -141,7 +141,7 @@ public final class Constants {
     public static final int coralRightMotorId = 5;
     public static final int coralLeftMotorId = 6;
     public static final int laserCanId = 30;
-    public static final int canAndColorId = 31;
+    public static final int laserCan2Id = 31;
 
     public static final double kIntakeSpeed = -0.3;//-0.3;
     public static final double kReverseSpeed = 0.6;
