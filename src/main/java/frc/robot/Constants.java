@@ -74,7 +74,7 @@ public final class Constants {
     public static final int StowHeight = 0;
     public static final double L2Height = 8.785;
     public static final double L3Height = 31.9;
-    public static final double L4Height = 72.5;
+    public static final double L4Height = 74; //best so far 74.07373046875, 73.59748840332031
     public static final double LowAlgaeHeight = 0;
     public static final double HighAlgaeHeight = 0;
     public static final int L_SWITCH_PORT = 0;
@@ -141,13 +141,13 @@ public final class Constants {
     public static final int coralRightMotorId = 5;
     public static final int coralLeftMotorId = 6;
     public static final int laserCanId = 30;
-    public static final int canAndColorId = 31;
+    public static final int laserCan2Id = 31;
 
-    public static final double kIntakeSpeed = -0.3;//-0.3;
+    public static final double kIntakeSpeed = -0.15;//-0.3;
     public static final double kReverseSpeed = 0.6;
     public static final double kL1Speed = -0.2;
     public static final double kL24Speed = -0.4;
-    public static final double kIndexSpeed = -0.15;
+    public static final double kIndexSpeed = -0.145;
     public static final double kSpeedDifference = kL1Speed * 0.5;
   }
 

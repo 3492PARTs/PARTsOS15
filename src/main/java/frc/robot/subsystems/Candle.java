@@ -143,8 +143,8 @@ public class Candle extends PARTsSubsystem {
         IDLE,
         DISABLED,
         ELEVATOR_ERROR,
-        CORAL_CANCOLOR_ERROR,
-        CORAL_LASER_ERROR,
+        CORAL_LASER_EXIT_ERROR,
+        CORAL_LASER_ENTRY_ERROR,
         FINE_GRAIN_DRIVE,
         CORAL_ENTERING,
         HAS_CORAL,
@@ -182,10 +182,14 @@ public class Candle extends PARTsSubsystem {
 
     /*---------------------------------- Custom Private Functions ---------------------------------*/
     private void setState() {
-        if (mPeriodicIO.robotStates.contains(CandleState.CORAL_CANCOLOR_ERROR))
-            mPeriodicIO.state = CandleState.CORAL_CANCOLOR_ERROR;
-        else if (mPeriodicIO.robotStates.contains(CandleState.CORAL_LASER_ERROR))
-            mPeriodicIO.state = CandleState.CORAL_LASER_ERROR;
+        CandleState previousState = mPeriodicIO.state;
+
+        if (mPeriodicIO.robotStates.contains(CandleState.ELEVATOR_ERROR))
+            mPeriodicIO.state = CandleState.ELEVATOR_ERROR;
+        else if (mPeriodicIO.robotStates.contains(CandleState.CORAL_LASER_EXIT_ERROR))
+            mPeriodicIO.state = CandleState.CORAL_LASER_EXIT_ERROR;
+        else if (mPeriodicIO.robotStates.contains(CandleState.CORAL_LASER_ENTRY_ERROR))
+            mPeriodicIO.state = CandleState.CORAL_LASER_ENTRY_ERROR;
         else if (mPeriodicIO.robotStates.contains(CandleState.SCORING))
             mPeriodicIO.state = CandleState.SCORING;
         else if (mPeriodicIO.robotStates.contains(CandleState.FINE_GRAIN_DRIVE))
@@ -194,8 +198,6 @@ public class Candle extends PARTsSubsystem {
             mPeriodicIO.state = CandleState.CORAL_ENTERING;
         else if (mPeriodicIO.robotStates.contains(CandleState.HAS_CORAL))
             mPeriodicIO.state = CandleState.HAS_CORAL;
-        else if (mPeriodicIO.robotStates.contains(CandleState.ELEVATOR_ERROR))
-            mPeriodicIO.state = CandleState.ELEVATOR_ERROR;
         /*else if (mPeriodicIO.robotStates.contains(CandleState.ELEVATOR_L4))
             mPeriodicIO.state = CandleState.ELEVATOR_L4;
         else if (mPeriodicIO.robotStates.contains(CandleState.ELEVATOR_L3))
@@ -209,19 +211,24 @@ public class Candle extends PARTsSubsystem {
         else if (mPeriodicIO.robotStates.contains(CandleState.DISABLED))
             mPeriodicIO.state = CandleState.DISABLED;
 
-        setStateAnimation();
+        //if (previousState != mPeriodicIO.state)
+            setStateAnimation();
     }
 
     private void setStateAnimation() {
         switch (mPeriodicIO.state) {
-            case CORAL_CANCOLOR_ERROR:
-                runBlinkAnimation(Color.RED);
+            case ELEVATOR_ERROR:
+                runStrobeAnimation(Color.ORANGE, .75);
                 break;
-            case CORAL_LASER_ERROR:
-                runBlinkAnimation(Color.YELLOW);
+            case CORAL_LASER_EXIT_ERROR:
+                runStrobeAnimation(Color.RED, .5);
+                break;
+            case CORAL_LASER_ENTRY_ERROR:
+                runStrobeAnimation(Color.YELLOW, .5);
                 break;
             case FINE_GRAIN_DRIVE:
-                runFadeAnimation(Color.YELLOW, .75);
+                runBurnyBurnAnimation();
+                //runFadeAnimation(Color.YELLOW, .75);
                 break;
             case CORAL_ENTERING:
                 runFadeAnimation(Color.PURPLE, .75);
@@ -229,8 +236,8 @@ public class Candle extends PARTsSubsystem {
             case HAS_CORAL:
                 runFadeAnimation(Color.GREEN, .75);
                 break;
-            case ELEVATOR_ERROR:
-                runFadeAnimation(Color.RED, .75);
+            case SCORING:
+                runRainbowAnimation();
                 break;
             case IDLE:
                 runFadeAnimation(Color.BLUE, .75);
@@ -238,9 +245,7 @@ public class Candle extends PARTsSubsystem {
             case DISABLED:
                 setColor(Color.BLUE);
                 break;
-            case SCORING:
-                runRainbowAnimation();
-                break;
+
             default:
                 break;
         }
@@ -274,8 +279,12 @@ public class Candle extends PARTsSubsystem {
         return new RainbowAnimation();
     }
 
-    private StrobeAnimation getBlinkAnimation(Color color) {
+    private StrobeAnimation getStrobeAnimation(Color color) {
         return new StrobeAnimation(color.r, color.g, color.b);
+    }
+
+    private StrobeAnimation getStrobeAnimation(Color color, double speed) {
+        return new StrobeAnimation(color.r, color.g, color.b, 0, speed, LED_LENGTH);
     }
 
     private SingleFadeAnimation getFadeAnimation(Color color) {
@@ -294,8 +303,12 @@ public class Candle extends PARTsSubsystem {
         setAnimation(getRainbowAnimation());
     }
 
-    private void runBlinkAnimation(Color color) {
-        setAnimation(getBlinkAnimation(color));
+    private void runStrobeAnimation(Color color) {
+        setAnimation(getStrobeAnimation(color));
+    }
+
+    private void runStrobeAnimation(Color color, double speed) {
+        setAnimation(getStrobeAnimation(color, speed));
     }
 
     private void runFadeAnimation(Color color, double speed) {
