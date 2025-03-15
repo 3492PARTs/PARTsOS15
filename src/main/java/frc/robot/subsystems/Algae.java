@@ -114,16 +114,17 @@ public class Algae extends PARTsSubsystem {
   @Override
   public void periodic() {
     //test
-   // double pidCalc = mWristPIDController.calculate(Math.toRadians(getWristAngle().getValue()),
-      //  Math.toRadians(mPeriodicIO.wrist_target_angle));
+    mWristPIDController.setGoal(mPeriodicIO.wrist_target_angle);
+    double pidCalc = mWristPIDController.atGoal() ? 0 : mWristPIDController.calculate(Math.toRadians(getWristAngle().getValue()),
+       Math.toRadians(mPeriodicIO.wrist_target_angle));
 
     //double ffCalc = mWristFeedForward.calculate(Math.toRadians(getWristAngle().getValue()),
         //Math.toRadians(mWristPIDController.getSetpoint().velocity));
 
-   // mPeriodicIO.wrist_voltage = pidCalc; //ffCalc;
+   mPeriodicIO.wrist_voltage = -pidCalc; //ffCalc;
 
-    //setWristVoltage(mPeriodicIO.wrist_voltage);
-    //setIntakeSpeed(mPeriodicIO.intake_power);
+    setWristVoltage(mPeriodicIO.wrist_voltage);
+    setIntakeSpeed(mPeriodicIO.intake_power);
   }
 
   @Override
@@ -193,7 +194,7 @@ public class Algae extends PARTsSubsystem {
 
   public PARTsUnit getWristAngle() {
 
-    return new PARTsUnit(new PARTsUnit(mWristRelEncoder.getPosition(), PARTsUnitType.Rotations).to(PARTsUnitType.Angle)
+    return new PARTsUnit(new PARTsUnit(-1 * mWristRelEncoder.getPosition(), PARTsUnitType.Rotations).to(PARTsUnitType.Angle)
         / Constants.Algae.wristGearRatio, PARTsUnitType.Angle);
   }
 

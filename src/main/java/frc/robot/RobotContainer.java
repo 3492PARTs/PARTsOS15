@@ -95,7 +95,7 @@ public class RobotContainer {
         private final Climber climber = new Climber();
 
         private final ArrayList<IPARTsSubsystem> subsystems = new ArrayList<IPARTsSubsystem>(
-                        Arrays.asList(candle, coral, elevator, drivetrain, climber));
+                        Arrays.asList(candle, coral, elevator, drivetrain, climber, algae));
 
         private SendableChooser<Command> autoChooser;
 
@@ -322,11 +322,15 @@ public class RobotContainer {
                 // ---------------------------------------------------------------------------------------------
 
                 operatorController.povDown().onTrue(algae.grabReefAlgae());
+
+                operatorController.povLeft().onTrue(algae.stow());
                 
                 operatorController.axisMagnitudeGreaterThan(1, 0.1)
                 .onTrue(algae.joystickAlgaeControl(operatorController));
+
+                operatorController.povRight().whileTrue(Commands.runOnce(() -> algae.reset()));
                 
-                operatorController.povUp().whileTrue(Commands.run(() -> algae.setIntakeSpeed(.4)));
+                operatorController.povUp().whileTrue(Commands.run(() -> algae.setIntakeSpeed(Constants.Algae.kReefIntakeSpeed))).whileFalse(Commands.runOnce(() -> algae.setIntakeSpeed(0)));
 
                 //operatorController.povLeft().onTrue(algae.stopAlgae());
                 //operatorController.leftTrigger().onTrue(Commands.runOnce(algae::reset));
