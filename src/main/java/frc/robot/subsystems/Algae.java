@@ -16,6 +16,7 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants;
 import frc.robot.util.PARTsNT;
 import frc.robot.util.PARTsSubsystem;
@@ -113,16 +114,16 @@ public class Algae extends PARTsSubsystem {
   @Override
   public void periodic() {
     //test
-    double pidCalc = mWristPIDController.calculate(Math.toRadians(getWristAngle().getValue()),
-        Math.toRadians(mPeriodicIO.wrist_target_angle));
+   // double pidCalc = mWristPIDController.calculate(Math.toRadians(getWristAngle().getValue()),
+      //  Math.toRadians(mPeriodicIO.wrist_target_angle));
 
     //double ffCalc = mWristFeedForward.calculate(Math.toRadians(getWristAngle().getValue()),
         //Math.toRadians(mWristPIDController.getSetpoint().velocity));
 
-    mPeriodicIO.wrist_voltage = pidCalc; //ffCalc;
+   // mPeriodicIO.wrist_voltage = pidCalc; //ffCalc;
 
-    setWristVoltage(mPeriodicIO.wrist_voltage);
-    setIntakeSpeed(mPeriodicIO.intake_power);
+    //setWristVoltage(mPeriodicIO.wrist_voltage);
+    //setIntakeSpeed(mPeriodicIO.intake_power);
   }
 
   @Override
@@ -218,6 +219,13 @@ public class Algae extends PARTsSubsystem {
 
   public double getRPS() {
     return mWristRelEncoder.getVelocity() * 60 / Constants.Algae.wristGearRatio; // 16 is the gear reduction
+  }
+
+    public Command joystickAlgaeControl(CommandXboxController controller) {
+    return super.commandFactory("joystickAlgaeControl", this.run(() -> {
+      double speed = controller.getLeftY();
+      setWristSpeed(speed);
+    }).until(() -> Math.abs(controller.getLeftY()) < 0.1).andThen(() -> setWristSpeed(0)));
   }
 
   /*---------------------------------- Custom Private Functions ---------------------------------*/

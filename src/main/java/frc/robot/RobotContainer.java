@@ -323,8 +323,10 @@ public class RobotContainer {
 
                 operatorController.povDown().onTrue(algae.grabReefAlgae());
                 
-                algae.setWristSpeed(operatorController.getLeftY());
-                operatorController.povUp().whileTrue(Commands.runOnce(() -> algae.setIntakeSpeed(.4)));
+                operatorController.axisMagnitudeGreaterThan(1, 0.1)
+                .onTrue(algae.joystickAlgaeControl(operatorController));
+                
+                operatorController.povUp().whileTrue(Commands.run(() -> algae.setIntakeSpeed(.4)));
 
                 //operatorController.povLeft().onTrue(algae.stopAlgae());
                 //operatorController.leftTrigger().onTrue(Commands.runOnce(algae::reset));
