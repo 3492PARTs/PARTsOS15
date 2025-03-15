@@ -72,7 +72,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         private Pose3d initialRobotPose3d;
         private Pose3d currentRobotPose3d;
         private Pose3d currentVisionPose3d;
-        private Rotation2d initialRobotRotation2d;
+        private PARTsUnit initialRobotAngleRad;
 
         Pose2d testPose;
         double turnPosNeg;
@@ -151,9 +151,9 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         public Command alignCommand(Pose2d holdDistance, CommandXboxController controller) {
                 Command c = new FunctionalCommand(
                                 () -> {
-                                        double[] botPoseTargetSpace = 
-                                        LimelightHelpers.getLimelightNTDoubleArray("","botpose_targetspace");
-                                        initialRobotRotation2d = super.getRotation3d().toRotation2d();
+                                        double[] botPoseTargetSpace = LimelightHelpers.getLimelightNTDoubleArray("",
+                                                        "botpose_targetspace");
+                                        initialRobotAngleRad = new PARTsUnit(super.getRotation3d().getAngle(), PARTsUnitType.Radian) ;
 
                                         initialRobotPose3d = m_vision.convertToKnownSpace(currentVisionPose3d);
 
@@ -167,9 +167,9 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                          * 0, new Rotation3d()));
                                          */
 
-                                
                                         testPose = new Pose2d(initialRobotPose3d.getX(), initialRobotPose3d.getY(),
-                                                        new Rotation2d(initialRobotPose3d.getRotation().getAngle()*turnPosNeg));
+                                                        new Rotation2d(initialRobotPose3d.getRotation().getAngle()
+                                                                        * turnPosNeg));
 
                                         // super.resetPose(initialRobotPose3d.toPose2d());
 
@@ -236,11 +236,13 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                         .withVelocityY(0)
                                                         .withRotationalRate(0));
 
-                                        super.resetRotation(
-                                                        initialRobotRotation2d.plus(super.getRotation3d().toRotation2d()
-                                                                        .minus(initialRobotPose3d.getRotation()
-                                                                                        .toRotation2d())));
-
+                                        Rotation2d initialRot = new Rotation2d(initialRobotAngleRad.getValue());
+                                        Rotation2d currentRot = new Rotation2d(super.getRotation3d().getAngle());
+                                        Rotation2d resetRot = initialRot.plus(currentRot.minus(initialRot)).rotateBy(new Rotation2d(Math.PI));
+                                        super.resetRotation(resetRot);
+                                        partsNT.setDouble("align/initialRotation", initialRot.getDegrees());
+                                        partsNT.setDouble("align/currentRotation", currentRot.getDegrees());
+                                        partsNT.setDouble("align/diffRotation", resetRot.getDegrees());
                                 },
                                 () -> ((xRangeController.atGoal() &&
                                                 yRangeController.atGoal() &&
@@ -508,8 +510,6 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 () -> getCurrentCommand() != null ? getCurrentCommand().getName() : "none",
                                 null);
         }
-
-        /*---------------------------------- AutoBuilder Functions ----------------------------------*/
 
         /*---------------------------------- AutoBuilder Functions ----------------------------------*/
 
