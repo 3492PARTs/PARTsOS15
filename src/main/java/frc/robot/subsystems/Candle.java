@@ -211,7 +211,7 @@ public class Candle extends PARTsSubsystem {
         else if (mPeriodicIO.robotStates.contains(CandleState.DISABLED))
             mPeriodicIO.state = CandleState.DISABLED;
 
-        if (previousState != mPeriodicIO.state)
+        //if (previousState != mPeriodicIO.state)
             setStateAnimation();
     }
 

@@ -1,14 +1,7 @@
 {
   "version": 1.0,
-  "grid_size": 100,
+  "grid_size": 128,
   "tabs": [
-    {
-      "name": "Autonomous",
-      "grid_layout": {
-        "layouts": [],
-        "containers": []
-      }
-    },
     {
       "name": "Teleoperated",
       "grid_layout": {
@@ -44,6 +37,13 @@
             }
           }
         ]
+      }
+    },
+    {
+      "name": "Autonomous",
+      "grid_layout": {
+        "layouts": [],
+        "containers": []
       }
     },
     {
@@ -1299,97 +1299,6 @@
             ]
           },
           {
-            "title": "Canandcolor",
-            "x": 500.0,
-            "y": 0.0,
-            "width": 200.0,
-            "height": 300.0,
-            "type": "List Layout",
-            "properties": {
-              "label_position": "TOP"
-            },
-            "children": [
-              {
-                "title": "Connection",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 200.0,
-                "height": 200.0,
-                "type": "Boolean Box",
-                "properties": {
-                  "topic": "/PARTs/Coral/Canandcolor/Connection",
-                  "period": 0.06,
-                  "data_type": "boolean",
-                  "true_color": 4283215696,
-                  "false_color": 4294198070,
-                  "true_icon": "None",
-                  "false_icon": "None"
-                }
-              },
-              {
-                "title": "distance",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 200.0,
-                "height": 200.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/PARTs/Coral/Canandcolor/distance",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "hasCoral",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 200.0,
-                "height": 200.0,
-                "type": "Boolean Box",
-                "properties": {
-                  "topic": "/PARTs/Coral/Canandcolor/hasCoral",
-                  "period": 0.06,
-                  "data_type": "boolean",
-                  "true_color": 4283215696,
-                  "false_color": 4294198070,
-                  "true_icon": "None",
-                  "false_icon": "None"
-                }
-              }
-            ]
-          },
-          {
-            "title": "Laser",
-            "x": 300.0,
-            "y": 0.0,
-            "width": 200.0,
-            "height": 200.0,
-            "type": "List Layout",
-            "properties": {
-              "label_position": "TOP"
-            },
-            "children": [
-              {
-                "title": "hasCoral",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 200.0,
-                "height": 200.0,
-                "type": "Boolean Box",
-                "properties": {
-                  "topic": "/PARTs/Coral/Laser/hasCoral",
-                  "period": 0.06,
-                  "data_type": "boolean",
-                  "true_color": 4283215696,
-                  "false_color": 4294198070,
-                  "true_icon": "None",
-                  "false_icon": "None"
-                }
-              }
-            ]
-          },
-          {
             "title": "RPM",
             "x": 700.0,
             "y": 0.0,
@@ -1417,11 +1326,183 @@
             ]
           },
           {
+            "title": "LaserEntry",
+            "x": 256.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 512.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "ambient",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/Coral/LaserEntry/ambient",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "budget_ms",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/Coral/LaserEntry/budget_ms",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "distance",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/Coral/LaserEntry/distance",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "hasCoral",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/PARTs/Coral/LaserEntry/hasCoral",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              },
+              {
+                "title": "status",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/Coral/LaserEntry/status",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              }
+            ]
+          },
+          {
+            "title": "LaserExit",
+            "x": 512.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 512.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "ambient",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/Coral/LaserExit/ambient",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "budget_ms",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/Coral/LaserExit/budget_ms",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "distance",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/Coral/LaserExit/distance",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "hasCoral",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/PARTs/Coral/LaserExit/hasCoral",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              },
+              {
+                "title": "status",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/Coral/LaserExit/status",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              }
+            ]
+          },
+          {
             "title": "Current",
-            "x": 500.0,
-            "y": 300.0,
-            "width": 200.0,
-            "height": 200.0,
+            "x": 256.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 256.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -1431,8 +1512,8 @@
                 "title": "Left",
                 "x": 0.0,
                 "y": 0.0,
-                "width": 200.0,
-                "height": 200.0,
+                "width": 128.0,
+                "height": 128.0,
                 "type": "Text Display",
                 "properties": {
                   "topic": "/PARTs/Coral/Current/Left",
@@ -1445,52 +1526,11 @@
                 "title": "Right",
                 "x": 0.0,
                 "y": 0.0,
-                "width": 200.0,
-                "height": 200.0,
+                "width": 128.0,
+                "height": 128.0,
                 "type": "Text Display",
                 "properties": {
                   "topic": "/PARTs/Coral/Current/Right",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              }
-            ]
-          },
-          {
-            "title": "Output",
-            "x": 700.0,
-            "y": 300.0,
-            "width": 200.0,
-            "height": 200.0,
-            "type": "List Layout",
-            "properties": {
-              "label_position": "TOP"
-            },
-            "children": [
-              {
-                "title": "Left",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 200.0,
-                "height": 200.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/PARTs/Coral/Output/Left",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Right",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 200.0,
-                "height": 200.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/PARTs/Coral/Output/Right",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false

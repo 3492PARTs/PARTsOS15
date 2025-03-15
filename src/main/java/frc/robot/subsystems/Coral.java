@@ -89,6 +89,12 @@ public class Coral extends PARTsSubsystem {
     } catch (ConfigurationFailedException e) {
       System.out.println("Configuration failed! " + e);
     }
+
+    new Trigger(this::isCoralInEntry).onTrue(Commands.runOnce(() -> candle.addState(CandleState.CORAL_ENTERING)))
+    .onFalse(Commands.runOnce(() -> candle.removeState(CandleState.CORAL_ENTERING)));
+
+new Trigger(this::isCoralInExit).onTrue(Commands.runOnce(() -> candle.addState(CandleState.HAS_CORAL)))
+    .onFalse(Commands.runOnce(() -> candle.removeState(CandleState.HAS_CORAL)));
   }
 
   private static class PeriodicIO {
@@ -128,7 +134,7 @@ public class Coral extends PARTsSubsystem {
     mLeftMotor.set(mPeriodicIO.rpm - mPeriodicIO.speed_diff);
     mRightMotor.set(-mPeriodicIO.rpm);
 
-    setCoralCandleState();
+    //setCoralCandleState();
   }
 
   @Override
@@ -254,6 +260,13 @@ public class Coral extends PARTsSubsystem {
     mPeriodicIO.state = IntakeState.SCORE;
   }
 
+  public void scoreL4() {
+    // return this.runOnce(() -> {
+    mPeriodicIO.speed_diff = 0.0;
+    mPeriodicIO.rpm = -0.2;
+    mPeriodicIO.state = IntakeState.SCORE;
+  }
+
   public Command stopCoral() {
     return super.commandFactory("coralStop",
         this.runOnce(() -> {
@@ -305,7 +318,7 @@ public class Coral extends PARTsSubsystem {
         break;
       case INDEX:
         // pulls in slowly till we pass the sensor, stop after
-        if (!isCoralInEntry()) {
+        if (!isCoralInEntry() && isCoralInExit()) {
           mPeriodicIO.index_debounce++;
 
           if (mPeriodicIO.index_debounce > 1) {
@@ -339,14 +352,18 @@ public class Coral extends PARTsSubsystem {
   }
 
   private void checkErrors() {
+    ArrayList<Integer> okStates = new ArrayList<Integer>();
+    okStates.add(0);
+    okStates.add(2);
+
     // Trigger sub system error if exists
     // if there was an error but there isn't now remove error
-    if (mPeriodicIO.entryLaserMeasurement == null || mPeriodicIO.entryLaserMeasurement.status != 0
-        || mPeriodicIO.exitLaserMeasurement == null || mPeriodicIO.exitLaserMeasurement.status != 0) {
+    if (mPeriodicIO.entryLaserMeasurement == null || !okStates.contains(mPeriodicIO.entryLaserMeasurement.status)
+        || mPeriodicIO.exitLaserMeasurement == null || !okStates.contains(mPeriodicIO.exitLaserMeasurement.status)) {
       if (!mPeriodicIO.error && mPeriodicIO.state != IntakeState.ERROR) {
         mPeriodicIO.error = true;
         mPeriodicIO.state = IntakeState.ERROR;
-        candle.addState((mPeriodicIO.exitLaserMeasurement == null || mPeriodicIO.exitLaserMeasurement.status != 0)
+        candle.addState((mPeriodicIO.exitLaserMeasurement == null || !okStates.contains(mPeriodicIO.exitLaserMeasurement.status))
             ? CandleState.CORAL_LASER_EXIT_ERROR
             : CandleState.CORAL_LASER_ENTRY_ERROR);
       }

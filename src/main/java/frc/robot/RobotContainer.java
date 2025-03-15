@@ -205,6 +205,8 @@ public class RobotContainer {
                 buttonBoxController.positive4Trigger().onTrue(coral.intake()).onFalse(coral.stopCoral());
                 buttonBoxController.negative4Trigger().onTrue(coral.reverse()).onFalse(coral.stopCoral());
 
+                operatorController.rightBumper().onTrue(Commands.runOnce(() -> coral.scoreL4(), coral)).onFalse(coral.stopCoral());
+
                 // =============================================================================================
                 // * */ ------------------------------------- Elevator and Score Control
                 // * */ -------------------------------------------
