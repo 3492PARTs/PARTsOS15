@@ -120,9 +120,7 @@ public class RobotContainer {
                 // and Y is defined as to the left according to WPILib convention.
                 Command driveCommand = drivetrain.applyRequest(() -> {
                         double limit = MaxSpeed;
-                        if (elevator.getElevatorPosition() > Constants.Elevator.L2Height)
-                                limit *= 0.25;
-                        else if (fineGrainDrive)
+                        if (fineGrainDrive)
                                 limit *= 0.25;
                         return drive.withVelocityX(-driveController.getLeftY() * limit) // Drive forward with negative Y
                                         // (forward)
@@ -138,14 +136,16 @@ public class RobotContainer {
                 // Drivetrain will execute this command periodically
                 drivetrain.setDefaultCommand(driveCommand);
 
+                new Trigger(() -> elevator.getElevatorPosition() > Constants.Elevator.L2Height)
+                                .onTrue(Commands.runOnce(() -> fineGrainDrive = true))
+                                .onFalse(Commands.runOnce(() -> fineGrainDrive = false));
+
                 // fine grain controls
-                driveController.rightBumper().onTrue(Commands.runOnce(() -> {
-                        fineGrainDrive = !fineGrainDrive;
-                        if (fineGrainDrive)
-                                candle.addState(CandleState.FINE_GRAIN_DRIVE);
-                        else
-                                candle.removeState(CandleState.FINE_GRAIN_DRIVE);
-                }));
+                driveController.rightBumper().onTrue(Commands.runOnce(() -> fineGrainDrive = !fineGrainDrive));
+
+                new Trigger(() -> fineGrainDrive)
+                                .onTrue(Commands.runOnce(() -> candle.addState(CandleState.FINE_GRAIN_DRIVE)))
+                                .onFalse(Commands.runOnce(() -> candle.removeState(CandleState.FINE_GRAIN_DRIVE)));
 
                 // brakes swerve, puts modules into x configuration
                 driveController.a().whileTrue(drivetrain.applyRequest(() -> brake));
@@ -205,7 +205,8 @@ public class RobotContainer {
                 buttonBoxController.positive4Trigger().onTrue(coral.intake()).onFalse(coral.stopCoral());
                 buttonBoxController.negative4Trigger().onTrue(coral.reverse()).onFalse(coral.stopCoral());
 
-                operatorController.rightBumper().onTrue(Commands.runOnce(() -> coral.scoreL4(), coral)).onFalse(coral.stopCoral());
+                operatorController.rightBumper().onTrue(Commands.runOnce(() -> coral.scoreL4(), coral))
+                                .onFalse(coral.stopCoral());
 
                 // =============================================================================================
                 // * */ ------------------------------------- Elevator and Score Control
