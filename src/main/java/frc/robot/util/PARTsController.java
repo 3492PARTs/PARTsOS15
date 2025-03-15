@@ -1,14 +1,11 @@
 package frc.robot.util;
 
-import java.util.function.BooleanSupplier;
-
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.PS5Controller;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.event.BooleanEvent;
 import edu.wpi.first.wpilibj.event.EventLoop;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class PARTsController {
 
@@ -34,7 +31,8 @@ public class PARTsController {
     private ControllerType controllerType;
     private XboxController xboxController;
     private PS4Controller dualshockController;
-    private PS5Controller dualsenseCotroller;
+    private PS5Controller dualsenseController;
+    // TODO: Finish joystick by allowing an array of custom button codes that will map to the xbox controller.
     private Joystick joystick;
     private String err_msg = "";
 
@@ -55,7 +53,7 @@ public class PARTsController {
                 dualshockController = new PS4Controller(port);
                 break;
             case DS5:
-                dualsenseCotroller = new PS5Controller(port);
+                dualsenseController = new PS5Controller(port);
                 break;
             case XBOX:
                 xboxController = new XboxController(port);
@@ -81,7 +79,7 @@ public class PARTsController {
                 val = dualshockController.getLeftX();
                 break;
             case DS5:
-                val = dualsenseCotroller.getLeftX();
+                val = dualsenseController.getLeftX();
                 break;
             case OTHER:
                 throw new UnsupportedOperationException(err_msg);
@@ -106,7 +104,7 @@ public class PARTsController {
                 val = dualshockController.getRightX();
                 break;
             case DS5:
-                val = dualsenseCotroller.getRightX();
+                val = dualsenseController.getRightX();
                 break;
             case OTHER:
                 throw new UnsupportedOperationException(err_msg);
@@ -131,7 +129,7 @@ public class PARTsController {
                 val = dualshockController.getLeftY();
                 break;
             case DS5:
-                val = dualsenseCotroller.getLeftY();
+                val = dualsenseController.getLeftY();
                 break;
             case OTHER:
                 throw new UnsupportedOperationException(err_msg);
@@ -156,7 +154,7 @@ public class PARTsController {
                 val = dualshockController.getRightY();
                 break;
             case DS5:
-                val = dualsenseCotroller.getRightY();
+                val = dualsenseController.getRightY();
                 break;
             case OTHER:
                 throw new UnsupportedOperationException(err_msg);
@@ -183,7 +181,7 @@ public class PARTsController {
                 val = dualshockController.getL2Axis();
                 break;
             case DS5:
-                val = dualsenseCotroller.getL2Axis();
+                val = dualsenseController.getL2Axis();
                 break;
             case XBOX:
                 val = xboxController.getLeftTriggerAxis();
@@ -217,7 +215,7 @@ public class PARTsController {
                 val = dualshockController.L2(loop);
                 break;
             case DS5:
-                val = dualsenseCotroller.L2(loop);
+                val = dualsenseController.L2(loop);
                 break;
             case XBOX:
                 val = xboxController.leftTrigger(threshold, loop);
@@ -258,7 +256,7 @@ public class PARTsController {
                 val = dualshockController.getL2Axis();
                 break;
             case DS5:
-                val = dualsenseCotroller.getL2Axis();
+                val = dualsenseController.getL2Axis();
                 break;
             case XBOX:
                 val = xboxController.getLeftTriggerAxis();
@@ -292,7 +290,7 @@ public class PARTsController {
                 val = dualshockController.L2(loop);
                 break;
             case DS5:
-                val = dualsenseCotroller.L2(loop);
+                val = dualsenseController.L2(loop);
                 break;
             case XBOX:
                 val = xboxController.leftTrigger(threshold, loop);
@@ -331,7 +329,7 @@ public class PARTsController {
                 val = dualshockController.getCrossButton();
                 break;
             case DS5:
-                val = dualsenseCotroller.getCrossButton();
+                val = dualsenseController.getCrossButton();
                 break;
             case XBOX:
                 val = xboxController.getAButton();
@@ -356,7 +354,7 @@ public class PARTsController {
                 val = dualshockController.getCrossButtonPressed();
                 break;
             case DS5:
-                val = dualsenseCotroller.getCrossButtonPressed();
+                val = dualsenseController.getCrossButtonPressed();
                 break;
             case XBOX:
                 val = xboxController.getAButtonPressed();
@@ -381,7 +379,7 @@ public class PARTsController {
                 val = dualshockController.getCrossButtonReleased();
                 break;
             case DS5:
-                val = dualsenseCotroller.getCrossButtonReleased();
+                val = dualsenseController.getCrossButtonReleased();
                 break;
             case XBOX:
                 val = xboxController.getAButtonReleased();
@@ -408,7 +406,7 @@ public class PARTsController {
                 val = dualshockController.cross(loop);
                 break;
             case DS5:
-                val = dualsenseCotroller.cross(loop);
+                val = dualsenseController.cross(loop);
                 break;
             case XBOX:
                 val = xboxController.a(loop);
@@ -433,7 +431,7 @@ public class PARTsController {
                 val = dualshockController.getCircleButton();
                 break;
             case DS5:
-                val = dualsenseCotroller.getCircleButton();
+                val = dualsenseController.getCircleButton();
                 break;
             case XBOX:
                 val = xboxController.getBButton();
@@ -458,7 +456,7 @@ public class PARTsController {
                 val = dualshockController.getCircleButtonPressed();
                 break;
             case DS5:
-                val = dualsenseCotroller.getCircleButtonPressed();
+                val = dualsenseController.getCircleButtonPressed();
                 break;
             case XBOX:
                 val = xboxController.getBButtonPressed();
@@ -483,7 +481,7 @@ public class PARTsController {
                 val = dualshockController.getCircleButtonReleased();
                 break;
             case DS5:
-                val = dualsenseCotroller.getCircleButtonReleased();
+                val = dualsenseController.getCircleButtonReleased();
                 break;
             case XBOX:
                 val = xboxController.getBButtonReleased();
@@ -510,7 +508,7 @@ public class PARTsController {
                 val = dualshockController.circle(loop);
                 break;
             case DS5:
-                val = dualsenseCotroller.circle(loop);
+                val = dualsenseController.circle(loop);
                 break;
             case XBOX:
                 val = xboxController.b(loop);
@@ -535,7 +533,7 @@ public class PARTsController {
                 val = dualshockController.getSquareButton();
                 break;
             case DS5:
-                val = dualsenseCotroller.getSquareButton();
+                val = dualsenseController.getSquareButton();
                 break;
             case XBOX:
                 val = xboxController.getXButton();
@@ -560,7 +558,7 @@ public class PARTsController {
                 val = dualshockController.getSquareButtonPressed();
                 break;
             case DS5:
-                val = dualsenseCotroller.getSquareButtonPressed();
+                val = dualsenseController.getSquareButtonPressed();
                 break;
             case XBOX:
                 val = xboxController.getXButtonPressed();
@@ -585,7 +583,7 @@ public class PARTsController {
                 val = dualshockController.getSquareButtonReleased();
                 break;
             case DS5:
-                val = dualsenseCotroller.getSquareButtonReleased();
+                val = dualsenseController.getSquareButtonReleased();
                 break;
             case XBOX:
                 val = xboxController.getXButtonReleased();
@@ -612,7 +610,7 @@ public class PARTsController {
                 val = dualshockController.square(loop);
                 break;
             case DS5:
-                val = dualsenseCotroller.square(loop);
+                val = dualsenseController.square(loop);
                 break;
             case XBOX:
                 val = xboxController.x(loop);
@@ -637,7 +635,7 @@ public class PARTsController {
                 val = dualshockController.getTriangleButton();
                 break;
             case DS5:
-                val = dualsenseCotroller.getTriangleButton();
+                val = dualsenseController.getTriangleButton();
                 break;
             case XBOX:
                 val = xboxController.getYButton();
@@ -662,7 +660,7 @@ public class PARTsController {
                 val = dualshockController.getTriangleButtonPressed();
                 break;
             case DS5:
-                val = dualsenseCotroller.getTriangleButtonPressed();
+                val = dualsenseController.getTriangleButtonPressed();
                 break;
             case XBOX:
                 val = xboxController.getYButtonPressed();
@@ -687,7 +685,7 @@ public class PARTsController {
                 val = dualshockController.getTriangleButtonReleased();
                 break;
             case DS5:
-                val = dualsenseCotroller.getTriangleButtonReleased();
+                val = dualsenseController.getTriangleButtonReleased();
                 break;
             case XBOX:
                 val = xboxController.getYButtonReleased();
@@ -714,7 +712,7 @@ public class PARTsController {
                 val = dualshockController.triangle(loop);
                 break;
             case DS5:
-                val = dualsenseCotroller.triangle(loop);
+                val = dualsenseController.triangle(loop);
                 break;
             case XBOX:
                 val = xboxController.y(loop);
@@ -739,7 +737,7 @@ public class PARTsController {
                 val = dualshockController.getL1Button();
                 break;
             case DS5:
-                val = dualsenseCotroller.getL1Button();
+                val = dualsenseController.getL1Button();
                 break;
             case XBOX:
                 val = xboxController.getLeftBumperButton();
@@ -764,7 +762,7 @@ public class PARTsController {
                 val = dualshockController.getL1ButtonPressed();
                 break;
             case DS5:
-                val = dualsenseCotroller.getL1ButtonPressed();
+                val = dualsenseController.getL1ButtonPressed();
                 break;
             case XBOX:
                 val = xboxController.getLeftBumperButtonPressed();
@@ -789,7 +787,7 @@ public class PARTsController {
                 val = dualshockController.getL1ButtonReleased();
                 break;
             case DS5:
-                val = dualsenseCotroller.getL1ButtonReleased();
+                val = dualsenseController.getL1ButtonReleased();
                 break;
             case XBOX:
                 val = xboxController.getLeftBumperButtonReleased();
@@ -817,7 +815,7 @@ public class PARTsController {
                 val = dualshockController.L1(loop);
                 break;
             case DS5:
-                val = dualsenseCotroller.L1(loop);
+                val = dualsenseController.L1(loop);
                 break;
             case XBOX:
                 val = xboxController.leftBumper(loop);
@@ -842,7 +840,7 @@ public class PARTsController {
                 val = dualshockController.getR1Button();
                 break;
             case DS5:
-                val = dualsenseCotroller.getR1Button();
+                val = dualsenseController.getR1Button();
                 break;
             case XBOX:
                 val = xboxController.getRightBumperButton();
@@ -867,7 +865,7 @@ public class PARTsController {
                 val = dualshockController.getR1ButtonPressed();
                 break;
             case DS5:
-                val = dualsenseCotroller.getR1ButtonPressed();
+                val = dualsenseController.getR1ButtonPressed();
                 break;
             case XBOX:
                 val = xboxController.getRightBumperButtonPressed();
@@ -892,7 +890,7 @@ public class PARTsController {
                 val = dualshockController.getR1ButtonReleased();
                 break;
             case DS5:
-                val = dualsenseCotroller.getR1ButtonReleased();
+                val = dualsenseController.getR1ButtonReleased();
                 break;
             case XBOX:
                 val = xboxController.getRightBumperButtonReleased();
@@ -920,7 +918,7 @@ public class PARTsController {
                 val = dualshockController.R1(loop);
                 break;
             case DS5:
-                val = dualsenseCotroller.R1(loop);
+                val = dualsenseController.R1(loop);
                 break;
             case XBOX:
                 val = xboxController.rightBumper(loop);
@@ -1045,7 +1043,7 @@ public class PARTsController {
                 val = dualshockController.getOptionsButton();
                 break;
             case DS5:
-                val = dualsenseCotroller.getOptionsButton();
+                val = dualsenseController.getOptionsButton();
                 break;
             case XBOX:
                 val = xboxController.getStartButton();
@@ -1070,7 +1068,7 @@ public class PARTsController {
                 val = dualshockController.getOptionsButtonPressed();
                 break;
             case DS5:
-                val = dualsenseCotroller.getOptionsButtonPressed();
+                val = dualsenseController.getOptionsButtonPressed();
                 break;
             case XBOX:
                 val = xboxController.getStartButtonPressed();
@@ -1095,7 +1093,7 @@ public class PARTsController {
                 val = dualshockController.getOptionsButtonReleased();
                 break;
             case DS5:
-                val = dualsenseCotroller.getOptionsButtonReleased();
+                val = dualsenseController.getOptionsButtonReleased();
                 break;
             case XBOX:
                 val = xboxController.getStartButtonReleased();
@@ -1122,7 +1120,7 @@ public class PARTsController {
                 val = dualshockController.options(loop);
                 break;
             case DS5:
-                val = dualsenseCotroller.options(loop);
+                val = dualsenseController.options(loop);
                 break;
             case XBOX:
                 val = xboxController.start(loop);
@@ -1147,7 +1145,7 @@ public class PARTsController {
                 val = dualshockController.getL3Button();
                 break;
             case DS5:
-                val = dualsenseCotroller.getL3Button();
+                val = dualsenseController.getL3Button();
                 break;
             case XBOX:
                 val = xboxController.getLeftStickButton();
@@ -1172,7 +1170,7 @@ public class PARTsController {
                 val = dualshockController.getL3ButtonPressed();
                 break;
             case DS5:
-                val = dualsenseCotroller.getL3ButtonPressed();
+                val = dualsenseController.getL3ButtonPressed();
                 break;
             case XBOX:
                 val = xboxController.getLeftStickButtonPressed();
@@ -1197,7 +1195,7 @@ public class PARTsController {
                 val = dualshockController.getL3ButtonReleased();
                 break;
             case DS5:
-                val = dualsenseCotroller.getL3ButtonReleased();
+                val = dualsenseController.getL3ButtonReleased();
                 break;
             case XBOX:
                 val = xboxController.getLeftStickButtonReleased();
@@ -1224,7 +1222,7 @@ public class PARTsController {
                 val = dualshockController.L3(loop);
                 break;
             case DS5:
-                val = dualsenseCotroller.L3(loop);
+                val = dualsenseController.L3(loop);
                 break;
             case XBOX:
                 val = xboxController.leftStick(loop);
@@ -1249,7 +1247,7 @@ public class PARTsController {
                 val = dualshockController.getR3Button();
                 break;
             case DS5:
-                val = dualsenseCotroller.getR3Button();
+                val = dualsenseController.getR3Button();
                 break;
             case XBOX:
                 val = xboxController.getRightStickButton();
@@ -1274,7 +1272,7 @@ public class PARTsController {
                 val = dualshockController.getR3ButtonPressed();
                 break;
             case DS5:
-                val = dualsenseCotroller.getR3ButtonPressed();
+                val = dualsenseController.getR3ButtonPressed();
                 break;
             case XBOX:
                 val = xboxController.getRightStickButtonPressed();
@@ -1299,7 +1297,7 @@ public class PARTsController {
                 val = dualshockController.getR3ButtonReleased();
                 break;
             case DS5:
-                val = dualsenseCotroller.getR3ButtonReleased();
+                val = dualsenseController.getR3ButtonReleased();
                 break;
             case XBOX:
                 val = xboxController.getRightStickButtonReleased();
@@ -1327,7 +1325,7 @@ public class PARTsController {
                 val = dualshockController.R3(loop);
                 break;
             case DS5:
-                val = dualsenseCotroller.R3(loop);
+                val = dualsenseController.R3(loop);
                 break;
             case XBOX:
                 val = xboxController.rightStick(loop);
