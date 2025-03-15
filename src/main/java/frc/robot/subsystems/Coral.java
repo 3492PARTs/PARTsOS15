@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.ArrayList;
+
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -11,7 +13,6 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
 
-import com.reduxrobotics.sensors.canandcolor.Canandcolor;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -44,9 +45,8 @@ public class Coral extends PARTsSubsystem {
   private SparkMax mLeftMotor;
   private SparkMax mRightMotor;
 
-  private LaserCan laserCAN;
+  private LaserCan entrySensor;
   private LaserCan exitSensor;
-  //private Canandcolor canandcolor;
 
   public Coral(Candle candle, Elevator elevator) {
     super("Coral");
@@ -72,17 +72,15 @@ public class Coral extends PARTsSubsystem {
         ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
 
-    /*canandcolor = new Canandcolor(Constants.Coral.canAndColorId);
-    canandcolor.setLampLEDBrightness(0); */
-
-    laserCAN = new LaserCan(Constants.Coral.laserCanId);
+    entrySensor = new LaserCan(Constants.Coral.laserCanId);
     try {
-      laserCAN.setRangingMode(LaserCan.RangingMode.SHORT);
-      laserCAN.setRegionOfInterest(new LaserCan.RegionOfInterest(4, 4, 4, 4));
-      laserCAN.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
+      entrySensor.setRangingMode(LaserCan.RangingMode.SHORT);
+      entrySensor.setRegionOfInterest(new LaserCan.RegionOfInterest(4, 4, 4, 4));
+      entrySensor.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
     } catch (ConfigurationFailedException e) {
       System.out.println("Configuration failed! " + e);
     }
+
     exitSensor = new LaserCan(Constants.Coral.laserCan2Id);
     try {
       exitSensor.setRangingMode(LaserCan.RangingMode.SHORT);
@@ -105,9 +103,9 @@ public class Coral extends PARTsSubsystem {
 
     int index_debounce = 0;
 
-    LaserCan.Measurement laserMeasurement = null;
+    LaserCan.Measurement entryLaserMeasurement = null;
     LaserCan.Measurement exitLaserMeasurement = null;
-    //double colorMeasurement;
+    // double colorMeasurement;
 
     IntakeState state = IntakeState.NONE;
     boolean error = false;
@@ -117,19 +115,19 @@ public class Coral extends PARTsSubsystem {
 
   @Override
   public void periodic() {
-    mPeriodicIO.laserMeasurement = laserCAN.getMeasurement();
+    mPeriodicIO.entryLaserMeasurement = entrySensor.getMeasurement();
     mPeriodicIO.exitLaserMeasurement = exitSensor.getMeasurement();
-    //mPeriodicIO.colorMeasurement = canandcolor.getProximity();
 
     // Trigger sub system error if exists
     // if there was an error but there isn't now remove error
-    if (mPeriodicIO.laserMeasurement == null || mPeriodicIO.laserMeasurement.status != 0
-        || mPeriodicIO.exitLaserMeasurement == null || mPeriodicIO.exitLaserMeasurement.status != 0
-        ) {
+    if (mPeriodicIO.entryLaserMeasurement == null || validStates. mPeriodicIO.entryLaserMeasurement.status != 0
+        || mPeriodicIO.exitLaserMeasurement == null || mPeriodicIO.exitLaserMeasurement.status != 0) {
       if (!mPeriodicIO.error && mPeriodicIO.state != IntakeState.ERROR) {
         mPeriodicIO.error = true;
         mPeriodicIO.state = IntakeState.ERROR;
-        candle.addState((mPeriodicIO.exitLaserMeasurement == null || mPeriodicIO.exitLaserMeasurement.status != 0) ? CandleState.CORAL_LASER_EXIT_ERROR : CandleState.CORAL_LASER_ERROR);
+        candle.addState((mPeriodicIO.exitLaserMeasurement == null || mPeriodicIO.exitLaserMeasurement.status != 0)
+            ? CandleState.CORAL_LASER_EXIT_ERROR
+            : CandleState.CORAL_LASER_ENTRY_ERROR);
       }
 
     } else {
@@ -137,7 +135,7 @@ public class Coral extends PARTsSubsystem {
         mPeriodicIO.error = false;
         mPeriodicIO.state = IntakeState.NONE;
         candle.removeState(CandleState.CORAL_LASER_EXIT_ERROR);
-        candle.removeState(CandleState.CORAL_LASER_ERROR);
+        candle.removeState(CandleState.CORAL_LASER_ENTRY_ERROR);
       }
     }
 
@@ -167,33 +165,42 @@ public class Coral extends PARTsSubsystem {
   public void outputTelemetry() {
     super.partsNT.setDouble("RPM/target", mPeriodicIO.rpm);
 
-    if (mPeriodicIO.laserMeasurement != null) {
-      super.partsNT.setDouble("Laser/distance", mPeriodicIO.laserMeasurement.distance_mm);
-      super.partsNT.setDouble("Laser/ambient", mPeriodicIO.laserMeasurement.ambient);
-      super.partsNT.setDouble("Laser/budget_ms", mPeriodicIO.laserMeasurement.budget_ms);
-      super.partsNT.setDouble("Laser/status", mPeriodicIO.laserMeasurement.status);
+    if (mPeriodicIO.entryLaserMeasurement != null) {
+      super.partsNT.setDouble("LaserEntry/distance", mPeriodicIO.entryLaserMeasurement.distance_mm);
+      super.partsNT.setDouble("LaserEntry/ambient", mPeriodicIO.entryLaserMeasurement.ambient);
+      super.partsNT.setDouble("LaserEntry/budget_ms", mPeriodicIO.entryLaserMeasurement.budget_ms);
+      super.partsNT.setDouble("LaserEntry/status", mPeriodicIO.entryLaserMeasurement.status);
     }
 
-    // Error logging for lasercam and color
-    if (mPeriodicIO.laserMeasurement != null)
-      partsLogger.logDouble("Laser/status", mPeriodicIO.laserMeasurement.status);
+    if (mPeriodicIO.entryLaserMeasurement != null)
+      partsLogger.logDouble("LaserEntry/status", mPeriodicIO.entryLaserMeasurement.status);
     else
-      partsLogger.logDouble("Laser/status", -1);
+      partsLogger.logDouble("LaserEntry/status", -1);
 
-    partsLogger.logBoolean("Laser/laserMeasurementExists", (mPeriodicIO.laserMeasurement != null));
-    //partsLogger.logBoolean("Canandcolor/Connection", canandcolor.isConnected());
+    partsLogger.logBoolean("LaserEntry/laserMeasurementExists", (mPeriodicIO.entryLaserMeasurement != null));
 
-    super.partsNT.setBoolean("Laser/hasCoral", isCoralInEntry());
+    if (mPeriodicIO.exitLaserMeasurement != null) {
+      super.partsNT.setDouble("LaserExit/distance", mPeriodicIO.exitLaserMeasurement.distance_mm);
+      super.partsNT.setDouble("LaserExit/ambient", mPeriodicIO.exitLaserMeasurement.ambient);
+      super.partsNT.setDouble("LaserExit/budget_ms", mPeriodicIO.exitLaserMeasurement.budget_ms);
+      super.partsNT.setDouble("LaserExit/status", mPeriodicIO.exitLaserMeasurement.status);
+    }
+
+    if (mPeriodicIO.exitLaserMeasurement != null)
+      partsLogger.logDouble("LaserExit/status", mPeriodicIO.exitLaserMeasurement.status);
+    else
+      partsLogger.logDouble("LaserExit/status", -1);
+
+    partsLogger.logBoolean("LaserExit/laserMeasurementExists", (mPeriodicIO.exitLaserMeasurement != null));
+
+    super.partsNT.setBoolean("LaserEntry/hasCoral", isCoralInEntry());
+    super.partsNT.setBoolean("LaserExit/hasCoral", isCoralInExit());
 
     super.partsNT.setDouble("Current/Left", mLeftMotor.getOutputCurrent());
     super.partsNT.setDouble("Current/Right", mRightMotor.getOutputCurrent());
 
     super.partsNT.setDouble("Output/Left", mLeftMotor.getAppliedOutput());
     super.partsNT.setDouble("Output/Right", mRightMotor.getAppliedOutput());
-
-    //super.partsNT.setBoolean("Canandcolor/hasCoral", isCoralInExit());
-    //super.partsNT.setDouble("Canandcolor/distance", mPeriodicIO.colorMeasurement);
-    //super.partsNT.setBoolean("Canandcolor/Connection", canandcolor.isConnected());
 
     super.partsNT.setString("State", mPeriodicIO.state.toString());
   }
@@ -218,8 +225,8 @@ public class Coral extends PARTsSubsystem {
   }
 
   public boolean isCoralInEntry() {
-    if (mPeriodicIO.laserMeasurement != null)
-      return mPeriodicIO.laserMeasurement.distance_mm <= 22;
+    if (mPeriodicIO.entryLaserMeasurement != null)
+      return mPeriodicIO.entryLaserMeasurement.distance_mm <= 22;
     else
       return false;
   }
@@ -257,14 +264,14 @@ public class Coral extends PARTsSubsystem {
   }
 
   public void scoreL1() {
-    //return this.runOnce(() -> {
+    // return this.runOnce(() -> {
     mPeriodicIO.speed_diff = Constants.Coral.kSpeedDifference;
     mPeriodicIO.rpm = Constants.Coral.kL1Speed;
     mPeriodicIO.state = IntakeState.SCORE;
   }
 
   public void scoreL24() {
-    //return this.runOnce(() -> {
+    // return this.runOnce(() -> {
     mPeriodicIO.speed_diff = 0.0;
     mPeriodicIO.rpm = Constants.Coral.kL24Speed;
     mPeriodicIO.state = IntakeState.SCORE;

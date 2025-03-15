@@ -144,7 +144,7 @@ public class Candle extends PARTsSubsystem {
         DISABLED,
         ELEVATOR_ERROR,
         CORAL_LASER_EXIT_ERROR,
-        CORAL_LASER_ERROR,
+        CORAL_LASER_ENTRY_ERROR,
         FINE_GRAIN_DRIVE,
         CORAL_ENTERING,
         HAS_CORAL,
@@ -184,8 +184,8 @@ public class Candle extends PARTsSubsystem {
     private void setState() {
         if (mPeriodicIO.robotStates.contains(CandleState.CORAL_LASER_EXIT_ERROR))
             mPeriodicIO.state = CandleState.CORAL_LASER_EXIT_ERROR;
-        else if (mPeriodicIO.robotStates.contains(CandleState.CORAL_LASER_ERROR))
-            mPeriodicIO.state = CandleState.CORAL_LASER_ERROR;
+        else if (mPeriodicIO.robotStates.contains(CandleState.CORAL_LASER_ENTRY_ERROR))
+            mPeriodicIO.state = CandleState.CORAL_LASER_ENTRY_ERROR;
         else if (mPeriodicIO.robotStates.contains(CandleState.SCORING))
             mPeriodicIO.state = CandleState.SCORING;
         else if (mPeriodicIO.robotStates.contains(CandleState.FINE_GRAIN_DRIVE))
@@ -217,7 +217,7 @@ public class Candle extends PARTsSubsystem {
             case CORAL_LASER_EXIT_ERROR:
                 runBlinkAnimation(Color.RED);
                 break;
-            case CORAL_LASER_ERROR:
+            case CORAL_LASER_ENTRY_ERROR:
                 runBlinkAnimation(Color.YELLOW);
                 break;
             case FINE_GRAIN_DRIVE:
