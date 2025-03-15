@@ -165,11 +165,12 @@ public class RobotContainer {
                 // .whileTrue(drivetrain.alignCommand(new Pose2d(-1, 0, new Rotation2d()),
                 // driveController));
 
-                driveController.rightTrigger().whileTrue(new ScoreCoral(
+                driveController.rightTrigger().whileTrue(new AlignScoreCoral(
                                 new Pose2d(0, new PARTsUnit(-7, PARTsUnitType.Inch).to(PARTsUnitType.Meter),
                                                 new Rotation2d()),
                                 ElevatorState.L2,
                                 drivetrain, elevator, coral, candle));
+                                
                 driveController.leftTrigger().whileTrue(drivetrain.alignDebugCommand());
 
                 // logging
@@ -205,10 +206,10 @@ public class RobotContainer {
                 // * */
                 // ---------------------------------------------------------------------------------------------
 
-                buttonBoxController.positive4Trigger().onTrue(coral.intake()).onFalse(coral.stopCoral());
-                buttonBoxController.negative4Trigger().onTrue(coral.reverse()).onFalse(coral.stopCoral());
+                buttonBoxController.positive4Trigger().onTrue(coral.intake()).onFalse(coral.stopCoralCommand());
+                buttonBoxController.negative4Trigger().onTrue(coral.reverse()).onFalse(coral.stopCoralCommand());
 
-                operatorController.rightBumper().onTrue(Commands.runOnce(() -> coral.scoreL4(), coral)).onFalse(coral.stopCoral());
+                operatorController.rightBumper().onTrue(Commands.runOnce(() -> coral.scoreL4(), coral)).onFalse(coral.stopCoralCommand());
 
                 // =============================================================================================
                 // * */ ------------------------------------- Elevator and Score Control
@@ -235,7 +236,7 @@ public class RobotContainer {
                                 elevator.goToElevatorL2().schedule();
 
                         else
-                                new ScoreCoral(
+                                new AlignScoreCoral(
                                                 new Pose2d(0, Constants.Drivetrain.rightAlignDistance
                                                                 .to(PARTsUnitType.Meter),
                                                                 new Rotation2d()),
@@ -247,7 +248,7 @@ public class RobotContainer {
                         if (elevatorManualControl)
                                 elevator.goToElevatorL3().schedule();
                         else
-                                new ScoreCoral(
+                                new AlignScoreCoral(
                                                 new Pose2d(0, Constants.Drivetrain.rightAlignDistance
                                                                 .to(PARTsUnitType.Meter),
                                                                 new Rotation2d()),
@@ -259,7 +260,7 @@ public class RobotContainer {
                         if (elevatorManualControl)
                                 elevator.goToElevatorL4().schedule();
                         else
-                                new ScoreCoral(
+                                new AlignScoreCoral(
                                                 new Pose2d(0, Constants.Drivetrain.rightAlignDistance
                                                                 .to(PARTsUnitType.Meter),
                                                                 new Rotation2d()),
@@ -275,7 +276,7 @@ public class RobotContainer {
                         if (elevatorManualControl)
                                 elevator.goToElevatorL2().schedule();
                         else
-                                new ScoreCoral(
+                                new AlignScoreCoral(
                                                 new Pose2d(0, Constants.Drivetrain.leftAlignDistance
                                                                 .to(PARTsUnitType.Meter),
                                                                 new Rotation2d()),
@@ -287,7 +288,7 @@ public class RobotContainer {
                         if (elevatorManualControl)
                                 elevator.goToElevatorL3().schedule();
                         else
-                                new ScoreCoral(
+                                new AlignScoreCoral(
                                                 new Pose2d(0, Constants.Drivetrain.leftAlignDistance
                                                                 .to(PARTsUnitType.Meter),
                                                                 new Rotation2d()),
@@ -299,7 +300,7 @@ public class RobotContainer {
                         if (elevatorManualControl)
                                 elevator.goToElevatorL4().schedule();
                         else
-                                new ScoreCoral(
+                                new AlignScoreCoral(
                                                 new Pose2d(0, Constants.Drivetrain.leftAlignDistance
                                                                 .to(PARTsUnitType.Meter),
                                                                 new Rotation2d()),

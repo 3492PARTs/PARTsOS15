@@ -190,7 +190,7 @@ new Trigger(this::isCoralInExit).onTrue(Commands.runOnce(() -> candle.addState(C
 
   @Override
   public void reset() {
-    stopCoral().schedule();
+    stopCoral();
   }
 
   @Override
@@ -237,13 +237,11 @@ new Trigger(this::isCoralInExit).onTrue(Commands.runOnce(() -> candle.addState(C
         }));
   }
 
-  public Command index() {
-    return super.commandFactory("coralIndex",
-        this.runOnce(() -> {
+  public void index() {
           mPeriodicIO.speed_diff = 0.0;
           mPeriodicIO.rpm = Constants.Coral.kIndexSpeed;
           mPeriodicIO.state = IntakeState.INDEX;
-        }));
+
   }
 
   public void scoreL1() {
@@ -267,14 +265,15 @@ new Trigger(this::isCoralInExit).onTrue(Commands.runOnce(() -> candle.addState(C
     mPeriodicIO.state = IntakeState.SCORE;
   }
 
-  public Command stopCoral() {
-    return super.commandFactory("coralStop",
-        this.runOnce(() -> {
-          mPeriodicIO.rpm = 0.0;
+  public void stopCoral() {
+    mPeriodicIO.rpm = 0.0;
           mPeriodicIO.speed_diff = 0.0;
           mPeriodicIO.state = IntakeState.NONE;
-        }));
 
+  }
+
+  public Command stopCoralCommand() {
+    return super.commandFactory("stopCoralCommand", super.runOnce(() -> stopCoral()));
   }
 
   public Command score() {
@@ -325,7 +324,7 @@ new Trigger(this::isCoralInExit).onTrue(Commands.runOnce(() -> candle.addState(C
             mPeriodicIO.index_debounce = 0;
 
           }
-          index().schedule();
+          index();
         } else {
           mPeriodicIO.index_debounce = 0;
         }
@@ -340,7 +339,7 @@ new Trigger(this::isCoralInExit).onTrue(Commands.runOnce(() -> candle.addState(C
 
           }
 
-          stopCoral().schedule();
+          stopCoral();
           mPeriodicIO.state = IntakeState.READY;
         } else {
           mPeriodicIO.index_debounce = 0;
@@ -356,7 +355,7 @@ new Trigger(this::isCoralInExit).onTrue(Commands.runOnce(() -> candle.addState(C
             mPeriodicIO.index_debounce = 0;
 
           }
-          stopCoral().schedule();
+          stopCoral();
           candle.removeState(CandleState.SCORING);
         }
         break;
