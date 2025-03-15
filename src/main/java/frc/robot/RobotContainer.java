@@ -25,7 +25,6 @@ import frc.robot.Constants.VisionConstants;
 import frc.robot.cmds.coral.ScoreCoral;
 //import frc.robot.commands.algae.AlgaeWrist;
 import frc.robot.subsystems.Algae;
-import frc.robot.subsystems.Camera;
 import frc.robot.subsystems.Candle;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Vision;
@@ -78,7 +77,6 @@ public class RobotContainer {
         // private final AlgaeSysId algae = new AlgaeSysId();
 
         private final Coral coral = new Coral(candle, elevator);
-        private final Camera camera = new Camera();
 
         public final PARTsDrivetrain drivetrain = new PARTsDrivetrain(visionSubsystem,
                         TunerConstants.DrivetrainConstants,
@@ -88,7 +86,7 @@ public class RobotContainer {
         private final Climber climber = new Climber();
 
         private final ArrayList<IPARTsSubsystem> subsystems = new ArrayList<IPARTsSubsystem>(
-                        Arrays.asList(candle, algae, coral, elevator, drivetrain, climber, camera));
+                        Arrays.asList(candle, algae, coral, elevator, drivetrain, climber));
 
         private SendableChooser<Command> autoChooser;
 
