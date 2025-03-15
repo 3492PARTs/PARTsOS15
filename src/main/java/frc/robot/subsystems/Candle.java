@@ -21,9 +21,11 @@ import com.ctre.phoenix.led.StrobeAnimation;
 import com.ctre.phoenix.led.TwinkleAnimation;
 import com.ctre.phoenix.led.CANdle.LEDStripType;
 import com.ctre.phoenix.led.CANdle.VBatOutputMode;
+import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
 import com.ctre.phoenix.led.LarsonAnimation.BounceMode;
 import com.ctre.phoenix.led.TwinkleAnimation.TwinklePercent;
 import com.ctre.phoenix.led.CANdleConfiguration;
+import com.ctre.phoenix.led.ColorFlowAnimation;
 
 import frc.robot.Constants;
 import frc.robot.util.PARTsSubsystem;
@@ -326,6 +328,22 @@ public class Candle extends PARTsSubsystem {
         setAnimation(getTwinkleAnimation(color));
     }
 
+    private void runColorFlowAnimation(Color color) {
+        setAnimation(getColorFlowAnimation(color));
+    }
+
+    private void runColorFlowAnimation(Color color, double speed, Direction direction, int offset) {
+        setAnimation(getColorFlowAnimation(color, speed, direction, offset));
+    }
+
+    private void runFireAnimation() {
+        setAnimation(getFireAnimation());
+    }
+
+    private void runFireAnimation(double brightness, double speed, double sparking, double cooling) {
+        setAnimation(getFireAnimation(brightness, speed, sparking, cooling));
+    }
+
     private void runTwinkleAnimation(Color color, double speed, TwinklePercent twinklePercent, int size) {
         setAnimation(getTwinkleAnimation(color, speed, twinklePercent, size));
     }
@@ -348,9 +366,24 @@ public class Candle extends PARTsSubsystem {
         return new TwinkleAnimation(color.r, color.g, color.b);
     }
 
-    private TwinkleAnimation getTwinkleAnimation(Color color, double speed, TwinklePercent twinklePercent, int size) {
-        //Size max is 7
-        return new TwinkleAnimation(color.r, color.g, color.b, 0, speed, LED_LENGTH, twinklePercent, size);
+    private TwinkleAnimation getTwinkleAnimation(Color color, double speed, TwinklePercent twinklePercent, int offset) {
+        return new TwinkleAnimation(color.r, color.g, color.b, 0, speed, LED_LENGTH, twinklePercent, offset);
+    }
+
+    private ColorFlowAnimation getColorFlowAnimation(Color color) {
+        return new ColorFlowAnimation(color.r, color.g, color.b);
+    }
+
+    private ColorFlowAnimation getColorFlowAnimation(Color color, double speed, Direction direction, int offset) {
+        return new ColorFlowAnimation(color.r, color.g, color.b, 0, speed, LED_LENGTH, direction, offset);
+    }
+
+    private FireAnimation getFireAnimation() {
+        return new FireAnimation();
+    }
+
+    private FireAnimation getFireAnimation(double brightness, double speed, double sparking, double cooling) {
+        return new FireAnimation(brightness, speed, LED_LENGTH, sparking, cooling);
     }
 
     private void setAnimation(Animation a) {
