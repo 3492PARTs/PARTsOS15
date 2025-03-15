@@ -120,7 +120,7 @@ public class Coral extends PARTsSubsystem {
 
     // Trigger sub system error if exists
     // if there was an error but there isn't now remove error
-    if (mPeriodicIO.entryLaserMeasurement == null || validStates. mPeriodicIO.entryLaserMeasurement.status != 0
+    if (mPeriodicIO.entryLaserMeasurement == null || mPeriodicIO.entryLaserMeasurement.status != 0
         || mPeriodicIO.exitLaserMeasurement == null || mPeriodicIO.exitLaserMeasurement.status != 0) {
       if (!mPeriodicIO.error && mPeriodicIO.state != IntakeState.ERROR) {
         mPeriodicIO.error = true;
@@ -316,7 +316,7 @@ public class Coral extends PARTsSubsystem {
           mPeriodicIO.index_debounce++;
 
           // Index for 10 loop run to get the coral in the right place
-          if (mPeriodicIO.index_debounce > 10) {
+          if (mPeriodicIO.index_debounce > 5) {
             mPeriodicIO.index_debounce = 0;
             index().schedule();
           }
@@ -328,10 +328,9 @@ public class Coral extends PARTsSubsystem {
           mPeriodicIO.index_debounce++;
           if (mPeriodicIO.index_debounce > 0) {
             mPeriodicIO.index_debounce = 0;
-            stopCoral().schedule();
-            mPeriodicIO.state = IntakeState.READY;
-
           }
+          stopCoral().schedule();
+          mPeriodicIO.state = IntakeState.READY;
         }
         break;
       case SCORE:
