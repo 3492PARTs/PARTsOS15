@@ -91,10 +91,10 @@ public class Coral extends PARTsSubsystem {
     }
 
     new Trigger(this::isCoralInEntry).onTrue(Commands.runOnce(() -> candle.addState(CandleState.CORAL_ENTERING)))
-    .onFalse(Commands.runOnce(() -> candle.removeState(CandleState.CORAL_ENTERING)));
+        .onFalse(Commands.runOnce(() -> candle.removeState(CandleState.CORAL_ENTERING)));
 
-new Trigger(this::isCoralInExit).onTrue(Commands.runOnce(() -> candle.addState(CandleState.HAS_CORAL)))
-    .onFalse(Commands.runOnce(() -> candle.removeState(CandleState.HAS_CORAL)));
+    new Trigger(this::isCoralInExit).onTrue(Commands.runOnce(() -> candle.addState(CandleState.HAS_CORAL)))
+        .onFalse(Commands.runOnce(() -> candle.removeState(CandleState.HAS_CORAL)));
   }
 
   private static class PeriodicIO {
@@ -385,9 +385,10 @@ new Trigger(this::isCoralInExit).onTrue(Commands.runOnce(() -> candle.addState(C
       if (!mPeriodicIO.error && mPeriodicIO.state != IntakeState.ERROR) {
         mPeriodicIO.error = true;
         mPeriodicIO.state = IntakeState.ERROR;
-        candle.addState((mPeriodicIO.exitLaserMeasurement == null || !okStates.contains(mPeriodicIO.exitLaserMeasurement.status))
-            ? CandleState.CORAL_LASER_EXIT_ERROR
-            : CandleState.CORAL_LASER_ENTRY_ERROR);
+        candle.addState(
+            (mPeriodicIO.exitLaserMeasurement == null || !okStates.contains(mPeriodicIO.exitLaserMeasurement.status))
+                ? CandleState.CORAL_LASER_EXIT_ERROR
+                : CandleState.CORAL_LASER_ENTRY_ERROR);
       }
 
     } else {
@@ -402,27 +403,16 @@ new Trigger(this::isCoralInExit).onTrue(Commands.runOnce(() -> candle.addState(C
 
   private void setCoralCandleState() {
     if (isCoralInEntry()) {
-      if (mPeriodicIO.candleState != CandleState.CORAL_ENTERING) {
-        mPeriodicIO.candleState = CandleState.CORAL_ENTERING;
-        candle.addState(mPeriodicIO.candleState);
-      }
-    } else {
-      if (mPeriodicIO.candleState == CandleState.CORAL_ENTERING) {
-        candle.removeState(mPeriodicIO.candleState);
-        mPeriodicIO.candleState = null;
-      }
-    }
-
-    if (isCoralInExit()) {
-      if (mPeriodicIO.candleState != CandleState.HAS_CORAL) {
-        mPeriodicIO.candleState = CandleState.HAS_CORAL;
-        candle.addState(mPeriodicIO.candleState);
-      }
-    } else {
-      if (mPeriodicIO.candleState == CandleState.HAS_CORAL) {
-        candle.removeState(mPeriodicIO.candleState);
-        mPeriodicIO.candleState = null;
-      }
+      candle.removeState(mPeriodicIO.candleState);
+      mPeriodicIO.candleState = CandleState.CORAL_ENTERING;
+      candle.addState(mPeriodicIO.candleState);
+    } else if (isCoralInExit()) {
+      candle.removeState(mPeriodicIO.candleState);
+      mPeriodicIO.candleState = CandleState.HAS_CORAL;
+      candle.addState(mPeriodicIO.candleState);
+    } else if (mPeriodicIO.candleState != null) {
+      candle.removeState(mPeriodicIO.candleState);
+      mPeriodicIO.candleState = null;
     }
   }
 }
