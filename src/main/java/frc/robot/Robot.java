@@ -7,6 +7,7 @@ package frc.robot;
 import com.ctre.phoenix.led.CANdle;
 
 import au.grapplerobotics.CanBridge;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -40,6 +41,8 @@ public class Robot extends TimedRobot {
     m_robotContainer.constructDashboard();
 
     partsLogger.logCommandScheduler();
+
+    CameraServer.startAutomaticCapture();
   }
 
   @Override
@@ -90,6 +93,7 @@ public class Robot extends TimedRobot {
     if (!Constants.Debug.debug) {
       PARTsDashboard.setTab(DashboardTab.TELEOPERATED);
     }
+
     m_robotContainer.setIdleCandleState();
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
