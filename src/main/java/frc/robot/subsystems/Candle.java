@@ -14,12 +14,15 @@ import java.util.Set;
 import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.FireAnimation;
+import com.ctre.phoenix.led.LarsonAnimation;
 import com.ctre.phoenix.led.RainbowAnimation;
 import com.ctre.phoenix.led.SingleFadeAnimation;
 import com.ctre.phoenix.led.StrobeAnimation;
-
+import com.ctre.phoenix.led.TwinkleAnimation;
 import com.ctre.phoenix.led.CANdle.LEDStripType;
 import com.ctre.phoenix.led.CANdle.VBatOutputMode;
+import com.ctre.phoenix.led.LarsonAnimation.BounceMode;
+import com.ctre.phoenix.led.TwinkleAnimation.TwinklePercent;
 import com.ctre.phoenix.led.CANdleConfiguration;
 
 import frc.robot.Constants;
@@ -212,22 +215,22 @@ public class Candle extends PARTsSubsystem {
             mPeriodicIO.state = CandleState.DISABLED;
 
         //if (previousState != mPeriodicIO.state)
-            setStateAnimation();
+        setStateAnimation();
     }
 
     private void setStateAnimation() {
         switch (mPeriodicIO.state) {
             case ELEVATOR_ERROR:
-                runStrobeAnimation(Color.ORANGE, .75);
+                runLarsonAnimation(Color.ORANGE, .75, BounceMode.Center, 7);
                 break;
             case CORAL_LASER_EXIT_ERROR:
-                runStrobeAnimation(Color.RED, .5);
+                runLarsonAnimation(Color.RED, .75, BounceMode.Center, 7);
                 break;
             case CORAL_LASER_ENTRY_ERROR:
-                runStrobeAnimation(Color.YELLOW, .5);
+                runLarsonAnimation(Color.YELLOW, .75, BounceMode.Center, 7);
                 break;
             case FINE_GRAIN_DRIVE:
-                runBurnyBurnAnimation();
+                runTwinkleAnimation(Color.AQUA, LED_LENGTH, TwinklePercent.Percent76, LED_LENGTH);
                 //runFadeAnimation(Color.YELLOW, .75);
                 break;
             case CORAL_ENTERING:
@@ -311,8 +314,43 @@ public class Candle extends PARTsSubsystem {
         setAnimation(getStrobeAnimation(color, speed));
     }
 
+    private void runLarsonAnimation(Color color) {
+        setAnimation(getLarsonAnimation(color));
+    }
+
+    private void runLarsonAnimation(Color color, double speed, LarsonAnimation.BounceMode bounceMode, int size) {
+        setAnimation(getLarsonAnimation(color, speed, bounceMode, size));
+    }
+
+    private void runTwinkleAnimation(Color color) {
+        setAnimation(getTwinkleAnimation(color));
+    }
+
+    private void runTwinkleAnimation(Color color, double speed, TwinklePercent twinklePercent, int size) {
+        setAnimation(getTwinkleAnimation(color, speed, twinklePercent, size));
+    }
+
     private void runFadeAnimation(Color color, double speed) {
         setAnimation(getFadeAnimation(color, speed));
+    }
+
+    private LarsonAnimation getLarsonAnimation(Color color) {
+        return new LarsonAnimation(color.r, color.g, color.b);
+    }
+
+    private LarsonAnimation getLarsonAnimation(Color color, double speed, LarsonAnimation.BounceMode bounceMode,
+            int size) {
+        //Size max is 7
+        return new LarsonAnimation(color.r, color.g, color.b, 0, speed, LED_LENGTH, bounceMode, size);
+    }
+
+    private TwinkleAnimation getTwinkleAnimation(Color color) {
+        return new TwinkleAnimation(color.r, color.g, color.b);
+    }
+
+    private TwinkleAnimation getTwinkleAnimation(Color color, double speed, TwinklePercent twinklePercent, int size) {
+        //Size max is 7
+        return new TwinkleAnimation(color.r, color.g, color.b, 0, speed, LED_LENGTH, twinklePercent, size);
     }
 
     private void setAnimation(Animation a) {
