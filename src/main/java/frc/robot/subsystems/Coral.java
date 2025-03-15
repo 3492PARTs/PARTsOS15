@@ -292,12 +292,13 @@ public class Coral extends PARTsSubsystem {
         if (isCoralInEntry()) {
           mPeriodicIO.index_debounce++;
 
-          // Index for 10 loop run to get the coral in the right place, or check if in the exit incase it happened too fast
+          // Index for 10 loop run to get the coral in the right place, or check if in the
+          // exit incase it happened too fast
           if (mPeriodicIO.index_debounce > 10 || isCoralInExit()) {
             mPeriodicIO.index_debounce = 0;
-            index().schedule();
-          }
 
+          }
+          index().schedule();
         } else {
           mPeriodicIO.index_debounce = 0;
         }
@@ -309,10 +310,11 @@ public class Coral extends PARTsSubsystem {
 
           if (mPeriodicIO.index_debounce > 1) {
             mPeriodicIO.index_debounce = 0;
-            stopCoral().schedule();
-            mPeriodicIO.state = IntakeState.READY;
+
           }
 
+          stopCoral().schedule();
+          mPeriodicIO.state = IntakeState.READY;
         } else {
           mPeriodicIO.index_debounce = 0;
         }
@@ -325,9 +327,10 @@ public class Coral extends PARTsSubsystem {
           // Let coral be gone for 10 loop runs
           if (mPeriodicIO.index_debounce > 10) {
             mPeriodicIO.index_debounce = 0;
-            stopCoral().schedule();
-            candle.removeState(CandleState.SCORING);
+
           }
+          stopCoral().schedule();
+          candle.removeState(CandleState.SCORING);
         }
         break;
       default:
