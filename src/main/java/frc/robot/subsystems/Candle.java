@@ -157,7 +157,8 @@ public class Candle extends PARTsSubsystem {
         ELEVATOR_L2,
         ELEVATOR_L3,
         ELEVATOR_L4,
-        SCORING
+        SCORING,
+        AUTO_ALIGN
     }
 
     private static class PeriodicIO {
@@ -195,6 +196,8 @@ public class Candle extends PARTsSubsystem {
             mPeriodicIO.state = CandleState.CORAL_LASER_EXIT_ERROR;
         else if (mPeriodicIO.robotStates.contains(CandleState.CORAL_LASER_ENTRY_ERROR))
             mPeriodicIO.state = CandleState.CORAL_LASER_ENTRY_ERROR;
+        else if (mPeriodicIO.robotStates.contains(CandleState.AUTO_ALIGN))
+            mPeriodicIO.state = CandleState.AUTO_ALIGN;
         else if (mPeriodicIO.robotStates.contains(CandleState.SCORING))
             mPeriodicIO.state = CandleState.SCORING;
         else if (mPeriodicIO.robotStates.contains(CandleState.FINE_GRAIN_DRIVE))
@@ -223,17 +226,16 @@ public class Candle extends PARTsSubsystem {
     private void setStateAnimation() {
         switch (mPeriodicIO.state) {
             case ELEVATOR_ERROR:
-                runLarsonAnimation(Color.ORANGE, .75, BounceMode.Center, 7);
+                runLarsonAnimation(Color.ORANGE, 1, BounceMode.Center, 7);
                 break;
             case CORAL_LASER_EXIT_ERROR:
-                runLarsonAnimation(Color.RED, .75, BounceMode.Center, 7);
+                runLarsonAnimation(Color.RED, 1, BounceMode.Center, 7);
                 break;
             case CORAL_LASER_ENTRY_ERROR:
-                runLarsonAnimation(Color.YELLOW, .75, BounceMode.Center, 7);
+                runLarsonAnimation(Color.YELLOW, 1, BounceMode.Center, 7);
                 break;
             case FINE_GRAIN_DRIVE:
-                runTwinkleAnimation(Color.AQUA, LED_LENGTH, TwinklePercent.Percent76, LED_LENGTH);
-                //runFadeAnimation(Color.YELLOW, .75);
+                runTwinkleAnimation(Color.HOT_PINK, .75, TwinklePercent.Percent30, 0);
                 break;
             case CORAL_ENTERING:
                 runFadeAnimation(Color.PURPLE, .75);
@@ -250,7 +252,9 @@ public class Candle extends PARTsSubsystem {
             case DISABLED:
                 setColor(Color.BLUE);
                 break;
-
+            case AUTO_ALIGN:
+                runTwinkleAnimation(Color.AQUA, .75, TwinklePercent.Percent76, 0);
+                break;
             default:
                 break;
         }
@@ -344,8 +348,8 @@ public class Candle extends PARTsSubsystem {
         setAnimation(getFireAnimation(brightness, speed, sparking, cooling));
     }
 
-    private void runTwinkleAnimation(Color color, double speed, TwinklePercent twinklePercent, int size) {
-        setAnimation(getTwinkleAnimation(color, speed, twinklePercent, size));
+    private void runTwinkleAnimation(Color color, double speed, TwinklePercent twinklePercent, int offset) {
+        setAnimation(getTwinkleAnimation(color, speed, twinklePercent, offset));
     }
 
     private void runFadeAnimation(Color color, double speed) {
