@@ -44,7 +44,6 @@ import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.Elevator;
 import com.pathplanner.lib.auto.AutoBuilder;
 
-
 public class RobotContainer {
         private boolean fineGrainDrive = false;
         private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top
@@ -79,7 +78,7 @@ public class RobotContainer {
         private final Elevator elevator = new Elevator(candle);
         // private final ElevatorSysId elevator = new ElevatorSysId();
 
-        private final Algae algae = new Algae();
+        //private final Algae algae = new Algae();
         // private final AlgaeSysId algae = new AlgaeSysId();
 
         private final Coral coral = new Coral(candle, elevator);
@@ -92,7 +91,7 @@ public class RobotContainer {
         private final Climber climber = new Climber();
 
         private final ArrayList<IPARTsSubsystem> subsystems = new ArrayList<IPARTsSubsystem>(
-                        Arrays.asList(candle, algae, coral, elevator, drivetrain, climber));
+                        Arrays.asList(candle, coral, elevator, drivetrain, climber));
 
         private SendableChooser<Command> autoChooser;
 
@@ -126,9 +125,9 @@ public class RobotContainer {
                         else if (fineGrainDrive)
                                 limit *= 0.25;
                         return drive.withVelocityX(-driveController.getLeftY() * limit) // Drive forward with negative Y
-                                                                                        // (forward)
+                                        // (forward)
                                         .withVelocityY(-driveController.getLeftX() * limit) // Drive left with negative
-                                                                                            // X (left)
+                                        // X (left)
                                         .withRotationalRate(-driveController.getRightX() * MaxAngularRate); // Drive
                                                                                                             // counterclockwise
                                                                                                             // with
@@ -163,11 +162,12 @@ public class RobotContainer {
                 // .whileTrue(drivetrain.alignCommand(new Pose2d(-1, 0, new Rotation2d()),
                 // driveController));
 
-        driveController.rightTrigger().whileTrue(new ScoreCoral(
-                new Pose2d(0, new PARTsUnit(-7, PARTsUnitType.Inch).to(PARTsUnitType.Meter), new Rotation2d()),
-                ElevatorState.L2,
-                drivetrain, elevator, coral, candle)); 
-        driveController.leftTrigger().whileTrue(drivetrain.alignDebugCommand());
+                driveController.rightTrigger().whileTrue(new ScoreCoral(
+                                new Pose2d(0, new PARTsUnit(-7, PARTsUnitType.Inch).to(PARTsUnitType.Meter),
+                                                new Rotation2d()),
+                                ElevatorState.L2,
+                                drivetrain, elevator, coral, candle));
+                driveController.leftTrigger().whileTrue(drivetrain.alignDebugCommand());
 
                 // logging
                 drivetrain.registerTelemetry(telemetryLogger::telemeterize);
@@ -175,7 +175,7 @@ public class RobotContainer {
                 // Run SysId routines when holding back/start and X/Y.
                 // Note that each routine should be run exactly once in a single log.
                 /*
-
+                
                  * driveController.back().and(driveController.y()).whileTrue(drivetrain.
                  * sysIdDynamic(Direction.kForward));
                  * driveController.back().and(driveController.x()).whileTrue(drivetrain.
@@ -195,16 +195,17 @@ public class RobotContainer {
 
                 operatorController.axisMagnitudeGreaterThan(5, 0.1)
                                 .onTrue(elevator.joystickElevatorControl(operatorController));
-   
+
                 // =============================================================================================
                 // * */ ------------------------------------- Coral Intake
                 // * */ -------------------------------------------
                 // * */
                 // ---------------------------------------------------------------------------------------------
-               
+
                 buttonBoxController.positive4Trigger().onTrue(coral.intake()).onFalse(coral.stopCoral());
                 buttonBoxController.negative4Trigger().onTrue(coral.reverse()).onFalse(coral.stopCoral());
 
+                operatorController.rightBumper().onTrue(Commands.runOnce(() -> coral.scoreL4(), coral)).onFalse(coral.stopCoral());
 
                 // =============================================================================================
                 // * */ ------------------------------------- Elevator and Score Control
@@ -229,14 +230,14 @@ public class RobotContainer {
                 buttonBoxController.mapTrigger().onTrue(Commands.runOnce(() -> {
                         if (elevatorManualControl)
                                 elevator.goToElevatorL2().schedule();
-                        
-                        else 
+
+                        else
                                 new ScoreCoral(
                                                 new Pose2d(0, Constants.Drivetrain.rightAlignDistance
                                                                 .to(PARTsUnitType.Meter),
                                                                 new Rotation2d()),
                                                 ElevatorState.L2, drivetrain, elevator, coral, candle).schedule();
-        }));
+                }));
 
                 //--------------------- Align, L3, Score --------------------//
                 buttonBoxController.audioTrigger().onTrue(Commands.runOnce(() -> {
@@ -318,12 +319,12 @@ public class RobotContainer {
                 // goToElevatorL4()
                 // TODO: We are migrating to command factory structure. (i.e. creating and using
                 // a command though a function call)
-                operatorController.povUp().onTrue(algae.stow());
-                operatorController.povDown().onTrue(algae.grabReefAlgae());
-                operatorController.povRight().onTrue(algae.groundIntake());
-                operatorController.povLeft().onTrue(algae.stopAlgae());
-                operatorController.leftTrigger().onTrue(Commands.runOnce(algae::reset));
-                operatorController.leftBumper().whileTrue(algae.score());
+                //operatorController.povUp().onTrue(algae.stow());
+                //operatorController.povDown().onTrue(algae.grabReefAlgae());
+                //operatorController.povRight().onTrue(algae.groundIntake());
+                //operatorController.povLeft().onTrue(algae.stopAlgae());
+                //operatorController.leftTrigger().onTrue(Commands.runOnce(algae::reset));
+                //operatorController.leftBumper().whileTrue(algae.score());
 
                 // =============================================================================================
                 // ------------------------------------- Climber
@@ -361,7 +362,7 @@ public class RobotContainer {
                  */
         }
 
-        public void configureAutonomousCommands() {         
+        public void configureAutonomousCommands() {
                 autoChooser = AutoBuilder.buildAutoChooser();
                 SmartDashboard.putData("Auto Chooser", autoChooser);
         }

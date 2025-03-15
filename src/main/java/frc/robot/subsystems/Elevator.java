@@ -76,7 +76,7 @@ public class Elevator extends PARTsSubsystem {
 
     ElevatorState state = ElevatorState.STOW;
 
-    boolean useLaserCan = false;
+    boolean useLaserCan = true;
     int lasercan_error_debounce = 0;
 
     boolean elevator_bottom_limit_error = false;
