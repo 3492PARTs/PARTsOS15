@@ -74,7 +74,7 @@ public final class Constants {
     public static final int StowHeight = 0;
     public static final double L2Height = 8.785;
     public static final double L3Height = 31.9;
-    public static final double L4Height = 72.5; //best so far 74.07373046875
+    public static final double L4Height = 74; //best so far 74.07373046875, 73.59748840332031
     public static final double LowAlgaeHeight = 0;
     public static final double HighAlgaeHeight = 0;
     public static final int L_SWITCH_PORT = 0;
