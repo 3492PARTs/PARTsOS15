@@ -48,15 +48,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "J2"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Elevator L2"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "J2"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Elevator L2"
+                }
+              }
+            ]
           }
         },
         {
