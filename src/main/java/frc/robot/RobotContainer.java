@@ -81,7 +81,7 @@ public class RobotContainer {
         private final Elevator elevator = new Elevator(candle);
         // private final ElevatorSysId elevator = new ElevatorSysId();
 
-        //private final Algae algae = new Algae();
+        private final Algae algae = new Algae();
         // private final AlgaeSysId algae = new AlgaeSysId();
 
         private final Coral coral = new Coral(candle, elevator);
@@ -223,6 +223,10 @@ public class RobotContainer {
 
                 buttonBoxController.enginestartTrigger().onTrue(coral.score());
 
+                buttonBoxController.escTrigger().onTrue(elevator.goToAlgaeLow());
+
+                buttonBoxController.enterTrigger().onTrue(elevator.goToAlgaeHigh());
+
                 //---------------------  Stow --------------------//
                 buttonBoxController.negative1Trigger().onTrue(elevator.goToElevatorStow());
 
@@ -314,18 +318,11 @@ public class RobotContainer {
                 // * */
                 // ---------------------------------------------------------------------------------------------
 
-                // operatorController.leftBumper().whileTrue(new AlgaeIntake(algae,
-                // operatorController));
-                // operatorController.leftTrigger().whileTrue(getAutonomousCommand()));
-                // algae.setDefaultCommand(new AlgaeWrist(algae, operatorController));
+                operatorController.povDown().onTrue(algae.grabReefAlgae());
+                
+                algae.setWristSpeed(operatorController.getLeftY());
+                operatorController.povUp().whileTrue(Commands.runOnce(() -> algae.setIntakeSpeed(.4)));
 
-                // TODO: Please migrate from run command, example Elevator.java - public Command
-                // goToElevatorL4()
-                // TODO: We are migrating to command factory structure. (i.e. creating and using
-                // a command though a function call)
-                //operatorController.povUp().onTrue(algae.stow());
-                //operatorController.povDown().onTrue(algae.grabReefAlgae());
-                //operatorController.povRight().onTrue(algae.groundIntake());
                 //operatorController.povLeft().onTrue(algae.stopAlgae());
                 //operatorController.leftTrigger().onTrue(Commands.runOnce(algae::reset));
                 //operatorController.leftBumper().whileTrue(algae.score());
