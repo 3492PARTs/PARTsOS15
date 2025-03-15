@@ -72,7 +72,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         private Pose3d initialRobotPose3d;
         private Pose3d currentRobotPose3d;
         private Pose3d currentVisionPose3d;
-        private Rotation2d initialRobotRotation2d;
+        private PARTsUnit initialRobotAngleRad;
 
         Pose2d testPose;
         double turnPosNeg;
@@ -153,7 +153,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 () -> {
                                         double[] botPoseTargetSpace = LimelightHelpers.getLimelightNTDoubleArray("",
                                                         "botpose_targetspace");
-                                        initialRobotRotation2d = super.getRotation3d().toRotation2d();
+                                        initialRobotAngleRad = new PARTsUnit(super.getRotation3d().getAngle(), PARTsUnitType.Radian) ;
 
                                         initialRobotPose3d = m_vision.convertToKnownSpace(currentVisionPose3d);
 
@@ -235,12 +235,15 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                         .withVelocityX(0)
                                                         .withVelocityY(0)
                                                         .withRotationalRate(0));
-
-                                        super.resetRotation(
-                                                        initialRobotRotation2d.plus(super.getRotation3d().toRotation2d()
-                                                                        .minus(initialRobotPose3d.getRotation()
-                                                                                        .toRotation2d())));
-
+//initialRobotRotation2d.plus(super.getRotation3d().toRotation2d()
+//                                                                        .minus(initialRobotPose3d.getRotation()
+//                                                                                        .toRotation2d()));
+                                        Rotation2d initialRot = new Rotation2d(initialRobotAngleRad.to(PARTsUnitType.Angle));
+                                        Rotation2d currentRot = new Rotation2d(new PARTsUnit(super.getRotation3d().getAngle(), PARTsUnitType.Radian).to(PARTsUnitType.Angle));
+                                        super.resetRotation(initialRot.plus(currentRot.minus(initialRot)));
+                                        partsNT.setDouble("align/initialRotation", initialRot.getDegrees());
+                                        partsNT.setDouble("align/currentRotation", currentRot.getDegrees());
+                                        partsNT.setDouble("align/diffRotation", initialRot.plus(currentRot.minus(initialRot)).getDegrees());
                                 },
                                 () -> ((xRangeController.atGoal() &&
                                                 yRangeController.atGoal() &&
@@ -390,12 +393,6 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 yRangeController.getVelocityError());
                 partsNT.setDouble("align/Output/thetaVelocityError",
                                 thetaController.getVelocityError());
-
-                partsNT.setDouble("align/InitialRotation", initialRobotRotation2d.getDegrees());
-                partsNT.setDouble("align/currentRotation", super.getRotation3d().toRotation2d().getDegrees());
-                partsNT.setDouble("rotationDiff", super.getRotation3d().toRotation2d()
-                                .minus(initialRobotPose3d.getRotation()
-                                                .toRotation2d()).getDegrees());
         }
 
         private void initialize() {
@@ -514,8 +511,6 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 () -> getCurrentCommand() != null ? getCurrentCommand().getName() : "none",
                                 null);
         }
-
-        /*---------------------------------- AutoBuilder Functions ----------------------------------*/
 
         /*---------------------------------- AutoBuilder Functions ----------------------------------*/
 
