@@ -14,13 +14,18 @@ import java.util.Set;
 import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.FireAnimation;
+import com.ctre.phoenix.led.LarsonAnimation;
 import com.ctre.phoenix.led.RainbowAnimation;
 import com.ctre.phoenix.led.SingleFadeAnimation;
 import com.ctre.phoenix.led.StrobeAnimation;
-
+import com.ctre.phoenix.led.TwinkleAnimation;
 import com.ctre.phoenix.led.CANdle.LEDStripType;
 import com.ctre.phoenix.led.CANdle.VBatOutputMode;
+import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
+import com.ctre.phoenix.led.LarsonAnimation.BounceMode;
+import com.ctre.phoenix.led.TwinkleAnimation.TwinklePercent;
 import com.ctre.phoenix.led.CANdleConfiguration;
+import com.ctre.phoenix.led.ColorFlowAnimation;
 
 import frc.robot.Constants;
 import frc.robot.util.PARTsSubsystem;
@@ -152,7 +157,8 @@ public class Candle extends PARTsSubsystem {
         ELEVATOR_L2,
         ELEVATOR_L3,
         ELEVATOR_L4,
-        SCORING
+        SCORING,
+        AUTO_ALIGN
     }
 
     private static class PeriodicIO {
@@ -190,6 +196,8 @@ public class Candle extends PARTsSubsystem {
             mPeriodicIO.state = CandleState.CORAL_LASER_EXIT_ERROR;
         else if (mPeriodicIO.robotStates.contains(CandleState.CORAL_LASER_ENTRY_ERROR))
             mPeriodicIO.state = CandleState.CORAL_LASER_ENTRY_ERROR;
+        else if (mPeriodicIO.robotStates.contains(CandleState.AUTO_ALIGN))
+            mPeriodicIO.state = CandleState.AUTO_ALIGN;
         else if (mPeriodicIO.robotStates.contains(CandleState.SCORING))
             mPeriodicIO.state = CandleState.SCORING;
         else if (mPeriodicIO.robotStates.contains(CandleState.FINE_GRAIN_DRIVE))
@@ -212,23 +220,22 @@ public class Candle extends PARTsSubsystem {
             mPeriodicIO.state = CandleState.DISABLED;
 
         //if (previousState != mPeriodicIO.state)
-            setStateAnimation();
+        setStateAnimation();
     }
 
     private void setStateAnimation() {
         switch (mPeriodicIO.state) {
             case ELEVATOR_ERROR:
-                runStrobeAnimation(Color.ORANGE, .75);
+                runLarsonAnimation(Color.ORANGE, 1, BounceMode.Center, 7);
                 break;
             case CORAL_LASER_EXIT_ERROR:
-                runStrobeAnimation(Color.RED, .5);
+                runLarsonAnimation(Color.RED, 1, BounceMode.Center, 7);
                 break;
             case CORAL_LASER_ENTRY_ERROR:
-                runStrobeAnimation(Color.YELLOW, .5);
+                runLarsonAnimation(Color.YELLOW, 1, BounceMode.Center, 7);
                 break;
             case FINE_GRAIN_DRIVE:
-                runBurnyBurnAnimation();
-                //runFadeAnimation(Color.YELLOW, .75);
+                runTwinkleAnimation(Color.HOT_PINK, .75, TwinklePercent.Percent30, 0);
                 break;
             case CORAL_ENTERING:
                 runFadeAnimation(Color.PURPLE, .75);
@@ -245,7 +252,9 @@ public class Candle extends PARTsSubsystem {
             case DISABLED:
                 setColor(Color.BLUE);
                 break;
-
+            case AUTO_ALIGN:
+                runTwinkleAnimation(Color.AQUA, .75, TwinklePercent.Percent76, 0);
+                break;
             default:
                 break;
         }
@@ -311,8 +320,74 @@ public class Candle extends PARTsSubsystem {
         setAnimation(getStrobeAnimation(color, speed));
     }
 
+    private void runLarsonAnimation(Color color) {
+        setAnimation(getLarsonAnimation(color));
+    }
+
+    private void runLarsonAnimation(Color color, double speed, LarsonAnimation.BounceMode bounceMode, int size) {
+        setAnimation(getLarsonAnimation(color, speed, bounceMode, size));
+    }
+
+    private void runTwinkleAnimation(Color color) {
+        setAnimation(getTwinkleAnimation(color));
+    }
+
+    private void runColorFlowAnimation(Color color) {
+        setAnimation(getColorFlowAnimation(color));
+    }
+
+    private void runColorFlowAnimation(Color color, double speed, Direction direction, int offset) {
+        setAnimation(getColorFlowAnimation(color, speed, direction, offset));
+    }
+
+    private void runFireAnimation() {
+        setAnimation(getFireAnimation());
+    }
+
+    private void runFireAnimation(double brightness, double speed, double sparking, double cooling) {
+        setAnimation(getFireAnimation(brightness, speed, sparking, cooling));
+    }
+
+    private void runTwinkleAnimation(Color color, double speed, TwinklePercent twinklePercent, int offset) {
+        setAnimation(getTwinkleAnimation(color, speed, twinklePercent, offset));
+    }
+
     private void runFadeAnimation(Color color, double speed) {
         setAnimation(getFadeAnimation(color, speed));
+    }
+
+    private LarsonAnimation getLarsonAnimation(Color color) {
+        return new LarsonAnimation(color.r, color.g, color.b);
+    }
+
+    private LarsonAnimation getLarsonAnimation(Color color, double speed, LarsonAnimation.BounceMode bounceMode,
+            int size) {
+        //Size max is 7
+        return new LarsonAnimation(color.r, color.g, color.b, 0, speed, LED_LENGTH, bounceMode, size);
+    }
+
+    private TwinkleAnimation getTwinkleAnimation(Color color) {
+        return new TwinkleAnimation(color.r, color.g, color.b);
+    }
+
+    private TwinkleAnimation getTwinkleAnimation(Color color, double speed, TwinklePercent twinklePercent, int offset) {
+        return new TwinkleAnimation(color.r, color.g, color.b, 0, speed, LED_LENGTH, twinklePercent, offset);
+    }
+
+    private ColorFlowAnimation getColorFlowAnimation(Color color) {
+        return new ColorFlowAnimation(color.r, color.g, color.b);
+    }
+
+    private ColorFlowAnimation getColorFlowAnimation(Color color, double speed, Direction direction, int offset) {
+        return new ColorFlowAnimation(color.r, color.g, color.b, 0, speed, LED_LENGTH, direction, offset);
+    }
+
+    private FireAnimation getFireAnimation() {
+        return new FireAnimation();
+    }
+
+    private FireAnimation getFireAnimation(double brightness, double speed, double sparking, double cooling) {
+        return new FireAnimation(brightness, speed, LED_LENGTH, sparking, cooling);
     }
 
     private void setAnimation(Animation a) {
