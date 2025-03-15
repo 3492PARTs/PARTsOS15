@@ -228,6 +228,15 @@ new Trigger(this::isCoralInExit).onTrue(Commands.runOnce(() -> candle.addState(C
         }));
   }
 
+  public Command autoIntake() {
+    return super.commandFactory("coralIntake",
+        this.runOnce(() -> {
+          mPeriodicIO.speed_diff = 0.0;
+          mPeriodicIO.rpm = Constants.Coral.kIntakeSpeed;
+          mPeriodicIO.state = IntakeState.INTAKE;
+        })).andThen(new WaitUntilCommand(() -> mPeriodicIO.state == IntakeState.READY));
+  }
+
   public Command reverse() {
     return super.commandFactory("coralReverse",
         this.runOnce(() -> {

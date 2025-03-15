@@ -23,15 +23,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "Elevator Stow"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "I2FS"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Elevator Stow"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "I2FS"
+                }
+              }
+            ]
           }
         },
         {
