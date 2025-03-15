@@ -235,9 +235,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                         .withVelocityX(0)
                                                         .withVelocityY(0)
                                                         .withRotationalRate(0));
-//initialRobotRotation2d.plus(super.getRotation3d().toRotation2d()
-//                                                                        .minus(initialRobotPose3d.getRotation()
-//                                                                                        .toRotation2d()));
+
                                         Rotation2d initialRot = new Rotation2d(initialRobotAngleRad.getValue());
                                         Rotation2d currentRot = new Rotation2d(super.getRotation3d().getAngle());
                                         Rotation2d resetRot = initialRot.plus(currentRot.minus(initialRot)).rotateBy(new Rotation2d(Math.PI));
