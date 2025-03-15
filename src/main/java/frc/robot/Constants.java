@@ -4,7 +4,9 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.config.RobotConfig;
+import static edu.wpi.first.units.Units.Inch;
+
+//import com.pathplanner.lib.config.RobotConfig;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -24,13 +26,22 @@ public final class Constants {
     public static final double MAX_RANGE_VELOCITY = 5.0; // m/s
     public static final double MAX_RANGE_ACCELERATION = 5.0; // 0.5; // m/2^s
 
-    public static final double THETA_P = 8; // Proprotinal
+    public static final double THETA_P = 8.0; // Proprotinal
     public static final double THETA_I = 0.01; // 0.01; //Gradual corretction
     public static final double THETA_D = 0.05; // 0.05; //Smooth oscilattions
 
-    public static final double RANGE_P = 6.0;//1.6;// 0.8;
+    public static final double RANGE_P = 8.0;//1.6;// 0.8;
     public static final double RANGE_I = 0.04;
     public static final double RANGE_D = 0.1;
+
+    public static final PARTsUnit yRControllerTolerance = new PARTsUnit(1, PARTsUnitType.Inch);
+    public static final PARTsUnit xRControllerTolerance = new PARTsUnit(2, PARTsUnitType.Inch);
+    public static final PARTsUnit thetaControllerTolerance = new PARTsUnit(2, PARTsUnitType.Angle);
+
+    public static final double leftSideOffset = 5.5;
+
+    public static final PARTsUnit leftAlignDistance = new PARTsUnit(2, PARTsUnitType.Inch);
+    public static final PARTsUnit rightAlignDistance = new PARTsUnit(-2, PARTsUnitType.Inch);
   }
 
   public static class LimelightData {
@@ -61,16 +72,16 @@ public final class Constants {
     public static final int rightElevatorId = 1;
     public static final int laserCanId = 32;
     public static final int StowHeight = 0;
-    public static final double L2Height = 11.0;
-    public static final double L3Height = 35.0;
-    public static final double L4Height = 72.5;
+    public static final double L2Height = 8.785;
+    public static final double L3Height = 31.9;
+    public static final double L4Height = 74; //best so far 74.07373046875, 73.59748840332031
     public static final double LowAlgaeHeight = 0;
     public static final double HighAlgaeHeight = 0;
     public static final int L_SWITCH_PORT = 0;
     public static final double kP = 1;
     public static final double kI = 0;
     public static final double kD = 0;
-    public static final double kTolerance = 0.5;
+    public static final double kTolerance = 0.25;
     public static final int kIZone = 0;
     public static final int kMaxCurrent = 40;
     public static final int kMaxVelocity = 60;
@@ -130,13 +141,13 @@ public final class Constants {
     public static final int coralRightMotorId = 5;
     public static final int coralLeftMotorId = 6;
     public static final int laserCanId = 30;
-    public static final int canAndColorId = 31;
+    public static final int laserCan2Id = 31;
 
-    public static final double kIntakeSpeed = -0.2;//-0.3;
+    public static final double kIntakeSpeed = -0.15;//-0.3;
     public static final double kReverseSpeed = 0.6;
-    public static final double kL1Speed = -0.4;
+    public static final double kL1Speed = -0.2;
     public static final double kL24Speed = -0.4;
-    public static final double kIndexSpeed = -0.11;
+    public static final double kIndexSpeed = -0.145;
     public static final double kSpeedDifference = kL1Speed * 0.5;
   }
 
