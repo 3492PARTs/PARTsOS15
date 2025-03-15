@@ -125,7 +125,7 @@ public class Coral extends PARTsSubsystem {
     mRightMotor.set(-mPeriodicIO.rpm);
 
     // Help us index a little more if its still detected in entry
-    if (isCoralInEntry() && mPeriodicIO.state == IntakeState.NONE) {
+    if (isCoralInEntry() && mPeriodicIO.state != IntakeState.INTAKE) {
       mPeriodicIO.state = IntakeState.INDEX;
     }
 
