@@ -240,43 +240,47 @@ public class RobotContainer {
 
                 // --------------------- Align, L3, Score --------------------//
                 buttonBoxController.audioTrigger().onTrue(
-                        new ConditionalAlign(manualElevatorControlSupplier, elevator, ElevatorState.L3,
+                                new ConditionalAlign(manualElevatorControlSupplier, elevator, ElevatorState.L3,
                                                 drivetrain, coral, candle, buttonBoxController,
                                                 new Pose2d(0, Constants.Drivetrain.rightAlignDistance
                                                                 .to(PARTsUnitType.Meter),
                                                                 new Rotation2d())));
 
                 // --------------------- Align, L4, Score --------------------//
-                buttonBoxController.cruiseTrigger().onTrue(new ConditionalAlign(manualElevatorControlSupplier, elevator, ElevatorState.L4,
-                drivetrain, coral, candle, buttonBoxController,
-                new Pose2d(0, Constants.Drivetrain.rightAlignDistance
-                                .to(PARTsUnitType.Meter),
-                                new Rotation2d())));
+                buttonBoxController.cruiseTrigger()
+                                .onTrue(new ConditionalAlign(manualElevatorControlSupplier, elevator, ElevatorState.L4,
+                                                drivetrain, coral, candle, buttonBoxController,
+                                                new Pose2d(0, Constants.Drivetrain.rightAlignDistance
+                                                                .to(PARTsUnitType.Meter),
+                                                                new Rotation2d())));
 
                 // *---------------------------------------------------- *//
                 // * ---------------Left Reef Pole Controls ----------- *//
                 // *-----------------------------------------------------*//
 
                 // --------------------- Align, L2, Score --------------------//
-                buttonBoxController.wipeTrigger().onTrue(new ConditionalAlign(manualElevatorControlSupplier, elevator, ElevatorState.L2,
-                drivetrain, coral, candle, buttonBoxController,
-                new Pose2d(0, Constants.Drivetrain.leftAlignDistance
-                                .to(PARTsUnitType.Meter),
-                                new Rotation2d())));
+                buttonBoxController.wipeTrigger()
+                                .onTrue(new ConditionalAlign(manualElevatorControlSupplier, elevator, ElevatorState.L2,
+                                                drivetrain, coral, candle, buttonBoxController,
+                                                new Pose2d(0, Constants.Drivetrain.leftAlignDistance
+                                                                .to(PARTsUnitType.Meter),
+                                                                new Rotation2d())));
 
                 // --------------------- Align, L3, Score --------------------//
-                buttonBoxController.flashTrigger().onTrue(new ConditionalAlign(manualElevatorControlSupplier, elevator, ElevatorState.L3,
-                drivetrain, coral, candle, buttonBoxController,
-                new Pose2d(0, Constants.Drivetrain.leftAlignDistance
-                                .to(PARTsUnitType.Meter),
-                                new Rotation2d())));
+                buttonBoxController.flashTrigger()
+                                .onTrue(new ConditionalAlign(manualElevatorControlSupplier, elevator, ElevatorState.L3,
+                                                drivetrain, coral, candle, buttonBoxController,
+                                                new Pose2d(0, Constants.Drivetrain.leftAlignDistance
+                                                                .to(PARTsUnitType.Meter),
+                                                                new Rotation2d())));
 
                 // --------------------- Align, L4, Score --------------------//
-                buttonBoxController.handleTrigger().onTrue(new ConditionalAlign(manualElevatorControlSupplier, elevator, ElevatorState.L4,
-                drivetrain, coral, candle, buttonBoxController,
-                new Pose2d(0, Constants.Drivetrain.leftAlignDistance
-                                .to(PARTsUnitType.Meter),
-                                new Rotation2d())));
+                buttonBoxController.handleTrigger()
+                                .onTrue(new ConditionalAlign(manualElevatorControlSupplier, elevator, ElevatorState.L4,
+                                                drivetrain, coral, candle, buttonBoxController,
+                                                new Pose2d(0, Constants.Drivetrain.leftAlignDistance
+                                                                .to(PARTsUnitType.Meter),
+                                                                new Rotation2d())));
 
                 // * */
                 // =============================================================================================
@@ -289,8 +293,8 @@ public class RobotContainer {
 
                 operatorController.povLeft().onTrue(algae.stow());
 
-                operatorController.axisMagnitudeGreaterThan(1, 0.1)
-                                .onTrue(algae.joystickAlgaeControl(operatorController));
+                buttonBoxController.povTrigger0().or(buttonBoxController.povTrigger180())
+                                .onTrue(algae.joystickAlgaeControl(buttonBoxController));
 
                 operatorController.povRight().whileTrue(Commands.runOnce(() -> algae.reset()));
 
