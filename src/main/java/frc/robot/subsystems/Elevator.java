@@ -324,7 +324,6 @@ public class Elevator extends PARTsSubsystem {
 
         mElevatorPIDController.reset(getElevatorPosition());
         mElevatorPIDController.setGoal(mPeriodicIO.elevator_target);
-        //mElevatorPIDController.calculate(getElevatorPosition(), mPeriodicIO.elevator_target);
       }
     }).andThen(new WaitUntilCommand(() -> mElevatorPIDController.atGoal() || mPeriodicIO.error)));
   }

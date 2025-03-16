@@ -10,12 +10,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.path.PathPlannerPath;
-
 import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.Radian;
-
-import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -176,19 +171,10 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
                                         turnPosNeg = -Math.signum(botPoseTargetSpace[4]);
 
-                                        /*
-                                         * initialRobotPose3d = initialRobotPose3d.plus(new Transform3d(0,
-                                         * new PARTsUnit(Constants.Drivetrain.leftSideOffset,
-                                         * PARTsUnitType.Inch)
-                                         * .to(PARTsUnitType.Meter),
-                                         * 0, new Rotation3d()));
-                                         */
 
                                         testPose = new Pose2d(initialRobotPose3d.getX(), initialRobotPose3d.getY(),
                                                         new Rotation2d(initialRobotPose3d.getRotation().getAngle()
                                                                         * turnPosNeg));
-
-                                        // super.resetPose(initialRobotPose3d.toPose2d());
 
                                         super.resetPose(testPose);
 
@@ -253,12 +239,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                         .withVelocityY(0)
                                                         .withRotationalRate(0));
 
-                                        Rotation2d initialRot = new Rotation2d(initialRobotAngleRad);
-                                        Rotation2d currentRot = new Rotation2d(super.getRotation3d().getAngle());
-                                        super.resetRotation(initialRot);
-                                        partsNT.setDouble("align/initialRotation", initialRot.getDegrees());
-                                        partsNT.setDouble("align/currentRotation", currentRot.getDegrees());
-                                        // partsNT.setDouble("align/diffRotation", resetRot.getDegrees());
+                                        Rotation2d resetRot = new Rotation2d(initialRobotAngleRad);
+                                        super.resetRotation(resetRot);
                                 },
                                 () -> (tagID <= 0 || (xRangeController.atGoal() &&
                                                 yRangeController.atGoal() &&
@@ -302,9 +284,6 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 },
                                 () -> (true),
                                 this);
-
-                // c = alignCommand(null, null);
-                // c.until(() -> true);
                 c.setName("alignDebug");
                 return c;
         }

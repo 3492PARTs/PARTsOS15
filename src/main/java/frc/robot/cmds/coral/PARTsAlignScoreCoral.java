@@ -3,8 +3,6 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.cmds.coral;
 
-import static edu.wpi.first.units.Units.Meter;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;

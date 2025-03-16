@@ -12,13 +12,11 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
-import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants;
-import frc.robot.util.PARTsNT;
 import frc.robot.util.PARTsSubsystem;
 import frc.robot.util.PARTsUnit;
 import frc.robot.util.PARTsUnit.PARTsUnitType;
@@ -70,15 +68,6 @@ public class Algae extends PARTsSubsystem {
         new TrapezoidProfile.Constraints(
             Constants.Algae.kWristMaxVelocity,
             Constants.Algae.kWristMaxAcceleration));
-
-    // Wrist Feedforward
-  /*mWristFeedForward = new ArmFeedforward(
-        Constants.Algae.kWristKS,
-        Constants.Algae.kWristKG,
-        Constants.Algae.kWristKV,
-        Constants.Algae.kWristKA);
-        */
-
     mWristPIDController.setTolerance(Constants.Algae.kTolerance);
 
     // INTAKE
@@ -118,9 +107,6 @@ public class Algae extends PARTsSubsystem {
     double pidCalc = mWristPIDController.atGoal() ? 0 : mWristPIDController.calculate(Math.toRadians(getWristAngle().getValue()),
        Math.toRadians(mPeriodicIO.wrist_target_angle));
 
-    //double ffCalc = mWristFeedForward.calculate(Math.toRadians(getWristAngle().getValue()),
-        //Math.toRadians(mWristPIDController.getSetpoint().velocity));
-
    mPeriodicIO.wrist_voltage = -pidCalc; //ffCalc;
 
     setWristVoltage(mPeriodicIO.wrist_voltage);
@@ -144,12 +130,9 @@ public class Algae extends PARTsSubsystem {
     super.partsNT.setDouble("Wrist/Current", mWristMotor.getOutputCurrent());
     super.partsNT.setDouble("Wrist/Output", mWristMotor.getAppliedOutput());
     super.partsNT.setDouble("Wrist/Voltage", mPeriodicIO.wrist_voltage);
-    //super.partsNT.setDouble("Wrist/Frequency", mWristAbsEncoder.getFrequency());
-
     super.partsNT.setDouble("Intake/Current", mIntakeMotor.getOutputCurrent());
     super.partsNT.setDouble("Intake/Output", mIntakeMotor.getAppliedOutput());
     super.partsNT.setDouble("Intake/Power", mPeriodicIO.intake_power);
-
     super.partsNT.setString("State", mPeriodicIO.state.toString());
   }
 
