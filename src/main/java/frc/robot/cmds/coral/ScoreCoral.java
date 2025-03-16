@@ -4,8 +4,6 @@
 
 package frc.robot.cmds.coral;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Candle;
 import frc.robot.subsystems.Coral;

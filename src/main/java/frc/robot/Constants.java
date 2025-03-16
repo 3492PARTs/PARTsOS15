@@ -4,10 +4,6 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Inch;
-
-//import com.pathplanner.lib.config.RobotConfig;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.util.PARTsUnit;
@@ -30,9 +26,11 @@ public final class Constants {
     public static final double THETA_I = 0.01; // 0.01; //Gradual corretction
     public static final double THETA_D = 0.05; // 0.05; //Smooth oscilattions
 
-    public static final double RANGE_P = 8.0;//1.6;// 0.8;
+    public static final double RANGE_X_P = 10.0;//1.6;// 0.8;
     public static final double RANGE_I = 0.04;
     public static final double RANGE_D = 0.1;
+
+    public static final double RANGE_Y_P = 15;
 
     public static final PARTsUnit yRControllerTolerance = new PARTsUnit(1, PARTsUnitType.Inch);
     public static final PARTsUnit xRControllerTolerance = new PARTsUnit(2, PARTsUnitType.Inch);

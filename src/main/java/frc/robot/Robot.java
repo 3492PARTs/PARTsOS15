@@ -4,16 +4,9 @@
 
 package frc.robot;
 
-import java.util.ArrayList;
-
-import org.ejml.equation.IntegerSequence.Range;
-
-import com.ctre.phoenix.led.CANdle;
-
 import au.grapplerobotics.CanBridge;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.net.WebServer;
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -47,6 +40,8 @@ public class Robot extends TimedRobot {
     partsLogger.logCommandScheduler();
 
     CameraServer.startAutomaticCapture();
+
+    m_robotContainer.resetStartPose();
   }
 
   @Override

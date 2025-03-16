@@ -10,12 +10,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.path.PathPlannerPath;
-
 import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.Radian;
-
-import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -125,6 +120,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 partsNT.setDouble("Vision/Vision z",
                                 new PARTsUnit(currentVisionPose3d.getRotation().getAngle(), PARTsUnitType.Radian)
                                                 .to(PARTsUnitType.Angle));
+
+                partsNT.setBoolean("align/validTag", tagID > 0);
         }
 
         @Override
@@ -151,6 +148,11 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 super.periodic();
 
                 currentVisionPose3d = m_vision.getPose3d();
+                try {
+                        tagID = m_vision.getTargetID();
+                } catch (ArrayIndexOutOfBoundsException e) {
+                        tagID = -1;
+                }
         }
 
         /*---------------------------------- Custom Public Functions ----------------------------------*/
@@ -158,29 +160,22 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         public Command alignCommand(Pose2d holdDistance, PARTsCommandController controller) {
                 Command c = new FunctionalCommand(
                                 () -> {
-                                        tagID = m_vision.getTargetID();
+
                                         double[] botPoseTargetSpace = LimelightHelpers.getLimelightNTDoubleArray("",
                                                         "botpose_targetspace");
-                                        initialRobotAngleRad = AprilTagData.getAprilTagAngle((int) tagID)
-                                                        .to(PARTsUnitType.Radian);
+
+                                        if (tagID > 0)
+                                                initialRobotAngleRad = AprilTagData.getAprilTagAngle((int) tagID)
+                                                                .to(PARTsUnitType.Radian);
 
                                         initialRobotPose3d = m_vision.convertToKnownSpace(currentVisionPose3d);
 
                                         turnPosNeg = -Math.signum(botPoseTargetSpace[4]);
 
-                                        /*
-                                         * initialRobotPose3d = initialRobotPose3d.plus(new Transform3d(0,
-                                         * new PARTsUnit(Constants.Drivetrain.leftSideOffset,
-                                         * PARTsUnitType.Inch)
-                                         * .to(PARTsUnitType.Meter),
-                                         * 0, new Rotation3d()));
-                                         */
 
                                         testPose = new Pose2d(initialRobotPose3d.getX(), initialRobotPose3d.getY(),
                                                         new Rotation2d(initialRobotPose3d.getRotation().getAngle()
                                                                         * turnPosNeg));
-
-                                        // super.resetPose(initialRobotPose3d.toPose2d());
 
                                         super.resetPose(testPose);
 
@@ -245,14 +240,10 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                         .withVelocityY(0)
                                                         .withRotationalRate(0));
 
-                                        Rotation2d initialRot = new Rotation2d(initialRobotAngleRad);
-                                        Rotation2d currentRot = new Rotation2d(super.getRotation3d().getAngle());
-                                        super.resetRotation(initialRot);
-                                        partsNT.setDouble("align/initialRotation", initialRot.getDegrees());
-                                        partsNT.setDouble("align/currentRotation", currentRot.getDegrees());
-                                        //partsNT.setDouble("align/diffRotation", resetRot.getDegrees());
+                                        Rotation2d resetRot = new Rotation2d(initialRobotAngleRad);
+                                        super.resetRotation(resetRot);
                                 },
-                                () -> ((xRangeController.atGoal() &&
+                                () -> (tagID <= 0 || (xRangeController.atGoal() &&
                                                 yRangeController.atGoal() &&
                                                 thetaController.atGoal())
                                                 || (controller != null &&
@@ -294,9 +285,6 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 },
                                 () -> (true),
                                 this);
-
-                // c = alignCommand(null, null);
-                // c.until(() -> true);
                 c.setName("alignDebug");
                 return c;
         }
@@ -332,7 +320,6 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
                 partsNT.setDouble("align/turnPosNeg", turnPosNeg);
                 partsNT.setDouble("align/aprilTagID", tagID);
-
         }
 
         private void alignCommandExecuteTelemetry(Rotation2d thetaOutput, Pose2d rangeOutput) {
@@ -488,11 +475,13 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                 Constants.Drivetrain.MAX_AIM_ACCELERATION));
                 thetaController.enableContinuousInput(-Math.PI, Math.PI); // Wrpa from -pi to ip
 
-                xRangeController = new ProfiledPIDController(Constants.Drivetrain.RANGE_P, Constants.Drivetrain.RANGE_I,
+                xRangeController = new ProfiledPIDController(Constants.Drivetrain.RANGE_X_P,
+                                Constants.Drivetrain.RANGE_I,
                                 Constants.Drivetrain.RANGE_D,
                                 new TrapezoidProfile.Constraints(Constants.Drivetrain.MAX_RANGE_VELOCITY,
                                                 Constants.Drivetrain.MAX_RANGE_ACCELERATION));
-                yRangeController = new ProfiledPIDController(Constants.Drivetrain.RANGE_P, Constants.Drivetrain.RANGE_I,
+                yRangeController = new ProfiledPIDController(Constants.Drivetrain.RANGE_Y_P,
+                                Constants.Drivetrain.RANGE_I,
                                 Constants.Drivetrain.RANGE_D,
                                 new TrapezoidProfile.Constraints(Constants.Drivetrain.MAX_RANGE_VELOCITY,
                                                 Constants.Drivetrain.MAX_RANGE_ACCELERATION));
