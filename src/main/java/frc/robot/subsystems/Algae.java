@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants;
 import frc.robot.util.PARTsButtonBoxController;
-import frc.robot.util.PARTsCommandController;
 import frc.robot.util.PARTsNT;
 import frc.robot.util.PARTsSubsystem;
 import frc.robot.util.PARTsUnit;
@@ -214,17 +213,15 @@ public class Algae extends PARTsSubsystem {
   public Command joystickAlgaeControl(PARTsButtonBoxController controller) {
     return super.commandFactory("joystickAlgaeControl", this.run(() -> {
       double speed = 0;
-      double intakeSpeed = 0;
       if (controller.povTrigger0().getAsBoolean()) {
-        speed = 0.5;
-        intakeSpeed = -0.5;
-      } else if (controller.povTrigger180().getAsBoolean()) {
         speed = -0.5;
-        intakeSpeed = 0;
+        mPeriodicIO.intake_power = Constants.Algae.kReefIntakeSpeed;
+      } else if (controller.povTrigger180().getAsBoolean()) {
+        speed = 0.5;
+        mPeriodicIO.intake_power = 0;
       }
 
       setWristSpeed(speed);
-      setIntakeSpeed(intakeSpeed);
     }).until(() -> !controller.povTrigger0().getAsBoolean() && !controller.povTrigger180().getAsBoolean())
         .andThen(() -> setWristSpeed(0)));
   }
