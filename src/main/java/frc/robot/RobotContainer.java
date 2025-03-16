@@ -11,7 +11,6 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -19,15 +18,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants.VisionConstants;
 import frc.robot.cmds.algae.Dealgae;
 import frc.robot.cmds.coral.AlignScoreCoral;
 import frc.robot.cmds.coral.ConditionalAlign;
 import frc.robot.cmds.coral.PARTsAlignScoreCoral;
-import frc.robot.cmds.coral.ScoreCoral;
 //import frc.robot.commands.algae.AlgaeWrist;
 import frc.robot.subsystems.Algae;
 import frc.robot.subsystems.Candle;
@@ -39,12 +35,10 @@ import frc.robot.subsystems.PARTsDrivetrain;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.sysid.AlgaeSysId;
 import frc.robot.subsystems.sysid.ElevatorSysId;
-import frc.robot.subsystems.testing.Buttonbox;
 import frc.robot.util.IPARTsSubsystem;
 import frc.robot.util.PARTsButtonBoxController;
 import frc.robot.util.PARTsDashboard;
 import frc.robot.util.PARTsNT;
-import frc.robot.util.PARTsSubsystem;
 import frc.robot.util.PARTsUnit;
 import frc.robot.util.PARTsUnit.PARTsUnitType;
 import frc.robot.subsystems.Coral;
@@ -109,12 +103,6 @@ public class RobotContainer {
 
         BooleanSupplier manualElevatorControlSupplier = () -> elevatorManualControl;
 
-        /*
-         * NetworkTableInstance inst = NetworkTableInstance.getDefault();
-         * StringTopic strTopic = inst.getStringTopic("/Elastic/CANColorValues");
-         * StringPublisher strPub = strTopic.publish(PubSubOption.sendAll(true));
-         */
-
         public RobotContainer() {
                 configureAutonomousCommands();
                 configureBindings();
@@ -169,10 +157,6 @@ public class RobotContainer {
 
                 // reset the field-centric heading on left bumper press
                 driveController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-
-                // driveController.leftTrigger()
-                // .whileTrue(drivetrain.alignCommand(new Pose2d(-1, 0, new Rotation2d()),
-                // driveController));
 
                 driveController.rightTrigger().whileTrue(new PARTsAlignScoreCoral(
                                 new Pose2d(0, new PARTsUnit(-7, PARTsUnitType.Inch).to(PARTsUnitType.Meter),
