@@ -163,5 +163,6 @@ public final class Constants {
   public static class Debug {
     public static boolean logging = true;
     public static boolean debug = true;
+    public static boolean allowAutoControllerDetection = false;
   }
 }

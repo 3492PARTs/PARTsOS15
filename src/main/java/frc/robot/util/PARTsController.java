@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.PS5Controller;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.event.BooleanEvent;
 import edu.wpi.first.wpilibj.event.EventLoop;
+import frc.robot.Constants;
 
 public class PARTsController {
 
@@ -42,38 +43,29 @@ public class PARTsController {
      * @param port The controller port.
      */
     public PARTsController(int port) {
-        if (DriverStation.getJoystickIsXbox(port)) {
-            controllerType = ControllerType.XBOX;
-        } else if (DriverStation.getJoystickName(port).toLowerCase().contains("dualsense")) {
-            controllerType = ControllerType.DS5;
-        } else if (DriverStation.getJoystickName(port).toLowerCase().contains("dualshock")) {
-            // TODO: This might be the wrong name for the DS4.
-            controllerType = ControllerType.DS4;
+        if (Constants.Debug.allowAutoControllerDetection) {
+            if (DriverStation.getJoystickIsXbox(port)) {
+                controllerType = ControllerType.XBOX;
+            } else if (DriverStation.getJoystickName(port).toLowerCase().contains("dualsense")) {
+                controllerType = ControllerType.DS5;
+            } else if (DriverStation.getJoystickName(port).toLowerCase().contains("dualshock")) {
+                // TODO: This might be the wrong name for the DS4.
+                controllerType = ControllerType.DS4;
+            } else {
+                controllerType = ControllerType.OTHER;
+            }
         } else {
-            controllerType = ControllerType.OTHER;
+            controllerType = ControllerType.XBOX;
         }
-        
-        switch (controllerType) {
-            case DS4:
-                dualshockController = new PS4Controller(port);
-                break;
-            case DS5:
-                dualsenseController = new PS5Controller(port);
-                break;
-            case XBOX:
-                xboxController = new XboxController(port);
-                break;
-            case OTHER:
-                joystick = new Joystick(port);
-                break;
-            default:
-                throw new UnsupportedOperationException("Unknown controller option '" + controllerType + "' for PARTsController.");
-        }
-        err_msg = "Unimplemented controller button for " + this.controllerType.name();
+        initialize(port);
     }
 
     public PARTsController(int port, ControllerType controllerType) {
         this.controllerType = controllerType;
+        initialize(port);
+    }
+
+    private void initialize(int port) {
         switch (controllerType) {
             case DS4:
                 dualshockController = new PS4Controller(port);

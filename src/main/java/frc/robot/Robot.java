@@ -98,11 +98,6 @@ public class Robot extends TimedRobot {
       PARTsDashboard.setTab(DashboardTab.TELEOPERATED);
     }
 
-    ArrayList<String> controllers = new ArrayList<>();
-    for (int i = 0; i < DriverStation.kJoystickPorts; i++) {
-      controllers.add("Joystick " + i + ": | Name | " + DriverStation.getJoystickName(i) + " | Type | " + DriverStation.getJoystickType(i));
-    }
-
     m_robotContainer.setIdleCandleState();
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
