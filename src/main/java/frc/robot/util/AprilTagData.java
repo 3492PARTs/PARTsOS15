@@ -75,12 +75,12 @@ public final class AprilTagData {
                     break;
                 case REEF:
                     currHeight = 8.75;
-                    if (i == 18 || i == 10) angle = 135;
-                    if (i == 17 || i == 11) angle = 135+45;
-                    if (i == 22 || i == 6) angle = 135+90;
-                    if (i == 21 || i == 7) angle = 135*2;
-                    if (i == 20 || i == 8) angle = 135-45;
-                    if (i == 19 || i == 9) angle = 135-90;
+                    if (i == 18 || i == 7) angle = 135;
+                    if (i == 17 || i == 8) angle = 135+45;
+                    if (i == 22 || i == 9) angle = 135+90;
+                    if (i == 21 || i == 10) angle = 135*2;
+                    if (i == 20 || i == 11) angle = 135-45;
+                    if (i == 19 || i == 6) angle = 135-90;
                     break;
                 case STATION:
                     currHeight = 55.25;
@@ -148,6 +148,6 @@ public final class AprilTagData {
     }
 
     public static PARTsUnit getAprilTagAngle(int targetID) {
-        return APRILTAG_TAG_OBJECTS[targetID].angle;
+        return APRILTAG_TAG_OBJECTS[targetID - 1].angle;
     }
 }
