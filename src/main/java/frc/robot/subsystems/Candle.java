@@ -226,13 +226,13 @@ public class Candle extends PARTsSubsystem {
     private void setStateAnimation() {
         switch (mPeriodicIO.state) {
             case ELEVATOR_ERROR:
-                runLarsonAnimation(Color.ORANGE, 1, BounceMode.Center, 7);
+                runLarsonAnimation(Color.ORANGE, 0.75, BounceMode.Center, 7);
                 break;
             case CORAL_LASER_EXIT_ERROR:
-                runLarsonAnimation(Color.RED, 1, BounceMode.Center, 7);
+                runLarsonAnimation(Color.RED, 0.75, BounceMode.Center, 7);
                 break;
             case CORAL_LASER_ENTRY_ERROR:
-                runLarsonAnimation(Color.YELLOW, 1, BounceMode.Center, 7);
+                runLarsonAnimation(Color.YELLOW, 0.75, BounceMode.Center, 7);
                 break;
             case FINE_GRAIN_DRIVE:
                 runTwinkleAnimation(Color.HOT_PINK, .75, TwinklePercent.Percent30, 0);
