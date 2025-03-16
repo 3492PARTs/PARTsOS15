@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.cmds.algae.Dealgae;
 import frc.robot.cmds.coral.AlignScoreCoral;
+import frc.robot.cmds.coral.L4ScoreCoral;
 import frc.robot.cmds.coral.ScoreCoral;
 //import frc.robot.commands.algae.AlgaeWrist;
 import frc.robot.subsystems.Algae;
@@ -213,7 +214,7 @@ public class RobotContainer {
                 buttonBoxController.positive4Trigger().onTrue(coral.intake()).onFalse(coral.stopCoralCommand());
                 buttonBoxController.negative4Trigger().onTrue(coral.reverse()).onFalse(coral.stopCoralCommand());
 
-                operatorController.rightBumper().onTrue(Commands.runOnce(() -> coral.scoreL4(), coral)).onFalse(coral.stopCoralCommand());
+                operatorController.rightBumper().onTrue(new L4ScoreCoral(drivetrain, elevator, coral, candle));
 
                 // =============================================================================================
                 // * */ ------------------------------------- Elevator and Score Control
