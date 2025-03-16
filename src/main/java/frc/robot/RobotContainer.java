@@ -48,7 +48,6 @@ import frc.robot.subsystems.Elevator;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
-
 public class RobotContainer {
         private boolean fineGrainDrive = false;
         private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top
@@ -174,7 +173,7 @@ public class RobotContainer {
                                                 new Rotation2d()),
                                 ElevatorState.L2,
                                 drivetrain, elevator, coral, candle));
-                                
+
                 driveController.leftTrigger().whileTrue(drivetrain.alignDebugCommand());
 
                 // logging
@@ -213,7 +212,8 @@ public class RobotContainer {
                 buttonBoxController.positive4Trigger().onTrue(coral.intake()).onFalse(coral.stopCoralCommand());
                 buttonBoxController.negative4Trigger().onTrue(coral.reverse()).onFalse(coral.stopCoralCommand());
 
-                operatorController.rightBumper().onTrue(Commands.runOnce(() -> coral.scoreL4(), coral)).onFalse(coral.stopCoralCommand());
+                operatorController.rightBumper().onTrue(Commands.runOnce(() -> coral.scoreL4(), coral))
+                                .onFalse(coral.stopCoralCommand());
 
                 // =============================================================================================
                 // * */ ------------------------------------- Elevator and Score Control
@@ -325,13 +325,15 @@ public class RobotContainer {
                 operatorController.povDown().onTrue(algae.grabReefAlgae());
 
                 operatorController.povLeft().onTrue(algae.stow());
-                
+
                 operatorController.axisMagnitudeGreaterThan(1, 0.1)
-                .onTrue(algae.joystickAlgaeControl(operatorController));
+                                .onTrue(algae.joystickAlgaeControl(operatorController));
 
                 operatorController.povRight().whileTrue(Commands.runOnce(() -> algae.reset()));
-                
-                operatorController.povUp().whileTrue(Commands.run(() -> algae.setIntakeSpeed(Constants.Algae.kReefIntakeSpeed))).whileFalse(Commands.runOnce(() -> algae.setIntakeSpeed(0)));
+
+                operatorController.povUp()
+                                .whileTrue(Commands.run(() -> algae.setIntakeSpeed(Constants.Algae.kReefIntakeSpeed)))
+                                .whileFalse(Commands.runOnce(() -> algae.setIntakeSpeed(0)));
 
                 //operatorController.povLeft().onTrue(algae.stopAlgae());
                 //operatorController.leftTrigger().onTrue(Commands.runOnce(algae::reset));
@@ -373,7 +375,7 @@ public class RobotContainer {
                  */
         }
 
-        public void configureAutonomousCommands() {   
+        public void configureAutonomousCommands() {
                 NamedCommands.registerCommand("Elevator L2", elevator.elevatorToLevelCommand(ElevatorState.L2));
                 NamedCommands.registerCommand("Intake", coral.autoIntake());
                 NamedCommands.registerCommand("Score", coral.autoScore());
@@ -391,7 +393,7 @@ public class RobotContainer {
                 subsystems.forEach(s -> s.outputTelemetry());
                 partsNT.setBoolean("Manual Mode", elevatorManualControl);
                 partsNT.setDouble("Battery Voltage", RobotController.getBatteryVoltage());
-        }        
+        }
 
         public void stop() {
                 subsystems.forEach(s -> s.stop());
@@ -402,11 +404,12 @@ public class RobotContainer {
         }
 
         public void setCandleDisabledState() {
-                candle.disable();
+                candle.addState(CandleState.DISABLED);
         }
 
         public void setIdleCandleState() {
                 candle.addState(CandleState.IDLE);
+                candle.removeState(CandleState.DISABLED);
         }
 
         public void constructDashboard() {
