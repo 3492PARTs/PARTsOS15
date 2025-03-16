@@ -75,8 +75,8 @@ public final class Constants {
     public static final double L2Height = 8.785;
     public static final double L3Height = 31.9;
     public static final double L4Height = 74; //best so far 74.07373046875, 73.59748840332031
-    public static final double LowAlgaeHeight = 0;
-    public static final double HighAlgaeHeight = 0;
+    public static final double LowAlgaeHeight = 29.47;
+    public static final double HighAlgaeHeight = 55.548;
     public static final int L_SWITCH_PORT = 0;
     public static final double kP = 1;
     public static final double kI = 0;
@@ -121,7 +121,7 @@ public final class Constants {
     public static final double kWristMaxAcceleration = 1380.0;
 
     public static final double kStowAngle = 0;
-    public static final double kDeAlgaeAngle = 150.0;
+    public static final double kDeAlgaeAngle = 139.15;
     public static final double kGroundIntakeAngle = 145.0;
 
     public static final int wristGearRatio = 64 / 1;
