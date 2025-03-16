@@ -43,6 +43,8 @@ public class Robot extends TimedRobot {
     partsLogger.logCommandScheduler();
 
     CameraServer.startAutomaticCapture();
+
+    m_robotContainer.resetStartPose();
   }
 
   @Override
