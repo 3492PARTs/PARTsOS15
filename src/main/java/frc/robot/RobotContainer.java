@@ -103,12 +103,6 @@ public class RobotContainer {
 
         BooleanSupplier manualElevatorControlSupplier = () -> elevatorManualControl;
 
-        /*
-         * NetworkTableInstance inst = NetworkTableInstance.getDefault();
-         * StringTopic strTopic = inst.getStringTopic("/Elastic/CANColorValues");
-         * StringPublisher strPub = strTopic.publish(PubSubOption.sendAll(true));
-         */
-
         public RobotContainer() {
                 configureAutonomousCommands();
                 configureBindings();
