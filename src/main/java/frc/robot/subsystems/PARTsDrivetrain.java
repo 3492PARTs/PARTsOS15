@@ -38,6 +38,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.util.AprilTagData;
 import frc.robot.util.IPARTsSubsystem;
 import frc.robot.util.LimelightHelpers;
+import frc.robot.util.PARTsCommandController;
 import frc.robot.util.PARTsLogger;
 import frc.robot.util.PARTsNT;
 import frc.robot.util.PARTsUnit;
@@ -156,7 +157,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
         /*---------------------------------- Custom Public Functions ----------------------------------*/
 
-        public Command alignCommand(Pose2d holdDistance, CommandXboxController controller) {
+        public Command alignCommand(Pose2d holdDistance, PARTsCommandController controller) {
                 Command c = new FunctionalCommand(
                                 () -> {
 

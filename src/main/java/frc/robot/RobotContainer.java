@@ -37,9 +37,11 @@ import frc.robot.subsystems.sysid.AlgaeSysId;
 import frc.robot.subsystems.sysid.ElevatorSysId;
 import frc.robot.util.IPARTsSubsystem;
 import frc.robot.util.PARTsButtonBoxController;
+import frc.robot.util.PARTsCommandController;
 import frc.robot.util.PARTsDashboard;
 import frc.robot.util.PARTsNT;
 import frc.robot.util.PARTsUnit;
+import frc.robot.util.PARTsController.ControllerType;
 import frc.robot.util.PARTsUnit.PARTsUnitType;
 import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.Elevator;
@@ -64,8 +66,8 @@ public class RobotContainer {
 
         private final Telemetry telemetryLogger = new Telemetry(MaxSpeed);
 
-        private final CommandXboxController driveController = new CommandXboxController(0);
-        private final CommandXboxController operatorController = new CommandXboxController(1);
+        private final PARTsCommandController driveController = new PARTsCommandController(0, ControllerType.XBOX);
+        private final PARTsCommandController operatorController = new PARTsCommandController(1, ControllerType.XBOX);
         private final PARTsButtonBoxController buttonBoxController = new PARTsButtonBoxController(2);
 
         private boolean elevatorManualControl = false;
