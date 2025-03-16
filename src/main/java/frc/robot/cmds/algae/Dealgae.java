@@ -29,11 +29,8 @@ public class Dealgae extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new ParallelCommandGroup(
+      
       elevator.elevatorToLevelCommand(level),
-      algae.grabReefAlgae()
-      // TODO: Make offset pose command, get initial pose, get current pose, get desired pose -> current + translation
-      ),
-      new ParallelCommandGroup(elevator.elevatorToLevelCommand(ElevatorState.STOW), algae.stopAlgae()));
+      algae.grabReefAlgae());
   }
 }

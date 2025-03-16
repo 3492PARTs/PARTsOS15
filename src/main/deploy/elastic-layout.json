@@ -233,6 +233,24 @@
               "period": 0.06,
               "rotation_turns": 2
             }
+          },
+          {
+            "title": "Battery Voltage",
+            "x": 800.0,
+            "y": 600.0,
+            "width": 500.0,
+            "height": 200.0,
+            "type": "Voltage View",
+            "properties": {
+              "topic": "/PARTs/RobotContainer/Battery Voltage",
+              "period": 0.06,
+              "data_type": "double",
+              "min_value": 4.0,
+              "max_value": 13.0,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
           }
         ]
       }
@@ -1208,10 +1226,10 @@
           },
           {
             "title": "Position",
-            "x": 400.0,
-            "y": 200.0,
-            "width": 200.0,
-            "height": 300.0,
+            "x": 1400.0,
+            "y": 0.0,
+            "width": 300.0,
+            "height": 700.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"

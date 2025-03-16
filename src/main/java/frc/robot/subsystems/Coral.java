@@ -260,7 +260,7 @@ public class Coral extends PARTsSubsystem {
     mPeriodicIO.state = IntakeState.SCORE;
   }
 
-  public void scoreL24() {
+  public void scoreL23() {
     // return this.runOnce(() -> {
     mPeriodicIO.speed_diff = 0.0;
     mPeriodicIO.rpm = Constants.Coral.kL24Speed;
@@ -292,8 +292,11 @@ public class Coral extends PARTsSubsystem {
         case STOW:
           scoreL1();
           break;
+        case L4:
+          scoreL4();
+          break;
         default:
-          scoreL24();
+          scoreL23();
           break;
       }
     });
@@ -306,8 +309,11 @@ public class Coral extends PARTsSubsystem {
         case STOW:
           scoreL1();
           break;
+        case L4:
+          scoreL4();
+          break;
         default:
-          scoreL24();
+          scoreL23();
           break;
       }
     }).until(() -> !isCoralInEntry());

@@ -83,8 +83,6 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
         double tagID;
 
-
-
         public PARTsDrivetrain(Vision vision,
                         SwerveDrivetrainConstants drivetrainConstants,
                         SwerveModuleConstants<?, ?, ?>... modules) {
@@ -155,14 +153,15 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         }
 
         /*---------------------------------- Custom Public Functions ----------------------------------*/
-        
+
         public Command alignCommand(Pose2d holdDistance, CommandXboxController controller) {
                 Command c = new FunctionalCommand(
                                 () -> {
                                         tagID = m_vision.getTargetID();
                                         double[] botPoseTargetSpace = LimelightHelpers.getLimelightNTDoubleArray("",
                                                         "botpose_targetspace");
-                                        initialRobotAngleRad = AprilTagData.getAprilTagAngle((int)tagID).to(PARTsUnitType.Radian);
+                                        initialRobotAngleRad = AprilTagData.getAprilTagAngle((int) tagID)
+                                                        .to(PARTsUnitType.Radian);
 
                                         initialRobotPose3d = m_vision.convertToKnownSpace(currentVisionPose3d);
 
@@ -247,9 +246,6 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
                                         Rotation2d initialRot = new Rotation2d(initialRobotAngleRad);
                                         Rotation2d currentRot = new Rotation2d(super.getRotation3d().getAngle());
-                                        // TODO: ANGLE
-                                        //Rotation2d resetRot = initialRot.plus(currentRot.minus(initialRot)).rotateBy(
-                                               // new Rotation2d(getTagAngle().to(PARTsUnitType.Radian)));
                                         super.resetRotation(initialRot);
                                         partsNT.setDouble("align/initialRotation", initialRot.getDegrees());
                                         partsNT.setDouble("align/currentRotation", currentRot.getDegrees());

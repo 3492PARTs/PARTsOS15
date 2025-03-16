@@ -40,8 +40,8 @@ public final class Constants {
 
     public static final double leftSideOffset = 5.5;
 
-    public static final PARTsUnit leftAlignDistance = new PARTsUnit(2, PARTsUnitType.Inch);
-    public static final PARTsUnit rightAlignDistance = new PARTsUnit(-2, PARTsUnitType.Inch);
+    public static final PARTsUnit leftAlignDistance = new PARTsUnit(7, PARTsUnitType.Inch);
+    public static final PARTsUnit rightAlignDistance = new PARTsUnit(-7, PARTsUnitType.Inch);
   }
 
   public static class LimelightData {
