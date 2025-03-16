@@ -11,6 +11,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -20,6 +21,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.VisionConstants;
+import frc.robot.cmds.algae.Dealgae;
+import frc.robot.cmds.coral.AlignScoreCoral;
 import frc.robot.cmds.coral.ScoreCoral;
 //import frc.robot.commands.algae.AlgaeWrist;
 import frc.robot.subsystems.Algae;
@@ -45,6 +48,8 @@ import frc.robot.util.PARTsUnit.PARTsUnitType;
 import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.Elevator;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+
 
 public class RobotContainer {
         private boolean fineGrainDrive = false;
@@ -80,7 +85,7 @@ public class RobotContainer {
         private final Elevator elevator = new Elevator(candle);
         // private final ElevatorSysId elevator = new ElevatorSysId();
 
-        //private final Algae algae = new Algae();
+        private final Algae algae = new Algae();
         // private final AlgaeSysId algae = new AlgaeSysId();
 
         private final Coral coral = new Coral(candle, elevator);
@@ -93,9 +98,11 @@ public class RobotContainer {
         private final Climber climber = new Climber();
 
         private final ArrayList<IPARTsSubsystem> subsystems = new ArrayList<IPARTsSubsystem>(
-                        Arrays.asList(candle, coral, elevator, drivetrain, climber));
+                        Arrays.asList(candle, coral, elevator, drivetrain, climber, algae));
 
         private SendableChooser<Command> autoChooser;
+
+        private PARTsNT partsNT = new PARTsNT("RobotContainer");
 
         /** End Subsystems */
 
@@ -164,11 +171,12 @@ public class RobotContainer {
                 // .whileTrue(drivetrain.alignCommand(new Pose2d(-1, 0, new Rotation2d()),
                 // driveController));
 
-                driveController.rightTrigger().whileTrue(new ScoreCoral(
+                driveController.rightTrigger().whileTrue(new AlignScoreCoral(
                                 new Pose2d(0, new PARTsUnit(-7, PARTsUnitType.Inch).to(PARTsUnitType.Meter),
                                                 new Rotation2d()),
                                 ElevatorState.L2,
                                 drivetrain, elevator, coral, candle));
+                                
                 driveController.leftTrigger().whileTrue(drivetrain.alignDebugCommand());
 
                 // logging
@@ -204,10 +212,10 @@ public class RobotContainer {
                 // * */
                 // ---------------------------------------------------------------------------------------------
 
-                buttonBoxController.positive4Trigger().onTrue(coral.intake()).onFalse(coral.stopCoral());
-                buttonBoxController.negative4Trigger().onTrue(coral.reverse()).onFalse(coral.stopCoral());
+                buttonBoxController.positive4Trigger().onTrue(coral.intake()).onFalse(coral.stopCoralCommand());
+                buttonBoxController.negative4Trigger().onTrue(coral.reverse()).onFalse(coral.stopCoralCommand());
 
-                operatorController.rightBumper().onTrue(Commands.runOnce(() -> coral.scoreL4(), coral)).onFalse(coral.stopCoral());
+                operatorController.rightBumper().onTrue(Commands.runOnce(() -> coral.scoreL4(), coral)).onFalse(coral.stopCoralCommand());
 
                 // =============================================================================================
                 // * */ ------------------------------------- Elevator and Score Control
@@ -220,6 +228,10 @@ public class RobotContainer {
                 }));
 
                 buttonBoxController.enginestartTrigger().onTrue(coral.score());
+
+                buttonBoxController.escTrigger().onTrue(new Dealgae(ElevatorState.A1, elevator, algae));
+
+                buttonBoxController.enterTrigger().onTrue(new Dealgae(ElevatorState.A2, elevator, algae));
 
                 //---------------------  Stow --------------------//
                 buttonBoxController.negative1Trigger().onTrue(elevator.goToElevatorStow());
@@ -234,7 +246,7 @@ public class RobotContainer {
                                 elevator.goToElevatorL2().schedule();
 
                         else
-                                new ScoreCoral(
+                                new AlignScoreCoral(
                                                 new Pose2d(0, Constants.Drivetrain.rightAlignDistance
                                                                 .to(PARTsUnitType.Meter),
                                                                 new Rotation2d()),
@@ -246,7 +258,7 @@ public class RobotContainer {
                         if (elevatorManualControl)
                                 elevator.goToElevatorL3().schedule();
                         else
-                                new ScoreCoral(
+                                new AlignScoreCoral(
                                                 new Pose2d(0, Constants.Drivetrain.rightAlignDistance
                                                                 .to(PARTsUnitType.Meter),
                                                                 new Rotation2d()),
@@ -258,7 +270,7 @@ public class RobotContainer {
                         if (elevatorManualControl)
                                 elevator.goToElevatorL4().schedule();
                         else
-                                new ScoreCoral(
+                                new AlignScoreCoral(
                                                 new Pose2d(0, Constants.Drivetrain.rightAlignDistance
                                                                 .to(PARTsUnitType.Meter),
                                                                 new Rotation2d()),
@@ -274,7 +286,7 @@ public class RobotContainer {
                         if (elevatorManualControl)
                                 elevator.goToElevatorL2().schedule();
                         else
-                                new ScoreCoral(
+                                new AlignScoreCoral(
                                                 new Pose2d(0, Constants.Drivetrain.leftAlignDistance
                                                                 .to(PARTsUnitType.Meter),
                                                                 new Rotation2d()),
@@ -286,7 +298,7 @@ public class RobotContainer {
                         if (elevatorManualControl)
                                 elevator.goToElevatorL3().schedule();
                         else
-                                new ScoreCoral(
+                                new AlignScoreCoral(
                                                 new Pose2d(0, Constants.Drivetrain.leftAlignDistance
                                                                 .to(PARTsUnitType.Meter),
                                                                 new Rotation2d()),
@@ -298,7 +310,7 @@ public class RobotContainer {
                         if (elevatorManualControl)
                                 elevator.goToElevatorL4().schedule();
                         else
-                                new ScoreCoral(
+                                new AlignScoreCoral(
                                                 new Pose2d(0, Constants.Drivetrain.leftAlignDistance
                                                                 .to(PARTsUnitType.Meter),
                                                                 new Rotation2d()),
@@ -312,18 +324,17 @@ public class RobotContainer {
                 // * */
                 // ---------------------------------------------------------------------------------------------
 
-                // operatorController.leftBumper().whileTrue(new AlgaeIntake(algae,
-                // operatorController));
-                // operatorController.leftTrigger().whileTrue(getAutonomousCommand()));
-                // algae.setDefaultCommand(new AlgaeWrist(algae, operatorController));
+                operatorController.povDown().onTrue(algae.grabReefAlgae());
 
-                // TODO: Please migrate from run command, example Elevator.java - public Command
-                // goToElevatorL4()
-                // TODO: We are migrating to command factory structure. (i.e. creating and using
-                // a command though a function call)
-                //operatorController.povUp().onTrue(algae.stow());
-                //operatorController.povDown().onTrue(algae.grabReefAlgae());
-                //operatorController.povRight().onTrue(algae.groundIntake());
+                operatorController.povLeft().onTrue(algae.stow());
+                
+                operatorController.axisMagnitudeGreaterThan(1, 0.1)
+                .onTrue(algae.joystickAlgaeControl(operatorController));
+
+                operatorController.povRight().whileTrue(Commands.runOnce(() -> algae.reset()));
+                
+                operatorController.povUp().whileTrue(Commands.run(() -> algae.setIntakeSpeed(Constants.Algae.kReefIntakeSpeed))).whileFalse(Commands.runOnce(() -> algae.setIntakeSpeed(0)));
+
                 //operatorController.povLeft().onTrue(algae.stopAlgae());
                 //operatorController.leftTrigger().onTrue(Commands.runOnce(algae::reset));
                 //operatorController.leftBumper().whileTrue(algae.score());
@@ -364,7 +375,12 @@ public class RobotContainer {
                  */
         }
 
-        public void configureAutonomousCommands() {
+        public void configureAutonomousCommands() {   
+                NamedCommands.registerCommand("Elevator L2", elevator.elevatorToLevelCommand(ElevatorState.L2));
+                NamedCommands.registerCommand("Intake", coral.autoIntake());
+                NamedCommands.registerCommand("Score", coral.autoScore());
+                NamedCommands.registerCommand("Elevator Stow", elevator.elevatorToLevelCommand(ElevatorState.STOW));
+                NamedCommands.registerCommand("Elevator L4", elevator.elevatorToLevelCommand(ElevatorState.L4));
                 autoChooser = AutoBuilder.buildAutoChooser();
                 SmartDashboard.putData("Auto Chooser", autoChooser);
         }
@@ -375,7 +391,9 @@ public class RobotContainer {
 
         public void outputTelemetry() {
                 subsystems.forEach(s -> s.outputTelemetry());
-        }
+                partsNT.setBoolean("Manual Mode", elevatorManualControl);
+                partsNT.setDouble("Battery Voltage", RobotController.getBatteryVoltage());
+        }        
 
         public void stop() {
                 subsystems.forEach(s -> s.stop());

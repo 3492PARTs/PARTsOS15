@@ -22,17 +22,15 @@ public class Dealgae extends SequentialCommandGroup {
 
   
   /** Creates a new Dealgae. */
-  public Dealgae(ElevatorState level, PARTsDrivetrain drivetrain, Elevator elevator, Algae algae) {
-    addRequirements(drivetrain, elevator, algae);
+  public Dealgae(ElevatorState level, Elevator elevator, Algae algae) {
+    addRequirements( elevator, algae);
 
   
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new ParallelCommandGroup(drivetrain.alignCommand(deAlgaePose2d, null),
+      
       elevator.elevatorToLevelCommand(level),
-      algae.grabReefAlgae()
-      // TODO: Make offset pose command, get initial pose, get current pose, get desired pose -> current + translation
-      ));
+      algae.grabReefAlgae());
   }
 }

@@ -13,7 +13,9 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Radian;
 
+import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -38,6 +40,7 @@ import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants;
 import frc.robot.generated.TunerConstants;
+import frc.robot.util.AprilTagData;
 import frc.robot.util.IPARTsSubsystem;
 import frc.robot.util.LimelightHelpers;
 import frc.robot.util.PARTsLogger;
@@ -72,11 +75,13 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         private Pose3d initialRobotPose3d;
         private Pose3d currentRobotPose3d;
         private Pose3d currentVisionPose3d;
-        private PARTsUnit initialRobotAngleRad;
+        private double initialRobotAngleRad;
 
         Pose2d testPose;
         double turnPosNeg;
         double skewVal;
+
+        double tagID;
 
         public PARTsDrivetrain(Vision vision,
                         SwerveDrivetrainConstants drivetrainConstants,
@@ -148,12 +153,15 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         }
 
         /*---------------------------------- Custom Public Functions ----------------------------------*/
+
         public Command alignCommand(Pose2d holdDistance, CommandXboxController controller) {
                 Command c = new FunctionalCommand(
                                 () -> {
+                                        tagID = m_vision.getTargetID();
                                         double[] botPoseTargetSpace = LimelightHelpers.getLimelightNTDoubleArray("",
                                                         "botpose_targetspace");
-                                        initialRobotAngleRad = new PARTsUnit(super.getRotation3d().getAngle(), PARTsUnitType.Radian) ;
+                                        initialRobotAngleRad = AprilTagData.getAprilTagAngle((int) tagID)
+                                                        .to(PARTsUnitType.Radian);
 
                                         initialRobotPose3d = m_vision.convertToKnownSpace(currentVisionPose3d);
 
@@ -236,13 +244,12 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                         .withVelocityY(0)
                                                         .withRotationalRate(0));
 
-                                        Rotation2d initialRot = new Rotation2d(initialRobotAngleRad.getValue());
+                                        Rotation2d initialRot = new Rotation2d(initialRobotAngleRad);
                                         Rotation2d currentRot = new Rotation2d(super.getRotation3d().getAngle());
-                                        Rotation2d resetRot = initialRot.plus(currentRot.minus(initialRot)).rotateBy(new Rotation2d(Math.PI));
-                                        super.resetRotation(resetRot);
+                                        super.resetRotation(initialRot);
                                         partsNT.setDouble("align/initialRotation", initialRot.getDegrees());
                                         partsNT.setDouble("align/currentRotation", currentRot.getDegrees());
-                                        partsNT.setDouble("align/diffRotation", resetRot.getDegrees());
+                                        //partsNT.setDouble("align/diffRotation", resetRot.getDegrees());
                                 },
                                 () -> ((xRangeController.atGoal() &&
                                                 yRangeController.atGoal() &&
@@ -323,6 +330,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 .to(PARTsUnitType.Angle));
 
                 partsNT.setDouble("align/turnPosNeg", turnPosNeg);
+                partsNT.setDouble("align/aprilTagID", tagID);
 
         }
 
@@ -400,6 +408,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 initializeControllers();
                 sendToDashboard();
                 configureAutoBuilder();
+                AprilTagData.InitAprilTagObjects();
         }
 
         private void sendToDashboard() {

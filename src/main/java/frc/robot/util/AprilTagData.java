@@ -29,7 +29,8 @@ public final class AprilTagData {
     };
 
     public static class AprilTagObject {
-        int tagID = 0;
+        public int tagID = 0;
+        public PARTsUnit angle = new PARTsUnit(0, PARTsUnitType.Angle);
         PARTsUnit height = new PARTsUnit(0, null);
         AprilTagType type = AprilTagType.NONE;
 
@@ -42,14 +43,26 @@ public final class AprilTagData {
             this.type = type;
             tagID = knownID;
         }
+
+        /**
+         * Create a new AprilTag object.
+         * @param height Height in inches.
+         */
+        AprilTagObject(double height, AprilTagType type, int knownID, PARTsUnit angle) {
+            this.height = new PARTsUnit(height, PARTsUnitType.Inch);
+            this.type = type;
+            tagID = knownID;
+            this.angle = angle;
+        }
     }
 
     static final AprilTagObject[] APRILTAG_TAG_OBJECTS = new AprilTagObject[22]; //= {new AprilTagObject(16, AprilTagType.NONE, 0)};
 
     static double centerOffset = 3.25;
-    static final void InitAprilTagObjects() {
+    public static final void InitAprilTagObjects() {
         for (int i=0; i < APRIL_TAG_TYPES.length; i++) {
             double currHeight = 0.0;
+            int angle = 0;
             switch (APRIL_TAG_TYPES[i]) {
                 case CAGE:
                     currHeight = 70.73;
@@ -62,6 +75,12 @@ public final class AprilTagData {
                     break;
                 case REEF:
                     currHeight = 8.75;
+                    if (i == 18 || i == 7) angle = 135;
+                    if (i == 17 || i == 8) angle = 135+45;
+                    if (i == 22 || i == 9) angle = 135+90;
+                    if (i == 21 || i == 10) angle = 135*2;
+                    if (i == 20 || i == 11) angle = 135-45;
+                    if (i == 19 || i == 6) angle = 135-90;
                     break;
                 case STATION:
                     currHeight = 55.25;
@@ -70,10 +89,13 @@ public final class AprilTagData {
                     throw new RuntimeException("AprilTag type is not a valid type!");
             }
 
+
+
             APRILTAG_TAG_OBJECTS[i] = new AprilTagObject(
                 currHeight + centerOffset, 
                 APRIL_TAG_TYPES[i], 
-                i
+                i,
+                new PARTsUnit(angle, PARTsUnitType.Angle)
             );
         }
     }
@@ -123,5 +145,9 @@ public final class AprilTagData {
      */
     public static PARTsUnit getAprilTagHeight(int targetID) {
         return APRILTAG_TAG_OBJECTS[targetID].height;
+    }
+
+    public static PARTsUnit getAprilTagAngle(int targetID) {
+        return APRILTAG_TAG_OBJECTS[targetID - 1].angle;
     }
 }
