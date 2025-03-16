@@ -1,18 +1,147 @@
 {
   "version": 1.0,
-  "grid_size": 128,
+  "grid_size": 100,
   "tabs": [
     {
       "name": "Teleoperated",
       "grid_layout": {
-        "layouts": [],
+        "layouts": [
+          {
+            "title": "LaserExit",
+            "x": 200.0,
+            "y": 600.0,
+            "width": 200.0,
+            "height": 200.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "hasCoral",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 200.0,
+                "height": 200.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/PARTs/Coral/LaserExit/hasCoral",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              }
+            ]
+          },
+          {
+            "title": "LaserEntry",
+            "x": 0.0,
+            "y": 600.0,
+            "width": 200.0,
+            "height": 200.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "hasCoral",
+                "x": 600.0,
+                "y": 200.0,
+                "width": 200.0,
+                "height": 200.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/PARTs/Coral/LaserEntry/hasCoral",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              }
+            ]
+          },
+          {
+            "title": "Candle",
+            "x": 600.0,
+            "y": 400.0,
+            "width": 300.0,
+            "height": 200.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "Animation",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 200.0,
+                "height": 200.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/Candle/Animation",
+                  "period": 0.06,
+                  "data_type": "string",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "State",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 200.0,
+                "height": 200.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/Candle/State",
+                  "period": 0.06,
+                  "data_type": "string",
+                  "show_submit_button": false
+                }
+              }
+            ]
+          },
+          {
+            "title": "Elevator",
+            "x": 400.0,
+            "y": 600.0,
+            "width": 200.0,
+            "height": 200.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "State",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 200.0,
+                "height": 200.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/Elevator/State",
+                  "period": 0.06,
+                  "data_type": "string",
+                  "show_submit_button": false
+                }
+              }
+            ]
+          }
+        ],
         "containers": [
           {
             "title": "Match Time",
-            "x": 500.0,
-            "y": 0.0,
-            "width": 300.0,
-            "height": 200.0,
+            "x": 1300.0,
+            "y": 600.0,
+            "width": 600.0,
+            "height": 300.0,
             "type": "Match Time",
             "properties": {
               "topic": "/PARTs/Robot/Match Time",
@@ -25,7 +154,7 @@
           },
           {
             "title": "Elevator Zero Command",
-            "x": 500.0,
+            "x": 600.0,
             "y": 200.0,
             "width": 300.0,
             "height": 200.0,
@@ -35,6 +164,93 @@
               "period": 0.06,
               "show_type": true
             }
+          },
+          {
+            "title": "limelight",
+            "x": 1300.0,
+            "y": 0.0,
+            "width": 600.0,
+            "height": 600.0,
+            "type": "Camera Stream",
+            "properties": {
+              "topic": "/CameraPublisher/limelight",
+              "period": 0.06,
+              "rotation_turns": 0
+            }
+          },
+          {
+            "title": "FMSInfo",
+            "x": 600.0,
+            "y": 0.0,
+            "width": 700.0,
+            "height": 200.0,
+            "type": "FMSInfo",
+            "properties": {
+              "topic": "/FMSInfo",
+              "period": 0.06
+            }
+          },
+          {
+            "title": "Swerve Drive",
+            "x": 900.0,
+            "y": 200.0,
+            "width": 400.0,
+            "height": 400.0,
+            "type": "SwerveDrive",
+            "properties": {
+              "topic": "/SmartDashboard/PARTsDrivetrain/Swerve Drive",
+              "period": 0.06,
+              "show_robot_rotation": true,
+              "rotation_unit": "Radians"
+            }
+          },
+          {
+            "title": "Manual Mode",
+            "x": 600.0,
+            "y": 600.0,
+            "width": 200.0,
+            "height": 200.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/PARTs/RobotContainer/Manual Mode",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "USB Camera 0",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 600.0,
+            "height": 600.0,
+            "type": "Camera Stream",
+            "properties": {
+              "topic": "/CameraPublisher/USB Camera 0",
+              "period": 0.06,
+              "rotation_turns": 2
+            }
+          },
+          {
+            "title": "Battery Voltage",
+            "x": 800.0,
+            "y": 600.0,
+            "width": 500.0,
+            "height": 200.0,
+            "type": "Voltage View",
+            "properties": {
+              "topic": "/PARTs/RobotContainer/Battery Voltage",
+              "period": 0.06,
+              "data_type": "double",
+              "min_value": 4.0,
+              "max_value": 13.0,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
           }
         ]
       }
@@ -43,7 +259,21 @@
       "name": "Autonomous",
       "grid_layout": {
         "layouts": [],
-        "containers": []
+        "containers": [
+          {
+            "title": "Auto Chooser",
+            "x": 700.0,
+            "y": 0.0,
+            "width": 400.0,
+            "height": 200.0,
+            "type": "ComboBox Chooser",
+            "properties": {
+              "topic": "/SmartDashboard/Auto Chooser",
+              "period": 0.06,
+              "sort_options": false
+            }
+          }
+        ]
       }
     },
     {
@@ -996,10 +1226,10 @@
           },
           {
             "title": "Position",
-            "x": 400.0,
-            "y": 200.0,
-            "width": 200.0,
-            "height": 300.0,
+            "x": 1400.0,
+            "y": 0.0,
+            "width": 300.0,
+            "height": 700.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -1196,75 +1426,6 @@
                 }
               }
             ]
-          },
-          {
-            "title": "Laser",
-            "x": 1024.0,
-            "y": 512.0,
-            "width": 256.0,
-            "height": 384.0,
-            "type": "List Layout",
-            "properties": {
-              "label_position": "TOP"
-            },
-            "children": [
-              {
-                "title": "ambient",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/PARTs/Elevator/Laser/ambient",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "budget_ms",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/PARTs/Elevator/Laser/budget_ms",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "distance",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/PARTs/Elevator/Laser/distance",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "status",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/PARTs/Elevator/Laser/status",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              }
-            ]
           }
         ],
         "containers": [
@@ -1368,6 +1529,97 @@
             ]
           },
           {
+            "title": "Canandcolor",
+            "x": 500.0,
+            "y": 0.0,
+            "width": 200.0,
+            "height": 300.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "Connection",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 200.0,
+                "height": 200.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/PARTs/Coral/Canandcolor/Connection",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              },
+              {
+                "title": "distance",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 200.0,
+                "height": 200.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/Coral/Canandcolor/distance",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "hasCoral",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 200.0,
+                "height": 200.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/PARTs/Coral/Canandcolor/hasCoral",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              }
+            ]
+          },
+          {
+            "title": "Laser",
+            "x": 300.0,
+            "y": 0.0,
+            "width": 200.0,
+            "height": 200.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "hasCoral",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 200.0,
+                "height": 200.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/PARTs/Coral/Laser/hasCoral",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              }
+            ]
+          },
+          {
             "title": "RPM",
             "x": 700.0,
             "y": 0.0,
@@ -1395,183 +1647,11 @@
             ]
           },
           {
-            "title": "LaserEntry",
-            "x": 256.0,
-            "y": 256.0,
-            "width": 256.0,
-            "height": 512.0,
-            "type": "List Layout",
-            "properties": {
-              "label_position": "TOP"
-            },
-            "children": [
-              {
-                "title": "ambient",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/PARTs/Coral/LaserEntry/ambient",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "budget_ms",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/PARTs/Coral/LaserEntry/budget_ms",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "distance",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/PARTs/Coral/LaserEntry/distance",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "hasCoral",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Boolean Box",
-                "properties": {
-                  "topic": "/PARTs/Coral/LaserEntry/hasCoral",
-                  "period": 0.06,
-                  "data_type": "boolean",
-                  "true_color": 4283215696,
-                  "false_color": 4294198070,
-                  "true_icon": "None",
-                  "false_icon": "None"
-                }
-              },
-              {
-                "title": "status",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/PARTs/Coral/LaserEntry/status",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              }
-            ]
-          },
-          {
-            "title": "LaserExit",
-            "x": 512.0,
-            "y": 256.0,
-            "width": 256.0,
-            "height": 512.0,
-            "type": "List Layout",
-            "properties": {
-              "label_position": "TOP"
-            },
-            "children": [
-              {
-                "title": "ambient",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/PARTs/Coral/LaserExit/ambient",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "budget_ms",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/PARTs/Coral/LaserExit/budget_ms",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "distance",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/PARTs/Coral/LaserExit/distance",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "hasCoral",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Boolean Box",
-                "properties": {
-                  "topic": "/PARTs/Coral/LaserExit/hasCoral",
-                  "period": 0.06,
-                  "data_type": "boolean",
-                  "true_color": 4283215696,
-                  "false_color": 4294198070,
-                  "true_icon": "None",
-                  "false_icon": "None"
-                }
-              },
-              {
-                "title": "status",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/PARTs/Coral/LaserExit/status",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              }
-            ]
-          },
-          {
             "title": "Current",
-            "x": 256.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 256.0,
+            "x": 500.0,
+            "y": 300.0,
+            "width": 200.0,
+            "height": 200.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -1581,8 +1661,8 @@
                 "title": "Left",
                 "x": 0.0,
                 "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
+                "width": 200.0,
+                "height": 200.0,
                 "type": "Text Display",
                 "properties": {
                   "topic": "/PARTs/Coral/Current/Left",
@@ -1595,11 +1675,52 @@
                 "title": "Right",
                 "x": 0.0,
                 "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
+                "width": 200.0,
+                "height": 200.0,
                 "type": "Text Display",
                 "properties": {
                   "topic": "/PARTs/Coral/Current/Right",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              }
+            ]
+          },
+          {
+            "title": "Output",
+            "x": 700.0,
+            "y": 300.0,
+            "width": 200.0,
+            "height": 200.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "Left",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 200.0,
+                "height": 200.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/Coral/Output/Left",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Right",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 200.0,
+                "height": 200.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/Coral/Output/Right",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -1958,6 +2079,26 @@
         ],
         "containers": [
           {
+            "title": "Pose",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 1000.0,
+            "height": 500.0,
+            "type": "Field",
+            "properties": {
+              "topic": "/Pose",
+              "period": 0.06,
+              "field_game": "Reefscape",
+              "robot_width": 0.85,
+              "robot_length": 0.85,
+              "show_other_objects": true,
+              "show_trajectories": true,
+              "field_rotation": 0.0,
+              "robot_color": 4294198070,
+              "trajectory_color": 4294967295
+            }
+          },
+          {
             "title": "PARTsDrivetrain",
             "x": 1000.0,
             "y": 0.0,
@@ -1994,19 +2135,6 @@
               "topic": "/SmartDashboard/PARTsDrivetrain/Align",
               "period": 0.06,
               "show_type": false
-            }
-          },
-          {
-            "title": "limelight",
-            "x": 256.0,
-            "y": 0.0,
-            "width": 512.0,
-            "height": 384.0,
-            "type": "Camera Stream",
-            "properties": {
-              "topic": "/CameraPublisher/limelight",
-              "period": 0.06,
-              "rotation_turns": 0
             }
           }
         ]

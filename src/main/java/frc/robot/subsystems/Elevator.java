@@ -290,7 +290,7 @@ public class Elevator extends PARTsSubsystem {
   public double getElevatorPosition() {
     return mLeftEncoder.getPosition();
   }
-
+  
   public void setGantryBlock(boolean b) {
     mPeriodicIO.gantry_blocked = b;
   }

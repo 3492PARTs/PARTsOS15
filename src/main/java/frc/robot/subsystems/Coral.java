@@ -190,7 +190,7 @@ public class Coral extends PARTsSubsystem {
 
   @Override
   public void reset() {
-    stopCoral().schedule();
+    stopCoral();
   }
 
   @Override
@@ -228,6 +228,15 @@ public class Coral extends PARTsSubsystem {
         }));
   }
 
+  public Command autoIntake() {
+    return super.commandFactory("coralIntake",
+        this.runOnce(() -> {
+          mPeriodicIO.speed_diff = 0.0;
+          mPeriodicIO.rpm = Constants.Coral.kIntakeSpeed;
+          mPeriodicIO.state = IntakeState.INTAKE;
+        })).andThen(new WaitUntilCommand(() -> mPeriodicIO.state == IntakeState.READY));
+  }
+
   public Command reverse() {
     return super.commandFactory("coralReverse",
         this.runOnce(() -> {
@@ -237,13 +246,11 @@ public class Coral extends PARTsSubsystem {
         }));
   }
 
-  public Command index() {
-    return super.commandFactory("coralIndex",
-        this.runOnce(() -> {
+  public void index() {
           mPeriodicIO.speed_diff = 0.0;
           mPeriodicIO.rpm = Constants.Coral.kIndexSpeed;
           mPeriodicIO.state = IntakeState.INDEX;
-        }));
+
   }
 
   public void scoreL1() {
@@ -253,7 +260,7 @@ public class Coral extends PARTsSubsystem {
     mPeriodicIO.state = IntakeState.SCORE;
   }
 
-  public void scoreL24() {
+  public void scoreL23() {
     // return this.runOnce(() -> {
     mPeriodicIO.speed_diff = 0.0;
     mPeriodicIO.rpm = Constants.Coral.kL24Speed;
@@ -267,14 +274,15 @@ public class Coral extends PARTsSubsystem {
     mPeriodicIO.state = IntakeState.SCORE;
   }
 
-  public Command stopCoral() {
-    return super.commandFactory("coralStop",
-        this.runOnce(() -> {
-          mPeriodicIO.rpm = 0.0;
+  public void stopCoral() {
+    mPeriodicIO.rpm = 0.0;
           mPeriodicIO.speed_diff = 0.0;
           mPeriodicIO.state = IntakeState.NONE;
-        }));
 
+  }
+
+  public Command stopCoralCommand() {
+    return super.commandFactory("stopCoralCommand", super.runOnce(() -> stopCoral()));
   }
 
   public Command score() {
@@ -284,11 +292,31 @@ public class Coral extends PARTsSubsystem {
         case STOW:
           scoreL1();
           break;
+        case L4:
+          scoreL4();
+          break;
         default:
-          scoreL24();
+          scoreL23();
           break;
       }
     });
+  }
+
+  public Command autoScore() {
+    return this.runOnce(() -> {
+      candle.addState(CandleState.SCORING);
+      switch (elevator.getState()) {
+        case STOW:
+          scoreL1();
+          break;
+        case L4:
+          scoreL4();
+          break;
+        default:
+          scoreL23();
+          break;
+      }
+    }).until(() -> !isCoralInEntry());
   }
 
   public Command scoreCommand() {
@@ -311,7 +339,7 @@ public class Coral extends PARTsSubsystem {
             mPeriodicIO.index_debounce = 0;
 
           }
-          index().schedule();
+          index();
         } else {
           mPeriodicIO.index_debounce = 0;
         }
@@ -326,7 +354,7 @@ public class Coral extends PARTsSubsystem {
 
           }
 
-          stopCoral().schedule();
+          stopCoral();
           mPeriodicIO.state = IntakeState.READY;
         } else {
           mPeriodicIO.index_debounce = 0;
@@ -342,7 +370,7 @@ public class Coral extends PARTsSubsystem {
             mPeriodicIO.index_debounce = 0;
 
           }
-          stopCoral().schedule();
+          stopCoral();
           candle.removeState(CandleState.SCORING);
         }
         break;

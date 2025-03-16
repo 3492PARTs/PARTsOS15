@@ -16,6 +16,7 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants;
 import frc.robot.util.PARTsNT;
 import frc.robot.util.PARTsSubsystem;
@@ -36,7 +37,7 @@ public class Algae extends PARTsSubsystem {
 
   protected SparkMax mWristMotor;
   private final ProfiledPIDController mWristPIDController;
-  private final ArmFeedforward mWristFeedForward;
+  //private final ArmFeedforward mWristFeedForward;
 
   private SparkMax mIntakeMotor;
 
@@ -71,11 +72,12 @@ public class Algae extends PARTsSubsystem {
             Constants.Algae.kWristMaxAcceleration));
 
     // Wrist Feedforward
-    mWristFeedForward = new ArmFeedforward(
+  /*mWristFeedForward = new ArmFeedforward(
         Constants.Algae.kWristKS,
         Constants.Algae.kWristKG,
         Constants.Algae.kWristKV,
         Constants.Algae.kWristKA);
+        */
 
     mWristPIDController.setTolerance(Constants.Algae.kTolerance);
 
@@ -112,13 +114,14 @@ public class Algae extends PARTsSubsystem {
   @Override
   public void periodic() {
     //test
-    double pidCalc = mWristPIDController.calculate(Math.toRadians(getWristAngle().getValue()),
-        Math.toRadians(mPeriodicIO.wrist_target_angle));
+    mWristPIDController.setGoal(mPeriodicIO.wrist_target_angle);
+    double pidCalc = mWristPIDController.atGoal() ? 0 : mWristPIDController.calculate(Math.toRadians(getWristAngle().getValue()),
+       Math.toRadians(mPeriodicIO.wrist_target_angle));
 
-    double ffCalc = mWristFeedForward.calculate(Math.toRadians(getWristAngle().getValue()),
-        Math.toRadians(mWristPIDController.getSetpoint().velocity));
+    //double ffCalc = mWristFeedForward.calculate(Math.toRadians(getWristAngle().getValue()),
+        //Math.toRadians(mWristPIDController.getSetpoint().velocity));
 
-    mPeriodicIO.wrist_voltage = pidCalc + ffCalc;
+   mPeriodicIO.wrist_voltage = -pidCalc; //ffCalc;
 
     setWristVoltage(mPeriodicIO.wrist_voltage);
     setIntakeSpeed(mPeriodicIO.intake_power);
@@ -182,58 +185,16 @@ public class Algae extends PARTsSubsystem {
     }));
   }
 
-  public Command grabReefAlgae1() {
-    return this.run(() -> {
-      mPeriodicIO.wrist_target_angle = Constants.Algae.kDeAlgaeAngle;
-      mPeriodicIO.intake_power = Constants.Algae.kReefIntakeSpeed;
-      mPeriodicIO.state = IntakeState.REEFALGAE;
-    }).until(() -> mIntakeMotor.getOutputCurrent() > 100); //TODO; check output current
-  }
-
-  public Command score() {
-    return this.commandFactory("score", this.runOnce(() -> mPeriodicIO.intake_power = Constants.Algae.kEjectSpeed));
-  }
-
-  public Command score1() {
-    return this.run(() -> {
-      //TODO: check negations
-      if (mPeriodicIO.state == IntakeState.REEFALGAE)
-        mPeriodicIO.intake_power = Constants.Algae.kReefIntakeSpeed;
-      else
-        mPeriodicIO.intake_power = Constants.Algae.kEjectSpeed;
-    }).until(() -> mIntakeMotor.getOutputCurrent() > 100); //TODO: Check output current when no ball
-
-    /* .andThen(() -> mPeriodicIO.wrist_target_angle = Constants.Algae.kStowAngle)
-    .andThen(() -> mPeriodicIO.state = IntakeState.STOW); 
-    */
-  }
-
-  public Command groundIntake() {
-    return super.commandFactory("groundIntake", this.runOnce(() -> {
-      mPeriodicIO.wrist_target_angle = Constants.Algae.kGroundIntakeAngle;
-      mPeriodicIO.intake_power = Constants.Algae.kGroundIntakeSpeed;
-      mPeriodicIO.state = IntakeState.GROUND;
-    }));
-  }
-
-  public Command groundIntake1() {
-    return this.run(() -> {
-      mPeriodicIO.wrist_target_angle = Constants.Algae.kGroundIntakeAngle;
-      mPeriodicIO.intake_power = Constants.Algae.kGroundIntakeSpeed;
-      mPeriodicIO.state = IntakeState.GROUND;
-    }).until(() -> mIntakeMotor.getOutputCurrent() > 100); //TODO: Check output current and then add, may default to stow angle with ball
-  }
-
   public Command stopAlgae() {
     return this.commandFactory("stopAlgae", this.runOnce(() -> {
       mPeriodicIO.intake_power = 0.0;
-      //mPeriodicIO.wrist_target_angle = Constants.Algae.kStowAngle;
+      mPeriodicIO.wrist_target_angle = Constants.Algae.kStowAngle;
     }));
   }
 
   public PARTsUnit getWristAngle() {
 
-    return new PARTsUnit(new PARTsUnit(mWristRelEncoder.getPosition(), PARTsUnitType.Rotations).to(PARTsUnitType.Angle)
+    return new PARTsUnit(new PARTsUnit(-1 * mWristRelEncoder.getPosition(), PARTsUnitType.Rotations).to(PARTsUnitType.Angle)
         / Constants.Algae.wristGearRatio, PARTsUnitType.Angle);
   }
 
@@ -259,6 +220,13 @@ public class Algae extends PARTsSubsystem {
 
   public double getRPS() {
     return mWristRelEncoder.getVelocity() * 60 / Constants.Algae.wristGearRatio; // 16 is the gear reduction
+  }
+
+    public Command joystickAlgaeControl(CommandXboxController controller) {
+    return super.commandFactory("joystickAlgaeControl", this.run(() -> {
+      double speed = controller.getLeftY();
+      setWristSpeed(speed);
+    }).until(() -> Math.abs(controller.getLeftY()) < 0.1).andThen(() -> setWristSpeed(0)));
   }
 
   /*---------------------------------- Custom Private Functions ---------------------------------*/
