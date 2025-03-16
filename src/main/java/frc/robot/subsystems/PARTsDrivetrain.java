@@ -13,7 +13,9 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Radian;
 
+import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -38,6 +40,7 @@ import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants;
 import frc.robot.generated.TunerConstants;
+import frc.robot.util.AprilTagData;
 import frc.robot.util.IPARTsSubsystem;
 import frc.robot.util.LimelightHelpers;
 import frc.robot.util.PARTsLogger;
@@ -77,6 +80,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         Pose2d testPose;
         double turnPosNeg;
         double skewVal;
+
+
 
         public PARTsDrivetrain(Vision vision,
                         SwerveDrivetrainConstants drivetrainConstants,
@@ -148,6 +153,11 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         }
 
         /*---------------------------------- Custom Public Functions ----------------------------------*/
+        public PARTsUnit getTagAngle() {
+                double id = LimelightHelpers.getLimelightNTDouble("limelight", "tid");
+                return AprilTagData.getAprilTagAngle((int) id);
+        }
+
         public Command alignCommand(Pose2d holdDistance, CommandXboxController controller) {
                 Command c = new FunctionalCommand(
                                 () -> {
@@ -238,7 +248,9 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
                                         Rotation2d initialRot = new Rotation2d(initialRobotAngleRad.getValue());
                                         Rotation2d currentRot = new Rotation2d(super.getRotation3d().getAngle());
-                                        Rotation2d resetRot = initialRot.plus(currentRot.minus(initialRot)).rotateBy(new Rotation2d(Math.PI));
+                                        // TODO: ANGLE
+                                        Rotation2d resetRot = initialRot.plus(currentRot.minus(initialRot)).rotateBy(
+                                                new Rotation2d(getTagAngle().to(PARTsUnitType.Radian)));
                                         super.resetRotation(resetRot);
                                         partsNT.setDouble("align/initialRotation", initialRot.getDegrees());
                                         partsNT.setDouble("align/currentRotation", currentRot.getDegrees());
@@ -400,6 +412,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 initializeControllers();
                 sendToDashboard();
                 configureAutoBuilder();
+                AprilTagData.InitAprilTagObjects();
         }
 
         private void sendToDashboard() {
