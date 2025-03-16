@@ -251,7 +251,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                         partsNT.setDouble("align/currentRotation", currentRot.getDegrees());
                                         //partsNT.setDouble("align/diffRotation", resetRot.getDegrees());
                                 },
-                                () -> ((xRangeController.atGoal() &&
+                                () -> (tagID <= 0 || (xRangeController.atGoal() &&
                                                 yRangeController.atGoal() &&
                                                 thetaController.atGoal())
                                                 || (controller != null &&
@@ -487,11 +487,11 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                 Constants.Drivetrain.MAX_AIM_ACCELERATION));
                 thetaController.enableContinuousInput(-Math.PI, Math.PI); // Wrpa from -pi to ip
 
-                xRangeController = new ProfiledPIDController(Constants.Drivetrain.RANGE_P, Constants.Drivetrain.RANGE_I,
+                xRangeController = new ProfiledPIDController(Constants.Drivetrain.RANGE_X_P, Constants.Drivetrain.RANGE_I,
                                 Constants.Drivetrain.RANGE_D,
                                 new TrapezoidProfile.Constraints(Constants.Drivetrain.MAX_RANGE_VELOCITY,
                                                 Constants.Drivetrain.MAX_RANGE_ACCELERATION));
-                yRangeController = new ProfiledPIDController(Constants.Drivetrain.RANGE_P, Constants.Drivetrain.RANGE_I,
+                yRangeController = new ProfiledPIDController(Constants.Drivetrain.RANGE_Y_P, Constants.Drivetrain.RANGE_I,
                                 Constants.Drivetrain.RANGE_D,
                                 new TrapezoidProfile.Constraints(Constants.Drivetrain.MAX_RANGE_VELOCITY,
                                                 Constants.Drivetrain.MAX_RANGE_ACCELERATION));
