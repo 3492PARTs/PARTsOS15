@@ -15,13 +15,16 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.lib.PARTsLib.PARTsLogger;
 import frc.lib.PARTsLib.PARTsNT;
 import frc.lib.PARTsLib.PARTsSubsystem;
 import frc.lib.PARTsLib.PARTsUnit;
 import frc.lib.PARTsLib.PARTsUnit.PARTsUnitType;
 import frc.lib.PARTsLib.CheckPARTs.CheckPARTs;
 import frc.lib.PARTsLib.CheckPARTs.PARTsError;
+import frc.lib.PARTsLib.CheckPARTs.PARTsError.PartStatus;
 import frc.robot.Constants;
 
 public class Algae extends PARTsSubsystem {
@@ -107,6 +110,22 @@ public class Algae extends PARTsSubsystem {
     double intake_power = 0.0;
 
     IntakeState state = IntakeState.STOW;
+
+    boolean selfCheck(SparkMax wrist, SparkMax intake, PARTsLogger logger) {
+      boolean passedCheck = false;
+      double tolerant_wrist_voltage = wrist_voltage - 0.2;
+
+      if (wrist.hasActiveFault() || wrist.hasActiveWarning()) {
+        CheckPARTs.getInstance().getReport(new PARTsError("Algae Motor Error", PartStatus.MOTOR_FAILURE, logger));
+        return false;
+      }
+
+      if (wrist.getBusVoltage() >= tolerant_wrist_voltage
+      /* && intake.getAppliedOutput() == intake_power */) {
+        passedCheck = true;
+      }
+      return passedCheck;
+    }
   }
 
   /*-------------------------------- Generic Subsystem Functions --------------------------------*/
@@ -124,6 +143,8 @@ public class Algae extends PARTsSubsystem {
 
     mWristMotor.setVoltage(mPeriodicIO.wrist_voltage);
     mIntakeMotor.set(mPeriodicIO.intake_power);
+
+    mPeriodicIO.selfCheck(mWristMotor, mIntakeMotor, partsLogger);
   }
 
   @Override

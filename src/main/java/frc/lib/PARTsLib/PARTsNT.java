@@ -15,6 +15,9 @@ import edu.wpi.first.networktables.StringEntry;
 import edu.wpi.first.networktables.StringTopic;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.lib.ElasticLib.Elastic;
+import frc.lib.ElasticLib.Elastic.Notification;
+import frc.lib.ElasticLib.Elastic.Notification.NotificationLevel;
 
 /**
  * PARTs NetworkTables Easy API.<p>
@@ -419,5 +422,10 @@ public class PARTsNT {
      */
     public void putSmartDashboardSendable(String key, Sendable data) {
         SmartDashboard.putData(String.format("%s/%s", name, key), data);
+    }
+
+
+    public void sendNotificationToElasticDashboard(NotificationLevel notificationLevel, String message) {
+        Elastic.sendNotification(new Notification(notificationLevel, name, message));
     }
 }
