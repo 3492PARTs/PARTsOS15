@@ -124,6 +124,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 partsNT.setDouble("Vision/Vision z",
                                 new PARTsUnit(currentVisionPose3d.getRotation().getAngle(), PARTsUnitType.Radian)
                                                 .to(PARTsUnitType.Angle));
+
+                                                partsNT.setBoolean("align/validTag", tagID > 0);
         }
 
         @Override
@@ -150,6 +152,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 super.periodic();
 
                 currentVisionPose3d = m_vision.getPose3d();
+                tagID = m_vision.getTargetID();
         }
 
         /*---------------------------------- Custom Public Functions ----------------------------------*/
@@ -157,11 +160,13 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         public Command alignCommand(Pose2d holdDistance, CommandXboxController controller) {
                 Command c = new FunctionalCommand(
                                 () -> {
-                                        tagID = m_vision.getTargetID();
+                                        
                                         double[] botPoseTargetSpace = LimelightHelpers.getLimelightNTDoubleArray("",
                                                         "botpose_targetspace");
-                                        initialRobotAngleRad = AprilTagData.getAprilTagAngle((int) tagID)
-                                                        .to(PARTsUnitType.Radian);
+
+                                        if (tagID > 0)
+                                                initialRobotAngleRad = AprilTagData.getAprilTagAngle((int) tagID)
+                                                                .to(PARTsUnitType.Radian);
 
                                         initialRobotPose3d = m_vision.convertToKnownSpace(currentVisionPose3d);
 
@@ -249,7 +254,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                         super.resetRotation(initialRot);
                                         partsNT.setDouble("align/initialRotation", initialRot.getDegrees());
                                         partsNT.setDouble("align/currentRotation", currentRot.getDegrees());
-                                        //partsNT.setDouble("align/diffRotation", resetRot.getDegrees());
+                                        // partsNT.setDouble("align/diffRotation", resetRot.getDegrees());
                                 },
                                 () -> (tagID <= 0 || (xRangeController.atGoal() &&
                                                 yRangeController.atGoal() &&
@@ -331,7 +336,6 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
                 partsNT.setDouble("align/turnPosNeg", turnPosNeg);
                 partsNT.setDouble("align/aprilTagID", tagID);
-
         }
 
         private void alignCommandExecuteTelemetry(Rotation2d thetaOutput, Pose2d rangeOutput) {
@@ -487,11 +491,13 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                 Constants.Drivetrain.MAX_AIM_ACCELERATION));
                 thetaController.enableContinuousInput(-Math.PI, Math.PI); // Wrpa from -pi to ip
 
-                xRangeController = new ProfiledPIDController(Constants.Drivetrain.RANGE_X_P, Constants.Drivetrain.RANGE_I,
+                xRangeController = new ProfiledPIDController(Constants.Drivetrain.RANGE_X_P,
+                                Constants.Drivetrain.RANGE_I,
                                 Constants.Drivetrain.RANGE_D,
                                 new TrapezoidProfile.Constraints(Constants.Drivetrain.MAX_RANGE_VELOCITY,
                                                 Constants.Drivetrain.MAX_RANGE_ACCELERATION));
-                yRangeController = new ProfiledPIDController(Constants.Drivetrain.RANGE_Y_P, Constants.Drivetrain.RANGE_I,
+                yRangeController = new ProfiledPIDController(Constants.Drivetrain.RANGE_Y_P,
+                                Constants.Drivetrain.RANGE_I,
                                 Constants.Drivetrain.RANGE_D,
                                 new TrapezoidProfile.Constraints(Constants.Drivetrain.MAX_RANGE_VELOCITY,
                                                 Constants.Drivetrain.MAX_RANGE_ACCELERATION));
