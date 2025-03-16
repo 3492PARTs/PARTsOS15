@@ -194,6 +194,11 @@ public class RobotContainer {
 
                 operatorController.axisMagnitudeGreaterThan(5, 0.1)
                                 .onTrue(elevator.joystickElevatorControl(operatorController));
+                
+                operatorController.a().onTrue(elevator.goToElevatorStow());
+                operatorController.b().onTrue(elevator.goToElevatorL2());
+                operatorController.y().onTrue(elevator.goToElevatorL3());
+                operatorController.x().onTrue(elevator.goToElevatorL4());
 
                 // =============================================================================================
                 // * */ ------------------------------------- Coral Intake
@@ -203,9 +208,14 @@ public class RobotContainer {
 
                 buttonBoxController.positive4Trigger().onTrue(coral.intake()).onFalse(coral.stopCoralCommand());
                 buttonBoxController.negative4Trigger().onTrue(coral.reverse()).onFalse(coral.stopCoralCommand());
-
+                
+                /*
                 operatorController.rightBumper().onTrue(Commands.runOnce(() -> coral.scoreL4(), coral))
                                 .onFalse(coral.stopCoralCommand());
+                */
+
+                operatorController.rightBumper().onTrue(coral.intake()).onFalse(coral.stopCoralCommand());
+                operatorController.leftBumper().onTrue(coral.reverse()).onFalse(coral.stopCoralCommand());
 
                 // =============================================================================================
                 // * */ ------------------------------------- Elevator and Score Control
@@ -218,6 +228,7 @@ public class RobotContainer {
                 }));
 
                 buttonBoxController.enginestartTrigger().onTrue(coral.score());
+                operatorController.rightTrigger().onTrue(coral.score());
 
                 buttonBoxController.escTrigger().onTrue(new Dealgae(ElevatorState.A1, elevator, algae));
 
