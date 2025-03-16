@@ -4,27 +4,27 @@ import static edu.wpi.first.units.Units.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.function.BooleanSupplier;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants.VisionConstants;
 import frc.robot.cmds.algae.Dealgae;
 import frc.robot.cmds.coral.AlignScoreCoral;
 import frc.robot.cmds.coral.L4ScoreCoral;
-import frc.robot.cmds.coral.ScoreCoral;
+import frc.robot.cmds.coral.ConditionalAlign;
+import frc.robot.cmds.coral.PARTsAlignScoreCoral;
 //import frc.robot.commands.algae.AlgaeWrist;
 import frc.robot.subsystems.Algae;
 import frc.robot.subsystems.Candle;
@@ -36,19 +36,18 @@ import frc.robot.subsystems.PARTsDrivetrain;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.sysid.AlgaeSysId;
 import frc.robot.subsystems.sysid.ElevatorSysId;
-import frc.robot.subsystems.testing.Buttonbox;
 import frc.robot.util.IPARTsSubsystem;
 import frc.robot.util.PARTsButtonBoxController;
+import frc.robot.util.PARTsCommandController;
 import frc.robot.util.PARTsDashboard;
 import frc.robot.util.PARTsNT;
-import frc.robot.util.PARTsSubsystem;
 import frc.robot.util.PARTsUnit;
+import frc.robot.util.PARTsController.ControllerType;
 import frc.robot.util.PARTsUnit.PARTsUnitType;
 import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.Elevator;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-
 
 public class RobotContainer {
         private boolean fineGrainDrive = false;
@@ -68,8 +67,8 @@ public class RobotContainer {
 
         private final Telemetry telemetryLogger = new Telemetry(MaxSpeed);
 
-        private final CommandXboxController driveController = new CommandXboxController(0);
-        private final CommandXboxController operatorController = new CommandXboxController(1);
+        private final PARTsCommandController driveController = new PARTsCommandController(0, ControllerType.XBOX);
+        private final PARTsCommandController operatorController = new PARTsCommandController(1, ControllerType.XBOX);
         private final PARTsButtonBoxController buttonBoxController = new PARTsButtonBoxController(2);
 
         private boolean elevatorManualControl = false;
@@ -105,11 +104,7 @@ public class RobotContainer {
 
         /** End Subsystems */
 
-        /*
-         * NetworkTableInstance inst = NetworkTableInstance.getDefault();
-         * StringTopic strTopic = inst.getStringTopic("/Elastic/CANColorValues");
-         * StringPublisher strPub = strTopic.publish(PubSubOption.sendAll(true));
-         */
+        BooleanSupplier manualElevatorControlSupplier = () -> elevatorManualControl;
 
         public RobotContainer() {
                 configureAutonomousCommands();
@@ -166,17 +161,13 @@ public class RobotContainer {
                 // reset the field-centric heading on left bumper press
                 driveController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-                // driveController.leftTrigger()
-                // .whileTrue(drivetrain.alignCommand(new Pose2d(-1, 0, new Rotation2d()),
-                // driveController));
-
-                driveController.rightTrigger().whileTrue(new AlignScoreCoral(
+                driveController.rightTrigger().whileTrue(new PARTsAlignScoreCoral(
                                 new Pose2d(0, new PARTsUnit(-7, PARTsUnitType.Inch).to(PARTsUnitType.Meter),
                                                 new Rotation2d()),
                                 ElevatorState.L2,
-                                drivetrain, elevator, coral, candle));
-                                
-                driveController.leftTrigger().whileTrue(drivetrain.alignDebugCommand());
+                                drivetrain, elevator, coral, candle, buttonBoxController));
+
+                driveController.leftTrigger().whileTrue(elevator.elevatorToLevelCommand(ElevatorState.L2));
 
                 // logging
                 drivetrain.registerTelemetry(telemetryLogger::telemeterize);
@@ -184,7 +175,7 @@ public class RobotContainer {
                 // Run SysId routines when holding back/start and X/Y.
                 // Note that each routine should be run exactly once in a single log.
                 /*
-                
+                 * 
                  * driveController.back().and(driveController.y()).whileTrue(drivetrain.
                  * sysIdDynamic(Direction.kForward));
                  * driveController.back().and(driveController.x()).whileTrue(drivetrain.
@@ -232,89 +223,60 @@ public class RobotContainer {
 
                 buttonBoxController.enterTrigger().onTrue(new Dealgae(ElevatorState.A2, elevator, algae));
 
-                //---------------------  Stow --------------------//
+                // --------------------- Stow --------------------//
                 buttonBoxController.negative1Trigger().onTrue(elevator.goToElevatorStow());
 
-                //*---------------------------------------------------- *//
-                //* ---------------Right Reef Pole Controls ----------- *//
-                //*-----------------------------------------------------*//
+                // *---------------------------------------------------- *//
+                // * ---------------Right Reef Pole Controls ----------- *//
+                // *-----------------------------------------------------*//
 
-                //--------------------- Align, L2, Score --------------------//
-                buttonBoxController.mapTrigger().onTrue(Commands.runOnce(() -> {
-                        if (elevatorManualControl)
-                                elevator.goToElevatorL2().schedule();
-
-                        else
-                                new AlignScoreCoral(
+                // --------------------- Align, L2, Score --------------------//
+                buttonBoxController.mapTrigger()
+                                .onTrue(new ConditionalAlign(manualElevatorControlSupplier, elevator, ElevatorState.L2,
+                                                drivetrain, coral, candle, buttonBoxController,
                                                 new Pose2d(0, Constants.Drivetrain.rightAlignDistance
                                                                 .to(PARTsUnitType.Meter),
-                                                                new Rotation2d()),
-                                                ElevatorState.L2, drivetrain, elevator, coral, candle).schedule();
-                }));
+                                                                new Rotation2d())));
 
-                //--------------------- Align, L3, Score --------------------//
-                buttonBoxController.audioTrigger().onTrue(Commands.runOnce(() -> {
-                        if (elevatorManualControl)
-                                elevator.goToElevatorL3().schedule();
-                        else
-                                new AlignScoreCoral(
+                // --------------------- Align, L3, Score --------------------//
+                buttonBoxController.audioTrigger().onTrue(
+                        new ConditionalAlign(manualElevatorControlSupplier, elevator, ElevatorState.L3,
+                                                drivetrain, coral, candle, buttonBoxController,
                                                 new Pose2d(0, Constants.Drivetrain.rightAlignDistance
                                                                 .to(PARTsUnitType.Meter),
-                                                                new Rotation2d()),
-                                                ElevatorState.L3, drivetrain, elevator, coral, candle).schedule();
-                }));
+                                                                new Rotation2d())));
 
-                //--------------------- Align, L4, Score --------------------//
-                buttonBoxController.cruiseTrigger().onTrue(Commands.runOnce(() -> {
-                        if (elevatorManualControl)
-                                elevator.goToElevatorL4().schedule();
-                        else
-                                new AlignScoreCoral(
-                                                new Pose2d(0, Constants.Drivetrain.rightAlignDistance
-                                                                .to(PARTsUnitType.Meter),
-                                                                new Rotation2d()),
-                                                ElevatorState.L4, drivetrain, elevator, coral, candle).schedule();
-                }));
+                // --------------------- Align, L4, Score --------------------//
+                buttonBoxController.cruiseTrigger().onTrue(new ConditionalAlign(manualElevatorControlSupplier, elevator, ElevatorState.L4,
+                drivetrain, coral, candle, buttonBoxController,
+                new Pose2d(0, Constants.Drivetrain.rightAlignDistance
+                                .to(PARTsUnitType.Meter),
+                                new Rotation2d())));
 
-                //*---------------------------------------------------- *//
-                //* ---------------Left Reef Pole Controls ----------- *//
-                //*-----------------------------------------------------*//
+                // *---------------------------------------------------- *//
+                // * ---------------Left Reef Pole Controls ----------- *//
+                // *-----------------------------------------------------*//
 
-                //--------------------- Align, L2, Score --------------------//
-                buttonBoxController.wipeTrigger().onTrue(Commands.runOnce(() -> {
-                        if (elevatorManualControl)
-                                elevator.goToElevatorL2().schedule();
-                        else
-                                new AlignScoreCoral(
-                                                new Pose2d(0, Constants.Drivetrain.leftAlignDistance
-                                                                .to(PARTsUnitType.Meter),
-                                                                new Rotation2d()),
-                                                ElevatorState.L2, drivetrain, elevator, coral, candle).schedule();
-                }));
+                // --------------------- Align, L2, Score --------------------//
+                buttonBoxController.wipeTrigger().onTrue(new ConditionalAlign(manualElevatorControlSupplier, elevator, ElevatorState.L2,
+                drivetrain, coral, candle, buttonBoxController,
+                new Pose2d(0, Constants.Drivetrain.leftAlignDistance
+                                .to(PARTsUnitType.Meter),
+                                new Rotation2d())));
 
-                //--------------------- Align, L3, Score --------------------//
-                buttonBoxController.flashTrigger().onTrue(Commands.runOnce(() -> {
-                        if (elevatorManualControl)
-                                elevator.goToElevatorL3().schedule();
-                        else
-                                new AlignScoreCoral(
-                                                new Pose2d(0, Constants.Drivetrain.leftAlignDistance
-                                                                .to(PARTsUnitType.Meter),
-                                                                new Rotation2d()),
-                                                ElevatorState.L3, drivetrain, elevator, coral, candle).schedule();
-                }));
+                // --------------------- Align, L3, Score --------------------//
+                buttonBoxController.flashTrigger().onTrue(new ConditionalAlign(manualElevatorControlSupplier, elevator, ElevatorState.L3,
+                drivetrain, coral, candle, buttonBoxController,
+                new Pose2d(0, Constants.Drivetrain.leftAlignDistance
+                                .to(PARTsUnitType.Meter),
+                                new Rotation2d())));
 
-                //--------------------- Align, L4, Score --------------------//
-                buttonBoxController.handleTrigger().onTrue(Commands.runOnce(() -> {
-                        if (elevatorManualControl)
-                                elevator.goToElevatorL4().schedule();
-                        else
-                                new AlignScoreCoral(
-                                                new Pose2d(0, Constants.Drivetrain.leftAlignDistance
-                                                                .to(PARTsUnitType.Meter),
-                                                                new Rotation2d()),
-                                                ElevatorState.L4, drivetrain, elevator, coral, candle).schedule();
-                }));
+                // --------------------- Align, L4, Score --------------------//
+                buttonBoxController.handleTrigger().onTrue(new ConditionalAlign(manualElevatorControlSupplier, elevator, ElevatorState.L4,
+                drivetrain, coral, candle, buttonBoxController,
+                new Pose2d(0, Constants.Drivetrain.leftAlignDistance
+                                .to(PARTsUnitType.Meter),
+                                new Rotation2d())));
 
                 // * */
                 // =============================================================================================
@@ -326,17 +288,19 @@ public class RobotContainer {
                 operatorController.povDown().onTrue(algae.grabReefAlgae());
 
                 operatorController.povLeft().onTrue(algae.stow());
-                
+
                 operatorController.axisMagnitudeGreaterThan(1, 0.1)
-                .onTrue(algae.joystickAlgaeControl(operatorController));
+                                .onTrue(algae.joystickAlgaeControl(operatorController));
 
                 operatorController.povRight().whileTrue(Commands.runOnce(() -> algae.reset()));
-                
-                operatorController.povUp().whileTrue(Commands.run(() -> algae.setIntakeSpeed(Constants.Algae.kReefIntakeSpeed))).whileFalse(Commands.runOnce(() -> algae.setIntakeSpeed(0)));
 
-                //operatorController.povLeft().onTrue(algae.stopAlgae());
-                //operatorController.leftTrigger().onTrue(Commands.runOnce(algae::reset));
-                //operatorController.leftBumper().whileTrue(algae.score());
+                operatorController.povUp()
+                                .whileTrue(Commands.run(() -> algae.setIntakeSpeed(Constants.Algae.kReefIntakeSpeed)))
+                                .whileFalse(Commands.runOnce(() -> algae.setIntakeSpeed(0)));
+
+                // operatorController.povLeft().onTrue(algae.stopAlgae());
+                // operatorController.leftTrigger().onTrue(Commands.runOnce(algae::reset));
+                // operatorController.leftBumper().whileTrue(algae.score());
 
                 // =============================================================================================
                 // ------------------------------------- Climber
@@ -374,7 +338,7 @@ public class RobotContainer {
                  */
         }
 
-        public void configureAutonomousCommands() {   
+        public void configureAutonomousCommands() {
                 NamedCommands.registerCommand("Elevator L2", elevator.elevatorToLevelCommand(ElevatorState.L2));
                 NamedCommands.registerCommand("Intake", coral.autoIntake());
                 NamedCommands.registerCommand("Score", coral.autoScore());
@@ -392,7 +356,7 @@ public class RobotContainer {
                 subsystems.forEach(s -> s.outputTelemetry());
                 partsNT.setBoolean("Manual Mode", elevatorManualControl);
                 partsNT.setDouble("Battery Voltage", RobotController.getBatteryVoltage());
-        }        
+        }
 
         public void stop() {
                 subsystems.forEach(s -> s.stop());
@@ -415,4 +379,7 @@ public class RobotContainer {
                 PARTsDashboard.setCommandScheduler();
         }
 
+        public void resetStartPose() {
+                drivetrain.resetRotation(new Rotation2d());
+        }
 }
