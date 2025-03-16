@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.function.BooleanSupplier;
 
 import edu.wpi.first.math.Pair;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.PS5Controller;
@@ -28,8 +29,33 @@ public class PARTsCommandController {
     private String err_msg = "";
 
     public PARTsCommandController(int port) {
-        controllerType = ControllerType.XBOX;
-        xboxController = new CommandXboxController(port);
+        if (DriverStation.getJoystickIsXbox(port)) {
+            controllerType = ControllerType.XBOX;
+        } else if (DriverStation.getJoystickName(port).toLowerCase().contains("dualsense")) {
+            controllerType = ControllerType.DS5;
+        } else if (DriverStation.getJoystickName(port).toLowerCase().contains("dualshock")) {
+            // TODO: This might be the wrong name for the DS4.
+            controllerType = ControllerType.DS4;
+        } else {
+            controllerType = ControllerType.OTHER;
+        }
+        switch (controllerType) {
+            case DS4:
+                dualshockController = new CommandPS4Controller(port);
+                break;
+            case DS5:
+                dualsenseController = new CommandPS5Controller(port);
+                break;
+            case OTHER:
+                joystick = new CommandJoystick(port);
+                break;
+            case XBOX:
+                xboxController = new CommandXboxController(port);
+                break;
+            default:
+                throw new UnsupportedOperationException(
+                        "Unknown controller option '" + controllerType + "' for PARTsCommandController.");
+        }
         err_msg = "Unimplemented controller button for " + this.controllerType.name();
     }
 

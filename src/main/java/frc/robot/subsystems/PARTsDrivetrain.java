@@ -154,7 +154,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
         /*---------------------------------- Custom Public Functions ----------------------------------*/
 
-        public Command alignCommand(Pose2d holdDistance, CommandXboxController controller) {
+        public Command alignCommand(Pose2d holdDistance, PARTsCommandController controller) {
                 Command c = new FunctionalCommand(
                                 () -> {
                                         tagID = m_vision.getTargetID();

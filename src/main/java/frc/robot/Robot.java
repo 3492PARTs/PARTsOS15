@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import java.util.ArrayList;
+
+import org.ejml.equation.IntegerSequence.Range;
+
 import com.ctre.phoenix.led.CANdle;
 
 import au.grapplerobotics.CanBridge;
@@ -92,6 +96,11 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
     if (!Constants.Debug.debug) {
       PARTsDashboard.setTab(DashboardTab.TELEOPERATED);
+    }
+
+    ArrayList<String> controllers = new ArrayList<>();
+    for (int i = 0; i < DriverStation.kJoystickPorts; i++) {
+      controllers.add("Joystick " + i + ": | Name | " + DriverStation.getJoystickName(i) + " | Type | " + DriverStation.getJoystickType(i));
     }
 
     m_robotContainer.setIdleCandleState();
