@@ -15,6 +15,7 @@ import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.PARTsDrivetrain;
+import frc.robot.util.PARTsButtonBoxController;
 import frc.robot.util.PARTsUnit;
 import frc.robot.util.PARTsUnit.PARTsUnitType;
 import frc.robot.subsystems.Candle.CandleState;
@@ -25,18 +26,22 @@ import frc.robot.subsystems.Candle.CandleState;
 public class PARTsAlignScoreCoral extends SequentialCommandGroup {
 
         /** Creates a new ScoreCoral. */
-        public PARTsAlignScoreCoral(Pose2d holdDistance, ElevatorState level, PARTsDrivetrain drivetrain, Elevator elevator,
-                        Coral coral, Candle candle) {
+        public PARTsAlignScoreCoral(Pose2d holdDistance, ElevatorState level, PARTsDrivetrain drivetrain,
+                        Elevator elevator,
+                        Coral coral, Candle candle, PARTsButtonBoxController partsButtonBoxController) {
 
                 addCommands(
                                 candle.addStateCommand(CandleState.AUTO_ALIGN),
-                                drivetrain.alignCommand(new Pose2d(new PARTsUnit(-25, PARTsUnitType.Inch).to(PARTsUnitType.Meter), new PARTsUnit(9, PARTsUnitType.Inch).to(PARTsUnitType.Meter),
+                                drivetrain.alignCommand(new Pose2d(
+                                                new PARTsUnit(-25, PARTsUnitType.Inch).to(PARTsUnitType.Meter),
+                                                new PARTsUnit(9, PARTsUnitType.Inch).to(PARTsUnitType.Meter),
                                                 new Rotation2d()), null),
                                 new WaitCommand(.1),
                                 new ParallelCommandGroup(drivetrain.alignCommand(holdDistance, null),
                                                 elevator.elevatorToLevelCommand(level)),
                                 coral.score(),
                                 candle.removeStateCommand(CandleState.AUTO_ALIGN));
+
+                until(partsButtonBoxController.tcclickTrigger());
         }
 }
-

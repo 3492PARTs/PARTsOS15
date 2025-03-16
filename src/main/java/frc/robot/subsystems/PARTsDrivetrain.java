@@ -125,7 +125,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 new PARTsUnit(currentVisionPose3d.getRotation().getAngle(), PARTsUnitType.Radian)
                                                 .to(PARTsUnitType.Angle));
 
-                                                partsNT.setBoolean("align/validTag", tagID > 0);
+                partsNT.setBoolean("align/validTag", tagID > 0);
         }
 
         @Override
@@ -152,7 +152,11 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 super.periodic();
 
                 currentVisionPose3d = m_vision.getPose3d();
-                tagID = m_vision.getTargetID();
+                try {
+                        tagID = m_vision.getTargetID();
+                } catch (ArrayIndexOutOfBoundsException e) {
+                        tagID = -1;
+                }
         }
 
         /*---------------------------------- Custom Public Functions ----------------------------------*/
@@ -160,7 +164,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         public Command alignCommand(Pose2d holdDistance, CommandXboxController controller) {
                 Command c = new FunctionalCommand(
                                 () -> {
-                                        
+
                                         double[] botPoseTargetSpace = LimelightHelpers.getLimelightNTDoubleArray("",
                                                         "botpose_targetspace");
 
