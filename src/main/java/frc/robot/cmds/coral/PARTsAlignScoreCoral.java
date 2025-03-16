@@ -8,8 +8,10 @@ import static edu.wpi.first.units.Units.Meter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.subsystems.Candle;
 import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.Elevator;
@@ -30,7 +32,7 @@ public class PARTsAlignScoreCoral extends SequentialCommandGroup {
                         Elevator elevator,
                         Coral coral, Candle candle, PARTsButtonBoxController partsButtonBoxController) {
 
-                addCommands(
+                addCommands(new ParallelRaceGroup(new SequentialCommandGroup(
                                 candle.addStateCommand(CandleState.AUTO_ALIGN),
                                 drivetrain.alignCommand(new Pose2d(
                                                 new PARTsUnit(-25, PARTsUnitType.Inch).to(PARTsUnitType.Meter),
@@ -39,9 +41,9 @@ public class PARTsAlignScoreCoral extends SequentialCommandGroup {
                                 new WaitCommand(.1),
                                 new ParallelCommandGroup(drivetrain.alignCommand(holdDistance, null),
                                                 elevator.elevatorToLevelCommand(level)),
-                                coral.score(),
+                                coral.score()),
+                                new WaitUntilCommand(partsButtonBoxController.negative3Trigger())),
                                 candle.removeStateCommand(CandleState.AUTO_ALIGN));
 
-                until(partsButtonBoxController.tcclickTrigger());
         }
 }
