@@ -21,6 +21,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -68,12 +69,12 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         private ProfiledPIDController yRangeController;
 
         // Robot poses.
-        private Pose3d initialRobotPose3d;
+        private Pose3d initialPose3d;
         private Pose3d currentRobotPose3d;
         private Pose3d currentVisionPose3d;
         private double initialRobotAngleRad;
 
-        Pose2d testPose;
+        Pose2d initialPose2d;
         double turnPosNeg;
         double skewVal;
 
@@ -153,6 +154,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 } catch (ArrayIndexOutOfBoundsException e) {
                         tagID = -1;
                 }
+                updatePoseEstimator();
         }
 
         /*---------------------------------- Custom Public Functions ----------------------------------*/
@@ -164,24 +166,17 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                         double[] botPoseTargetSpace = LimelightHelpers.getLimelightNTDoubleArray("",
                                                         "botpose_targetspace");
 
-                                        if (tagID > 0)
-                                                initialRobotAngleRad = AprilTagData.getAprilTagAngle((int) tagID)
-                                                                .to(PARTsUnitType.Radian);
-
-                                        initialRobotPose3d = m_vision.convertToKnownSpace(currentVisionPose3d);
+                                        initialPose3d = m_vision.convertToKnownSpace(currentVisionPose3d);
 
                                         turnPosNeg = -Math.signum(botPoseTargetSpace[4]);
 
-
-                                        testPose = new Pose2d(initialRobotPose3d.getX(), initialRobotPose3d.getY(),
-                                                        new Rotation2d(initialRobotPose3d.getRotation().getAngle()
+                                        initialPose2d = new Pose2d(initialPose3d.getX(), initialPose3d.getY(),
+                                                        new Rotation2d(initialPose3d.getRotation().getAngle()
                                                                         * turnPosNeg));
-
-                                        super.resetPose(testPose);
 
                                         // Initialize the aim controller.
                                         thetaController.reset(
-                                                        new PARTsUnit(initialRobotPose3d.getRotation()
+                                                        new PARTsUnit(initialPose3d.getRotation()
                                                                         .getAngle(),
                                                                         PARTsUnitType.Angle)
                                                                         .to(PARTsUnitType.Radian));
@@ -193,13 +188,13 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                                         .to(PARTsUnitType.Radian));
 
                                         // Initialize the x-range controller.
-                                        xRangeController.reset(initialRobotPose3d.getX());
+                                        xRangeController.reset(initialPose3d.getX());
                                         xRangeController.setGoal(holdDistance.getX());
                                         xRangeController.setTolerance(Constants.Drivetrain.xRControllerTolerance
                                                         .to(PARTsUnitType.Meter));
 
                                         // Initialize the y-range controller.
-                                        yRangeController.reset(initialRobotPose3d.getY()); // Center to target.
+                                        yRangeController.reset(initialPose3d.getY()); // Center to target.
                                         yRangeController.setGoal(holdDistance.getY()); // Center to target.
                                         yRangeController.setTolerance(Constants.Drivetrain.yRControllerTolerance
                                                         .to(PARTsUnitType.Meter));
@@ -207,7 +202,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                         alignCommandInitTelemetry();
                                 },
                                 () -> {
-                                        currentRobotPose3d = new Pose3d(super.getState().Pose);
+                                        currentRobotPose3d = new Pose3d(getEstimatedPose2d(initialPose2d,
+                                                        System.currentTimeMillis() / 1000));
 
                                         Rotation2d thetaOutput = new Rotation2d(
                                                         thetaController.calculate(currentRobotPose3d.getRotation()
@@ -225,13 +221,10 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                         Translation2d translation = new Translation2d(rangeOutput.getX(),
                                                         rangeOutput.getY());
 
-                                        super.setControl(alignRequest
-                                                        .withVelocityX(translation.getX())
-                                                        .withVelocityY(translation.getY())
-                                                        .withRotationalRate(thetaOutput.getRadians()));
+                                        super.setControl(new SwerveRequest.ApplyRobotSpeeds()
+                                                        .withSpeeds(new ChassisSpeeds(translation.getX(),
+                                                                        translation.getY(), thetaOutput.getRadians())));
 
-                                        // TODO: If this breaks our reset heading add back in
-                                        // super.setOperatorPerspectiveForward(thetaOutput);
                                         alignCommandExecuteTelemetry(thetaOutput, rangeOutput);
                                 },
                                 (Boolean b) -> {
@@ -239,9 +232,6 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                         .withVelocityX(0)
                                                         .withVelocityY(0)
                                                         .withRotationalRate(0));
-
-                                        Rotation2d resetRot = new Rotation2d(initialRobotAngleRad);
-                                        super.resetRotation(resetRot);
                                 },
                                 () -> (tagID <= 0 || (xRangeController.atGoal() &&
                                                 yRangeController.atGoal() &&
@@ -261,15 +251,15 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         public Command alignDebugCommand() {
                 Command c = new FunctionalCommand(
                                 () -> {
-                                        initialRobotPose3d = m_vision.convertToKnownSpace(currentVisionPose3d);
+                                        initialPose3d = m_vision.convertToKnownSpace(currentVisionPose3d);
 
-                                        initialRobotPose3d = initialRobotPose3d.plus(new Transform3d(0,
+                                        initialPose3d = initialPose3d.plus(new Transform3d(0,
                                                         new PARTsUnit(Constants.Drivetrain.leftSideOffset,
                                                                         PARTsUnitType.Inch)
                                                                         .to(PARTsUnitType.Meter),
                                                         0, new Rotation3d()));
 
-                                        super.resetPose(initialRobotPose3d.toPose2d());
+                                        super.resetPose(initialPose3d.toPose2d());
 
                                         alignCommandInitTelemetry();
                                 },
@@ -293,17 +283,17 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         private void alignCommandInitTelemetry() {
                 partsNT.setDouble("align/startMS", System.currentTimeMillis());
 
-                partsLogger.logDouble("align/llPoseX", initialRobotPose3d.getX());
-                partsLogger.logDouble("align/llPoseY", initialRobotPose3d.getY());
+                partsLogger.logDouble("align/llPoseX", initialPose3d.getX());
+                partsLogger.logDouble("align/llPoseY", initialPose3d.getY());
                 partsLogger.logDouble("align/llPoseRot",
-                                new PARTsUnit(initialRobotPose3d.getRotation()
+                                new PARTsUnit(initialPose3d.getRotation()
                                                 .getAngle(), PARTsUnitType.Radian)
                                                 .to(PARTsUnitType.Angle));
 
-                partsNT.setDouble("align/llPoseX", initialRobotPose3d.getX());
-                partsNT.setDouble("align/llPoseY", initialRobotPose3d.getY());
+                partsNT.setDouble("align/llPoseX", initialPose3d.getX());
+                partsNT.setDouble("align/llPoseY", initialPose3d.getY());
                 partsNT.setDouble("align/llPoseRot",
-                                new PARTsUnit(initialRobotPose3d.getRotation()
+                                new PARTsUnit(initialPose3d.getRotation()
                                                 .getAngle(), PARTsUnitType.Radian)
                                                 .to(PARTsUnitType.Angle));
 
@@ -312,9 +302,9 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 partsNT.setDouble("align/thetaControllerSetpoint",
                                 thetaController.getSetpoint().position);
 
-                partsNT.setDouble("align/testPoseX", testPose.getX());
-                partsNT.setDouble("align/testPoseY", testPose.getY());
-                partsNT.setDouble("align/testPoseRot", new PARTsUnit(testPose
+                partsNT.setDouble("align/testPoseX", initialPose2d.getX());
+                partsNT.setDouble("align/testPoseY", initialPose2d.getY());
+                partsNT.setDouble("align/testPoseRot", new PARTsUnit(initialPose2d
                                 .getRotation().getRadians(), PARTsUnitType.Radian)
                                 .to(PARTsUnitType.Angle));
 
@@ -491,6 +481,42 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         private void initializeClasses() {
                 partsNT = new PARTsNT(this);
                 partsLogger = new PARTsLogger(this);
+        }
+
+        private ChassisSpeeds getChassisSpeeds() {
+                return getKinematics().toChassisSpeeds(
+                                frontLeftModule.getCurrentState(),
+                                frontRightModule.getCurrentState(),
+                                backLeftModule.getCurrentState(),
+                                backRightModule.getCurrentState());
+        }
+
+        private void updatePoseEstimator() {
+                m_poseEstimator.update(
+                                getPigeon2().getRotation2d(),
+                                new SwerveModulePosition[] {
+                                                frontLeftModule.getPosition(true),
+                                                frontRightModule.getPosition(true),
+                                                backLeftModule.getPosition(true),
+                                                backRightModule.getPosition(true)
+                                });
+        }
+
+        private Pose2d getEstimatedPose2d(Pose2d measurements, double timestampSeconds) {
+                if (Math.abs(getPigeon2().getRate()) > 720) // if our angular velocity is greater than 720
+                                                            // degrees per
+                                                            // second, ignore vision updates
+                {
+                        doRejectUpdate = true;
+                }
+                if (!doRejectUpdate) {
+                        m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
+                        m_poseEstimator.addVisionMeasurement(
+                                        measurements,
+                                        timestampSeconds);
+                }
+
+                return !doRejectUpdate ? m_poseEstimator.getEstimatedPosition() : null;
         }
 
         /*---------------------------------- Interface Functions ----------------------------------*/
