@@ -119,13 +119,14 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         /*-------------------------------- Generic Subsystem Functions --------------------------------*/
         @Override
         public void outputTelemetry() {
-                partsNT.setDouble("Vision/Vision x", currentVisionPose3d.getX());
-                partsNT.setDouble("Vision/Vision y", currentVisionPose3d.getY());
-                partsNT.setDouble("Vision/Vision z",
-                                new PARTsUnit(currentVisionPose3d.getRotation().getAngle(), PARTsUnitType.Radian)
-                                                .to(PARTsUnitType.Angle));
+                partsNT.setDouble("vision/mt2PoseX", mt2 != null ? new PARTsUnit(mt2.pose.getX(), PARTsUnitType.Meter)
+                                .to(PARTsUnitType.Inch) : -9999);
+                partsNT.setDouble("vision/mt2PoseY", mt2 != null ? new PARTsUnit(mt2.pose.getY(), PARTsUnitType.Meter)
+                                .to(PARTsUnitType.Inch) : -9999);
+                partsNT.setDouble("vision/mt2PoseRot", mt2 != null ? new PARTsUnit(mt2.pose.getRotation().getRadians(),
+                                PARTsUnitType.Radian).to(PARTsUnitType.Angle) : -9999);
 
-                partsNT.setBoolean("align/mt2", mt2 != null);
+                partsNT.setBoolean("vision/mt2", mt2 != null);
         }
 
         @Override
