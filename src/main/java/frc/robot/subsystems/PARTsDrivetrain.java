@@ -157,6 +157,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 0.0, 0.0);
                 mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
                 setPoseEstimatorVisionMeasurement();
+                updatePoseEstimator();
         }
 
         /*---------------------------------- Custom Public Functions ----------------------------------*/
@@ -196,7 +197,6 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                         alignCommandInitTelemetry(holdPose);
                                 },
                                 () -> {
-                                        updatePoseEstimator();
                                         currentEstimatedRobotPose3d = new Pose3d(
                                                         m_poseEstimator.getEstimatedPosition());
 
