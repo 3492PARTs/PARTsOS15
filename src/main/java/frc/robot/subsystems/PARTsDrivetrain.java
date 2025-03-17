@@ -154,7 +154,6 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 } catch (ArrayIndexOutOfBoundsException e) {
                         tagID = -1;
                 }
-                updatePoseEstimator();
         }
 
         /*---------------------------------- Custom Public Functions ----------------------------------*/
@@ -207,6 +206,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                         alignCommandInitTelemetry();
                                 },
                                 () -> {
+                                        updatePoseEstimator();
                                         currentRobotPose3d = new Pose3d(m_poseEstimator.getEstimatedPosition());
 
                                         Rotation2d thetaOutput = new Rotation2d(
@@ -385,15 +385,15 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         }
 
         private void initialize() {
-                initializeClasses();
-                initializeControllers();
-                sendToDashboard();
-                configureAutoBuilder();
-                AprilTagData.InitAprilTagObjects();
                 frontLeftModule = getModule(0);
                 frontRightModule = getModule(1);
                 backLeftModule = getModule(2);
                 backRightModule = getModule(3);
+                initializeClasses();
+                initializeControllers();
+                sendToDashboard();
+                configureAutoBuilder();
+                AprilTagData.InitAprilTagObjects();                
         }
 
         private void sendToDashboard() {
