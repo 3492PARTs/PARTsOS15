@@ -27,18 +27,18 @@ import frc.robot.subsystems.Candle.CandleState;
 public class PARTsAlignScoreCoral extends SequentialCommandGroup {
 
         /** Creates a new ScoreCoral. */
-        public PARTsAlignScoreCoral(Transform2d holdDistance, ElevatorState level, PARTsDrivetrain drivetrain,
+        public PARTsAlignScoreCoral(Pose2d holdDistance, ElevatorState level, PARTsDrivetrain drivetrain,
                         Elevator elevator,
                         Coral coral, Candle candle, PARTsButtonBoxController partsButtonBoxController) {
 
                 addCommands(new ParallelRaceGroup(new SequentialCommandGroup(
                                 candle.addStateCommand(CandleState.AUTO_ALIGN),
-                                drivetrain.alignCommand(new Transform2d(
+                                drivetrain.alignCommand(new Pose2d(
                                                 new PARTsUnit(-25, PARTsUnitType.Inch).to(PARTsUnitType.Meter),
                                                 new PARTsUnit(9, PARTsUnitType.Inch).to(PARTsUnitType.Meter),
-                                                new Rotation2d()), null),
+                                                new Rotation2d())),
                                 new WaitCommand(.1),
-                                new ParallelCommandGroup(drivetrain.alignCommand(holdDistance, null),
+                                new ParallelCommandGroup(drivetrain.alignCommand(holdDistance),
                                                 elevator.elevatorToLevelCommand(level)),
                                 coral.score()),
                                 new WaitUntilCommand(partsButtonBoxController.negative3Trigger())),

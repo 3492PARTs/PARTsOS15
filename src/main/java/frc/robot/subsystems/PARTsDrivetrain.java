@@ -42,7 +42,6 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.util.AprilTagData;
 import frc.robot.util.IPARTsSubsystem;
 import frc.robot.util.LimelightHelpers;
-import frc.robot.util.PARTsCommandController;
 import frc.robot.util.PARTsLogger;
 import frc.robot.util.PARTsNT;
 import frc.robot.util.PARTsUnit;
@@ -72,13 +71,14 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         private ProfiledPIDController yRangeController;
 
         // Robot poses.
+        private Pose3d initialRobotPose3d;
         private Pose2d initialLLPose2d;
         private Pose3d currentEstimatedRobotPose3d;
         private Pose3d currentVisionPose3d;
         // private double initialRobotAngleRad;
 
-        // Pose2d initialPose2d;
-        // double turnPosNeg;
+        Pose2d initialPose2d;
+        double turnPosNeg;
         // double skewVal;
 
         LimelightHelpers.PoseEstimate mt2 = null;
@@ -154,27 +154,40 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
                 //currentVisionPose3d = m_vision.getPose3d();
                 // Get the pose estimate
-                LimelightHelpers.SetRobotOrientation("", super.getPigeon2().getYaw().getValueAsDouble(), 0.0, 0.0, 0.0,
-                                0.0, 0.0);
-                mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
-                setPoseEstimatorVisionMeasurement();
-                updatePoseEstimator();
+                //LimelightHelpers.SetRobotOrientation("", super.getPigeon2().getYaw().getValueAsDouble(), 0.0, 0.0, 0.0,
+                //                0.0, 0.0);
+               // mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
+                //setPoseEstimatorVisionMeasurement();
+                //updatePoseEstimator();
         }
 
         /*---------------------------------- Custom Public Functions ----------------------------------*/
 
-        public Command alignCommand(Transform2d holdDistance, PARTsCommandController controller) {
+        public Command alignCommand(Pose2d holdDistance) {
                 Command c = new ConditionalCommand(new FunctionalCommand(
                                 () -> {
-                                        initialLLPose2d = mt2.pose;
+                                        initializePoseEstimator();
+                                        double[] botPoseTargetSpace = LimelightHelpers.getLimelightNTDoubleArray("",
+                                                        "botpose_targetspace");
+
+
+                                        initialRobotPose3d = m_vision.convertToKnownSpace(currentVisionPose3d);
+
+                                        turnPosNeg = -Math.signum(botPoseTargetSpace[4]);
+
+
+                                        initialPose2d = new Pose2d(initialRobotPose3d.getX(), initialRobotPose3d.getY(),
+                                                        new Rotation2d(initialRobotPose3d.getRotation().getAngle()
+                                                                        * turnPosNeg));
+
+                                        resetPoseEstimator(initialPose2d);
 
                                         // Initialize the aim controller.
                                         thetaController.reset(m_poseEstimator.getEstimatedPosition().getRotation()
                                                         .getRadians());
 
-                                        Pose2d holdPose = mt2.pose.plus(holdDistance);
 
-                                        thetaController.setGoal(holdPose.getRotation().getRadians()); // tx=0
+                                        thetaController.setGoal(holdDistance.getRotation().getRadians()); // tx=0
                                                                                                       // is
                                                                                                       // centered.
                                         thetaController.setTolerance(
@@ -183,7 +196,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
                                         // Initialize the x-range controller.
                                         xRangeController.reset(m_poseEstimator.getEstimatedPosition().getX());
-                                        xRangeController.setGoal(holdPose.getX());
+                                        xRangeController.setGoal(holdDistance.getX());
                                         xRangeController.setTolerance(Constants.Drivetrain.xRControllerTolerance
                                                         .to(PARTsUnitType.Meter));
 
@@ -191,13 +204,14 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                         yRangeController.reset(m_poseEstimator.getEstimatedPosition().getY()); // Center
                                                                                                                // to
                                                                                                                // target.
-                                        yRangeController.setGoal(holdPose.getY()); // Center to target.
+                                        yRangeController.setGoal(holdDistance.getY()); // Center to target.
                                         yRangeController.setTolerance(Constants.Drivetrain.yRControllerTolerance
                                                         .to(PARTsUnitType.Meter));
 
-                                        alignCommandInitTelemetry(holdPose);
+                                        alignCommandInitTelemetry();
                                 },
                                 () -> {
+                                        updatePoseEstimator();
                                         currentEstimatedRobotPose3d = new Pose3d(
                                                         m_poseEstimator.getEstimatedPosition());
 
@@ -240,20 +254,14 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 () -> ((xRangeController.atGoal() &&
                                                 yRangeController.atGoal() &&
                                                 thetaController.atGoal())
-                                                || (controller != null &&
-                                                                (Math.abs(controller.getLeftX()) > 0.1 ||
-                                                                                Math.abs(controller
-                                                                                                .getLeftY()) > 0.1
-                                                                                ||
-                                                                                Math.abs(controller
-                                                                                                .getRightX()) > 0.1))),
+                                                ),
                                 this), new WaitCommand(0), () -> mt2 != null);
                 c.setName("align");
                 return c;
         }
 
         /*---------------------------------- Custom Private Functions ---------------------------------*/
-        private void alignCommandInitTelemetry(Pose2d holdPose) {
+        private void alignCommandInitTelemetry() {
                 partsNT.setDouble("align/startMS", System.currentTimeMillis());
 
                 partsLogger.logDouble("align/llPoseX", initialLLPose2d.getX());
@@ -272,12 +280,6 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 thetaController.getSetpoint().position);
                 partsNT.setDouble("align/thetaControllerSetpoint",
                                 thetaController.getSetpoint().position);
-
-                partsNT.setDouble("align/holdPoseX", holdPose.getX());
-                partsNT.setDouble("align/holdPoseY", holdPose.getY());
-                partsNT.setDouble("align/holdPoseRot", new PARTsUnit(holdPose
-                                .getRotation().getRadians(), PARTsUnitType.Radian)
-                                .to(PARTsUnitType.Angle));
         }
 
         private void alignCommandExecuteTelemetry(Rotation2d thetaOutput, Pose2d rangeOutput) {
@@ -437,7 +439,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 });
 
                 partsNT.putSmartDashboardSendable("Align",
-                                alignCommand(new Transform2d(-1, 0, new Rotation2d()), null));
+                                alignCommand(new Pose2d(-1, 0, new Rotation2d())));
         }
 
         private void initializePoseEstimator() {
@@ -507,8 +509,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 });
         }
 
-        private void resetPoseEstimator() {
-                m_poseEstimator.resetPose(super.getState().Pose);
+        private void resetPoseEstimator(Pose2d pose) {
+                m_poseEstimator.resetPose(pose);
         }
 
         private void setPoseEstimatorVisionMeasurement() {
