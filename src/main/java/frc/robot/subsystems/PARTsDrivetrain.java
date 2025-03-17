@@ -280,6 +280,44 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         }
 
         private void alignCommandExecuteTelemetry(Rotation2d thetaOutput, Pose2d rangeOutput) {
+
+                partsLogger.logDouble("align/mt2PoseX",
+                                mt2 != null ? new PARTsUnit(mt2.pose.getX(), PARTsUnitType.Meter)
+                                                .to(PARTsUnitType.Inch) : -9999);
+                partsLogger.logDouble("align/mt2PoseY",
+                                mt2 != null ? new PARTsUnit(mt2.pose.getY(), PARTsUnitType.Meter)
+                                                .to(PARTsUnitType.Inch) : -9999);
+                partsLogger.logDouble("align/mt2PoseRot",
+                                mt2 != null ? new PARTsUnit(mt2.pose.getRotation().getRadians(),
+                                                PARTsUnitType.Radian).to(PARTsUnitType.Angle) : -9999);
+
+                partsNT.setDouble("align/mt2PoseX", mt2 != null ? new PARTsUnit(mt2.pose.getX(), PARTsUnitType.Meter)
+                                .to(PARTsUnitType.Inch) : -9999);
+                partsNT.setDouble("align/mt2PoseY", mt2 != null ? new PARTsUnit(mt2.pose.getY(), PARTsUnitType.Meter)
+                                .to(PARTsUnitType.Inch) : -9999);
+                partsNT.setDouble("align/mt2PoseRot", mt2 != null ? new PARTsUnit(mt2.pose.getRotation().getRadians(),
+                                PARTsUnitType.Radian).to(PARTsUnitType.Angle) : -9999);
+
+                partsLogger.logDouble("align/estPoseX",
+                                new PARTsUnit(m_poseEstimator.getEstimatedPosition().getX(), PARTsUnitType.Meter)
+                                                .to(PARTsUnitType.Inch));
+                partsLogger.logDouble("align/estPoseY",
+                                new PARTsUnit(m_poseEstimator.getEstimatedPosition().getY(), PARTsUnitType.Meter)
+                                                .to(PARTsUnitType.Inch));
+                partsLogger.logDouble("align/estPoseRot",
+                                new PARTsUnit(m_poseEstimator.getEstimatedPosition().getRotation().getRadians(),
+                                                PARTsUnitType.Radian).to(PARTsUnitType.Angle));
+
+                partsNT.setDouble("align/estPoseX",
+                                new PARTsUnit(m_poseEstimator.getEstimatedPosition().getX(), PARTsUnitType.Meter)
+                                                .to(PARTsUnitType.Inch));
+                partsNT.setDouble("align/estPoseY",
+                                new PARTsUnit(m_poseEstimator.getEstimatedPosition().getY(), PARTsUnitType.Meter)
+                                                .to(PARTsUnitType.Inch));
+                partsNT.setDouble("align/estPoseRot",
+                                new PARTsUnit(m_poseEstimator.getEstimatedPosition().getRotation().getRadians(),
+                                                PARTsUnitType.Radian).to(PARTsUnitType.Angle));
+
                 partsLogger.logDouble("align/rPoseX",
                                 new PARTsUnit(currentEstimatedRobotPose3d.getX(), PARTsUnitType.Meter)
                                                 .to(PARTsUnitType.Inch));
@@ -473,7 +511,17 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         }
 
         private void setPoseEstimatorVisionMeasurement() {
-                if (mt2 != null) {
+                // if our angular velocity is greater than 360 degrees per second, ignore vision
+                // updates
+                if (Math.abs(super.getPigeon2().getRate()) > 360) {
+                        doRejectUpdate = true;
+                }
+
+                if (mt2 == null || mt2.tagCount == 0) {
+                        doRejectUpdate = true;
+                }
+
+                if (!doRejectUpdate) {
                         m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
                         m_poseEstimator.addVisionMeasurement(
                                         mt2.pose,
