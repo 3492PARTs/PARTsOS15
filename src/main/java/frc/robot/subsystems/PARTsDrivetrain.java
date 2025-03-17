@@ -78,7 +78,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         double turnPosNeg;
         double skewVal;
 
-        double tagID;
+        LimelightHelpers.PoseEstimate mt2 = null;
 
         public PARTsDrivetrain(Vision vision,
                         SwerveDrivetrainConstants drivetrainConstants,
@@ -122,7 +122,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 new PARTsUnit(currentVisionPose3d.getRotation().getAngle(), PARTsUnitType.Radian)
                                                 .to(PARTsUnitType.Angle));
 
-                partsNT.setBoolean("align/validTag", tagID > 0);
+                partsNT.setBoolean("align/mt2", mt2 != null);
         }
 
         @Override
@@ -149,12 +149,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 super.periodic();
 
                 currentVisionPose3d = m_vision.getPose3d();
-                try {
-                        tagID = m_vision.getTargetID();
-                } catch (ArrayIndexOutOfBoundsException e) {
-                        tagID = -1;
-                }
-                updatePoseEstimator();
+                // Get the pose estimate
+                mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
         }
 
         /*---------------------------------- Custom Public Functions ----------------------------------*/
@@ -162,22 +158,10 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         public Command alignCommand(Pose2d holdDistance, PARTsCommandController controller) {
                 Command c = new FunctionalCommand(
                                 () -> {
-
-                                        double[] botPoseTargetSpace = LimelightHelpers.getLimelightNTDoubleArray("",
-                                                        "botpose_targetspace");
-
-                                        initialPose3d = m_vision.convertToKnownSpace(currentVisionPose3d);
-
-                                        turnPosNeg = -Math.signum(botPoseTargetSpace[4]);
-
-                                        initialPose2d = new Pose2d(initialPose3d.getX(), initialPose3d.getY(),
-                                                        new Rotation2d(initialPose3d.getRotation().getAngle()
-                                                                        * turnPosNeg));
-
                                         // Feel like it needs to init before each estimation. remove if does not work
+                                        initialPose3d = new Pose3d(super.getState().Pose);
                                         initializePoseEstimator();
-                                        setPoseEstimatorVisionMeasurement(initialPose2d,
-                                                        System.currentTimeMillis() / 1000);
+                                        setPoseEstimatorVisionMeasurement();
 
                                         // Initialize the aim controller.
                                         thetaController.reset(
@@ -207,6 +191,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                         alignCommandInitTelemetry();
                                 },
                                 () -> {
+                                        updatePoseEstimator();
                                         currentRobotPose3d = new Pose3d(m_poseEstimator.getEstimatedPosition());
 
                                         Rotation2d thetaOutput = new Rotation2d(
@@ -237,7 +222,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                         .withVelocityY(0)
                                                         .withRotationalRate(0));
                                 },
-                                () -> (tagID <= 0 || (xRangeController.atGoal() &&
+                                () -> (mt2 != null || (xRangeController.atGoal() &&
                                                 yRangeController.atGoal() &&
                                                 thetaController.atGoal())
                                                 || (controller != null &&
@@ -249,6 +234,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                                                                 .getRightX()) > 0.1))),
                                 this);
                 c.setName("align");
+                // Probably throw update after composition error.
+                c.onlyIf(() -> mt2 != null);
                 return c;
         }
 
@@ -313,7 +300,6 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 .to(PARTsUnitType.Angle));
 
                 partsNT.setDouble("align/turnPosNeg", turnPosNeg);
-                partsNT.setDouble("align/aprilTagID", tagID);
         }
 
         private void alignCommandExecuteTelemetry(Rotation2d thetaOutput, Pose2d rangeOutput) {
@@ -503,22 +489,20 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 });
         }
 
-        private void setPoseEstimatorVisionMeasurement(Pose2d measurements, double timestampSeconds) {
-                /*if (Math.abs(super.getPigeon2().getRate()) > 720) // if our angular velocity is greater than 720
-                                                                  // degrees per
-                                                                  // second, ignore vision updates
-                {
-                        doRejectUpdate = true;
-                }
+        private void resetPoseEstimator() {
+                m_poseEstimator.resetPose(super.getState().Pose);
+        }
 
-                if (!doRejectUpdate) {
-
-                }*/
+        private void setPoseEstimatorVisionMeasurement() {
+                double robotYaw = new PARTsUnit(super.getPigeon2().getYaw().getValueAsDouble(),
+                PARTsUnitType.Angle)
+                .to(PARTsUnitType.Radian);  
+                LimelightHelpers.SetRobotOrientation("", robotYaw, 0.0, 0.0, 0.0, 0.0, 0.0);
 
                 m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
                 m_poseEstimator.addVisionMeasurement(
-                                measurements,
-                                timestampSeconds);
+                        mt2.pose,
+                        mt2.timestampSeconds);
         }
 
         /*---------------------------------- Interface Functions ----------------------------------*/
