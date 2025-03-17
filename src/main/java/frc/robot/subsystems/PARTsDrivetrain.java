@@ -216,9 +216,14 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                         Translation2d translation = new Translation2d(rangeOutput.getX(),
                                                         rangeOutput.getY());
 
-                                        super.setControl(new SwerveRequest.ApplyRobotSpeeds()
+                                        /*super.setControl(new SwerveRequest.ApplyRobotSpeeds()
                                                         .withSpeeds(new ChassisSpeeds(translation.getX(),
-                                                                        translation.getY(), thetaOutput.getRadians())));
+                                                                        translation.getY(), thetaOutput.getRadians())));*/
+
+                                        super.setControl(alignRequest
+                                                        .withVelocityX(translation.getX())
+                                                        .withVelocityY(translation.getY())
+                                                        .withRotationalRate(thetaOutput.getRadians()));
 
                                         alignCommandExecuteTelemetry(thetaOutput, rangeOutput);
                                 },
