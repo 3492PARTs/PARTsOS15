@@ -153,6 +153,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
                 currentVisionPose3d = m_vision.getPose3d();
                 // Get the pose estimate
+                LimelightHelpers.SetRobotOrientation("", super.getPigeon2().getYaw().getValueAsDouble(), 0.0, 0.0, 0.0, 0.0, 0.0);
                 mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
         }
 
@@ -510,11 +511,6 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         }
 
         private void setPoseEstimatorVisionMeasurement() {
-                double robotYaw = new PARTsUnit(super.getPigeon2().getYaw().getValueAsDouble(),
-                                PARTsUnitType.Angle)
-                                .to(PARTsUnitType.Radian);
-                LimelightHelpers.SetRobotOrientation("", robotYaw, 0.0, 0.0, 0.0, 0.0, 0.0);
-
                 m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
                 m_poseEstimator.addVisionMeasurement(
                                 mt2.pose,
