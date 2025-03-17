@@ -72,7 +72,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         private ProfiledPIDController yRangeController;
 
         // Robot poses.
-        private Pose2d initialLLPose2d;
+        private LimelightHelpers.PoseEstimate initialLLPose2d;
         private Pose3d currentEstimatedRobotPose3d;
         private Pose3d currentVisionPose3d;
         // private double initialRobotAngleRad;
@@ -166,13 +166,13 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         public Command alignCommand(Transform2d holdDistance, PARTsCommandController controller) {
                 Command c = new ConditionalCommand(new FunctionalCommand(
                                 () -> {
-                                        initialLLPose2d = mt2.pose;
+                                        initialLLPose2d = mt2;
 
                                         // Initialize the aim controller.
                                         thetaController.reset(m_poseEstimator.getEstimatedPosition().getRotation()
                                                         .getRadians());
 
-                                        Pose2d holdPose = mt2.pose.plus(holdDistance);
+                                        Pose2d holdPose = initialLLPose2d.pose.transformBy(holdDistance);
 
                                         thetaController.setGoal(holdPose.getRotation().getRadians()); // tx=0
                                                                                                       // is
@@ -256,16 +256,16 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         private void alignCommandInitTelemetry(Pose2d holdPose) {
                 partsNT.setDouble("align/startMS", System.currentTimeMillis());
 
-                partsLogger.logDouble("align/llPoseX", initialLLPose2d.getX());
-                partsLogger.logDouble("align/llPoseY", initialLLPose2d.getY());
+                partsLogger.logDouble("align/llPoseX", initialLLPose2d.pose.getX());
+                partsLogger.logDouble("align/llPoseY", initialLLPose2d.pose.getY());
                 partsLogger.logDouble("align/llPoseRot",
-                                new PARTsUnit(initialLLPose2d.getRotation().getRadians(), PARTsUnitType.Radian)
+                                new PARTsUnit(initialLLPose2d.pose.getRotation().getRadians(), PARTsUnitType.Radian)
                                                 .to(PARTsUnitType.Angle));
 
-                partsNT.setDouble("align/llPoseX", initialLLPose2d.getX());
-                partsNT.setDouble("align/llPoseY", initialLLPose2d.getY());
+                partsNT.setDouble("align/llPoseX", initialLLPose2d.pose.getX());
+                partsNT.setDouble("align/llPoseY", initialLLPose2d.pose.getY());
                 partsNT.setDouble("align/llPoseRot",
-                                new PARTsUnit(initialLLPose2d.getRotation().getRadians(), PARTsUnitType.Radian)
+                                new PARTsUnit(initialLLPose2d.pose.getRotation().getRadians(), PARTsUnitType.Radian)
                                                 .to(PARTsUnitType.Angle));
 
                 partsLogger.logDouble("align/thetaControllerSetpoint",
