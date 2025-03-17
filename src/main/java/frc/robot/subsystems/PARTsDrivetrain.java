@@ -173,7 +173,9 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                         initialPose2d = new Pose2d(initialPose3d.getX(), initialPose3d.getY(),
                                                         new Rotation2d(initialPose3d.getRotation().getAngle()
                                                                         * turnPosNeg));
-
+                                        
+                                        // Feel like it needs to init before each estimation. remove if does not work
+                                        initializePoseEstimator();
                                         setPoseEstimatorVisionMeasurement(initialPose2d, System.currentTimeMillis() / 1000);
 
                                         // Initialize the aim controller.
