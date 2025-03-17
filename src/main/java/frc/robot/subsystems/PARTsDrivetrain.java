@@ -174,6 +174,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                         new Rotation2d(initialPose3d.getRotation().getAngle()
                                                                         * turnPosNeg));
 
+                                        setPoseEstimatorVisionMeasurement(initialPose2d, System.currentTimeMillis() / 1000);
+
                                         // Initialize the aim controller.
                                         thetaController.reset(
                                                         new PARTsUnit(initialPose3d.getRotation()
@@ -202,8 +204,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                         alignCommandInitTelemetry();
                                 },
                                 () -> {
-                                        currentRobotPose3d = new Pose3d(getEstimatedPose2d(initialPose2d,
-                                                        System.currentTimeMillis() / 1000));
+                                        currentRobotPose3d = new Pose3d(m_poseEstimator.getEstimatedPosition());
 
                                         Rotation2d thetaOutput = new Rotation2d(
                                                         thetaController.calculate(currentRobotPose3d.getRotation()
@@ -502,7 +503,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 });
         }
 
-        private Pose2d getEstimatedPose2d(Pose2d measurements, double timestampSeconds) {
+        private void setPoseEstimatorVisionMeasurement(Pose2d measurements, double timestampSeconds) {
                 if (Math.abs(getPigeon2().getRate()) > 720) // if our angular velocity is greater than 720
                                                             // degrees per
                                                             // second, ignore vision updates
@@ -516,7 +517,6 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                         timestampSeconds);
                 }
 
-                return !doRejectUpdate ? m_poseEstimator.getEstimatedPosition() : null;
         }
 
         /*---------------------------------- Interface Functions ----------------------------------*/
