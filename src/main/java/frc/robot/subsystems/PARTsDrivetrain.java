@@ -385,7 +385,6 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
         private void initialize() {
                 initializeClasses();
-                initializePoseEstimator();
                 initializeControllers();
                 sendToDashboard();
                 configureAutoBuilder();
