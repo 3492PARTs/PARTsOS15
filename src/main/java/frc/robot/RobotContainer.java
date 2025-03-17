@@ -142,7 +142,7 @@ public class RobotContainer {
                 // Drivetrain will execute this command periodically
                 drivetrain.setDefaultCommand(driveCommand);
 
-                new Trigger(() -> elevator.getElevatorPosition() > Constants.Elevator.L2Height)
+                new Trigger(() -> elevator.getElevatorPosition() >= Constants.Elevator.L2Height)
                                 .onTrue(Commands.runOnce(() -> fineGrainDrive = true))
                                 .onFalse(Commands.runOnce(() -> fineGrainDrive = false));
 
