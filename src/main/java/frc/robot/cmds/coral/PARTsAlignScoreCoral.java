@@ -5,6 +5,7 @@ package frc.robot.cmds.coral;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -26,13 +27,13 @@ import frc.robot.subsystems.Candle.CandleState;
 public class PARTsAlignScoreCoral extends SequentialCommandGroup {
 
         /** Creates a new ScoreCoral. */
-        public PARTsAlignScoreCoral(Pose2d holdDistance, ElevatorState level, PARTsDrivetrain drivetrain,
+        public PARTsAlignScoreCoral(Transform2d holdDistance, ElevatorState level, PARTsDrivetrain drivetrain,
                         Elevator elevator,
                         Coral coral, Candle candle, PARTsButtonBoxController partsButtonBoxController) {
 
                 addCommands(new ParallelRaceGroup(new SequentialCommandGroup(
                                 candle.addStateCommand(CandleState.AUTO_ALIGN),
-                                drivetrain.alignCommand(new Pose2d(
+                                drivetrain.alignCommand(new Transform2d(
                                                 new PARTsUnit(-25, PARTsUnitType.Inch).to(PARTsUnitType.Meter),
                                                 new PARTsUnit(9, PARTsUnitType.Inch).to(PARTsUnitType.Meter),
                                                 new Rotation2d()), null),
