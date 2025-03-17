@@ -151,7 +151,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         public void periodic() {
                 super.periodic();
 
-                currentVisionPose3d = m_vision.getPose3d();
+                //currentVisionPose3d = m_vision.getPose3d();
                 // Get the pose estimate
                 LimelightHelpers.SetRobotOrientation("", super.getPigeon2().getYaw().getValueAsDouble(), 0.0, 0.0, 0.0,
                                 0.0, 0.0);
