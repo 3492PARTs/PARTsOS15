@@ -173,10 +173,11 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                         initialPose2d = new Pose2d(initialPose3d.getX(), initialPose3d.getY(),
                                                         new Rotation2d(initialPose3d.getRotation().getAngle()
                                                                         * turnPosNeg));
-                                        
+
                                         // Feel like it needs to init before each estimation. remove if does not work
                                         initializePoseEstimator();
-                                        setPoseEstimatorVisionMeasurement(initialPose2d, System.currentTimeMillis() / 1000);
+                                        setPoseEstimatorVisionMeasurement(initialPose2d,
+                                                        System.currentTimeMillis() / 1000);
 
                                         // Initialize the aim controller.
                                         thetaController.reset(
@@ -389,6 +390,10 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 sendToDashboard();
                 configureAutoBuilder();
                 AprilTagData.InitAprilTagObjects();
+                frontLeftModule = getModule(0);
+                frontRightModule = getModule(1);
+                backLeftModule = getModule(2);
+                backRightModule = getModule(3);
         }
 
         private void sendToDashboard() {
@@ -432,20 +437,14 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         }
 
         private void initializePoseEstimator() {
-
-                frontLeftModule = getModule(0);
-                frontRightModule = getModule(1);
-                backLeftModule = getModule(2);
-                backRightModule = getModule(3);
-
                 m_poseEstimator = new SwerveDrivePoseEstimator(
-                                getKinematics(),
-                                getRotation3d().toRotation2d(),
+                                super.getKinematics(),
+                                super.getPigeon2().getRotation2d(),
                                 new SwerveModulePosition[] {
-                                                frontLeftModule.getPosition(doRejectUpdate),
-                                                frontRightModule.getPosition(doRejectUpdate),
-                                                backLeftModule.getPosition(doRejectUpdate),
-                                                backRightModule.getPosition(doRejectUpdate)
+                                                frontLeftModule.getPosition(true),
+                                                frontRightModule.getPosition(true),
+                                                backLeftModule.getPosition(true),
+                                                backRightModule.getPosition(true)
 
                                 },
                                 new Pose2d(),
@@ -495,7 +494,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
         private void updatePoseEstimator() {
                 m_poseEstimator.update(
-                                getPigeon2().getRotation2d(),
+                                super.getPigeon2().getRotation2d(),
                                 new SwerveModulePosition[] {
                                                 frontLeftModule.getPosition(true),
                                                 frontRightModule.getPosition(true),
@@ -505,19 +504,21 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         }
 
         private void setPoseEstimatorVisionMeasurement(Pose2d measurements, double timestampSeconds) {
-                if (Math.abs(getPigeon2().getRate()) > 720) // if our angular velocity is greater than 720
-                                                            // degrees per
-                                                            // second, ignore vision updates
+                /*if (Math.abs(super.getPigeon2().getRate()) > 720) // if our angular velocity is greater than 720
+                                                                  // degrees per
+                                                                  // second, ignore vision updates
                 {
                         doRejectUpdate = true;
                 }
-                if (!doRejectUpdate) {
-                        m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
-                        m_poseEstimator.addVisionMeasurement(
-                                        measurements,
-                                        timestampSeconds);
-                }
 
+                if (!doRejectUpdate) {
+
+                }*/
+
+                m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
+                m_poseEstimator.addVisionMeasurement(
+                                measurements,
+                                timestampSeconds);
         }
 
         /*---------------------------------- Interface Functions ----------------------------------*/
