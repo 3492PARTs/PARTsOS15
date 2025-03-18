@@ -196,6 +196,8 @@ public class Candle extends PARTsSubsystem {
             mPeriodicIO.state = CandleState.CORAL_LASER_EXIT_ERROR;
         else if (mPeriodicIO.robotStates.contains(CandleState.CORAL_LASER_ENTRY_ERROR))
             mPeriodicIO.state = CandleState.CORAL_LASER_ENTRY_ERROR;
+        else if (mPeriodicIO.robotStates.contains(CandleState.DISABLED))
+            mPeriodicIO.state = CandleState.DISABLED;
         else if (mPeriodicIO.robotStates.contains(CandleState.AUTO_ALIGN))
             mPeriodicIO.state = CandleState.AUTO_ALIGN;
         else if (mPeriodicIO.robotStates.contains(CandleState.SCORING))
@@ -216,8 +218,6 @@ public class Candle extends PARTsSubsystem {
             mPeriodicIO.state = CandleState.ELEVATOR_STOW;;*/
         else if (mPeriodicIO.robotStates.contains(CandleState.IDLE))
             mPeriodicIO.state = CandleState.IDLE;
-        else if (mPeriodicIO.robotStates.contains(CandleState.DISABLED))
-            mPeriodicIO.state = CandleState.DISABLED;
 
         //if (previousState != mPeriodicIO.state)
         setStateAnimation();
@@ -403,13 +403,6 @@ public class Candle extends PARTsSubsystem {
 
     public void removeState(CandleState state) {
         mPeriodicIO.robotStates.remove(state);
-
-        setState();
-    }
-
-    public void disable() {
-        mPeriodicIO.robotStates.clear();
-        mPeriodicIO.robotStates.add(CandleState.DISABLED);
 
         setState();
     }
