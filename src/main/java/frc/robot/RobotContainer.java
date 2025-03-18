@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.cmds.algae.Dealgae;
@@ -123,9 +124,7 @@ public class RobotContainer {
                 // and Y is defined as to the left according to WPILib convention.
                 Command driveCommand = drivetrain.applyRequest(() -> {
                         double limit = MaxSpeed;
-                        if (elevator.getElevatorPosition() > Constants.Elevator.L2Height)
-                                limit *= 0.25;
-                        else if (fineGrainDrive)
+                        if (fineGrainDrive)
                                 limit *= 0.25;
                         return drive.withVelocityX(-driveController.getLeftY() * limit) // Drive forward with negative Y
                                         // (forward)
@@ -141,14 +140,16 @@ public class RobotContainer {
                 // Drivetrain will execute this command periodically
                 drivetrain.setDefaultCommand(driveCommand);
 
+                new Trigger(() -> elevator.getElevatorPosition() >= Constants.Elevator.L2Height)
+                                .onTrue(Commands.runOnce(() -> fineGrainDrive = true))
+                                .onFalse(Commands.runOnce(() -> fineGrainDrive = false));
+
                 // fine grain controls
-                driveController.rightBumper().onTrue(Commands.runOnce(() -> {
-                        fineGrainDrive = !fineGrainDrive;
-                        if (fineGrainDrive)
-                                candle.addState(CandleState.FINE_GRAIN_DRIVE);
-                        else
-                                candle.removeState(CandleState.FINE_GRAIN_DRIVE);
-                }));
+                driveController.rightBumper().onTrue(Commands.runOnce(() -> fineGrainDrive = !fineGrainDrive));
+
+                new Trigger(() -> fineGrainDrive)
+                                .onTrue(Commands.runOnce(() -> candle.addState(CandleState.FINE_GRAIN_DRIVE)))
+                                .onFalse(Commands.runOnce(() -> candle.removeState(CandleState.FINE_GRAIN_DRIVE)));
 
                 // brakes swerve, puts modules into x configuration
                 driveController.a().whileTrue(drivetrain.applyRequest(() -> brake));
