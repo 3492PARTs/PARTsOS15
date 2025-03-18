@@ -82,7 +82,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         private double tagID = -1;
         // double skewVal;
 
-        LimelightHelpers.PoseEstimate mt2 = null;
+        //LimelightHelpers.PoseEstimate mt2 = null;
 
         public PARTsDrivetrain(Vision vision,
                         SwerveDrivetrainConstants drivetrainConstants,
@@ -120,14 +120,14 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         /*-------------------------------- Generic Subsystem Functions --------------------------------*/
         @Override
         public void outputTelemetry() {
-                partsNT.setDouble("vision/mt2PoseX", mt2 != null ? new PARTsUnit(mt2.pose.getX(), PARTsUnitType.Meter)
-                                .to(PARTsUnitType.Inch) : -9999);
-                partsNT.setDouble("vision/mt2PoseY", mt2 != null ? new PARTsUnit(mt2.pose.getY(), PARTsUnitType.Meter)
-                                .to(PARTsUnitType.Inch) : -9999);
-                partsNT.setDouble("vision/mt2PoseRot", mt2 != null ? new PARTsUnit(mt2.pose.getRotation().getRadians(),
-                                PARTsUnitType.Radian).to(PARTsUnitType.Angle) : -9999);
+                partsNT.setDouble("vision/tagPoseX", new PARTsUnit(currentVisionPose3d.getX(), PARTsUnitType.Meter)
+                                .to(PARTsUnitType.Inch));
+                partsNT.setDouble("vision/tagPoseY", new PARTsUnit(currentVisionPose3d.getY(), PARTsUnitType.Meter)
+                                .to(PARTsUnitType.Inch));
+                partsNT.setDouble("vision/tagPoseRot", new PARTsUnit(currentVisionPose3d.getRotation().getAngle(),
+                                PARTsUnitType.Radian).to(PARTsUnitType.Angle));
 
-                partsNT.setBoolean("vision/mt2", mt2 != null);
+                partsNT.setBoolean("vision/tag", tagID > 0);
         }
 
         @Override
@@ -273,7 +273,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         }
 
         private void alignCommandExecuteTelemetry(Rotation2d thetaOutput, Pose2d rangeOutput) {
-
+                /* 
                 partsLogger.logDouble("align/mt2PoseX",
                                 mt2 != null ? new PARTsUnit(mt2.pose.getX(), PARTsUnitType.Meter)
                                                 .to(PARTsUnitType.Inch) : -9999);
@@ -283,13 +283,13 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 partsLogger.logDouble("align/mt2PoseRot",
                                 mt2 != null ? new PARTsUnit(mt2.pose.getRotation().getRadians(),
                                                 PARTsUnitType.Radian).to(PARTsUnitType.Angle) : -9999);
-
+                
                 partsNT.setDouble("align/mt2PoseX", mt2 != null ? new PARTsUnit(mt2.pose.getX(), PARTsUnitType.Meter)
                                 .to(PARTsUnitType.Inch) : -9999);
                 partsNT.setDouble("align/mt2PoseY", mt2 != null ? new PARTsUnit(mt2.pose.getY(), PARTsUnitType.Meter)
                                 .to(PARTsUnitType.Inch) : -9999);
                 partsNT.setDouble("align/mt2PoseRot", mt2 != null ? new PARTsUnit(mt2.pose.getRotation().getRadians(),
-                                PARTsUnitType.Radian).to(PARTsUnitType.Angle) : -9999);
+                                PARTsUnitType.Radian).to(PARTsUnitType.Angle) : -9999);*/
 
                 partsLogger.logDouble("align/estPoseX",
                                 new PARTsUnit(m_poseEstimator.getEstimatedPosition().getX(), PARTsUnitType.Meter)
@@ -506,20 +506,20 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         private void setPoseEstimatorVisionMeasurement() {
                 // if our angular velocity is greater than 360 degrees per second, ignore vision
                 // updates
-                if (Math.abs(super.getPigeon2().getRate()) > 360) {
+                /*if (Math.abs(super.getPigeon2().getRate()) > 360) {
                         doRejectUpdate = true;
                 }
-
+                
                 if (mt2 == null || mt2.tagCount == 0) {
                         doRejectUpdate = true;
                 }
-
+                
                 if (!doRejectUpdate) {
                         m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
                         m_poseEstimator.addVisionMeasurement(
                                         mt2.pose,
                                         mt2.timestampSeconds);
-                }
+                }*/
         }
 
         /*---------------------------------- Interface Functions ----------------------------------*/
