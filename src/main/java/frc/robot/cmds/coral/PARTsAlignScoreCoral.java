@@ -5,6 +5,7 @@ package frc.robot.cmds.coral;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -35,9 +36,9 @@ public class PARTsAlignScoreCoral extends SequentialCommandGroup {
                                 drivetrain.alignCommand(new Pose2d(
                                                 new PARTsUnit(-25, PARTsUnitType.Inch).to(PARTsUnitType.Meter),
                                                 new PARTsUnit(9, PARTsUnitType.Inch).to(PARTsUnitType.Meter),
-                                                new Rotation2d()), null),
+                                                new Rotation2d())),
                                 new WaitCommand(.1),
-                                new ParallelCommandGroup(drivetrain.alignCommand(holdDistance, null),
+                                new ParallelCommandGroup(drivetrain.alignCommand(holdDistance),
                                                 elevator.elevatorToLevelCommand(level)),
                                 coral.score()),
                                 new WaitUntilCommand(partsButtonBoxController.negative3Trigger())),

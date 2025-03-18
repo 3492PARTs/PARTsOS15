@@ -11,6 +11,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -384,6 +385,8 @@ public class RobotContainer {
         }
 
         public void resetStartPose() {
-                drivetrain.resetRotation(new Rotation2d());
+                drivetrain.seedFieldCentric();
+                drivetrain.resetRotation(new Rotation2d(Math.PI));
+                //drivetrain.setOperatorPerspectiveForward(new Rotation2d());
         }
 }
