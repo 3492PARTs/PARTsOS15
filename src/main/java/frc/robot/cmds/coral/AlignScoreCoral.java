@@ -5,6 +5,7 @@
 package frc.robot.cmds.coral;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Candle;
@@ -24,10 +25,11 @@ public class AlignScoreCoral extends SequentialCommandGroup {
                         Coral coral, Candle candle) {
 
                 addCommands(
-                                candle.addStateCommand(CandleState.SCORING),
-                                new ParallelCommandGroup(drivetrain.alignCommand(holdDistance, null),
+                                candle.addStateCommand(CandleState.AUTO_ALIGN),
+                                new ParallelCommandGroup(drivetrain.alignCommand(holdDistance),
                                                 elevator.elevatorToLevelCommand(level)),
                                 coral.score(),
-                                candle.removeStateCommand(CandleState.SCORING));
+                                elevator.elevatorToLevelCommand(ElevatorState.STOW),
+                                candle.removeStateCommand(CandleState.AUTO_ALIGN));
         }
 }

@@ -17,7 +17,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants;
-import frc.robot.util.PARTsCommandController;
+import frc.robot.util.PARTsButtonBoxController;
 import frc.robot.util.PARTsNT;
 import frc.robot.util.PARTsSubsystem;
 import frc.robot.util.PARTsUnit;
@@ -106,10 +106,11 @@ public class Algae extends PARTsSubsystem {
   public void periodic() {
     //test
     mWristPIDController.setGoal(mPeriodicIO.wrist_target_angle);
-    double pidCalc = mWristPIDController.atGoal() ? 0 : mWristPIDController.calculate(Math.toRadians(getWristAngle().getValue()),
-       Math.toRadians(mPeriodicIO.wrist_target_angle));
+    double pidCalc = mWristPIDController.atGoal() ? 0
+        : mWristPIDController.calculate(Math.toRadians(getWristAngle().getValue()),
+            Math.toRadians(mPeriodicIO.wrist_target_angle));
 
-   mPeriodicIO.wrist_voltage = -pidCalc; //ffCalc;
+    mPeriodicIO.wrist_voltage = -pidCalc; //ffCalc;
 
     setWristVoltage(mPeriodicIO.wrist_voltage);
     setIntakeSpeed(mPeriodicIO.intake_power);
@@ -179,8 +180,10 @@ public class Algae extends PARTsSubsystem {
 
   public PARTsUnit getWristAngle() {
 
-    return new PARTsUnit(new PARTsUnit(-1 * mWristRelEncoder.getPosition(), PARTsUnitType.Rotations).to(PARTsUnitType.Angle)
-        / Constants.Algae.wristGearRatio, PARTsUnitType.Angle);
+    return new PARTsUnit(
+        new PARTsUnit(-1 * mWristRelEncoder.getPosition(), PARTsUnitType.Rotations).to(PARTsUnitType.Angle)
+            / Constants.Algae.wristGearRatio,
+        PARTsUnitType.Angle);
   }
 
   public double getWristReferenceToHorizontal() {
@@ -207,11 +210,20 @@ public class Algae extends PARTsSubsystem {
     return mWristRelEncoder.getVelocity() * 60 / Constants.Algae.wristGearRatio; // 16 is the gear reduction
   }
 
-    public Command joystickAlgaeControl(PARTsCommandController controller) {
+  public Command joystickAlgaeControl(PARTsButtonBoxController controller) {
     return super.commandFactory("joystickAlgaeControl", this.run(() -> {
-      double speed = controller.getLeftY();
+      double speed = 0;
+      if (controller.povTrigger0().getAsBoolean()) {
+        speed = -0.5;
+        mPeriodicIO.intake_power = Constants.Algae.kReefIntakeSpeed;
+      } else if (controller.povTrigger180().getAsBoolean()) {
+        speed = 0.5;
+        mPeriodicIO.intake_power = 0;
+      }
+
       setWristSpeed(speed);
-    }).until(() -> Math.abs(controller.getLeftY()) < 0.1).andThen(() -> setWristSpeed(0)));
+    }).until(() -> !controller.povTrigger0().getAsBoolean() && !controller.povTrigger180().getAsBoolean())
+        .andThen(() -> setWristSpeed(0)));
   }
 
   /*---------------------------------- Custom Private Functions ---------------------------------*/
