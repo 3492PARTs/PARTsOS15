@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.subsystems.Candle.CandleState;
+import frc.robot.util.PARTsCommandController;
 import frc.robot.util.PARTsSubsystem;
 
 public class Elevator extends PARTsSubsystem {
@@ -308,7 +309,7 @@ public class Elevator extends PARTsSubsystem {
     mPeriodicIO.elevator_power = power;
   }
 
-  public Command joystickElevatorControl(CommandXboxController controller) {
+  public Command joystickElevatorControl(PARTsCommandController controller) {
     return super.commandFactory("joystickElevatorControl", this.run(() -> {
       double speed = -controller.getRightY() * Constants.Elevator.maxSpeed;
       setElevatorPower(speed);
@@ -321,6 +322,9 @@ public class Elevator extends PARTsSubsystem {
         mPeriodicIO.is_elevator_pos_control = true;
         mPeriodicIO.elevator_target = state.height;
         mPeriodicIO.state = state;
+
+        mElevatorPIDController.reset(getElevatorPosition());
+        mElevatorPIDController.setGoal(mPeriodicIO.elevator_target);
       }
     }).andThen(new WaitUntilCommand(() -> mElevatorPIDController.atGoal() || mPeriodicIO.error)));
   }
@@ -377,10 +381,9 @@ public class Elevator extends PARTsSubsystem {
     return super.commandFactory("zeroElevatorCommand",
         this.run(() -> {
           setSpeedWithoutLimits(Constants.Elevator.homingSpeed);
-          mPeriodicIO.state = ElevatorState.STOW;
         })
             .unless(() -> mPeriodicIO.gantry_blocked).until(this::getBottomLimit)
-            .andThen(() -> stop()));
+            .andThen(this.runOnce(() -> stop())).andThen(goToElevatorStow()));
   }
 
   public boolean isPositionControl() {
