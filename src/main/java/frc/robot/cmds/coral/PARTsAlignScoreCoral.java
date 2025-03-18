@@ -31,16 +31,20 @@ public class PARTsAlignScoreCoral extends SequentialCommandGroup {
                         Elevator elevator,
                         Coral coral, Candle candle, PARTsButtonBoxController partsButtonBoxController) {
 
-                addCommands(new ParallelRaceGroup(new SequentialCommandGroup(
-                                candle.addStateCommand(CandleState.AUTO_ALIGN),
-                                drivetrain.alignCommand(new Pose2d(
-                                                new PARTsUnit(-25, PARTsUnitType.Inch).to(PARTsUnitType.Meter),
-                                                new PARTsUnit(9, PARTsUnitType.Inch).to(PARTsUnitType.Meter),
-                                                new Rotation2d())),
-                                new WaitCommand(.1),
-                                new ParallelCommandGroup(drivetrain.alignCommand(holdDistance),
-                                                elevator.elevatorToLevelCommand(level)),
-                                coral.score()),
+                addCommands(new ParallelRaceGroup(
+                                new SequentialCommandGroup(
+                                                candle.addStateCommand(CandleState.AUTO_ALIGN),
+                                                drivetrain.alignCommand(new Pose2d(
+                                                                new PARTsUnit(-25, PARTsUnitType.Inch)
+                                                                                .to(PARTsUnitType.Meter),
+                                                                new PARTsUnit(9, PARTsUnitType.Inch)
+                                                                                .to(PARTsUnitType.Meter),
+                                                                new Rotation2d())),
+                                                new WaitCommand(.1),
+                                                new ParallelCommandGroup(drivetrain.alignCommand(holdDistance),
+                                                                elevator.elevatorToLevelCommand(level)),
+                                                coral.score(),
+                                                elevator.elevatorToLevelCommand(ElevatorState.STOW)),
                                 new WaitUntilCommand(partsButtonBoxController.negative3Trigger())),
                                 candle.removeStateCommand(CandleState.AUTO_ALIGN));
 

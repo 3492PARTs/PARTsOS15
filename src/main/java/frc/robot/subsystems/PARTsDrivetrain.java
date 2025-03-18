@@ -77,8 +77,9 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         private Pose3d currentVisionPose3d;
         // private double initialRobotAngleRad;
 
-        Pose2d initialPose2d;
-        double turnPosNeg;
+        private Pose2d initialPose2d;
+        private double turnPosNeg;
+        private double tagID = -1;
         // double skewVal;
 
         LimelightHelpers.PoseEstimate mt2 = null;
@@ -153,12 +154,11 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 super.periodic();
 
                 currentVisionPose3d = m_vision.getPose3d();
-                // Get the pose estimate
-                //LimelightHelpers.SetRobotOrientation("", super.getPigeon2().getYaw().getValueAsDouble(), 0.0, 0.0, 0.0,
-                //                0.0, 0.0);
-               // mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
-                //setPoseEstimatorVisionMeasurement();
-                //updatePoseEstimator();
+                try {
+                        tagID = m_vision.getTargetID();
+                } catch (ArrayIndexOutOfBoundsException e) {
+                        tagID = -1;
+                }
         }
 
         /*---------------------------------- Custom Public Functions ----------------------------------*/
@@ -169,7 +169,6 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                         initializePoseEstimator();
                                         double[] botPoseTargetSpace = LimelightHelpers.getLimelightNTDoubleArray("",
                                                         "botpose_targetspace");
-
 
                                         initialRobotPose3d = m_vision.convertToKnownSpace(currentVisionPose3d);
 
@@ -185,10 +184,9 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                         thetaController.reset(m_poseEstimator.getEstimatedPosition().getRotation()
                                                         .getRadians());
 
-
                                         thetaController.setGoal(holdDistance.getRotation().getRadians()); // tx=0
-                                                                                                      // is
-                                                                                                      // centered.
+                                                                                                          // is
+                                                                                                          // centered.
                                         thetaController.setTolerance(
                                                         Constants.Drivetrain.thetaControllerTolerance
                                                                         .to(PARTsUnitType.Radian));
@@ -231,12 +229,6 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                         Translation2d translation = new Translation2d(rangeOutput.getX(),
                                                         rangeOutput.getY());
 
-                                        /*
-                                         * super.setControl(new SwerveRequest.ApplyRobotSpeeds()
-                                         * .withSpeeds(new ChassisSpeeds(translation.getX(),
-                                         * translation.getY(), thetaOutput.getRadians())));
-                                         */
-
                                         super.setControl(alignRequest
                                                         .withVelocityX(translation.getX())
                                                         .withVelocityY(translation.getY())
@@ -252,9 +244,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 },
                                 () -> ((xRangeController.atGoal() &&
                                                 yRangeController.atGoal() &&
-                                                thetaController.atGoal())
-                                                ),
-                                this), new WaitCommand(0), () -> true);
+                                                thetaController.atGoal())),
+                                this), new WaitCommand(0), () -> tagID > 0);
                 c.setName("align");
                 return c;
         }
