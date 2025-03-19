@@ -254,7 +254,7 @@ public class RobotContainer {
                 buttonBoxController.cruiseTrigger()
                                 .onTrue(new ConditionalAlign(manualElevatorControlSupplier, elevator, ElevatorState.L4,
                                                 drivetrain, coral, candle, buttonBoxController,
-                                                new Pose2d(0, Constants.Drivetrain.rightAlignDistance
+                                                new Pose2d(Constants.Drivetrain.L4XDistance.to(PARTsUnitType.Meter), Constants.Drivetrain.rightAlignDistance
                                                                 .to(PARTsUnitType.Meter),
                                                                 new Rotation2d())));
 
@@ -282,7 +282,7 @@ public class RobotContainer {
                 buttonBoxController.handleTrigger()
                                 .onTrue(new ConditionalAlign(manualElevatorControlSupplier, elevator, ElevatorState.L4,
                                                 drivetrain, coral, candle, buttonBoxController,
-                                                new Pose2d(0, Constants.Drivetrain.leftAlignDistance
+                                                new Pose2d(Constants.Drivetrain.L4XDistance.to(PARTsUnitType.Meter), Constants.Drivetrain.leftAlignDistance
                                                                 .to(PARTsUnitType.Meter),
                                                                 new Rotation2d())));
 
