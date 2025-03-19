@@ -1,0 +1,37 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "AlignF"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Right Align L4 Score"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "AlignFEFS"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Left Align L4 Autos",
+  "choreoAuto": false
+}

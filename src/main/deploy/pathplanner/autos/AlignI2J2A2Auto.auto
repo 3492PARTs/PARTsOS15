@@ -1,0 +1,85 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "AlignI"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Left Align L2 Score"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "AlignIJFS"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "AlignJ"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Right Align L2 Score"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "AlignIJFS"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "AlignLeftAB"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Left Align L2 Score"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "AlignABFS"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Right Align L2 Autos",
+  "choreoAuto": false
+}
