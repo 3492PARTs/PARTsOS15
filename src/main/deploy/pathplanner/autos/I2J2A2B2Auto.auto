@@ -104,7 +104,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "A2"
+                  "pathName": "LeftA2"
                 }
               },
               {
@@ -154,7 +154,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "B2"
+                  "pathName": "LeftB2"
                 }
               },
               {

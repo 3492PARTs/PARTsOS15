@@ -7,13 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "H4"
+            "pathName": "F2"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Elevator L4"
+            "name": "Elevator L2"
           }
         },
         {
@@ -23,21 +23,34 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "Elevator Stow"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Elevator Stow"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "F2FS"
+                }
+              }
+            ]
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "H4BackUp"
+            "name": "Intake"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Non-Align L4 Autos",
+  "folder": "Non-Align L2 Autos",
   "choreoAuto": false
 }

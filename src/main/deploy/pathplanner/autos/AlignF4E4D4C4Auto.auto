@@ -55,7 +55,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "AlignRightAB"
+            "pathName": "AlignD"
           }
         },
         {
@@ -67,7 +67,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "AlignRightABFS"
+            "pathName": "AlignDCFS"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "AlignD"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Left Align L4 Score"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "AlignDCFS"
           }
         },
         {
