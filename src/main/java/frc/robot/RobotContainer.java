@@ -294,20 +294,16 @@ public class RobotContainer {
                 // * */
                 // ---------------------------------------------------------------------------------------------
 
-                operatorController.povDown().onTrue(algae.grabReefAlgae());
+                //operatorController.povDown().onTrue(algae.grabReefAlgae());
 
-                operatorController.povLeft().onTrue(algae.stow());
+               // operatorController.povLeft().onTrue(algae.stow());
 
-               /* buttonBoxController.povTrigger0().or(buttonBoxController.povTrigger180())
-                                .onTrue(algae.joystickAlgaeControl(buttonBoxController));
-*/
-                operatorController.povRight().whileTrue(Commands.runOnce(() -> algae.reset()));
+               operatorController.povUp().or(operatorController.povDown())
+                                .onTrue(algae.joystickAlgaeControl(operatorController));
 
-               /*  operatorController.povUp()
-                                .whileTrue(Commands.run(() -> algae.setIntakeSpeed(Constants.Algae.kReefIntakeSpeed)))
-                                .whileFalse(Commands.runOnce(() -> algae.setIntakeSpeed(0)));
+               // operatorController.povRight().whileTrue(Commands.runOnce(() -> algae.reset()));
 
-                     */           
+                
 
                 // operatorController.povLeft().onTrue(algae.stopAlgae());
                 // operatorController.leftTrigger().onTrue(Commands.runOnce(algae::reset));

@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.3029487179487176,
-        "y": 0.908205128205127
+        "x": 1.135361842105263,
+        "y": 1.0326480263157896
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.8616294513212304,
-        "y": 1.6836752163564528
+        "x": 1.6940425754777757,
+        "y": 1.8081181144671152
       },
       "isLocked": false,
       "linkedName": null
@@ -48,7 +48,7 @@
   "folder": "Right Reef Paths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 51.54629078329417
+    "rotation": 54.63753811293094
   },
   "useDefaultConstraints": true
 }
