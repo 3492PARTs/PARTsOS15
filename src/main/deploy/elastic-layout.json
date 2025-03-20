@@ -1,77 +1,17 @@
 {
   "version": 1.0,
-  "grid_size": 100,
+  "grid_size": 75,
   "tabs": [
     {
       "name": "Teleoperated",
       "grid_layout": {
         "layouts": [
           {
-            "title": "LaserExit",
-            "x": 200.0,
-            "y": 600.0,
-            "width": 200.0,
-            "height": 200.0,
-            "type": "List Layout",
-            "properties": {
-              "label_position": "TOP"
-            },
-            "children": [
-              {
-                "title": "hasCoral",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 200.0,
-                "height": 200.0,
-                "type": "Boolean Box",
-                "properties": {
-                  "topic": "/PARTs/Coral/LaserExit/hasCoral",
-                  "period": 0.06,
-                  "data_type": "boolean",
-                  "true_color": 4283215696,
-                  "false_color": 4294198070,
-                  "true_icon": "None",
-                  "false_icon": "None"
-                }
-              }
-            ]
-          },
-          {
-            "title": "LaserEntry",
-            "x": 0.0,
-            "y": 600.0,
-            "width": 200.0,
-            "height": 200.0,
-            "type": "List Layout",
-            "properties": {
-              "label_position": "TOP"
-            },
-            "children": [
-              {
-                "title": "hasCoral",
-                "x": 600.0,
-                "y": 200.0,
-                "width": 200.0,
-                "height": 200.0,
-                "type": "Boolean Box",
-                "properties": {
-                  "topic": "/PARTs/Coral/LaserEntry/hasCoral",
-                  "period": 0.06,
-                  "data_type": "boolean",
-                  "true_color": 4283215696,
-                  "false_color": 4294198070,
-                  "true_icon": "None",
-                  "false_icon": "None"
-                }
-              }
-            ]
-          },
-          {
             "title": "Candle",
-            "x": 600.0,
-            "y": 400.0,
+            "x": 900.0,
+            "y": 600.0,
             "width": 300.0,
-            "height": 200.0,
+            "height": 225.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -81,8 +21,8 @@
                 "title": "Animation",
                 "x": 0.0,
                 "y": 0.0,
-                "width": 200.0,
-                "height": 200.0,
+                "width": 150.0,
+                "height": 150.0,
                 "type": "Text Display",
                 "properties": {
                   "topic": "/PARTs/Candle/Animation",
@@ -95,8 +35,8 @@
                 "title": "State",
                 "x": 0.0,
                 "y": 0.0,
-                "width": 200.0,
-                "height": 200.0,
+                "width": 150.0,
+                "height": 150.0,
                 "type": "Text Display",
                 "properties": {
                   "topic": "/PARTs/Candle/State",
@@ -108,28 +48,65 @@
             ]
           },
           {
-            "title": "Elevator",
-            "x": 400.0,
-            "y": 600.0,
-            "width": 200.0,
-            "height": 200.0,
+            "title": "Goal",
+            "x": 750.0,
+            "y": 150.0,
+            "width": 150.0,
+            "height": 300.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
             },
             "children": [
               {
-                "title": "State",
+                "title": "rangeControllerX",
                 "x": 0.0,
                 "y": 0.0,
-                "width": 200.0,
-                "height": 200.0,
-                "type": "Text Display",
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Boolean Box",
                 "properties": {
-                  "topic": "/PARTs/Elevator/State",
+                  "topic": "/PARTs/PARTsDrivetrain/align/Goal/rangeControllerX",
                   "period": 0.06,
-                  "data_type": "string",
-                  "show_submit_button": false
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              },
+              {
+                "title": "rangeControllerY",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/PARTs/PARTsDrivetrain/align/Goal/rangeControllerY",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              },
+              {
+                "title": "thetaController",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/PARTs/PARTsDrivetrain/align/Goal/thetaController",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
                 }
               }
             ]
@@ -138,7 +115,7 @@
         "containers": [
           {
             "title": "Match Time",
-            "x": 1300.0,
+            "x": 1275.0,
             "y": 600.0,
             "width": 600.0,
             "height": 300.0,
@@ -154,10 +131,10 @@
           },
           {
             "title": "Elevator Zero Command",
-            "x": 600.0,
-            "y": 200.0,
+            "x": 900.0,
+            "y": 150.0,
             "width": 300.0,
-            "height": 200.0,
+            "height": 150.0,
             "type": "Command",
             "properties": {
               "topic": "/SmartDashboard/Elevator Zero Command",
@@ -166,24 +143,11 @@
             }
           },
           {
-            "title": "limelight",
-            "x": 1300.0,
-            "y": 0.0,
-            "width": 600.0,
-            "height": 600.0,
-            "type": "Camera Stream",
-            "properties": {
-              "topic": "/CameraPublisher/limelight",
-              "period": 0.06,
-              "rotation_turns": 0
-            }
-          },
-          {
             "title": "FMSInfo",
-            "x": 600.0,
+            "x": 750.0,
             "y": 0.0,
-            "width": 700.0,
-            "height": 200.0,
+            "width": 450.0,
+            "height": 150.0,
             "type": "FMSInfo",
             "properties": {
               "topic": "/FMSInfo",
@@ -193,9 +157,9 @@
           {
             "title": "Swerve Drive",
             "x": 900.0,
-            "y": 200.0,
-            "width": 400.0,
-            "height": 400.0,
+            "y": 300.0,
+            "width": 300.0,
+            "height": 300.0,
             "type": "SwerveDrive",
             "properties": {
               "topic": "/SmartDashboard/PARTsDrivetrain/Swerve Drive",
@@ -206,10 +170,10 @@
           },
           {
             "title": "Manual Mode",
-            "x": 600.0,
-            "y": 600.0,
-            "width": 200.0,
-            "height": 200.0,
+            "x": 0.0,
+            "y": 675.0,
+            "width": 225.0,
+            "height": 225.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/PARTs/RobotContainer/Manual Mode",
@@ -223,9 +187,9 @@
           },
           {
             "title": "USB Camera 0",
-            "x": 0.0,
+            "x": 1200.0,
             "y": 0.0,
-            "width": 600.0,
+            "width": 675.0,
             "height": 600.0,
             "type": "Camera Stream",
             "properties": {
@@ -235,11 +199,55 @@
             }
           },
           {
-            "title": "Battery Voltage",
-            "x": 800.0,
+            "title": "limelight",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 750.0,
+            "height": 600.0,
+            "type": "Camera Stream",
+            "properties": {
+              "topic": "/CameraPublisher/limelight",
+              "period": 0.06,
+              "rotation_turns": 0
+            }
+          },
+          {
+            "title": "Gantry Blocked",
+            "x": 300.0,
             "y": 600.0,
-            "width": 500.0,
-            "height": 200.0,
+            "width": 150.0,
+            "height": 150.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/PARTs/Elevator/Gantry Blocked",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "State",
+            "x": 300.0,
+            "y": 750.0,
+            "width": 150.0,
+            "height": 150.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/PARTs/Elevator/State",
+              "period": 0.06,
+              "data_type": "string",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Battery Voltage",
+            "x": 600.0,
+            "y": 600.0,
+            "width": 300.0,
+            "height": 150.0,
             "type": "Voltage View",
             "properties": {
               "topic": "/PARTs/RobotContainer/Battery Voltage",
@@ -262,10 +270,10 @@
         "containers": [
           {
             "title": "Auto Chooser",
-            "x": 700.0,
+            "x": 675.0,
             "y": 0.0,
-            "width": 400.0,
-            "height": 200.0,
+            "width": 225.0,
+            "height": 150.0,
             "type": "ComboBox Chooser",
             "properties": {
               "topic": "/SmartDashboard/Auto Chooser",
@@ -284,8 +292,8 @@
             "title": "Elevator",
             "x": 0.0,
             "y": 0.0,
-            "width": 200.0,
-            "height": 400.0,
+            "width": 256.0,
+            "height": 375.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -371,10 +379,10 @@
           },
           {
             "title": "Coral",
-            "x": 700.0,
+            "x": 675.0,
             "y": 0.0,
-            "width": 200.0,
-            "height": 200.0,
+            "width": 256.0,
+            "height": 256.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -400,8 +408,8 @@
             "title": "Canandcolor",
             "x": 900.0,
             "y": 0.0,
-            "width": 200.0,
-            "height": 400.0,
+            "width": 256.0,
+            "height": 375.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -459,10 +467,10 @@
           },
           {
             "title": "Laser",
-            "x": 700.0,
-            "y": 200.0,
-            "width": 200.0,
-            "height": 200.0,
+            "x": 675.0,
+            "y": 225.0,
+            "width": 256.0,
+            "height": 256.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -489,10 +497,10 @@
           },
           {
             "title": "Current",
-            "x": 200.0,
+            "x": 225.0,
             "y": 0.0,
-            "width": 200.0,
-            "height": 200.0,
+            "width": 256.0,
+            "height": 256.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -530,7 +538,7 @@
           },
           {
             "title": "Scheduler",
-            "x": 1100.0,
+            "x": 1125.0,
             "y": 0.0,
             "width": 300.0,
             "height": 300.0,
@@ -555,10 +563,10 @@
           },
           {
             "title": "Algae",
-            "x": 800.0,
-            "y": 500.0,
-            "width": 200.0,
-            "height": 200.0,
+            "x": 825.0,
+            "y": 525.0,
+            "width": 256.0,
+            "height": 256.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -583,8 +591,8 @@
           {
             "title": "Intake",
             "x": 600.0,
-            "y": 400.0,
-            "width": 200.0,
+            "y": 375.0,
+            "width": 256.0,
             "height": 300.0,
             "type": "List Layout",
             "properties": {
@@ -637,10 +645,10 @@
           },
           {
             "title": "Wrist",
-            "x": 400.0,
-            "y": 200.0,
-            "width": 200.0,
-            "height": 500.0,
+            "x": 375.0,
+            "y": 225.0,
+            "width": 256.0,
+            "height": 525.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -738,9 +746,9 @@
           {
             "title": "Limit",
             "x": 0.0,
-            "y": 400.0,
-            "width": 200.0,
-            "height": 200.0,
+            "y": 375.0,
+            "width": 256.0,
+            "height": 256.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -784,10 +792,10 @@
           },
           {
             "title": "Output",
-            "x": 400.0,
+            "x": 375.0,
             "y": 0.0,
-            "width": 200.0,
-            "height": 200.0,
+            "width": 256.0,
+            "height": 256.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -825,10 +833,10 @@
           },
           {
             "title": "Velocity",
-            "x": 200.0,
-            "y": 200.0,
-            "width": 200.0,
-            "height": 200.0,
+            "x": 225.0,
+            "y": 225.0,
+            "width": 256.0,
+            "height": 256.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -866,9 +874,9 @@
           },
           {
             "title": "Position",
-            "x": 200.0,
-            "y": 400.0,
-            "width": 200.0,
+            "x": 225.0,
+            "y": 375.0,
+            "width": 256.0,
             "height": 300.0,
             "type": "List Layout",
             "properties": {
@@ -926,8 +934,8 @@
             "title": "Candle",
             "x": 0.0,
             "y": 600.0,
-            "width": 200.0,
-            "height": 200.0,
+            "width": 256.0,
+            "height": 256.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -967,10 +975,10 @@
         "containers": [
           {
             "title": "Match Time",
-            "x": 1100.0,
+            "x": 1125.0,
             "y": 300.0,
             "width": 300.0,
-            "height": 200.0,
+            "height": 225.0,
             "type": "Match Time",
             "properties": {
               "topic": "/PARTs/Robot/Match Time",
@@ -983,10 +991,10 @@
           },
           {
             "title": "FMSInfo",
-            "x": 1000.0,
-            "y": 500.0,
-            "width": 400.0,
-            "height": 200.0,
+            "x": 975.0,
+            "y": 525.0,
+            "width": 384.0,
+            "height": 225.0,
             "type": "FMSInfo",
             "properties": {
               "topic": "/FMSInfo",
@@ -1003,9 +1011,9 @@
           {
             "title": "Candle",
             "x": 0.0,
-            "y": 500.0,
-            "width": 200.0,
-            "height": 200.0,
+            "y": 525.0,
+            "width": 256.0,
+            "height": 256.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -1043,10 +1051,10 @@
           },
           {
             "title": "Current",
-            "x": 200.0,
+            "x": 225.0,
             "y": 0.0,
-            "width": 200.0,
-            "height": 200.0,
+            "width": 256.0,
+            "height": 256.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -1084,9 +1092,9 @@
           },
           {
             "title": "Limit",
-            "x": 200.0,
-            "y": 400.0,
-            "width": 200.0,
+            "x": 225.0,
+            "y": 375.0,
+            "width": 256.0,
             "height": 300.0,
             "type": "List Layout",
             "properties": {
@@ -1131,10 +1139,10 @@
           },
           {
             "title": "Output",
-            "x": 400.0,
+            "x": 375.0,
             "y": 0.0,
-            "width": 200.0,
-            "height": 200.0,
+            "width": 256.0,
+            "height": 256.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -1172,10 +1180,10 @@
           },
           {
             "title": "Velocity",
-            "x": 200.0,
-            "y": 200.0,
-            "width": 200.0,
-            "height": 200.0,
+            "x": 225.0,
+            "y": 225.0,
+            "width": 256.0,
+            "height": 256.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -1226,10 +1234,10 @@
           },
           {
             "title": "Position",
-            "x": 1400.0,
+            "x": 1425.0,
             "y": 0.0,
             "width": 300.0,
-            "height": 700.0,
+            "height": 675.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -1286,8 +1294,8 @@
             "title": "Elevator",
             "x": 0.0,
             "y": 0.0,
-            "width": 200.0,
-            "height": 500.0,
+            "width": 256.0,
+            "height": 525.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -1390,10 +1398,10 @@
           },
           {
             "title": "Commands",
-            "x": 1000.0,
-            "y": 200.0,
+            "x": 975.0,
+            "y": 225.0,
             "width": 300.0,
-            "height": 200.0,
+            "height": 256.0,
             "type": "List Layout",
             "properties": {
               "label_position": "HIDDEN"
@@ -1431,10 +1439,10 @@
         "containers": [
           {
             "title": "Elevator",
-            "x": 1000.0,
+            "x": 975.0,
             "y": 0.0,
-            "width": 400.0,
-            "height": 200.0,
+            "width": 375.0,
+            "height": 225.0,
             "type": "Subsystem",
             "properties": {
               "topic": "/SmartDashboard/Elevator",
@@ -1445,7 +1453,7 @@
             "title": "PID",
             "x": 600.0,
             "y": 0.0,
-            "width": 400.0,
+            "width": 375.0,
             "height": 600.0,
             "type": "ProfiledPIDController",
             "properties": {
@@ -1463,9 +1471,9 @@
           {
             "title": "Candle",
             "x": 0.0,
-            "y": 500.0,
-            "width": 200.0,
-            "height": 200.0,
+            "y": 525.0,
+            "width": 256.0,
+            "height": 256.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -1505,8 +1513,8 @@
             "title": "Coral",
             "x": 0.0,
             "y": 0.0,
-            "width": 200.0,
-            "height": 200.0,
+            "width": 256.0,
+            "height": 256.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -1530,9 +1538,9 @@
           },
           {
             "title": "Canandcolor",
-            "x": 500.0,
+            "x": 525.0,
             "y": 0.0,
-            "width": 200.0,
+            "width": 256.0,
             "height": 300.0,
             "type": "List Layout",
             "properties": {
@@ -1593,8 +1601,8 @@
             "title": "Laser",
             "x": 300.0,
             "y": 0.0,
-            "width": 200.0,
-            "height": 200.0,
+            "width": 256.0,
+            "height": 256.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -1621,10 +1629,10 @@
           },
           {
             "title": "RPM",
-            "x": 700.0,
+            "x": 675.0,
             "y": 0.0,
-            "width": 200.0,
-            "height": 200.0,
+            "width": 256.0,
+            "height": 256.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -1648,10 +1656,10 @@
           },
           {
             "title": "Current",
-            "x": 500.0,
+            "x": 525.0,
             "y": 300.0,
-            "width": 200.0,
-            "height": 200.0,
+            "width": 256.0,
+            "height": 256.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -1689,10 +1697,10 @@
           },
           {
             "title": "Output",
-            "x": 700.0,
+            "x": 675.0,
             "y": 300.0,
-            "width": 200.0,
-            "height": 200.0,
+            "width": 256.0,
+            "height": 256.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -1732,10 +1740,10 @@
         "containers": [
           {
             "title": "Coral",
-            "x": 1000.0,
+            "x": 975.0,
             "y": 0.0,
-            "width": 400.0,
-            "height": 200.0,
+            "width": 375.0,
+            "height": 225.0,
             "type": "Subsystem",
             "properties": {
               "topic": "/SmartDashboard/Coral",
@@ -1752,9 +1760,9 @@
           {
             "title": "Candle",
             "x": 0.0,
-            "y": 500.0,
-            "width": 200.0,
-            "height": 200.0,
+            "y": 525.0,
+            "width": 256.0,
+            "height": 256.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -1794,8 +1802,8 @@
             "title": "Algae",
             "x": 0.0,
             "y": 0.0,
-            "width": 200.0,
-            "height": 200.0,
+            "width": 256.0,
+            "height": 256.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -1819,9 +1827,9 @@
           },
           {
             "title": "Intake",
-            "x": 200.0,
+            "x": 225.0,
             "y": 0.0,
-            "width": 200.0,
+            "width": 256.0,
             "height": 300.0,
             "type": "List Layout",
             "properties": {
@@ -1874,10 +1882,10 @@
           },
           {
             "title": "Wrist",
-            "x": 400.0,
+            "x": 375.0,
             "y": 0.0,
-            "width": 200.0,
-            "height": 500.0,
+            "width": 256.0,
+            "height": 525.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -1976,10 +1984,10 @@
         "containers": [
           {
             "title": "Algae",
-            "x": 1000.0,
+            "x": 975.0,
             "y": 0.0,
-            "width": 400.0,
-            "height": 200.0,
+            "width": 375.0,
+            "height": 225.0,
             "type": "Subsystem",
             "properties": {
               "topic": "/SmartDashboard/Algae",
@@ -1990,7 +1998,7 @@
             "title": "Wrist PID",
             "x": 600.0,
             "y": 0.0,
-            "width": 400.0,
+            "width": 375.0,
             "height": 600.0,
             "type": "ProfiledPIDController",
             "properties": {
@@ -2008,9 +2016,9 @@
           {
             "title": "Candle",
             "x": 0.0,
-            "y": 500.0,
-            "width": 200.0,
-            "height": 200.0,
+            "y": 525.0,
+            "width": 256.0,
+            "height": 256.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -2048,10 +2056,10 @@
           },
           {
             "title": "vision",
-            "x": 700.0,
-            "y": 500.0,
-            "width": 200.0,
-            "height": 200.0,
+            "x": 675.0,
+            "y": 525.0,
+            "width": 256.0,
+            "height": 256.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -2075,6 +2083,309 @@
                 }
               }
             ]
+          },
+          {
+            "title": "align",
+            "x": 1500.0,
+            "y": 0.0,
+            "width": 300.0,
+            "height": 900.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "estPoseRot",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/PARTsDrivetrain/align/estPoseRot",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "estPoseX",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/PARTsDrivetrain/align/estPoseX",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "estPoseY",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/PARTsDrivetrain/align/estPoseY",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "llPoseRot",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/PARTsDrivetrain/align/llPoseRot",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "llPoseX",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/PARTsDrivetrain/align/llPoseX",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "llPoseY",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/PARTsDrivetrain/align/llPoseY",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "rPoseRot",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/PARTsDrivetrain/align/rPoseRot",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "rPoseX",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/PARTsDrivetrain/align/rPoseX",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "rPoseY",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/PARTsDrivetrain/align/rPoseY",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "startMS",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/PARTsDrivetrain/align/startMS",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "thetaControllerSetpoint",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/PARTsDrivetrain/align/thetaControllerSetpoint",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              }
+            ]
+          },
+          {
+            "title": "vision",
+            "x": 975.0,
+            "y": 600.0,
+            "width": 300.0,
+            "height": 300.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "tag",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/PARTs/PARTsDrivetrain/vision/tag",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              },
+              {
+                "title": "tagPoseRot",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/PARTsDrivetrain/vision/tagPoseRot",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "tagPoseX",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/PARTsDrivetrain/vision/tagPoseX",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "tagPoseY",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/PARTsDrivetrain/vision/tagPoseY",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              }
+            ]
+          },
+          {
+            "title": "Goal",
+            "x": 300.0,
+            "y": 525.0,
+            "width": 300.0,
+            "height": 300.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "rangeControllerX",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/PARTs/PARTsDrivetrain/align/Goal/rangeControllerX",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              },
+              {
+                "title": "rangeControllerY",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/PARTs/PARTsDrivetrain/align/Goal/rangeControllerY",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              },
+              {
+                "title": "thetaController",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/PARTs/PARTsDrivetrain/align/Goal/thetaController",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              }
+            ]
           }
         ],
         "containers": [
@@ -2082,8 +2393,8 @@
             "title": "Pose",
             "x": 0.0,
             "y": 0.0,
-            "width": 1000.0,
-            "height": 500.0,
+            "width": 975.0,
+            "height": 525.0,
             "type": "Field",
             "properties": {
               "topic": "/Pose",
@@ -2100,10 +2411,10 @@
           },
           {
             "title": "PARTsDrivetrain",
-            "x": 1000.0,
+            "x": 975.0,
             "y": 0.0,
-            "width": 400.0,
-            "height": 200.0,
+            "width": 375.0,
+            "height": 225.0,
             "type": "Subsystem",
             "properties": {
               "topic": "/SmartDashboard/PARTsDrivetrain",
@@ -2112,10 +2423,10 @@
           },
           {
             "title": "Swerve Drive",
-            "x": 1000.0,
-            "y": 200.0,
-            "width": 400.0,
-            "height": 400.0,
+            "x": 975.0,
+            "y": 225.0,
+            "width": 375.0,
+            "height": 375.0,
             "type": "SwerveDrive",
             "properties": {
               "topic": "/SmartDashboard/PARTsDrivetrain/Swerve Drive",
@@ -2125,16 +2436,17 @@
             }
           },
           {
-            "title": "Align",
-            "x": 400.0,
-            "y": 500.0,
-            "width": 300.0,
-            "height": 200.0,
-            "type": "Command",
+            "title": "aprilTagID",
+            "x": 1350.0,
+            "y": 375.0,
+            "width": 150.0,
+            "height": 150.0,
+            "type": "Text Display",
             "properties": {
-              "topic": "/SmartDashboard/PARTsDrivetrain/Align",
+              "topic": "/PARTs/PARTsDrivetrain/align/aprilTagID",
               "period": 0.06,
-              "show_type": false
+              "data_type": "double",
+              "show_submit_button": false
             }
           }
         ]

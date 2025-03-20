@@ -41,7 +41,7 @@ public final class Constants {
     public static final PARTsUnit leftAlignDistance = new PARTsUnit(7, PARTsUnitType.Inch);
     public static final PARTsUnit rightAlignDistance = new PARTsUnit(-7, PARTsUnitType.Inch);
 
-    public static final PARTsUnit L4XDistance = new PARTsUnit(-8, PARTsUnitType.Inch);
+    public static final PARTsUnit L4XDistance = new PARTsUnit(-4.5, PARTsUnitType.Inch);
   }
 
   public static class LimelightData {
@@ -72,9 +72,9 @@ public final class Constants {
     public static final int rightElevatorId = 1;
     public static final int laserCanId = 32;
     public static final int StowHeight = 0;
-    public static final double L2Height = 8.785;
-    public static final double L3Height = 31.9;
-    public static final double L4Height = 73.80; //best so far 74.07373046875, 73.59748840332031
+    public static final double L2Height = 10.6;//8.785;
+    public static final double L3Height = 34.1;//31.9;
+    public static final double L4Height = 73.16;//73.80; //best so far 74.07373046875, 73.59748840332031
     public static final double LowAlgaeHeight = 29.47;
     public static final double HighAlgaeHeight = 55.548;
     public static final int L_SWITCH_PORT = 0;

@@ -205,7 +205,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                         yRangeController.setTolerance(Constants.Drivetrain.yRControllerTolerance
                                                         .to(PARTsUnitType.Meter));
 
-                                        alignCommandInitTelemetry();
+                                        alignCommandInitTelemetry(holdDistance);
                                 },
                                 () -> {
                                         updatePoseEstimator();
@@ -251,7 +251,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         }
 
         /*---------------------------------- Custom Private Functions ---------------------------------*/
-        private void alignCommandInitTelemetry() {
+        private void alignCommandInitTelemetry(Pose2d holdDist) {
                 partsNT.setDouble("align/startMS", System.currentTimeMillis());
 
                 partsLogger.logDouble("align/llPoseX", initialLLPose2d.getX());
@@ -264,6 +264,14 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 partsNT.setDouble("align/llPoseY", initialLLPose2d.getY());
                 partsNT.setDouble("align/llPoseRot",
                                 new PARTsUnit(initialLLPose2d.getRotation().getRadians(), PARTsUnitType.Radian)
+                                                .to(PARTsUnitType.Angle));
+
+                                                partsNT.setDouble("align/holdDistX", new PARTsUnit(holdDist.getX(), PARTsUnitType.Meter)
+                                                .to(PARTsUnitType.Inch));
+                partsNT.setDouble("align/holdDistY", new PARTsUnit(holdDist.getY(), PARTsUnitType.Meter)
+                .to(PARTsUnitType.Inch));
+                partsNT.setDouble("align/holdDistRot",
+                                new PARTsUnit(holdDist.getRotation().getRadians(), PARTsUnitType.Radian)
                                                 .to(PARTsUnitType.Angle));
 
                 partsLogger.logDouble("align/thetaControllerSetpoint",

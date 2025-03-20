@@ -44,6 +44,7 @@ public class PARTsAlignScoreCoral extends SequentialCommandGroup {
                                                 new ParallelCommandGroup(drivetrain.alignCommand(holdDistance),
                                                                 elevator.elevatorToLevelCommand(level)),
                                                 coral.score(),
+                                                new WaitCommand(.1),
                                                 elevator.elevatorToLevelCommand(ElevatorState.STOW)),
                                 new WaitUntilCommand(partsButtonBoxController.negative3Trigger())),
                                 candle.removeStateCommand(CandleState.AUTO_ALIGN));

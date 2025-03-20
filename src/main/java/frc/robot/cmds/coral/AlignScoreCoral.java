@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.Candle;
 import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.Elevator;
@@ -29,6 +30,7 @@ public class AlignScoreCoral extends SequentialCommandGroup {
                                 new ParallelCommandGroup(drivetrain.alignCommand(holdDistance),
                                                 elevator.elevatorToLevelCommand(level)),
                                 coral.score(),
+                                new WaitCommand(.1),
                                 elevator.elevatorToLevelCommand(ElevatorState.STOW),
                                 candle.removeStateCommand(CandleState.AUTO_ALIGN));
         }

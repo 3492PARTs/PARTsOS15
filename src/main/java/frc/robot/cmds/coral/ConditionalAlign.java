@@ -30,9 +30,7 @@ public class ConditionalAlign extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(new ConditionalCommand(elevator.elevatorToLevelCommand(state), new PARTsAlignScoreCoral(
-        new Pose2d(0, Constants.Drivetrain.rightAlignDistance
-            .to(PARTsUnitType.Meter),
-            new Rotation2d()),
+       holdDistance,
         state, drivetrain, elevator, coral, candle,
         buttonBoxController), supplier));
   }
