@@ -128,6 +128,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 PARTsUnitType.Radian).to(PARTsUnitType.Angle));
 
                 partsNT.setBoolean("vision/tag", tagID > 0);
+                partsNT.setDouble("vision/tagID", tagID);
         }
 
         @Override
