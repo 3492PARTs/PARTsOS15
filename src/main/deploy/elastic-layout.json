@@ -259,6 +259,36 @@
               "inverted": false,
               "orientation": "horizontal"
             }
+          },
+          {
+            "title": "tag",
+            "x": 450.0,
+            "y": 600.0,
+            "width": 150.0,
+            "height": 150.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/PARTs/PARTsDrivetrain/vision/tag",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "tagID",
+            "x": 450.0,
+            "y": 750.0,
+            "width": 150.0,
+            "height": 150.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "/PARTs/PARTsDrivetrain/vision/tagID",
+              "period": 0.06,
+              "data_type": "double"
+            }
           }
         ]
       }

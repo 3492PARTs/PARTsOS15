@@ -209,6 +209,7 @@ public class RobotContainer {
                 buttonBoxController.positive4Trigger().onTrue(coral.intake()).onFalse(coral.stopCoralCommand());
                 buttonBoxController.negative4Trigger().onTrue(coral.reverse()).onFalse(coral.stopCoralCommand());
 
+                buttonBoxController.povTrigger0().whileTrue(coral.L4Intake()).onFalse(coral.stopCoralCommand());
                 operatorController.rightBumper().onTrue(new L4ScoreCoral(drivetrain, elevator, coral, candle));
 
                 // =============================================================================================
@@ -297,14 +298,16 @@ public class RobotContainer {
 
                 operatorController.povLeft().onTrue(algae.stow());
 
-                buttonBoxController.povTrigger0().or(buttonBoxController.povTrigger180())
+               /* buttonBoxController.povTrigger0().or(buttonBoxController.povTrigger180())
                                 .onTrue(algae.joystickAlgaeControl(buttonBoxController));
-
+*/
                 operatorController.povRight().whileTrue(Commands.runOnce(() -> algae.reset()));
 
-                operatorController.povUp()
+               /*  operatorController.povUp()
                                 .whileTrue(Commands.run(() -> algae.setIntakeSpeed(Constants.Algae.kReefIntakeSpeed)))
                                 .whileFalse(Commands.runOnce(() -> algae.setIntakeSpeed(0)));
+
+                     */           
 
                 // operatorController.povLeft().onTrue(algae.stopAlgae());
                 // operatorController.leftTrigger().onTrue(Commands.runOnce(algae::reset));
