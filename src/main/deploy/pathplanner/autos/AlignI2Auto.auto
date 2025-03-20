@@ -7,37 +7,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "H4"
+            "pathName": "AlignI"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Elevator L4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Score"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Elevator Stow"
+            "name": "Left Align L2 Score"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "H4BackUp"
+            "pathName": "AlignIJFS"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Non-Align L4 Autos",
+  "folder": "Right Align L2 Autos",
   "choreoAuto": false
 }

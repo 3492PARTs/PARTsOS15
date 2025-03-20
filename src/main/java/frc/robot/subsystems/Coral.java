@@ -263,14 +263,14 @@ public class Coral extends PARTsSubsystem {
   public void scoreL23() {
     // return this.runOnce(() -> {
     mPeriodicIO.speed_diff = 0.0;
-    mPeriodicIO.rpm = Constants.Coral.kL24Speed;
+    mPeriodicIO.rpm = Constants.Coral.kL23Speed;
     mPeriodicIO.state = IntakeState.SCORE;
   }
 
   public void scoreL4() {
     // return this.runOnce(() -> {
     mPeriodicIO.speed_diff = 0.0;
-    mPeriodicIO.rpm = -0.2;
+    mPeriodicIO.rpm = Constants.Coral.kL4Speed;
     mPeriodicIO.state = IntakeState.SCORE;
   }
 

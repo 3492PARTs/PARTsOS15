@@ -3,10 +3,20 @@
   "robotLength": 0.83,
   "holonomicMode": true,
   "pathFolders": [
-    "SnapToAngle",
-    "Right Side Reef"
+    "Left Reef Paths",
+    "Middle Reef Paths",
+    "Non-Align Paths",
+    "Right Reef Paths"
   ],
-  "autoFolders": [],
+  "autoFolders": [
+    "Center Align L4 Autos",
+    "Left Align L2 Autos",
+    "Left Align L4 Autos",
+    "Non-Align L2 Autos",
+    "Non-Align L4 Autos",
+    "Right Align L2 Autos",
+    "Right Align L4 Autos"
+  ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,
   "defaultMaxAngVel": 540.0,

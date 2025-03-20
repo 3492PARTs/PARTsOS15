@@ -7,13 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "I2"
+            "pathName": "AlignGH"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Right Align L4 Score"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Center Align L4 Autos",
   "choreoAuto": false
 }

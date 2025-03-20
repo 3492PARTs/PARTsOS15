@@ -7,49 +7,55 @@
         {
           "type": "path",
           "data": {
-            "pathName": "I2"
+            "pathName": "AlignF"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Right Align L4 Score"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "I2FS"
+            "pathName": "AlignFEFS"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "L4K4"
+            "pathName": "AlignE"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Left Align L4 Score"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "L4K42FS"
+            "pathName": "AlignFEFS"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "L4K4"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "L4K42FS"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "J2"
+            "name": "Intake"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Left Align L4 Autos",
   "choreoAuto": false
 }

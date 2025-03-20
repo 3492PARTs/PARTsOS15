@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "I2"
+            "pathName": "F2"
           }
         },
         {
@@ -35,7 +35,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "I2FS"
+                  "pathName": "F2FS"
                 }
               }
             ]
@@ -54,7 +54,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "J2"
+                  "pathName": "E2"
                 }
               },
               {
@@ -85,7 +85,57 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "J2FS"
+                  "pathName": "E2FS"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "RightB2"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Elevator L2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Elevator Stow"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "B2FS"
                 }
               }
             ]
