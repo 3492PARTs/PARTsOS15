@@ -38,8 +38,11 @@ public final class Constants {
 
     public static final double leftSideOffset = 5.5;
 
-    public static final PARTsUnit leftAlignDistance = new PARTsUnit(7, PARTsUnitType.Inch);
-    public static final PARTsUnit rightAlignDistance = new PARTsUnit(-7, PARTsUnitType.Inch);
+    //more positive, more to left
+    public static final PARTsUnit leftAlignDistance = new PARTsUnit(6.5, PARTsUnitType.Inch);
+
+    //more negative, more to right
+    public static final PARTsUnit rightAlignDistance = new PARTsUnit(-8, PARTsUnitType.Inch);
 
     public static final PARTsUnit L4XDistance = new PARTsUnit(-4.5, PARTsUnitType.Inch);
   }

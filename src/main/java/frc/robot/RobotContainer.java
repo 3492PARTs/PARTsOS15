@@ -407,7 +407,7 @@ public class RobotContainer {
 
         public void resetStartPose() {
                 drivetrain.seedFieldCentric();
-                drivetrain.resetRotation(new Rotation2d(Math.PI));
+                //drivetrain.resetRotation(new Rotation2d(Math.PI));
                 //drivetrain.setOperatorPerspectiveForward(new Rotation2d());
         }
 }
