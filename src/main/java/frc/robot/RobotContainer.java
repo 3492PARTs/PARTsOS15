@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.cmds.algae.Dealgae;
+import frc.robot.cmds.algae.PARTsAlignScoreAlgae;
 import frc.robot.cmds.coral.AlignScoreCoral;
 import frc.robot.cmds.coral.L4ScoreCoral;
 import frc.robot.cmds.coral.ConditionalAlign;
@@ -210,6 +211,8 @@ public class RobotContainer {
                 buttonBoxController.negative4Trigger().onTrue(coral.reverse()).onFalse(coral.stopCoralCommand());
 
                 buttonBoxController.povTrigger0().whileTrue(coral.L4Intake()).onFalse(coral.stopCoralCommand());
+                
+                buttonBoxController.povTrigger180().whileTrue(coral.L4OutTake()).onFalse(coral.stopCoralCommand());
                 operatorController.rightBumper().onTrue(new L4ScoreCoral(drivetrain, elevator, coral, candle));
 
                 // =============================================================================================
@@ -224,9 +227,11 @@ public class RobotContainer {
 
                 buttonBoxController.enginestartTrigger().onTrue(coral.score());
 
-                buttonBoxController.escTrigger().onTrue(new Dealgae(ElevatorState.A1, elevator, algae));
+                //buttonBoxController.escTrigger().onTrue(new Dealgae(ElevatorState.A1, elevator, algae));
+                buttonBoxController.escTrigger().onTrue(new PARTsAlignScoreAlgae(new Pose2d(0, 0,
+                new Rotation2d()), ElevatorState.A1, drivetrain, elevator, algae, candle, buttonBoxController));
 
-                buttonBoxController.enterTrigger().onTrue(new Dealgae(ElevatorState.A2, elevator, algae));
+                //buttonBoxController.enterTrigger().onTrue(new Dealgae(ElevatorState.A2, elevator, algae));
 
                 // --------------------- Stow --------------------//
                 buttonBoxController.negative1Trigger().onTrue(elevator.goToElevatorStow());
@@ -300,6 +305,7 @@ public class RobotContainer {
 
                operatorController.povUp().or(operatorController.povDown())
                                 .onTrue(algae.joystickAlgaeControl(operatorController));
+                operatorController.povRight().or(operatorController.povLeft()).onTrue(algae.joystickAlgaeControl2(operatorController));
 
                // operatorController.povRight().whileTrue(Commands.runOnce(() -> algae.reset()));
 

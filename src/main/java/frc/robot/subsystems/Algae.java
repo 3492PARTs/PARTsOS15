@@ -253,6 +253,55 @@ public class Algae extends PARTsSubsystem {
         .andThen(() -> setWristSpeed(0)));
   }
 
+  public Command joystickAlgaeControl2(PARTsCommandController controller) {
+    return super.commandFactory("joystickAlgaeControl2", this.run(() -> {
+      double speed = 0;
+      if (controller.povRight().getAsBoolean()) {
+        speed = -0.5;
+        mPeriodicIO.intake_power = -Constants.Algae.kReefIntakeSpeed;
+
+        if (getWristAngle().getValue() >= 132 ) {
+          speed = 0;
+        }
+      } 
+      else if (controller.povLeft().getAsBoolean()) {
+        speed = .5;
+        mPeriodicIO.intake_power = 0;
+
+          if (getWristAngle().getValue() <= 0) {
+            speed = 0;
+          }
+      }
+
+      setWristSpeed(speed);
+    }).until(() -> !controller.povRight().getAsBoolean() && !controller.povLeft().getAsBoolean())
+        .andThen(() -> setWristSpeed(0)));
+  }
+
+  public Command runWristIntake() {
+    return super.commandFactory("runWristIntake", this.run(() -> {
+      double speed = 0;
+      if (getWristAngle().getValue() >= -1) {
+        speed = -0.5;
+        mPeriodicIO.intake_power = Constants.Algae.kReefIntakeSpeed;
+
+        if (getWristAngle().getValue() >= 132 ) {
+          speed = 0;
+        }
+      } 
+      else if (getWristAngle().getValue() >= 131) {
+        speed = .5;
+        mPeriodicIO.intake_power = 0;
+
+          if (getWristAngle().getValue() <= 0) {
+            speed = 0;
+          }
+      }
+
+      setWristSpeed(speed);
+    }));
+  }
+
   /*---------------------------------- Custom Private Functions ---------------------------------*/
 
 }

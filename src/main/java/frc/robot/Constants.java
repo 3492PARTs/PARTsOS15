@@ -26,23 +26,23 @@ public final class Constants {
     public static final double THETA_I = 0.01; // 0.01; //Gradual corretction
     public static final double THETA_D = 0.05; // 0.05; //Smooth oscilattions
 
-    public static final double RANGE_X_P = 11.0;//1.6;// 0.8;
+    public static final double RANGE_X_P = 12.0;//1.6;// 0.8;
     public static final double RANGE_I = 0.04;
     public static final double RANGE_D = 0.1;
 
-    public static final double RANGE_Y_P = 15;
+    public static final double RANGE_Y_P = 15.5;
 
     public static final PARTsUnit yRControllerTolerance = new PARTsUnit(1, PARTsUnitType.Inch);
-    public static final PARTsUnit xRControllerTolerance = new PARTsUnit(2, PARTsUnitType.Inch);
+    public static final PARTsUnit xRControllerTolerance = new PARTsUnit(1.7, PARTsUnitType.Inch);
     public static final PARTsUnit thetaControllerTolerance = new PARTsUnit(2, PARTsUnitType.Angle);
 
     public static final double leftSideOffset = 5.5;
 
     //more positive, more to left
-    public static final PARTsUnit leftAlignDistance = new PARTsUnit(6.75, PARTsUnitType.Inch);
+    public static final PARTsUnit leftAlignDistance = new PARTsUnit(6.5, PARTsUnitType.Inch);
 
     //more negative, more to right
-    public static final PARTsUnit rightAlignDistance = new PARTsUnit(-8.75, PARTsUnitType.Inch);
+    public static final PARTsUnit rightAlignDistance = new PARTsUnit(-7.5, PARTsUnitType.Inch);
 
     public static final PARTsUnit L4XDistance = new PARTsUnit(-4.5, PARTsUnitType.Inch);
   }
@@ -132,7 +132,7 @@ public final class Constants {
     // INTAKE
     public static final int kMaxIntakeCurrent = 20;
 
-    public static final double kReefIntakeSpeed = 0.6;
+    public static final double kReefIntakeSpeed = 0.8;
     public static final double kEjectSpeed = 0.3;
     public static final double kGroundIntakeSpeed = -0.3;
 

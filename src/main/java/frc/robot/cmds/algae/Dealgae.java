@@ -4,11 +4,17 @@
 
 package frc.robot.cmds.algae;
 
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Algae;
+import frc.robot.subsystems.Candle;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorState;
+import frc.robot.subsystems.PARTsDrivetrain;
+import frc.robot.util.PARTsButtonBoxController;
 import frc.robot.Constants;
 
 
@@ -20,15 +26,16 @@ public class Dealgae extends SequentialCommandGroup {
 
   
   /** Creates a new Dealgae. */
-  public Dealgae(ElevatorState level, Elevator elevator, Algae algae) {
+  public Dealgae( Elevator elevator, ElevatorState state, PARTsDrivetrain drivetrain,
+  Algae algae, Candle candle, PARTsButtonBoxController buttonBoxController, Pose2d holdDistance) {
     addRequirements( elevator, algae);
 
-  
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    addCommands(
-      
-      elevator.elevatorToLevelCommand(level),
-      algae.grabReefAlgae());
+    addCommands(/*new ConditionalCommand(elevator.elevatorToLevelCommand(state), new PARTsAlignScoreAlgae(
+      holdDistance,
+        state, drivetrain, elevator, algae, candle,
+        buttonBoxController
+       ))*/);
   }
 }

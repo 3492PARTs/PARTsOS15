@@ -236,6 +236,14 @@ public class Coral extends PARTsSubsystem {
         }));
   }
 
+  public Command L4OutTake() {
+    return super.commandFactory("coralIntake",
+        this.runOnce(() -> {
+          mPeriodicIO.speed_diff = 0.0;
+          mPeriodicIO.rpm = -Constants.Coral.kInchIntakeSpeed;
+        }));
+  }
+
   public Command autoIntake() {
     return super.commandFactory("coralIntake",
         this.runOnce(() -> {
