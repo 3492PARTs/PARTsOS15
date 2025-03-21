@@ -46,8 +46,8 @@ public class PARTsAlignScoreCoral extends SequentialCommandGroup {
                                                 coral.score(),
                                                 new WaitCommand(.1),
                                                 elevator.elevatorToLevelCommand(ElevatorState.STOW)),
-                                new WaitUntilCommand(partsButtonBoxController.negative3Trigger())),
-                                candle.removeStateCommand(CandleState.AUTO_ALIGN));
+                                new WaitUntilCommand(partsButtonBoxController.negative3Trigger()))
+                                .finallyDo(() -> candle.removeStateCommand(CandleState.AUTO_ALIGN)).schedule());
 
         }
 }
