@@ -307,6 +307,8 @@ public class RobotContainer {
                                 .onTrue(algae.joystickAlgaeControl(operatorController));
                 operatorController.povRight().or(operatorController.povLeft()).onTrue(algae.joystickAlgaeControl2(operatorController));
 
+                operatorController.x().onTrue(Commands.runOnce(()-> algae.setIntakeSpeed(0)));
+
                // operatorController.povRight().whileTrue(Commands.runOnce(() -> algae.reset()));
 
                 

@@ -26,11 +26,11 @@ public final class Constants {
     public static final double THETA_I = 0.01; // 0.01; //Gradual corretction
     public static final double THETA_D = 0.05; // 0.05; //Smooth oscilattions
 
-    public static final double RANGE_X_P = 12.0;//1.6;// 0.8;
-    public static final double RANGE_I = 0.04;
-    public static final double RANGE_D = 0.1;
+    public static final double RANGE_X_P = 12.5 ;//1.6;// 0.8; //12.5
+    public static final double RANGE_I = 0.04; // 0.04 
+    public static final double RANGE_D = 0.1; // 0.1
 
-    public static final double RANGE_Y_P = 15.5;
+    public static final double RANGE_Y_P = 15.5; // 15.5
 
     public static final PARTsUnit yRControllerTolerance = new PARTsUnit(1, PARTsUnitType.Inch);
     public static final PARTsUnit xRControllerTolerance = new PARTsUnit(1.7, PARTsUnitType.Inch);
@@ -44,7 +44,7 @@ public final class Constants {
     //more negative, more to right
     public static final PARTsUnit rightAlignDistance = new PARTsUnit(-7.5, PARTsUnitType.Inch);
 
-    public static final PARTsUnit L4XDistance = new PARTsUnit(-4.5, PARTsUnitType.Inch);
+    public static final PARTsUnit L4XDistance = new PARTsUnit(-6, PARTsUnitType.Inch);
   }
 
   public static class LimelightData {
@@ -77,7 +77,7 @@ public final class Constants {
     public static final int StowHeight = 0;
     public static final double L2Height = 10.6;//8.785;
     public static final double L3Height = 34.1;//31.9;
-    public static final double L4Height = 73.16;//73.80; //best so far 74.07373046875, 73.59748840332031
+    public static final double L4Height = 73.38;//73.16;//73.80; //best so far 74.07373046875, 73.59748840332031
     public static final double LowAlgaeHeight = 33.00;//29.47;
     public static final double HighAlgaeHeight = 58;//55.548;
     public static final int L_SWITCH_PORT = 0;

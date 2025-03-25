@@ -7,6 +7,7 @@ package frc.robot.cmds.coral;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.Candle;
 import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.Elevator;
@@ -26,6 +27,8 @@ public class L4ScoreCoral extends SequentialCommandGroup {
                 addCommands(
                                 candle.addStateCommand(CandleState.SCORING),
                                 elevator.elevatorToLevelCommand(ElevatorState.L4),
-                                coral.score());
+                                coral.score(),
+                                new WaitCommand(.1),
+                                elevator.elevatorToLevelCommand(ElevatorState.STOW));
         }
 }

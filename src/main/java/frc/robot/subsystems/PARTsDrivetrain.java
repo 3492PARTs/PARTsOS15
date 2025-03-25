@@ -279,6 +279,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 thetaController.getSetpoint().position);
                 partsNT.setDouble("align/thetaControllerSetpoint",
                                 thetaController.getSetpoint().position);
+
+                
         }
 
         private void alignCommandExecuteTelemetry(Rotation2d thetaOutput, Pose2d rangeOutput) {
@@ -353,6 +355,9 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 xRangeController.atGoal());
                 partsLogger.logBoolean("align/Goal/rangeControllerYGoal",
                                 yRangeController.atGoal());
+                partsNT.setDouble("align/Goal/x setpoint", xRangeController.getSetpoint().position);
+                partsNT.setDouble("align/Goal/y setpoint", yRangeController.getSetpoint().position);
+                partsNT.setDouble("align/Goal/x setpoint", thetaController.getSetpoint().position);
 
                 partsNT.setBoolean("align/Goal/thetaController", thetaController.atGoal());
                 partsNT.setBoolean("align/Goal/rangeControllerX", xRangeController.atGoal());
