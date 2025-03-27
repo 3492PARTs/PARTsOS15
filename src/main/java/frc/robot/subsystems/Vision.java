@@ -57,14 +57,15 @@ public class Vision extends PARTsSubsystem {
   @Override
   public void outputTelemetry() {
 
-    if (currentVisionPose3d != null) {
-      partsNT.setDouble("tagPoseX", new PARTsUnit(currentVisionPose3d.getX(), PARTsUnitType.Meter)
-          .to(PARTsUnitType.Inch));
-      partsNT.setDouble("tagPoseY", new PARTsUnit(currentVisionPose3d.getY(), PARTsUnitType.Meter)
-          .to(PARTsUnitType.Inch));
-      partsNT.setDouble("tagPoseRot", new PARTsUnit(currentVisionPose3d.getRotation().getAngle(),
-          PARTsUnitType.Radian).to(PARTsUnitType.Angle));
-    }
+    partsNT.setDouble("tagPoseX",
+        currentVisionPose3d != null ? new PARTsUnit(currentVisionPose3d.getX(), PARTsUnitType.Meter)
+            .to(PARTsUnitType.Inch) : -1);
+    partsNT.setDouble("tagPoseY",
+        currentVisionPose3d != null ? new PARTsUnit(currentVisionPose3d.getY(), PARTsUnitType.Meter)
+            .to(PARTsUnitType.Inch) : -1);
+    partsNT.setDouble("tagPoseRot",
+        currentVisionPose3d != null ? new PARTsUnit(currentVisionPose3d.getRotation().getAngle(),
+            PARTsUnitType.Radian).to(PARTsUnitType.Angle) : -1);
 
     partsNT.setBoolean("tag", tagID > 0);
     partsNT.setDouble("tagID", tagID);
