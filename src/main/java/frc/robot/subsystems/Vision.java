@@ -18,12 +18,14 @@ import frc.robot.util.PARTsUnit.PARTsUnitType;
 public class Vision extends PARTsSubsystem {
 
   /*-------------------------------- Private instance variables ---------------------------------*/
-  private final String LIMELIGHT_NAME;
-  private final double LIMELIGHT_ANGLE;
-  private final double LIMELIGHT_LENS_HEIGHT;
+  private String LIMELIGHT_NAME;
+  private double LIMELIGHT_ANGLE;
+  private double LIMELIGHT_LENS_HEIGHT;
 
   private Pose3d currentVisionPose3d;
   private double tagID = -1;
+
+  private String NT_TOPIC = "";
 
   /**
    * Creates a new Vision subsysten instance with the following Limelight
@@ -38,6 +40,7 @@ public class Vision extends PARTsSubsystem {
     LIMELIGHT_ANGLE = limelightAngle.to(PARTsUnitType.Angle);
     LIMELIGHT_LENS_HEIGHT = limelightLensHeight.to(PARTsUnitType.Inch);
     // Vision array of limelight data objects.
+    NT_TOPIC = LIMELIGHT_NAME + (LIMELIGHT_NAME.length() > 0 ? "/" : "");
   }
 
   /*-------------------------------- Generic Subsystem Functions --------------------------------*/
@@ -54,15 +57,16 @@ public class Vision extends PARTsSubsystem {
 
   @Override
   public void outputTelemetry() {
-    partsNT.setDouble("tagPoseX", new PARTsUnit(currentVisionPose3d.getX(), PARTsUnitType.Meter)
+    
+    partsNT.setDouble(NT_TOPIC + "tagPoseX", new PARTsUnit(currentVisionPose3d.getX(), PARTsUnitType.Meter)
         .to(PARTsUnitType.Inch));
-    partsNT.setDouble("tagPoseY", new PARTsUnit(currentVisionPose3d.getY(), PARTsUnitType.Meter)
+    partsNT.setDouble(NT_TOPIC + "tagPoseY", new PARTsUnit(currentVisionPose3d.getY(), PARTsUnitType.Meter)
         .to(PARTsUnitType.Inch));
-    partsNT.setDouble("tagPoseRot", new PARTsUnit(currentVisionPose3d.getRotation().getAngle(),
+    partsNT.setDouble(NT_TOPIC + "tagPoseRot", new PARTsUnit(currentVisionPose3d.getRotation().getAngle(),
         PARTsUnitType.Radian).to(PARTsUnitType.Angle));
 
-    partsNT.setBoolean("tag", tagID > 0);
-    partsNT.setDouble("tagID", tagID);
+    partsNT.setBoolean(NT_TOPIC + "tag", tagID > 0);
+    partsNT.setDouble(NT_TOPIC + "tagID", tagID);
   }
 
   @Override
