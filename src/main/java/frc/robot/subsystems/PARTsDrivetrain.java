@@ -39,9 +39,9 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Vision.LimelightHelpers;
 import frc.robot.util.AprilTagData;
 import frc.robot.util.IPARTsSubsystem;
-import frc.robot.util.LimelightHelpers;
 import frc.robot.util.PARTsLogger;
 import frc.robot.util.PARTsNT;
 import frc.robot.util.PARTsUnit;
@@ -71,14 +71,12 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         private ProfiledPIDController yRangeController;
 
         // Robot poses.
-        private Pose3d initialRobotPose3d;
         private Pose2d initialLLPose2d;
         private Pose3d currentEstimatedRobotPose3d;
         private Pose3d currentVisionPose3d;
         // private double initialRobotAngleRad;
 
         private Pose2d initialPose2d;
-        private double turnPosNeg;
         private double tagID = -1;
         // double skewVal;
 
@@ -154,31 +152,15 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         public void periodic() {
                 super.periodic();
 
-                currentVisionPose3d = m_vision.getPose3d();
-                try {
-                        tagID = m_vision.getTargetID();
-                } catch (ArrayIndexOutOfBoundsException e) {
-                        tagID = -1;
-                }
         }
 
         /*---------------------------------- Custom Public Functions ----------------------------------*/
 
-        public Command alignCommand(Pose2d holdDistance) {
+        public Command alignCommand(Pose2d holdDistance, Vision vision) {
                 Command c = new ConditionalCommand(new FunctionalCommand(
                                 () -> {
                                         initializePoseEstimator();
-                                        double[] botPoseTargetSpace = LimelightHelpers.getLimelightNTDoubleArray("",
-                                                        "botpose_targetspace");
-
-                                        initialRobotPose3d = m_vision.convertToKnownSpace(currentVisionPose3d);
-
-                                        turnPosNeg = -Math.signum(botPoseTargetSpace[4]);
-
-                                        initialPose2d = new Pose2d(initialRobotPose3d.getX(), initialRobotPose3d.getY(),
-                                                        new Rotation2d(initialRobotPose3d.getRotation().getAngle()
-                                                                        * turnPosNeg));
-                                        initialLLPose2d = initialPose2d;
+                                        
                                         resetPoseEstimator(initialPose2d);
 
                                         // Initialize the aim controller.
