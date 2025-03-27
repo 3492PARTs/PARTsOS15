@@ -25,8 +25,6 @@ public class Vision extends PARTsSubsystem {
   private Pose3d currentVisionPose3d;
   private double tagID = -1;
 
-  private String NT_TOPIC = "";
-
   /**
    * Creates a new Vision subsysten instance with the following Limelight
    * paramaters.
@@ -36,11 +34,11 @@ public class Vision extends PARTsSubsystem {
    * @param limelightLensHeight The height of the Limelight lens from the ground.
    */
   public Vision(String limelightName, PARTsUnit limelightAngle, PARTsUnit limelightLensHeight) {
+    super("vision" + (limelightName.length() > 0 ? "_" : "") + limelightName);
     LIMELIGHT_NAME = limelightName;
     LIMELIGHT_ANGLE = limelightAngle.to(PARTsUnitType.Angle);
     LIMELIGHT_LENS_HEIGHT = limelightLensHeight.to(PARTsUnitType.Inch);
     // Vision array of limelight data objects.
-    NT_TOPIC = LIMELIGHT_NAME + (LIMELIGHT_NAME.length() > 0 ? "/" : "");
   }
 
   /*-------------------------------- Generic Subsystem Functions --------------------------------*/
@@ -48,6 +46,7 @@ public class Vision extends PARTsSubsystem {
   public void periodic() {
     if (!isTarget()) {
       tagID = -1;
+      currentVisionPose3d = null;
       return;
     }
 
@@ -57,28 +56,30 @@ public class Vision extends PARTsSubsystem {
 
   @Override
   public void outputTelemetry() {
-    
-    partsNT.setDouble(NT_TOPIC + "tagPoseX", new PARTsUnit(currentVisionPose3d.getX(), PARTsUnitType.Meter)
-        .to(PARTsUnitType.Inch));
-    partsNT.setDouble(NT_TOPIC + "tagPoseY", new PARTsUnit(currentVisionPose3d.getY(), PARTsUnitType.Meter)
-        .to(PARTsUnitType.Inch));
-    partsNT.setDouble(NT_TOPIC + "tagPoseRot", new PARTsUnit(currentVisionPose3d.getRotation().getAngle(),
-        PARTsUnitType.Radian).to(PARTsUnitType.Angle));
 
-    partsNT.setBoolean(NT_TOPIC + "tag", tagID > 0);
-    partsNT.setDouble(NT_TOPIC + "tagID", tagID);
+    if (currentVisionPose3d != null) {
+      partsNT.setDouble("tagPoseX", new PARTsUnit(currentVisionPose3d.getX(), PARTsUnitType.Meter)
+          .to(PARTsUnitType.Inch));
+      partsNT.setDouble("tagPoseY", new PARTsUnit(currentVisionPose3d.getY(), PARTsUnitType.Meter)
+          .to(PARTsUnitType.Inch));
+      partsNT.setDouble("tagPoseRot", new PARTsUnit(currentVisionPose3d.getRotation().getAngle(),
+          PARTsUnitType.Radian).to(PARTsUnitType.Angle));
+    }
+
+    partsNT.setBoolean("tag", tagID > 0);
+    partsNT.setDouble("tagID", tagID);
   }
 
   @Override
   public void stop() {
     // TODO Auto-generated method stub
-    //throw new UnsupportedOperationException("Unimplemented method 'stop'");
+    // throw new UnsupportedOperationException("Unimplemented method 'stop'");
   }
 
   @Override
   public void reset() {
     // TODO Auto-generated method stub
-    //throw new UnsupportedOperationException("Unimplemented method 'reset'");
+    // throw new UnsupportedOperationException("Unimplemented method 'reset'");
   }
 
   @Override
@@ -250,6 +251,7 @@ public class Vision extends PARTsSubsystem {
   public double getTagId() {
     return tagID;
   }
+
   /*---------------------------------- Custom Private Functions ---------------------------------*/
   private double[] getBotPoseTargetSpace() {
     return LimelightHelpers.getLimelightNTDoubleArray(LIMELIGHT_NAME,
