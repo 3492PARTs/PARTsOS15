@@ -79,7 +79,7 @@ public class RobotContainer {
         private boolean elevatorManualControl = false;
 
         /** Subsystems */
-        private final Vision visionSubsystem = new Vision(Constants.VisionConstants.DRIVETRAIN_LIMELIGHT,
+        private final Vision frontVision = new Vision(Constants.VisionConstants.DRIVETRAIN_LIMELIGHT,
                         new PARTsUnit(Constants.VisionConstants.LIMELIGHT_ANGLE, PARTsUnitType.Angle),
                         new PARTsUnit(Constants.VisionConstants.LIMELIGHT_LENS_HEIGHT, PARTsUnitType.Inch));
 
@@ -93,7 +93,7 @@ public class RobotContainer {
 
         private final Coral coral = new Coral(candle, elevator);
 
-        public final PARTsDrivetrain drivetrain = new PARTsDrivetrain(visionSubsystem,
+        public final PARTsDrivetrain drivetrain = new PARTsDrivetrain(
                         TunerConstants.DrivetrainConstants,
                         TunerConstants.FrontLeft, TunerConstants.FrontRight, TunerConstants.BackLeft,
                         TunerConstants.BackRight);
@@ -101,7 +101,7 @@ public class RobotContainer {
         private final Climber climber = new Climber();
 
         private final ArrayList<IPARTsSubsystem> subsystems = new ArrayList<IPARTsSubsystem>(
-                        Arrays.asList(candle, coral, elevator, drivetrain, climber, algae));
+                        Arrays.asList(candle, coral, elevator, drivetrain, climber, algae, frontVision));
 
         private SendableChooser<Command> autoChooser;
 
@@ -170,7 +170,7 @@ public class RobotContainer {
                                 new Pose2d(0, new PARTsUnit(-7, PARTsUnitType.Inch).to(PARTsUnitType.Meter),
                                                 new Rotation2d()),
                                 ElevatorState.L2,
-                                drivetrain, elevator, coral, candle, buttonBoxController));
+                                drivetrain, elevator, coral, candle, buttonBoxController, frontVision));
 
                 driveController.leftTrigger().whileTrue(elevator.elevatorToLevelCommand(ElevatorState.L2));
 
@@ -229,7 +229,7 @@ public class RobotContainer {
 
                 //buttonBoxController.escTrigger().onTrue(new Dealgae(ElevatorState.A1, elevator, algae));
                 buttonBoxController.escTrigger().onTrue(new PARTsAlignScoreAlgae(new Pose2d(0, 0,
-                new Rotation2d()), ElevatorState.A1, drivetrain, elevator, algae, candle, buttonBoxController));
+                new Rotation2d()), ElevatorState.A1, drivetrain, elevator, algae, candle, buttonBoxController, frontVision));
 
                 //buttonBoxController.enterTrigger().onTrue(new Dealgae(ElevatorState.A2, elevator, algae));
 
@@ -246,7 +246,7 @@ public class RobotContainer {
                                                 drivetrain, coral, candle, buttonBoxController,
                                                 new Pose2d(0, Constants.Drivetrain.rightAlignDistance
                                                                 .to(PARTsUnitType.Meter),
-                                                                new Rotation2d())));
+                                                                new Rotation2d()), frontVision));
 
                 // --------------------- Align, L3, Score --------------------//
                 buttonBoxController.audioTrigger().onTrue(
@@ -254,7 +254,7 @@ public class RobotContainer {
                                                 drivetrain, coral, candle, buttonBoxController,
                                                 new Pose2d(0, Constants.Drivetrain.rightAlignDistance
                                                                 .to(PARTsUnitType.Meter),
-                                                                new Rotation2d())));
+                                                                new Rotation2d()), frontVision));
 
                 // --------------------- Align, L4, Score --------------------//
                 buttonBoxController.cruiseTrigger()
@@ -262,7 +262,7 @@ public class RobotContainer {
                                                 drivetrain, coral, candle, buttonBoxController,
                                                 new Pose2d(Constants.Drivetrain.L4XDistance.to(PARTsUnitType.Meter), Constants.Drivetrain.rightAlignDistance
                                                                 .to(PARTsUnitType.Meter),
-                                                                new Rotation2d())));
+                                                                new Rotation2d()), frontVision));
 
                 // *---------------------------------------------------- *//
                 // * ---------------Left Reef Pole Controls ----------- *//
@@ -274,7 +274,7 @@ public class RobotContainer {
                                                 drivetrain, coral, candle, buttonBoxController,
                                                 new Pose2d(0, Constants.Drivetrain.leftAlignDistance
                                                                 .to(PARTsUnitType.Meter),
-                                                                new Rotation2d())));
+                                                                new Rotation2d()), frontVision));
 
                 // --------------------- Align, L3, Score --------------------//
                 buttonBoxController.flashTrigger()
@@ -282,7 +282,7 @@ public class RobotContainer {
                                                 drivetrain, coral, candle, buttonBoxController,
                                                 new Pose2d(0, Constants.Drivetrain.leftAlignDistance
                                                                 .to(PARTsUnitType.Meter),
-                                                                new Rotation2d())));
+                                                                new Rotation2d()), frontVision));
 
                 // --------------------- Align, L4, Score --------------------//
                 buttonBoxController.handleTrigger()
@@ -290,7 +290,7 @@ public class RobotContainer {
                                                 drivetrain, coral, candle, buttonBoxController,
                                                 new Pose2d(Constants.Drivetrain.L4XDistance.to(PARTsUnitType.Meter), Constants.Drivetrain.leftAlignDistance
                                                                 .to(PARTsUnitType.Meter),
-                                                                new Rotation2d())));
+                                                                new Rotation2d()), frontVision));
 
                 // * */
                 // =============================================================================================
@@ -363,18 +363,18 @@ public class RobotContainer {
 
                 NamedCommands.registerCommand("Right Align L2 Score", new AlignScoreCoral(new Pose2d(0, Constants.Drivetrain.rightAlignDistance
                 .to(PARTsUnitType.Meter),
-                new Rotation2d()), ElevatorState.L2, drivetrain, elevator, coral, candle));
+                new Rotation2d()), ElevatorState.L2, drivetrain, elevator, coral, candle, frontVision));
                 NamedCommands.registerCommand("Left Align L2 Score", new AlignScoreCoral(new Pose2d(0, Constants.Drivetrain.leftAlignDistance
                 .to(PARTsUnitType.Meter),
-                new Rotation2d()), ElevatorState.L2, drivetrain, elevator, coral, candle));
+                new Rotation2d()), ElevatorState.L2, drivetrain, elevator, coral, candle, frontVision));
 
                 
                 NamedCommands.registerCommand("Right Align L4 Score", new AlignScoreCoral(new Pose2d(Constants.Drivetrain.L4XDistance.to(PARTsUnitType.Meter), Constants.Drivetrain.rightAlignDistance
                 .to(PARTsUnitType.Meter),
-                new Rotation2d()), ElevatorState.L4, drivetrain, elevator, coral, candle));
+                new Rotation2d()), ElevatorState.L4, drivetrain, elevator, coral, candle, frontVision));
                 NamedCommands.registerCommand("Left Align L4 Score", new AlignScoreCoral(new Pose2d(Constants.Drivetrain.L4XDistance.to(PARTsUnitType.Meter), Constants.Drivetrain.leftAlignDistance
                 .to(PARTsUnitType.Meter),
-                new Rotation2d()), ElevatorState.L4, drivetrain, elevator, coral, candle));
+                new Rotation2d()), ElevatorState.L4, drivetrain, elevator, coral, candle, frontVision));
 
                 autoChooser = AutoBuilder.buildAutoChooser();
                 SmartDashboard.putData("Auto Chooser", autoChooser);

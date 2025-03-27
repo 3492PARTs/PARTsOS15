@@ -17,6 +17,7 @@ import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.PARTsDrivetrain;
+import frc.robot.subsystems.Vision;
 import frc.robot.util.PARTsButtonBoxController;
 import frc.robot.util.PARTsUnit;
 import frc.robot.util.PARTsUnit.PARTsUnitType;
@@ -30,7 +31,7 @@ public class PARTsAlignScoreAlgae extends SequentialCommandGroup {
         /** Creates a new ScoreCoral. */
         public PARTsAlignScoreAlgae(Pose2d holdDistance, ElevatorState level, PARTsDrivetrain drivetrain,
                         Elevator elevator, Algae algae,
-                         Candle candle, PARTsButtonBoxController partsButtonBoxController) {
+                         Candle candle, PARTsButtonBoxController partsButtonBoxController, Vision vision) {
 
                 addCommands(new ParallelRaceGroup(
                                 new SequentialCommandGroup(
@@ -43,10 +44,10 @@ public class PARTsAlignScoreAlgae extends SequentialCommandGroup {
                                                                                         .to(PARTsUnitType.Meter),
                                                                         new PARTsUnit(9, PARTsUnitType.Inch)
                                                                                         .to(PARTsUnitType.Meter),
-                                                                        new Rotation2d()))
+                                                                        new Rotation2d()), vision)
                                                                 ),
                                                                 new WaitCommand(.1),
-                                                                drivetrain.alignCommand(holdDistance)
+                                                                drivetrain.alignCommand(holdDistance, vision)
                                                 
                                                 ),
                                 new WaitUntilCommand(partsButtonBoxController.negative3Trigger())),
