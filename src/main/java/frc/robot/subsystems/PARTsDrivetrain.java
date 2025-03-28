@@ -53,13 +53,13 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         private SwerveModule<TalonFX, TalonFX, CANcoder> backRightModule;
         private SwerveModule<TalonFX, TalonFX, CANcoder> backLeftModule;
 
-        private boolean doRejectUpdate = false;
+        //private boolean doRejectUpdate = false;
 
         private PARTsNT partsNT;
         private PARTsLogger partsLogger;
 
         // Vision Variables
-        private Vision m_vision;
+        //private Vision m_vision;
         private SwerveRequest.RobotCentric alignRequest;
 
         private ProfiledPIDController thetaController;
@@ -67,13 +67,13 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         private ProfiledPIDController yRangeController;
 
         // Robot poses.
-        private Pose2d initialLLPose2d;
+        //private Pose2d initialLLPose2d;
         private Pose3d currentEstimatedRobotPose3d;
-        private Pose3d currentVisionPose3d;
+        //private Pose3d currentVisionPose3d;
         // private double initialRobotAngleRad;
 
-        private Pose2d initialPose2d;
-        private double tagID = -1;
+        //private Pose2d initialPose2d;
+        //private double tagID = -1;
         // double skewVal;
 
         //LimelightHelpers.PoseEstimate mt2 = null;
@@ -111,15 +111,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         /*-------------------------------- Generic Subsystem Functions --------------------------------*/
         @Override
         public void outputTelemetry() {
-                partsNT.setDouble("vision/tagPoseX", new PARTsUnit(currentVisionPose3d.getX(), PARTsUnitType.Meter)
-                                .to(PARTsUnitType.Inch));
-                partsNT.setDouble("vision/tagPoseY", new PARTsUnit(currentVisionPose3d.getY(), PARTsUnitType.Meter)
-                                .to(PARTsUnitType.Inch));
-                partsNT.setDouble("vision/tagPoseRot", new PARTsUnit(currentVisionPose3d.getRotation().getAngle(),
-                                PARTsUnitType.Radian).to(PARTsUnitType.Angle));
 
-                partsNT.setBoolean("vision/tag", tagID > 0);
-                partsNT.setDouble("vision/tagID", tagID);
         }
 
         @Override
@@ -152,10 +144,9 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         public Command alignCommand(Pose2d holdDistance, Vision vision) {
                 Command c = new ConditionalCommand(new FunctionalCommand(
                                 () -> {
-                                        vision.periodic();
                                         initializePoseEstimator();
                                         
-                                        resetPoseEstimator(initialPose2d);
+                                        resetPoseEstimator(vision.getInitialPose2d());
 
                                         // Initialize the aim controller.
                                         thetaController.reset(m_poseEstimator.getEstimatedPosition().getRotation()
@@ -222,14 +213,14 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 () -> ((xRangeController.atGoal() &&
                                                 yRangeController.atGoal() &&
                                                 thetaController.atGoal())),
-                                this), new WaitCommand(0), () -> tagID > 0);
+                                this), new WaitCommand(0), () -> vision.getTargetID() > 0);
                 c.setName("align");
                 return c;
         }
 
         /*---------------------------------- Custom Private Functions ---------------------------------*/
         private void alignCommandInitTelemetry(Pose2d holdDist) {
-                partsNT.setDouble("align/startMS", System.currentTimeMillis());
+                /*partsNT.setDouble("align/startMS", System.currentTimeMillis());
 
                 partsLogger.logDouble("align/llPoseX", initialLLPose2d.getX());
                 partsLogger.logDouble("align/llPoseY", initialLLPose2d.getY());
@@ -245,11 +236,13 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
                                                 partsNT.setDouble("align/holdDistX", new PARTsUnit(holdDist.getX(), PARTsUnitType.Meter)
                                                 .to(PARTsUnitType.Inch));
+                                                */
                 partsNT.setDouble("align/holdDistY", new PARTsUnit(holdDist.getY(), PARTsUnitType.Meter)
                 .to(PARTsUnitType.Inch));
                 partsNT.setDouble("align/holdDistRot",
                                 new PARTsUnit(holdDist.getRotation().getRadians(), PARTsUnitType.Radian)
                                                 .to(PARTsUnitType.Angle));
+
 
                 partsLogger.logDouble("align/thetaControllerSetpoint",
                                 thetaController.getSetpoint().position);

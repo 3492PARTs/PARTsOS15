@@ -30,6 +30,7 @@ public class Vision extends PARTsSubsystem {
   private Pose2d initialPose2d;
   private double turnPosNeg;
   private Pose2d initialLLPose2d;
+  private String NTName = "";
 
   /**
    * Creates a new Vision subsysten instance with the following Limelight
@@ -49,47 +50,34 @@ public class Vision extends PARTsSubsystem {
     LIMELIGHT_NAME = limelightName;
     LIMELIGHT_ANGLE = limelightAngle.to(PARTsUnitType.Angle);
     LIMELIGHT_LENS_HEIGHT = limelightLensHeight.to(PARTsUnitType.Inch);
-
-    double[] botPoseTargetSpace = LimelightHelpers.getLimelightNTDoubleArray("",
-        "botpose_targetspace");
-
-    initialRobotPose3d = m_vision.convertToKnownSpace(currentVisionPose3d);
-
-    turnPosNeg = -Math.signum(botPoseTargetSpace[4]);
-
-    initialLLPose2d = initialPose2d;
-
-    initialPose2d = new Pose2d(initialRobotPose3d.getX(), initialRobotPose3d.getY(),
-        new Rotation2d(initialRobotPose3d.getRotation().getAngle()
-            * turnPosNeg));
+    NTName = "Vision" + (limelightName.length() > 0 ? "_" : "") + limelightName ;
     // Vision array of limelight data objects.
   }
 
   /*-------------------------------- Generic Subsystem Functions --------------------------------*/
   @Override
   public void periodic() {
-    if (!isTarget())
+    if (!isTarget()) {
+      currentVisionPose3d = null;
+      tagID = -1;
       return;
-
-    currentVisionPose3d = m_vision.getPose3d();
-    try {
-      tagID = m_vision.getTargetID();
-    } catch (ArrayIndexOutOfBoundsException e) {
-      tagID = -1;
     }
 
     currentVisionPose3d = m_vision.getPose3d();
-    try {
-      tagID = m_vision.getTargetID();
-    } catch (ArrayIndexOutOfBoundsException e) {
-      tagID = -1;
-    }
+    tagID = m_vision.getTargetID();
   }
 
   @Override
   public void outputTelemetry() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'outputTelemetry'");
+    partsNT.setDouble(NTName + "/tagPoseX", new PARTsUnit(currentVisionPose3d.getX(), PARTsUnitType.Meter)
+        .to(PARTsUnitType.Inch));
+    partsNT.setDouble(NTName + "/tagPoseY", new PARTsUnit(currentVisionPose3d.getY(), PARTsUnitType.Meter)
+        .to(PARTsUnitType.Inch));
+    partsNT.setDouble(NTName + "/tagPoseRot", new PARTsUnit(currentVisionPose3d.getRotation().getAngle(),
+        PARTsUnitType.Radian).to(PARTsUnitType.Angle));
+
+    partsNT.setBoolean(NTName + "/tag", tagID > 0);
+    partsNT.setDouble(NTName + "/tagID", tagID);
   }
 
   @Override
@@ -289,6 +277,24 @@ public class Vision extends PARTsSubsystem {
   public Rotation2d flipRotation2d(Rotation2d rotation) {
     return new Rotation2d(-rotation.getRadians());
   }
+
+  public Pose2d getInitialPose2d() {
+    double[] botPoseTargetSpace = LimelightHelpers.getLimelightNTDoubleArray("",
+        "botpose_targetspace");
+
+    initialRobotPose3d = m_vision.convertToKnownSpace(currentVisionPose3d);
+
+    turnPosNeg = -Math.signum(botPoseTargetSpace[4]);
+
+    initialLLPose2d = initialPose2d;
+
+    initialPose2d = new Pose2d(initialRobotPose3d.getX(), initialRobotPose3d.getY(),
+        new Rotation2d(initialRobotPose3d.getRotation().getAngle()
+            * turnPosNeg));
+    return initialPose2d;
+  }
+
+
 
   /*---------------------------------- Custom Private Functions ---------------------------------*/
 }

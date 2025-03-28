@@ -23,11 +23,11 @@ public class AlignScoreCoral extends SequentialCommandGroup {
 
         /** Creates a new ScoreCoral. */
         public AlignScoreCoral(Pose2d holdDistance, ElevatorState level, PARTsDrivetrain drivetrain, Elevator elevator,
-                        Coral coral, Candle candle) {
+                        Coral coral, Candle candle, Vision vision) {
 
                 addCommands(
                                 candle.addStateCommand(CandleState.AUTO_ALIGN),
-                                new ParallelCommandGroup(drivetrain.alignCommand(holdDistance, new Vision(Constants.VisionConstants.ELEVATOR_LIMELIGHT, Constants.VisionConstants.LIMELIGHT_ANGLE, Constants.VisionConstants.LIMELIGHT_LENS_HEIGHT)),
+                                new ParallelCommandGroup(drivetrain.alignCommand(holdDistance, vision),
                                                 elevator.elevatorToLevelCommand(level)),
                                 //coral.score(),
                                // new WaitCommand(.1),

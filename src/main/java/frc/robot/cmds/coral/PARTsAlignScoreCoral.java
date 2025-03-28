@@ -30,7 +30,7 @@ public class PARTsAlignScoreCoral extends SequentialCommandGroup {
         /** Creates a new ScoreCoral. */
         public PARTsAlignScoreCoral(Pose2d holdDistance, ElevatorState level, PARTsDrivetrain drivetrain,
                         Elevator elevator,
-                        Coral coral, Candle candle, PARTsButtonBoxController partsButtonBoxController) {
+                        Coral coral, Candle candle, PARTsButtonBoxController partsButtonBoxController, Vision vision) {
 
                 addCommands(new ParallelRaceGroup(
                                 new SequentialCommandGroup(
@@ -40,9 +40,9 @@ public class PARTsAlignScoreCoral extends SequentialCommandGroup {
                                                                                 .to(PARTsUnitType.Meter),
                                                                 new PARTsUnit(9, PARTsUnitType.Inch)
                                                                                 .to(PARTsUnitType.Meter),
-                                                                new Rotation2d()), new Vision("Slim_Shady", null, null)),
+                                                                new Rotation2d()), vision),
                                                 new WaitCommand(.1),
-                                                new ParallelCommandGroup(drivetrain.alignCommand(holdDistance, new Vision(Constants.VisionConstants.ELEVATOR_LIMELIGHT, Constants.VisionConstants.LIMELIGHT_ANGLE, Constants.VisionConstants.LIMELIGHT_LENS_HEIGHT)),
+                                                new ParallelCommandGroup(drivetrain.alignCommand(holdDistance, vision),
                                                                 elevator.elevatorToLevelCommand(level))),
                                                 //coral.score(),
                                                 //new WaitCommand(.1),
