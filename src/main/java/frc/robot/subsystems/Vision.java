@@ -278,7 +278,7 @@ public class Vision extends PARTsSubsystem {
     return new Rotation2d(-rotation.getRadians());
   }
 
-  public Pose2d getInitialPose2d() {
+  public Pose2d getBotPose2d() {
     double[] botPoseTargetSpace = LimelightHelpers.getLimelightNTDoubleArray("",
         "botpose_targetspace");
 

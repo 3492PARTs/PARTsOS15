@@ -145,7 +145,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 () -> {
                                         initializePoseEstimator();
                                         
-                                        resetPoseEstimator(vision.getInitialPose2d());
+                                        resetPoseEstimator(vision.getBotPose2d());
 
                                         // Initialize the aim controller.
                                         thetaController.reset(m_poseEstimator.getEstimatedPosition().getRotation()
@@ -176,6 +176,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 },
                                 () -> {
                                         updatePoseEstimator();
+                                        setPoseEstimatorVisionMeasurement(vision);
                                         currentEstimatedRobotPose3d = new Pose3d(
                                                         m_poseEstimator.getEstimatedPosition());
 
@@ -482,23 +483,24 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 m_poseEstimator.resetPose(pose);
         }
 
-        private void setPoseEstimatorVisionMeasurement() {
-                // if our angular velocity is greater than 360 degrees per second, ignore vision
-                // updates
-                /*if (Math.abs(super.getPigeon2().getRate()) > 360) {
-                        doRejectUpdate = true;
+        private void setPoseEstimatorVisionMeasurement(Vision vision) {
+                boolean doRejectUpdate = false;
+                                // if our angular velocity is greater than 360 degrees per second, ignore vision
+                                // updates
+                                if (Math.abs(super.getPigeon2().getRate()) > 360) {
+                                        doRejectUpdate = true;
                 }
                 
-                if (mt2 == null || mt2.tagCount == 0) {
+                if (vision.getTargetID() < 0) {
                         doRejectUpdate = true;
                 }
                 
                 if (!doRejectUpdate) {
                         m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
                         m_poseEstimator.addVisionMeasurement(
-                                        mt2.pose,
-                                        mt2.timestampSeconds);
-                }*/
+                                        vision.getBotPose2d(),
+                                        System.currentTimeMillis());
+                }
         }
 
         /*---------------------------------- Interface Functions ----------------------------------*/
