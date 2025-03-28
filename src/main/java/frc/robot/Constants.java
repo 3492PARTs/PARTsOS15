@@ -62,8 +62,8 @@ public final class Constants {
   public static class VisionConstants {
     public static final String DRIVETRAIN_LIMELIGHT = ""; //The_Real
     public static final String ELEVATOR_LIMELIGHT = "Slim_Shady";
-    public static final double LIMELIGHT_LENS_HEIGHT = 8.75; // Inches
-    public static final double LIMELIGHT_ANGLE = 11; // Degrees
+    public static final PARTsUnit LIMELIGHT_LENS_HEIGHT = new PARTsUnit(8.75, PARTsUnitType.Inch); // Inches
+    public static final PARTsUnit LIMELIGHT_ANGLE = new PARTsUnit(11, PARTsUnitType.Angle); // Degrees
 
     public static final double REEF_APRILTAG_HEIGHT = 16; //Distance.ofBaseUnits(6.875, Inches);
     public static final double PROCCESSOR_APRILTAG_HEIGHT = 45.875; // Inches

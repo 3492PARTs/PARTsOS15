@@ -7,18 +7,14 @@ package frc.robot.cmds.coral;
 import java.util.function.BooleanSupplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants;
 import frc.robot.subsystems.Candle;
 import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.PARTsDrivetrain;
 import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.util.PARTsButtonBoxController;
-import frc.robot.util.PARTsUnit.PARTsUnitType;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:

@@ -4,14 +4,15 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import frc.robot.util.AprilTagData;
-import frc.robot.util.LimelightHelpers;
 import frc.robot.util.PARTsSubsystem;
 import frc.robot.util.PARTsUnit;
 import frc.robot.util.AprilTagData.AprilTagType;
+import frc.robot.util.LimelightHelpers;
 import frc.robot.util.PARTsUnit.PARTsUnitType;
 
 public class Vision extends PARTsSubsystem {
@@ -20,17 +21,39 @@ public class Vision extends PARTsSubsystem {
   private final String LIMELIGHT_NAME;
   private final double LIMELIGHT_ANGLE;
   private final double LIMELIGHT_LENS_HEIGHT;
+  private Pose3d currentVisionPose3d;
+  private Vision m_vision;
+  private double tagID = -1;
+  private Pose3d initialRobotPose3d;
+  private Pose2d initialPose2d;
+  private double turnPosNeg;
+  private Pose2d initialLLPose2d;
 
   /**
-   * Creates a new Vision subsysten instance with the following Limelight paramaters.
-   * @param limelightName The name of the requested Limelight.
-   * @param limelightAngle The angle of the requested Limelight.
+   * Creates a new Vision subsysten instance with the following Limelight
+   * paramaters.
+   * 
+   * @param limelightName       The name of the requested Limelight.
+   * @param limelightAngle      The angle of the requested Limelight.
    * @param limelightLensHeight The height of the Limelight lens from the ground.
    */
   public Vision(String limelightName, PARTsUnit limelightAngle, PARTsUnit limelightLensHeight) {
     LIMELIGHT_NAME = limelightName;
     LIMELIGHT_ANGLE = limelightAngle.to(PARTsUnitType.Angle);
     LIMELIGHT_LENS_HEIGHT = limelightLensHeight.to(PARTsUnitType.Inch);
+
+    double[] botPoseTargetSpace = LimelightHelpers.getLimelightNTDoubleArray("",
+        "botpose_targetspace");
+
+    initialRobotPose3d = m_vision.convertToKnownSpace(currentVisionPose3d);
+
+    turnPosNeg = -Math.signum(botPoseTargetSpace[4]);
+
+    initialLLPose2d = initialPose2d;
+
+    initialPose2d = new Pose2d(initialRobotPose3d.getX(), initialRobotPose3d.getY(),
+        new Rotation2d(initialRobotPose3d.getRotation().getAngle()
+            * turnPosNeg));
     // Vision array of limelight data objects.
   }
 
@@ -39,6 +62,13 @@ public class Vision extends PARTsSubsystem {
   public void periodic() {
     if (!isTarget())
       return;
+
+    currentVisionPose3d = m_vision.getPose3d();
+    try {
+      tagID = m_vision.getTargetID();
+    } catch (ArrayIndexOutOfBoundsException e) {
+      tagID = -1;
+    }
   }
 
   @Override
@@ -62,25 +92,29 @@ public class Vision extends PARTsSubsystem {
   @Override
   public void log() {
     // TODO Auto-generated method stub
-    //throw new UnsupportedOperationException("Unimplemented method 'log'");
+    // throw new UnsupportedOperationException("Unimplemented method 'log'");
   }
 
   /*---------------------------------- Custom Public Functions ----------------------------------*/
   /**
    * Gets distance of robot in meters.
+   * 
    * @param goalHeight The height of the apriltag in inches.
-   * @return The distance from the apriltag as a {@link frc.robot.util.PARTsUnit PARTsUnit} in Meters.
-   * @deprecated Please do not use this to get distance. Zero will always be returned.
+   * @return The distance from the apriltag as a {@link frc.robot.util.PARTsUnit
+   *         PARTsUnit} in Meters.
+   * @deprecated Please do not use this to get distance. Zero will always be
+   *             returned.
    */
   public PARTsUnit getDistance(double goalHeight) {
 
     double angleToGoal = LimelightHelpers.getTY(LIMELIGHT_NAME);
-    //System.out.println("Vision -> Angle to goal: " + angleToGoal);
+    // System.out.println("Vision -> Angle to goal: " + angleToGoal);
 
-    //double distance = (goalHeight - LIMELIGHT_LENS_HEIGHT) / Math.tan(angleToGoal * (Math.PI/180));
-    //System.out.println("Vision -> Distance: " + distance);
+    // double distance = (goalHeight - LIMELIGHT_LENS_HEIGHT) / Math.tan(angleToGoal
+    // * (Math.PI/180));
+    // System.out.println("Vision -> Distance: " + distance);
 
-    // Dist from limelight, convert to x y for robot and 
+    // Dist from limelight, convert to x y for robot and
 
     PARTsUnit unit = new PARTsUnit(0, PARTsUnitType.Inch);
     return unit.as(PARTsUnitType.Meter);
@@ -92,7 +126,9 @@ public class Vision extends PARTsSubsystem {
 
   /**
    * Gets the horizontal offset from the crosshair to the target in degrees.
-   * @return Horizontal offset angle in degrees as a {@link frc.robot.util.PARTsUnit PARTsUnit}.
+   * 
+   * @return Horizontal offset angle in degrees as a
+   *         {@link frc.robot.util.PARTsUnit PARTsUnit}.
    */
   public PARTsUnit getTX() {
     return new PARTsUnit(LimelightHelpers.getTX(LIMELIGHT_NAME), PARTsUnitType.Angle);
@@ -100,7 +136,9 @@ public class Vision extends PARTsSubsystem {
 
   /**
    * Gets the vertical offset from the crosshair to the target in degrees.
-   * @return Vertical offset angle in degrees as a {@link frc.robot.util.PARTsUnit PARTsUnit}.
+   * 
+   * @return Vertical offset angle in degrees as a {@link frc.robot.util.PARTsUnit
+   *         PARTsUnit}.
    */
   public PARTsUnit getTY() {
     return new PARTsUnit(LimelightHelpers.getTY(LIMELIGHT_NAME), PARTsUnitType.Angle);
@@ -108,7 +146,9 @@ public class Vision extends PARTsSubsystem {
 
   /**
    * Gets the target area as a percentage of the image. (0% - 100%)
-   * @return Limelight TA percentage as a {@link frc.robot.util.PARTsUnit PARTsUnit}.
+   * 
+   * @return Limelight TA percentage as a {@link frc.robot.util.PARTsUnit
+   *         PARTsUnit}.
    */
   public PARTsUnit getTA() {
     return new PARTsUnit(LimelightHelpers.getTA(LIMELIGHT_NAME), PARTsUnitType.Percent);
@@ -116,6 +156,7 @@ public class Vision extends PARTsSubsystem {
 
   /**
    * Does the vision camera have a valid target?
+   * 
    * @return True if a valid target is found, otherwise false.
    */
   public boolean isTarget() {
@@ -124,6 +165,7 @@ public class Vision extends PARTsSubsystem {
 
   /**
    * Gets the target AprilTag ID.
+   * 
    * @return The target ID as a double.
    */
   public double getTargetID() {
@@ -133,6 +175,7 @@ public class Vision extends PARTsSubsystem {
 
   /**
    * Sets the Limelight's priority AprilTag ID to the requested AprilTag ID.
+   * 
    * @param targetID The requested AprilTag ID.
    */
   public void setTargetID(int targetID) {
@@ -143,6 +186,7 @@ public class Vision extends PARTsSubsystem {
 
   /**
    * Get the target AprilTag's height as a double.
+   * 
    * @param targetID The target AprilTag ID.
    * @return Returns the height of the AprilTag associated the provided ID.
    */
@@ -152,6 +196,7 @@ public class Vision extends PARTsSubsystem {
 
   /**
    * Switch the pipeline via the index in the limelight.
+   * 
    * @param index The index of the pipeline to set.
    */
   public void setPipelineIndex(int index) {
@@ -160,7 +205,10 @@ public class Vision extends PARTsSubsystem {
 
   /**
    * Coverts the pose in target space to a pose in robot space.
-   * @see <a href="https://docs.limelightvision.io/docs/docs-limelight/pipeline-apriltag/apriltag-coordinate-systems">3D Coordinate Systems in Detail</a>.
+   * 
+   * @see <a href=
+   *      "https://docs.limelightvision.io/docs/docs-limelight/pipeline-apriltag/apriltag-coordinate-systems">3D
+   *      Coordinate Systems in Detail</a>.
    * @param pose The pose in target space.
    * @return The new pose in robot space.
    */
@@ -175,7 +223,10 @@ public class Vision extends PARTsSubsystem {
 
   /**
    * Coverts the pose in target space to a pose in robot space.
-   * @see <a href="https://docs.limelightvision.io/docs/docs-limelight/pipeline-apriltag/apriltag-coordinate-systems">3D Coordinate Systems in Detail</a>.
+   * 
+   * @see <a href=
+   *      "https://docs.limelightvision.io/docs/docs-limelight/pipeline-apriltag/apriltag-coordinate-systems">3D
+   *      Coordinate Systems in Detail</a>.
    * @param pose The pose in target space.
    * @return The new pose in robot space.
    */

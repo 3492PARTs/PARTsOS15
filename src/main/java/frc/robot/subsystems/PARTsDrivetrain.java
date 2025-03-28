@@ -18,9 +18,6 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -39,7 +36,6 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.Vision.LimelightHelpers;
 import frc.robot.util.AprilTagData;
 import frc.robot.util.IPARTsSubsystem;
 import frc.robot.util.PARTsLogger;
@@ -82,26 +78,24 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
         //LimelightHelpers.PoseEstimate mt2 = null;
 
-        public PARTsDrivetrain(Vision vision,
+        public PARTsDrivetrain(
                         SwerveDrivetrainConstants drivetrainConstants,
                         SwerveModuleConstants<?, ?, ?>... modules) {
                 super(drivetrainConstants, modules);
-                this.m_vision = vision;
 
                 initialize();
         }
 
-        public PARTsDrivetrain(Vision vision,
+        public PARTsDrivetrain(
                         SwerveDrivetrainConstants drivetrainConstants,
                         double odometryUpdateFrequency,
                         SwerveModuleConstants<?, ?, ?>... modules) {
                 super(drivetrainConstants, odometryUpdateFrequency, modules);
-                this.m_vision = vision;
 
                 initialize();
         }
 
-        public PARTsDrivetrain(Vision vision,
+        public PARTsDrivetrain(
                         SwerveDrivetrainConstants drivetrainConstants,
                         double odometryUpdateFrequency,
                         Matrix<N3, N1> odometryStandardDeviation,
@@ -109,7 +103,6 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                         SwerveModuleConstants<?, ?, ?>... modules) {
                 super(drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation,
                                 modules);
-                this.m_vision = vision;
 
                 initialize();
 
@@ -159,6 +152,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         public Command alignCommand(Pose2d holdDistance, Vision vision) {
                 Command c = new ConditionalCommand(new FunctionalCommand(
                                 () -> {
+                                        vision.periodic();
                                         initializePoseEstimator();
                                         
                                         resetPoseEstimator(initialPose2d);
@@ -423,9 +417,6 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                 null);
                         }
                 });
-
-                partsNT.putSmartDashboardSendable("Align",
-                                alignCommand(new Pose2d(-1, 0, new Rotation2d())));
         }
 
         private void initializePoseEstimator() {

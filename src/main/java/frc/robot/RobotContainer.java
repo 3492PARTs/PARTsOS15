@@ -11,7 +11,6 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -80,8 +79,8 @@ public class RobotContainer {
 
         /** Subsystems */
         private final Vision visionSubsystem = new Vision(Constants.VisionConstants.DRIVETRAIN_LIMELIGHT,
-                        new PARTsUnit(Constants.VisionConstants.LIMELIGHT_ANGLE, PARTsUnitType.Angle),
-                        new PARTsUnit(Constants.VisionConstants.LIMELIGHT_LENS_HEIGHT, PARTsUnitType.Inch));
+                        Constants.VisionConstants.LIMELIGHT_ANGLE,
+                        Constants.VisionConstants.LIMELIGHT_LENS_HEIGHT);
 
         public final Candle candle = new Candle();
 
@@ -93,7 +92,7 @@ public class RobotContainer {
 
         private final Coral coral = new Coral(candle, elevator);
 
-        public final PARTsDrivetrain drivetrain = new PARTsDrivetrain(visionSubsystem,
+        public final PARTsDrivetrain drivetrain = new PARTsDrivetrain(
                         TunerConstants.DrivetrainConstants,
                         TunerConstants.FrontLeft, TunerConstants.FrontRight, TunerConstants.BackLeft,
                         TunerConstants.BackRight);
