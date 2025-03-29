@@ -19,8 +19,8 @@ public final class Constants {
 
     public static final double MAX_AIM_VELOCITY = 1.5 * Math.PI; // radd/s
     public static final double MAX_AIM_ACCELERATION = Math.PI / 2; // rad/s^2
-    public static final double MAX_RANGE_VELOCITY = 7.0;//5.0; // m/s
-    public static final double MAX_RANGE_ACCELERATION = 7.0;//5.0; // 0.5; // m/2^s
+    public static final double MAX_RANGE_VELOCITY = 5;//7.0;//5.0; // m/s
+    public static final double MAX_RANGE_ACCELERATION = 5;//7.0;//5.0; // 0.5; // m/2^s
 
     public static final double THETA_P = 8.0; // Proprotinal
     public static final double THETA_I = 0.01; // 0.01; //Gradual corretction
@@ -42,9 +42,11 @@ public final class Constants {
     public static final PARTsUnit leftAlignDistance = new PARTsUnit(6.5, PARTsUnitType.Inch);
 
     //more negative, more to right
-    public static final PARTsUnit rightAlignDistance = new PARTsUnit(-7.5, PARTsUnitType.Inch);
+    public static final PARTsUnit rightAlignDistance = new PARTsUnit(-6.5, PARTsUnitType.Inch); //-7.5
 
-    public static final PARTsUnit L4XDistance = new PARTsUnit(-6, PARTsUnitType.Inch);
+    public static final PARTsUnit L4XDistance = new PARTsUnit(-18 + (-5.5), PARTsUnitType.Inch);
+
+    public static final PARTsUnit xZeroHoldDistance = new PARTsUnit(-18, PARTsUnitType.Inch);
   }
 
   /*public static class LimelightData {
@@ -87,8 +89,8 @@ public final class Constants {
     public static final double kTolerance = 0.25;
     public static final int kIZone = 0;
     public static final int kMaxCurrent = 40;
-    public static final int kMaxVelocity = 60;
-    public static final int kMaxAcceleration = 200;
+    public static final int kMaxVelocity = 70;
+    public static final int kMaxAcceleration = 250;
     public static final double kG = 0.18162;//0.3766;
     public static final double kS = 0.22467;//0.24105;
     public static final double kV = 0.020157;//0.020009;

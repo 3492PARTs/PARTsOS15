@@ -282,19 +282,22 @@ public class Vision extends PARTsSubsystem {
   }
 
   public Pose2d getBotPose2d() {
-    double[] botPoseTargetSpace = LimelightHelpers.getLimelightNTDoubleArray(LIMELIGHT_NAME,
-        "botpose_targetspace");
+    if (currentVisionPose3d != null) {
+      double[] botPoseTargetSpace = LimelightHelpers.getLimelightNTDoubleArray(LIMELIGHT_NAME,
+          "botpose_targetspace");
 
-    initialRobotPose3d = convertToKnownSpace(currentVisionPose3d);
+      initialRobotPose3d = convertToKnownSpace(currentVisionPose3d);
 
-    turnPosNeg = -Math.signum(botPoseTargetSpace[4]);
+      turnPosNeg = -Math.signum(botPoseTargetSpace[4]);
 
-    initialLLPose2d = initialPose2d;
+      initialLLPose2d = initialPose2d;
 
-    initialPose2d = new Pose2d(initialRobotPose3d.getX(), initialRobotPose3d.getY(),
-        new Rotation2d(initialRobotPose3d.getRotation().getAngle()
-            * turnPosNeg));
-    return initialPose2d;
+      initialPose2d = new Pose2d(initialRobotPose3d.getX(), initialRobotPose3d.getY(),
+          new Rotation2d(initialRobotPose3d.getRotation().getAngle()
+              * turnPosNeg));
+      return initialPose2d.rotateBy(new Rotation2d(Math.PI * 0));
+    } else
+      return null;
   }
 
   /*---------------------------------- Custom Private Functions ---------------------------------*/

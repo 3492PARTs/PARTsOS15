@@ -26,9 +26,7 @@ public class ConditionalAlign extends SequentialCommandGroup {
       Coral coral, Candle candle, PARTsButtonBoxController buttonBoxController, Pose2d holdDistance, Vision vision) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    addCommands(new ConditionalCommand(elevator.elevatorToLevelCommand(state), new PARTsAlignScoreCoral(
-       holdDistance,
-        state, drivetrain, elevator, coral, candle,
-        buttonBoxController, vision), supplier));
+    addCommands(new ConditionalCommand(elevator.elevatorToLevelCommand(state),
+        new AlignScoreCoral(holdDistance, state, drivetrain, elevator, coral, candle, vision), supplier));
   }
 }

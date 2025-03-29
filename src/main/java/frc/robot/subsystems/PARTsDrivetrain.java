@@ -53,13 +53,13 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         private SwerveModule<TalonFX, TalonFX, CANcoder> backRightModule;
         private SwerveModule<TalonFX, TalonFX, CANcoder> backLeftModule;
 
-        //private boolean doRejectUpdate = false;
+        // private boolean doRejectUpdate = false;
 
         private PARTsNT partsNT;
         private PARTsLogger partsLogger;
 
         // Vision Variables
-        //private Vision m_vision;
+        // private Vision m_vision;
         private SwerveRequest.RobotCentric alignRequest;
 
         private ProfiledPIDController thetaController;
@@ -67,16 +67,16 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         private ProfiledPIDController yRangeController;
 
         // Robot poses.
-        //private Pose2d initialLLPose2d;
+        // private Pose2d initialLLPose2d;
         private Pose3d currentEstimatedRobotPose3d;
-        //private Pose3d currentVisionPose3d;
+        // private Pose3d currentVisionPose3d;
         // private double initialRobotAngleRad;
 
-        //private Pose2d initialPose2d;
-        //private double tagID = -1;
+        // private Pose2d initialPose2d;
+        // private double tagID = -1;
         // double skewVal;
 
-        //LimelightHelpers.PoseEstimate mt2 = null;
+        // LimelightHelpers.PoseEstimate mt2 = null;
 
         public PARTsDrivetrain(
                         SwerveDrivetrainConstants drivetrainConstants,
@@ -145,7 +145,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 Command c = new ConditionalCommand(new FunctionalCommand(
                                 () -> {
                                         initializePoseEstimator();
-                                        
+
                                         resetPoseEstimator(vision.getBotPose2d());
 
                                         // Initialize the aim controller.
@@ -221,56 +221,62 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
         /*---------------------------------- Custom Private Functions ---------------------------------*/
         private void alignCommandInitTelemetry(Pose2d holdDist) {
-                /*partsNT.setDouble("align/startMS", System.currentTimeMillis());
-
-                partsLogger.logDouble("align/llPoseX", initialLLPose2d.getX());
-                partsLogger.logDouble("align/llPoseY", initialLLPose2d.getY());
-                partsLogger.logDouble("align/llPoseRot",
-                                new PARTsUnit(initialLLPose2d.getRotation().getRadians(), PARTsUnitType.Radian)
-                                                .to(PARTsUnitType.Angle));
-
-                partsNT.setDouble("align/llPoseX", initialLLPose2d.getX());
-                partsNT.setDouble("align/llPoseY", initialLLPose2d.getY());
-                partsNT.setDouble("align/llPoseRot",
-                                new PARTsUnit(initialLLPose2d.getRotation().getRadians(), PARTsUnitType.Radian)
-                                                .to(PARTsUnitType.Angle));
-
-                                                partsNT.setDouble("align/holdDistX", new PARTsUnit(holdDist.getX(), PARTsUnitType.Meter)
-                                                .to(PARTsUnitType.Inch));
-                                                */
+                /*
+                 * partsNT.setDouble("align/startMS", System.currentTimeMillis());
+                 * 
+                 * partsLogger.logDouble("align/llPoseX", initialLLPose2d.getX());
+                 * partsLogger.logDouble("align/llPoseY", initialLLPose2d.getY());
+                 * partsLogger.logDouble("align/llPoseRot",
+                 * new PARTsUnit(initialLLPose2d.getRotation().getRadians(),
+                 * PARTsUnitType.Radian)
+                 * .to(PARTsUnitType.Angle));
+                 * 
+                 * partsNT.setDouble("align/llPoseX", initialLLPose2d.getX());
+                 * partsNT.setDouble("align/llPoseY", initialLLPose2d.getY());
+                 * partsNT.setDouble("align/llPoseRot",
+                 * new PARTsUnit(initialLLPose2d.getRotation().getRadians(),
+                 * PARTsUnitType.Radian)
+                 * .to(PARTsUnitType.Angle));
+                 * 
+                 * 
+                 */
+                partsNT.setDouble("align/holdDistX", new PARTsUnit(holdDist.getX(), PARTsUnitType.Meter)
+                                .to(PARTsUnitType.Inch));
                 partsNT.setDouble("align/holdDistY", new PARTsUnit(holdDist.getY(), PARTsUnitType.Meter)
-                .to(PARTsUnitType.Inch));
+                                .to(PARTsUnitType.Inch));
                 partsNT.setDouble("align/holdDistRot",
                                 new PARTsUnit(holdDist.getRotation().getRadians(), PARTsUnitType.Radian)
                                                 .to(PARTsUnitType.Angle));
-
 
                 partsLogger.logDouble("align/thetaControllerSetpoint",
                                 thetaController.getSetpoint().position);
                 partsNT.setDouble("align/thetaControllerSetpoint",
                                 thetaController.getSetpoint().position);
 
-                
         }
 
         private void alignCommandExecuteTelemetry(Rotation2d thetaOutput, Pose2d rangeOutput) {
-                /* 
-                partsLogger.logDouble("align/mt2PoseX",
-                                mt2 != null ? new PARTsUnit(mt2.pose.getX(), PARTsUnitType.Meter)
-                                                .to(PARTsUnitType.Inch) : -9999);
-                partsLogger.logDouble("align/mt2PoseY",
-                                mt2 != null ? new PARTsUnit(mt2.pose.getY(), PARTsUnitType.Meter)
-                                                .to(PARTsUnitType.Inch) : -9999);
-                partsLogger.logDouble("align/mt2PoseRot",
-                                mt2 != null ? new PARTsUnit(mt2.pose.getRotation().getRadians(),
-                                                PARTsUnitType.Radian).to(PARTsUnitType.Angle) : -9999);
-                
-                partsNT.setDouble("align/mt2PoseX", mt2 != null ? new PARTsUnit(mt2.pose.getX(), PARTsUnitType.Meter)
-                                .to(PARTsUnitType.Inch) : -9999);
-                partsNT.setDouble("align/mt2PoseY", mt2 != null ? new PARTsUnit(mt2.pose.getY(), PARTsUnitType.Meter)
-                                .to(PARTsUnitType.Inch) : -9999);
-                partsNT.setDouble("align/mt2PoseRot", mt2 != null ? new PARTsUnit(mt2.pose.getRotation().getRadians(),
-                                PARTsUnitType.Radian).to(PARTsUnitType.Angle) : -9999);*/
+                /*
+                 * partsLogger.logDouble("align/mt2PoseX",
+                 * mt2 != null ? new PARTsUnit(mt2.pose.getX(), PARTsUnitType.Meter)
+                 * .to(PARTsUnitType.Inch) : -9999);
+                 * partsLogger.logDouble("align/mt2PoseY",
+                 * mt2 != null ? new PARTsUnit(mt2.pose.getY(), PARTsUnitType.Meter)
+                 * .to(PARTsUnitType.Inch) : -9999);
+                 * partsLogger.logDouble("align/mt2PoseRot",
+                 * mt2 != null ? new PARTsUnit(mt2.pose.getRotation().getRadians(),
+                 * PARTsUnitType.Radian).to(PARTsUnitType.Angle) : -9999);
+                 * 
+                 * partsNT.setDouble("align/mt2PoseX", mt2 != null ? new
+                 * PARTsUnit(mt2.pose.getX(), PARTsUnitType.Meter)
+                 * .to(PARTsUnitType.Inch) : -9999);
+                 * partsNT.setDouble("align/mt2PoseY", mt2 != null ? new
+                 * PARTsUnit(mt2.pose.getY(), PARTsUnitType.Meter)
+                 * .to(PARTsUnitType.Inch) : -9999);
+                 * partsNT.setDouble("align/mt2PoseRot", mt2 != null ? new
+                 * PARTsUnit(mt2.pose.getRotation().getRadians(),
+                 * PARTsUnitType.Radian).to(PARTsUnitType.Angle) : -9999);
+                 */
 
                 partsLogger.logDouble("align/estPoseX",
                                 new PARTsUnit(m_poseEstimator.getEstimatedPosition().getX(), PARTsUnitType.Meter)
@@ -486,20 +492,21 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
         private void setPoseEstimatorVisionMeasurement(Vision vision) {
                 boolean doRejectUpdate = false;
-                                // if our angular velocity is greater than 360 degrees per second, ignore vision
-                                // updates
-                                if (Math.abs(super.getPigeon2().getRate()) > 360) {
-                                        doRejectUpdate = true;
-                }
-                
-                if (vision.getTargetID() < 0) {
+                Pose2d pose = vision.getBotPose2d();
+                // if our angular velocity is greater than 360 degrees per second, ignore vision
+                // updates
+                if (Math.abs(super.getPigeon2().getRate()) > 360) {
                         doRejectUpdate = true;
                 }
-                
+
+                if (vision.getTargetID() < 0 || pose == null) {
+                        doRejectUpdate = true;
+                }
+
                 if (!doRejectUpdate) {
                         m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
                         m_poseEstimator.addVisionMeasurement(
-                                        vision.getBotPose2d(), 
+                                        pose,
                                         Timer.getFPGATimestamp());
                 }
         }
