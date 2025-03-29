@@ -47,7 +47,7 @@ public final class Constants {
     public static final PARTsUnit L4XDistance = new PARTsUnit(-6, PARTsUnitType.Inch);
   }
 
-  public static class LimelightData {
+  /*public static class LimelightData {
     String limelightName;
     PARTsUnit lensHeight;
     PARTsUnit limelightAngle;
@@ -57,13 +57,13 @@ public final class Constants {
       this.lensHeight = lensHeight;
       this.limelightAngle = limelightAngle;
     }
-  }
+  }*/
 
   public static class VisionConstants {
-    public static final String DRIVETRAIN_LIMELIGHT = ""; //The_Real
-    public static final String ELEVATOR_LIMELIGHT = "Slim_Shady";
-    public static final PARTsUnit LIMELIGHT_LENS_HEIGHT = new PARTsUnit(8.75, PARTsUnitType.Inch); // Inches
-    public static final PARTsUnit LIMELIGHT_ANGLE = new PARTsUnit(11, PARTsUnitType.Angle); // Degrees
+    public static final String DRIVETRAIN_LIMELIGHT = "limelight-thereal"; //The_Real
+    public static final String ELEVATOR_LIMELIGHT = "limelight-slimmy";
+    public static final PARTsUnit LIMELIGHT_LENS_HEIGHT = new PARTsUnit(9, PARTsUnitType.Inch); // Inches
+    public static final PARTsUnit LIMELIGHT_ANGLE = new PARTsUnit(0, PARTsUnitType.Angle); // Degrees
 
     public static final double REEF_APRILTAG_HEIGHT = 16; //Distance.ofBaseUnits(6.875, Inches);
     public static final double PROCCESSOR_APRILTAG_HEIGHT = 45.875; // Inches

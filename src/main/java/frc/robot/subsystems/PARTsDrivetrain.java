@@ -28,6 +28,7 @@ import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -498,8 +499,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 if (!doRejectUpdate) {
                         m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
                         m_poseEstimator.addVisionMeasurement(
-                                        vision.getBotPose2d(),
-                                        System.currentTimeMillis());
+                                        vision.getBotPose2d(), 
+                                        Timer.getFPGATimestamp());
                 }
         }
 
