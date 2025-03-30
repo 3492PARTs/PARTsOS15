@@ -11,21 +11,9 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "Left Align L2 Score"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "AlignIJFS"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Intake"
           }
         }
       ]

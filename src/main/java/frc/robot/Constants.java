@@ -19,32 +19,37 @@ public final class Constants {
 
     public static final double MAX_AIM_VELOCITY = 1.5 * Math.PI; // radd/s
     public static final double MAX_AIM_ACCELERATION = Math.PI / 2; // rad/s^2
-    public static final double MAX_RANGE_VELOCITY = 5.0; // m/s
-    public static final double MAX_RANGE_ACCELERATION = 5.0; // 0.5; // m/2^s
+    public static final double MAX_RANGE_VELOCITY = 8.5;//7.0;//5.0; // m/s
+    public static final double MAX_RANGE_ACCELERATION = 8.5;//7.0;//5.0; // 0.5; // m/2^s
 
     public static final double THETA_P = 8.0; // Proprotinal
     public static final double THETA_I = 0.01; // 0.01; //Gradual corretction
     public static final double THETA_D = 0.05; // 0.05; //Smooth oscilattions
 
-    public static final double RANGE_X_P = 10.0;//1.6;// 0.8;
-    public static final double RANGE_I = 0.04;
-    public static final double RANGE_D = 0.1;
+    public static final double RANGE_X_P = 12.5 ;//1.6;// 0.8; //12.5
+    public static final double RANGE_I = 0.04; // 0.04 
+    public static final double RANGE_D = 0.1; // 0.1
 
-    public static final double RANGE_Y_P = 15;
+    public static final double RANGE_Y_P = 15.5; // 15.5
 
     public static final PARTsUnit yRControllerTolerance = new PARTsUnit(1, PARTsUnitType.Inch);
-    public static final PARTsUnit xRControllerTolerance = new PARTsUnit(2, PARTsUnitType.Inch);
+    public static final PARTsUnit xRControllerTolerance = new PARTsUnit(1.7, PARTsUnitType.Inch);
     public static final PARTsUnit thetaControllerTolerance = new PARTsUnit(2, PARTsUnitType.Angle);
 
     public static final double leftSideOffset = 5.5;
 
-    public static final PARTsUnit leftAlignDistance = new PARTsUnit(7, PARTsUnitType.Inch);
-    public static final PARTsUnit rightAlignDistance = new PARTsUnit(-7, PARTsUnitType.Inch);
+    //more positive, more to left
+    public static final PARTsUnit leftAlignDistance = new PARTsUnit(6.5, PARTsUnitType.Inch);
 
-    public static final PARTsUnit L4XDistance = new PARTsUnit(-8, PARTsUnitType.Inch);
+    //more negative, more to right
+    public static final PARTsUnit rightAlignDistance = new PARTsUnit(-6.5, PARTsUnitType.Inch); //-7.5
+
+    public static final PARTsUnit L4XDistance = new PARTsUnit(-18 + (-6), PARTsUnitType.Inch);
+
+    public static final PARTsUnit xZeroHoldDistance = new PARTsUnit(-18, PARTsUnitType.Inch);
   }
 
-  public static class LimelightData {
+  /*public static class LimelightData {
     String limelightName;
     PARTsUnit lensHeight;
     PARTsUnit limelightAngle;
@@ -54,13 +59,13 @@ public final class Constants {
       this.lensHeight = lensHeight;
       this.limelightAngle = limelightAngle;
     }
-  }
+  }*/
 
   public static class VisionConstants {
-    public static final String DRIVETRAIN_LIMELIGHT = ""; //The_Real
-    public static final String ELEVATOR_LIMELIGHT = "Slim_Shady";
-    public static final double LIMELIGHT_LENS_HEIGHT = 8.75; // Inches
-    public static final double LIMELIGHT_ANGLE = 11; // Degrees
+    public static final String DRIVETRAIN_LIMELIGHT = "limelight-thereal"; //The_Real
+    public static final String ELEVATOR_LIMELIGHT = "limelight-slimmy";
+    public static final PARTsUnit LIMELIGHT_LENS_HEIGHT = new PARTsUnit(9, PARTsUnitType.Inch); // Inches
+    public static final PARTsUnit LIMELIGHT_ANGLE = new PARTsUnit(0, PARTsUnitType.Angle); // Degrees
 
     public static final double REEF_APRILTAG_HEIGHT = 16; //Distance.ofBaseUnits(6.875, Inches);
     public static final double PROCCESSOR_APRILTAG_HEIGHT = 45.875; // Inches
@@ -72,11 +77,11 @@ public final class Constants {
     public static final int rightElevatorId = 1;
     public static final int laserCanId = 32;
     public static final int StowHeight = 0;
-    public static final double L2Height = 8.785;
-    public static final double L3Height = 31.9;
-    public static final double L4Height = 73.80; //best so far 74.07373046875, 73.59748840332031
-    public static final double LowAlgaeHeight = 29.47;
-    public static final double HighAlgaeHeight = 55.548;
+    public static final double L2Height = 10.6;//8.785;
+    public static final double L3Height = 34.1;//31.9;
+    public static final double L4Height = 73.38;//73.16;//73.80; //best so far 74.07373046875, 73.59748840332031
+    public static final double LowAlgaeHeight = 33.00;//29.47;
+    public static final double HighAlgaeHeight = 58;//55.548;
     public static final int L_SWITCH_PORT = 0;
     public static final double kP = 1;
     public static final double kI = 0;
@@ -84,8 +89,8 @@ public final class Constants {
     public static final double kTolerance = 0.25;
     public static final int kIZone = 0;
     public static final int kMaxCurrent = 40;
-    public static final int kMaxVelocity = 60;
-    public static final int kMaxAcceleration = 200;
+    public static final int kMaxVelocity = 100;
+    public static final int kMaxAcceleration = 300;
     public static final double kG = 0.18162;//0.3766;
     public static final double kS = 0.22467;//0.24105;
     public static final double kV = 0.020157;//0.020009;
@@ -129,7 +134,7 @@ public final class Constants {
     // INTAKE
     public static final int kMaxIntakeCurrent = 20;
 
-    public static final double kReefIntakeSpeed = 0.6;
+    public static final double kReefIntakeSpeed = 0.8;
     public static final double kEjectSpeed = 0.3;
     public static final double kGroundIntakeSpeed = -0.3;
 
@@ -146,10 +151,11 @@ public final class Constants {
     public static final double kIntakeSpeed = -0.15;//-0.3;
     public static final double kReverseSpeed = 0.6;
     public static final double kL1Speed = -0.2;
-    public static final double kL23Speed = -0.4;
+    public static final double kL23Speed = -0.3;
     public static final double kL4Speed = -.2;
-    public static final double kIndexSpeed = -0.145;
+    public static final double kIndexSpeed = -0.135;
     public static final double kSpeedDifference = kL1Speed * 0.5;
+    public static final double kInchIntakeSpeed = -.1;
   }
 
   public static class Candle {

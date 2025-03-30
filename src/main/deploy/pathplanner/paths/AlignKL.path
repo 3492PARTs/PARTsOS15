@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.1894230769230765,
-        "y": 7.0076282051282055
+        "x": 1.2604440789473683,
+        "y": 7.084703947368421
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.159125929421387,
-        "y": 6.493625016890562
+        "x": 2.2301469314456783,
+        "y": 6.570700759130777
       },
       "isLocked": false,
       "linkedName": null
@@ -48,7 +48,7 @@
   "folder": "Left Reef Paths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -53.38355544573739
+    "rotation": -53.3835554457374
   },
   "useDefaultConstraints": true
 }

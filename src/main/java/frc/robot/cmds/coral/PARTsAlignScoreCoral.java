@@ -5,7 +5,6 @@ package frc.robot.cmds.coral;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -16,6 +15,7 @@ import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.PARTsDrivetrain;
+import frc.robot.subsystems.Vision;
 import frc.robot.util.PARTsButtonBoxController;
 import frc.robot.util.PARTsUnit;
 import frc.robot.util.PARTsUnit.PARTsUnitType;
@@ -29,7 +29,7 @@ public class PARTsAlignScoreCoral extends SequentialCommandGroup {
         /** Creates a new ScoreCoral. */
         public PARTsAlignScoreCoral(Pose2d holdDistance, ElevatorState level, PARTsDrivetrain drivetrain,
                         Elevator elevator,
-                        Coral coral, Candle candle, PARTsButtonBoxController partsButtonBoxController) {
+                        Coral coral, Candle candle, PARTsButtonBoxController partsButtonBoxController, Vision vision) {
 
                 addCommands(new ParallelRaceGroup(
                                 new SequentialCommandGroup(
@@ -39,12 +39,13 @@ public class PARTsAlignScoreCoral extends SequentialCommandGroup {
                                                                                 .to(PARTsUnitType.Meter),
                                                                 new PARTsUnit(9, PARTsUnitType.Inch)
                                                                                 .to(PARTsUnitType.Meter),
-                                                                new Rotation2d())),
+                                                                new Rotation2d()), vision),
                                                 new WaitCommand(.1),
-                                                new ParallelCommandGroup(drivetrain.alignCommand(holdDistance),
-                                                                elevator.elevatorToLevelCommand(level)),
-                                                coral.score(),
-                                                elevator.elevatorToLevelCommand(ElevatorState.STOW)),
+                                                new ParallelCommandGroup(drivetrain.alignCommand(holdDistance, vision),
+                                                                elevator.elevatorToLevelCommand(level))),
+                                                //coral.score(),
+                                                //new WaitCommand(.1),
+                                                //elevator.elevatorToLevelCommand(ElevatorState.STOW)),
                                 new WaitUntilCommand(partsButtonBoxController.negative3Trigger())),
                                 candle.removeStateCommand(CandleState.AUTO_ALIGN));
 

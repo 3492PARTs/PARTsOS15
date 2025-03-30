@@ -10,12 +10,12 @@
   ],
   "autoFolders": [
     "Center Align L4 Autos",
-    "Left Align L2 Autos",
-    "Left Align L4 Autos",
+    "Right Align L2 Autos",
+    "Right Align L4 Autos",
     "Non-Align L2 Autos",
     "Non-Align L4 Autos",
-    "Right Align L2 Autos",
-    "Right Align L4 Autos"
+    "Left Align L2 Autos",
+    "Left Align L4 Autos"
   ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,

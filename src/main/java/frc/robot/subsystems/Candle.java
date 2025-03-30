@@ -198,16 +198,18 @@ public class Candle extends PARTsSubsystem {
             mPeriodicIO.state = CandleState.CORAL_LASER_ENTRY_ERROR;
         else if (mPeriodicIO.robotStates.contains(CandleState.DISABLED))
             mPeriodicIO.state = CandleState.DISABLED;
+        else if (mPeriodicIO.robotStates.contains(CandleState.CORAL_ENTERING))
+            mPeriodicIO.state = CandleState.CORAL_ENTERING;
+
         else if (mPeriodicIO.robotStates.contains(CandleState.AUTO_ALIGN))
             mPeriodicIO.state = CandleState.AUTO_ALIGN;
         else if (mPeriodicIO.robotStates.contains(CandleState.SCORING))
             mPeriodicIO.state = CandleState.SCORING;
+            else if (mPeriodicIO.robotStates.contains(CandleState.HAS_CORAL))
+            mPeriodicIO.state = CandleState.HAS_CORAL;
         else if (mPeriodicIO.robotStates.contains(CandleState.FINE_GRAIN_DRIVE))
             mPeriodicIO.state = CandleState.FINE_GRAIN_DRIVE;
-        else if (mPeriodicIO.robotStates.contains(CandleState.CORAL_ENTERING))
-            mPeriodicIO.state = CandleState.CORAL_ENTERING;
-        else if (mPeriodicIO.robotStates.contains(CandleState.HAS_CORAL))
-            mPeriodicIO.state = CandleState.HAS_CORAL;
+
         /*else if (mPeriodicIO.robotStates.contains(CandleState.ELEVATOR_L4))
             mPeriodicIO.state = CandleState.ELEVATOR_L4;
         else if (mPeriodicIO.robotStates.contains(CandleState.ELEVATOR_L3))
@@ -235,7 +237,7 @@ public class Candle extends PARTsSubsystem {
                 runLarsonAnimation(Color.YELLOW, 0.75, BounceMode.Center, 7);
                 break;
             case FINE_GRAIN_DRIVE:
-                runTwinkleAnimation(Color.HOT_PINK, .75, TwinklePercent.Percent30, 0);
+                runTwinkleAnimation(Color.ORANGE, .75, TwinklePercent.Percent30, 0);
                 break;
             case CORAL_ENTERING:
                 runFadeAnimation(Color.PURPLE, .75);

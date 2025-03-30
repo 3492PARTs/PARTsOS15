@@ -7,18 +7,15 @@ package frc.robot.cmds.coral;
 import java.util.function.BooleanSupplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants;
 import frc.robot.subsystems.Candle;
 import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.PARTsDrivetrain;
+import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.util.PARTsButtonBoxController;
-import frc.robot.util.PARTsUnit.PARTsUnitType;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -26,14 +23,10 @@ import frc.robot.util.PARTsUnit.PARTsUnitType;
 public class ConditionalAlign extends SequentialCommandGroup {
   /** Creates a new ConditionalAlign. */
   public ConditionalAlign(BooleanSupplier supplier, Elevator elevator, ElevatorState state, PARTsDrivetrain drivetrain,
-      Coral coral, Candle candle, PARTsButtonBoxController buttonBoxController, Pose2d holdDistance) {
+      Coral coral, Candle candle, PARTsButtonBoxController buttonBoxController, Pose2d holdDistance, Vision vision, BooleanSupplier escapeBooleanSupplier) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    addCommands(new ConditionalCommand(elevator.elevatorToLevelCommand(state), new PARTsAlignScoreCoral(
-        new Pose2d(0, Constants.Drivetrain.rightAlignDistance
-            .to(PARTsUnitType.Meter),
-            new Rotation2d()),
-        state, drivetrain, elevator, coral, candle,
-        buttonBoxController), supplier));
+    addCommands(new ConditionalCommand(elevator.elevatorToLevelCommand(state),
+        new AlignScoreCoral(holdDistance, state, drivetrain, elevator, coral, candle, vision, escapeBooleanSupplier), supplier));
   }
 }
