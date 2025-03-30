@@ -205,7 +205,7 @@ public class Candle extends PARTsSubsystem {
             mPeriodicIO.state = CandleState.AUTO_ALIGN;
         else if (mPeriodicIO.robotStates.contains(CandleState.SCORING))
             mPeriodicIO.state = CandleState.SCORING;
-            else if (mPeriodicIO.robotStates.contains(CandleState.HAS_CORAL))
+        else if (mPeriodicIO.robotStates.contains(CandleState.HAS_CORAL))
             mPeriodicIO.state = CandleState.HAS_CORAL;
         else if (mPeriodicIO.robotStates.contains(CandleState.FINE_GRAIN_DRIVE))
             mPeriodicIO.state = CandleState.FINE_GRAIN_DRIVE;
@@ -237,7 +237,7 @@ public class Candle extends PARTsSubsystem {
                 runLarsonAnimation(Color.YELLOW, 0.75, BounceMode.Center, 7);
                 break;
             case FINE_GRAIN_DRIVE:
-                runTwinkleAnimation(Color.HOT_PINK, .75, TwinklePercent.Percent30, 0);
+                runTwinkleAnimation(Color.ORANGE, .75, TwinklePercent.Percent30, 0);
                 break;
             case CORAL_ENTERING:
                 runFadeAnimation(Color.PURPLE, .75);
