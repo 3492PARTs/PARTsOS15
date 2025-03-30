@@ -237,7 +237,7 @@ public class Candle extends PARTsSubsystem {
                 runLarsonAnimation(Color.YELLOW, 0.75, BounceMode.Center, 7);
                 break;
             case FINE_GRAIN_DRIVE:
-                runTwinkleAnimation(Color.HOT_PINK, .75, TwinklePercent.Percent30, 0);
+                runTwinkleAnimation(Color.ORANGE, .75, TwinklePercent.Percent30, 0);
                 break;
             case CORAL_ENTERING:
                 runFadeAnimation(Color.PURPLE, .75);

@@ -4,10 +4,14 @@
 
 package frc.robot.cmds.coral;
 
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.subsystems.Candle;
 import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.Elevator;
@@ -23,16 +27,23 @@ public class AlignScoreCoral extends SequentialCommandGroup {
 
         /** Creates a new ScoreCoral. */
         public AlignScoreCoral(Pose2d holdDistance, ElevatorState level, PARTsDrivetrain drivetrain, Elevator elevator,
-                        Coral coral, Candle candle, Vision vision) {
+                        Coral coral, Candle candle, Vision vision, BooleanSupplier escapeBooleanSupplier) {
 
-                addCommands(
+                addCommands(new SequentialCommandGroup(
                                 candle.addStateCommand(CandleState.AUTO_ALIGN),
-                                new ParallelCommandGroup(drivetrain.alignCommand(holdDistance, vision),
-                                                elevator.elevatorToLevelCommand(level)),
-                                new WaitCommand(.1),
-                                coral.score(),
-                                new WaitCommand(.1),
-                                elevator.elevatorToLevelCommand(ElevatorState.STOW),
-                                candle.removeStateCommand(CandleState.AUTO_ALIGN));
+                                new ParallelDeadlineGroup(new WaitUntilCommand(escapeBooleanSupplier),
+                                                new SequentialCommandGroup(
+                                                                new ParallelCommandGroup(
+                                                                                drivetrain.alignCommand(holdDistance,
+                                                                                                vision),
+                                                                                elevator.elevatorToLevelCommand(level)),
+
+                                                                new WaitCommand(.1),
+                                                                coral.score(),
+                                                                new WaitCommand(.1))))
+                                .finallyDo(() -> {
+                                        elevator.elevatorToLevel(ElevatorState.STOW);
+                                        candle.removeState(CandleState.AUTO_ALIGN);
+                                }));
         }
 }

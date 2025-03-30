@@ -192,8 +192,7 @@ public class Elevator extends PARTsSubsystem {
 
         if (mPeriodicIO.state == ElevatorState.STOW && !getBottomLimit() && mElevatorPIDController.atGoal()) {
           mPeriodicIO.elevator_power = Constants.Elevator.homingSpeed;
-        }
-        else if (mPeriodicIO.state == ElevatorState.STOW && getBottomLimit()) {
+        } else if (mPeriodicIO.state == ElevatorState.STOW && getBottomLimit()) {
           mPeriodicIO.elevator_power = 0;
         } else {
           double pidCalc = mElevatorPIDController.atGoal() ? 0
@@ -291,7 +290,7 @@ public class Elevator extends PARTsSubsystem {
   public double getElevatorPosition() {
     return mLeftEncoder.getPosition();
   }
-  
+
   public void setGantryBlock(boolean b) {
     mPeriodicIO.gantry_blocked = b;
   }
@@ -327,6 +326,16 @@ public class Elevator extends PARTsSubsystem {
         mElevatorPIDController.setGoal(mPeriodicIO.elevator_target);
       }
     }).andThen(new WaitUntilCommand(() -> mElevatorPIDController.atGoal() || mPeriodicIO.error)));
+  }
+
+  public void elevatorToLevel(ElevatorState state) {
+
+    if (state.height != -1) {
+      mPeriodicIO.is_elevator_pos_control = true;
+      mPeriodicIO.elevator_target = state.height;
+      mPeriodicIO.state = state;
+    }
+
   }
 
   public Command goToElevatorStow() {

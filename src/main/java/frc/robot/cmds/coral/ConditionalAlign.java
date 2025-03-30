@@ -23,10 +23,10 @@ import frc.robot.util.PARTsButtonBoxController;
 public class ConditionalAlign extends SequentialCommandGroup {
   /** Creates a new ConditionalAlign. */
   public ConditionalAlign(BooleanSupplier supplier, Elevator elevator, ElevatorState state, PARTsDrivetrain drivetrain,
-      Coral coral, Candle candle, PARTsButtonBoxController buttonBoxController, Pose2d holdDistance, Vision vision) {
+      Coral coral, Candle candle, PARTsButtonBoxController buttonBoxController, Pose2d holdDistance, Vision vision, BooleanSupplier escapeBooleanSupplier) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(new ConditionalCommand(elevator.elevatorToLevelCommand(state),
-        new AlignScoreCoral(holdDistance, state, drivetrain, elevator, coral, candle, vision), supplier));
+        new AlignScoreCoral(holdDistance, state, drivetrain, elevator, coral, candle, vision, escapeBooleanSupplier), supplier));
   }
 }
