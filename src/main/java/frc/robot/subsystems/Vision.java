@@ -45,7 +45,7 @@ public class Vision extends PARTsSubsystem {
    * @param limelightLensHeight The height of the Limelight lens from the ground.
    */
   public Vision(String limelightName, PARTsUnit limelightAngle, PARTsUnit limelightLensHeight) {
-    super("Vision" + (limelightName.length() > 0 ? "_" : "") + limelightName);
+    super("Vision" + (limelightName.length() > 0 ? "-" : "") + limelightName);
     LIMELIGHT_NAME = limelightName;
     LIMELIGHT_ANGLE = limelightAngle.to(PARTsUnitType.Angle);
     LIMELIGHT_LENS_HEIGHT = limelightLensHeight.to(PARTsUnitType.Inch);
