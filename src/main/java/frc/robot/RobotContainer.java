@@ -380,12 +380,12 @@ public class RobotContainer {
                 NamedCommands.registerCommand("Score", coral.autoScore());
 
                 NamedCommands.registerCommand("Right Align L2 Score",
-                                new AlignScoreCoral(new Pose2d(0, Constants.Drivetrain.rightAlignDistance
+                                new AlignScoreCoral(new Pose2d(Constants.Drivetrain.xZeroHoldDistance.to(PARTsUnitType.Meter), Constants.Drivetrain.rightAlignDistance
                                                 .to(PARTsUnitType.Meter),
                                                 new Rotation2d()), ElevatorState.L2, drivetrain, elevator, coral,
                                                 candle, frontVision, escapeBooleanSupplier));
                 NamedCommands.registerCommand("Left Align L2 Score",
-                                new AlignScoreCoral(new Pose2d(0, Constants.Drivetrain.leftAlignDistance
+                                new AlignScoreCoral(new Pose2d(Constants.Drivetrain.xZeroHoldDistance.to(PARTsUnitType.Meter), Constants.Drivetrain.leftAlignDistance
                                                 .to(PARTsUnitType.Meter),
                                                 new Rotation2d()), ElevatorState.L2, drivetrain, elevator, coral,
                                                 candle, frontVision, escapeBooleanSupplier));
