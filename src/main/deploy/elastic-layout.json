@@ -7,47 +7,6 @@
       "grid_layout": {
         "layouts": [
           {
-            "title": "Candle",
-            "x": 1575.0,
-            "y": 600.0,
-            "width": 300.0,
-            "height": 225.0,
-            "type": "List Layout",
-            "properties": {
-              "label_position": "TOP"
-            },
-            "children": [
-              {
-                "title": "Animation",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 150.0,
-                "height": 150.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/PARTs/Candle/Animation",
-                  "period": 0.06,
-                  "data_type": "string",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "State",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 150.0,
-                "height": 150.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/PARTs/Candle/State",
-                  "period": 0.06,
-                  "data_type": "string",
-                  "show_submit_button": false
-                }
-              }
-            ]
-          },
-          {
             "title": "Goal",
             "x": 600.0,
             "y": 600.0,
@@ -110,6 +69,45 @@
                 }
               }
             ]
+          },
+          {
+            "title": "Candle",
+            "x": 1200.0,
+            "y": 750.0,
+            "width": 375.0,
+            "height": 225.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "Animation",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Large Text Display",
+                "properties": {
+                  "topic": "/PARTs/Candle/Animation",
+                  "period": 0.06,
+                  "data_type": "string"
+                }
+              },
+              {
+                "title": "State",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Large Text Display",
+                "properties": {
+                  "topic": "/PARTs/Candle/State",
+                  "period": 0.06,
+                  "data_type": "string"
+                }
+              }
+            ]
           }
         ],
         "containers": [
@@ -156,7 +154,7 @@
           },
           {
             "title": "Swerve Drive",
-            "x": 1200.0,
+            "x": 1575.0,
             "y": 600.0,
             "width": 300.0,
             "height": 300.0,
@@ -244,9 +242,9 @@
           },
           {
             "title": "Battery Voltage",
-            "x": 750.0,
+            "x": 1200.0,
             "y": 600.0,
-            "width": 450.0,
+            "width": 375.0,
             "height": 150.0,
             "type": "Voltage View",
             "properties": {
@@ -262,15 +260,117 @@
           },
           {
             "title": "Targeting Tag ID",
-            "x": 750.0,
-            "y": 450.0,
-            "width": 450.0,
+            "x": 900.0,
+            "y": 600.0,
+            "width": 150.0,
             "height": 150.0,
             "type": "Large Text Display",
             "properties": {
               "topic": "/PARTs/Vision-limelight-thereal/tagID",
               "period": 0.06,
               "data_type": "double"
+            }
+          },
+          {
+            "title": "farTag",
+            "x": 900.0,
+            "y": 450.0,
+            "width": 150.0,
+            "height": 150.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/PARTs/Vision-limelight-thereal/farTag",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "closeTag",
+            "x": 900.0,
+            "y": 750.0,
+            "width": 150.0,
+            "height": 150.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/PARTs/Vision-limelight-thereal/closeTag",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "closeRightTag",
+            "x": 1050.0,
+            "y": 675.0,
+            "width": 150.0,
+            "height": 150.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/PARTs/Vision-limelight-thereal/closeRightTag",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "farLeftTag",
+            "x": 750.0,
+            "y": 525.0,
+            "width": 150.0,
+            "height": 150.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/PARTs/Vision-limelight-thereal/farLeftTag",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "farRightTag",
+            "x": 1050.0,
+            "y": 525.0,
+            "width": 150.0,
+            "height": 150.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/PARTs/Vision-limelight-thereal/farRightTag",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "closeLeftTag",
+            "x": 750.0,
+            "y": 675.0,
+            "width": 150.0,
+            "height": 150.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/PARTs/Vision-limelight-thereal/closeLeftTag",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
             }
           }
         ]
