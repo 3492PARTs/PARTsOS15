@@ -429,7 +429,7 @@ public class RobotContainer {
         }
 
         public void outputTelemetry() {
-                subsystems.forEach(s -> s.outputTelemetry());
+                //subsystems.forEach(s -> s.outputTelemetry());
                 partsNT.setBoolean("Manual Mode", elevatorManualControl);
                 partsNT.setDouble("Battery Voltage", RobotController.getBatteryVoltage());
         }

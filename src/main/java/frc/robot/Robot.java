@@ -95,6 +95,7 @@ public class Robot extends TimedRobot {
     }
 
     m_robotContainer.setIdleCandleState();
+    System.out.println("fhadsfhadsjhfjahdsdfhkjadsf");
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
