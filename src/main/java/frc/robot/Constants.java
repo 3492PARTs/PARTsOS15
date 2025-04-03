@@ -44,7 +44,7 @@ public final class Constants {
     //more negative, more to right
     public static final PARTsUnit rightAlignDistance = new PARTsUnit(-6, PARTsUnitType.Inch); //-7.5
 
-    public static final PARTsUnit L4XDistance = new PARTsUnit(-18 + (-6), PARTsUnitType.Inch);
+    public static final PARTsUnit L4XDistance = new PARTsUnit(-9 + (-6), PARTsUnitType.Inch);
 
     public static final PARTsUnit xZeroHoldDistance = new PARTsUnit(-9, PARTsUnitType.Inch);
   }
