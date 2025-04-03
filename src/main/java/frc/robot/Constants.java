@@ -19,8 +19,8 @@ public final class Constants {
 
     public static final double MAX_AIM_VELOCITY = 1.5 * Math.PI; // radd/s
     public static final double MAX_AIM_ACCELERATION = Math.PI / 2; // rad/s^2
-    public static final double MAX_RANGE_VELOCITY = 8.5;//7.0;//5.0; // m/s
-    public static final double MAX_RANGE_ACCELERATION = 8.5;//7.0;//5.0; // 0.5; // m/2^s
+    public static final double MAX_RANGE_VELOCITY = 7.0;//7.0;//5.0; // m/s
+    public static final double MAX_RANGE_ACCELERATION = 7.0;//7.0;//5.0; // 0.5; // m/2^s
 
     public static final double THETA_P = 8.0; // Proprotinal
     public static final double THETA_I = 0.01; // 0.01; //Gradual corretction
