@@ -39,14 +39,14 @@ public final class Constants {
     public static final double leftSideOffset = 5.5;
 
     //more positive, more to left
-    public static final PARTsUnit leftAlignDistance = new PARTsUnit(6.5, PARTsUnitType.Inch);
+    public static final PARTsUnit leftAlignDistance = new PARTsUnit(7, PARTsUnitType.Inch);
 
     //more negative, more to right
-    public static final PARTsUnit rightAlignDistance = new PARTsUnit(-6.5, PARTsUnitType.Inch); //-7.5
+    public static final PARTsUnit rightAlignDistance = new PARTsUnit(-6, PARTsUnitType.Inch); //-7.5
 
     public static final PARTsUnit L4XDistance = new PARTsUnit(-18 + (-6), PARTsUnitType.Inch);
 
-    public static final PARTsUnit xZeroHoldDistance = new PARTsUnit(-18, PARTsUnitType.Inch);
+    public static final PARTsUnit xZeroHoldDistance = new PARTsUnit(-9, PARTsUnitType.Inch);
   }
 
   /*public static class LimelightData {
@@ -62,8 +62,8 @@ public final class Constants {
   }*/
 
   public static class VisionConstants {
-    public static final String DRIVETRAIN_LIMELIGHT = "limelight-thereal"; //The_Real
-    public static final String ELEVATOR_LIMELIGHT = "limelight-slimmy";
+    public static final String DRIVETRAIN_LIMELIGHT = "limelight-slimmy"; //The_Real
+    public static final String ELEVATOR_LIMELIGHT = "limelight-thereal";
     public static final PARTsUnit LIMELIGHT_LENS_HEIGHT = new PARTsUnit(9, PARTsUnitType.Inch); // Inches
     public static final PARTsUnit LIMELIGHT_ANGLE = new PARTsUnit(0, PARTsUnitType.Angle); // Degrees
 

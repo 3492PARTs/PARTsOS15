@@ -40,7 +40,7 @@ public class AlignScoreCoral extends SequentialCommandGroup {
 
                                                                 new WaitCommand(.1),
                                                                 coral.score(),
-                                                                new WaitCommand(.1),
+                                                                new WaitCommand(.2),
                                                                 elevator.elevatorToLevelCommand(ElevatorState.STOW))))
                                 .finallyDo(() -> {
                                         candle.removeState(CandleState.AUTO_ALIGN);
