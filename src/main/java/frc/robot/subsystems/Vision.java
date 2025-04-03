@@ -55,7 +55,6 @@ public class Vision extends PARTsSubsystem {
   /*-------------------------------- Generic Subsystem Functions --------------------------------*/
   @Override
   public void periodic() {
-    /*
     if (!isTarget()) {
       currentVisionPose3d = null;
       tagID = -1;
@@ -63,12 +62,12 @@ public class Vision extends PARTsSubsystem {
     }
 
     currentVisionPose3d = getPose3d();
-    tagID = getTargetID();*/
+    tagID = getTargetID();
   }
 
   @Override
   public void outputTelemetry() {
-      /*partsNT.setDouble("tagPoseX", currentVisionPose3d != null ? new PARTsUnit(currentVisionPose3d.getX(), PARTsUnitType.Meter)
+      partsNT.setDouble("tagPoseX", currentVisionPose3d != null ? new PARTsUnit(currentVisionPose3d.getX(), PARTsUnitType.Meter)
           .to(PARTsUnitType.Inch) : -1);
       partsNT.setDouble("tagPoseY", currentVisionPose3d != null ? new PARTsUnit(currentVisionPose3d.getY(), PARTsUnitType.Meter)
           .to(PARTsUnitType.Inch) : -1);
@@ -88,7 +87,7 @@ public class Vision extends PARTsSubsystem {
     partsNT.setBoolean("closeRightTag", tagID == 17 || tagID == 8);
     partsNT.setBoolean("farLeftTag", tagID == 20 || tagID == 11);
     partsNT.setBoolean("closeLeftTag", tagID == 19 || tagID == 6);
-    partsNT.setBoolean("closeTag", tagID == 18 || tagID == 7);*/
+    partsNT.setBoolean("closeTag", tagID == 18 || tagID == 7);
   }
 
   @Override
