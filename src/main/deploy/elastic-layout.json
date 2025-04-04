@@ -193,7 +193,8 @@
             "properties": {
               "topic": "/CameraPublisher/USB Camera 0",
               "period": 0.06,
-              "rotation_turns": 0
+              "rotation_turns": 0,
+              "fps": 15
             }
           },
           {
@@ -246,20 +247,6 @@
             }
           },
           {
-            "title": "tagID",
-            "x": 900.0,
-            "y": 600.0,
-            "width": 150.0,
-            "height": 150.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/PARTs/Vision-limelight-slimmy/tagID",
-              "period": 0.06,
-              "data_type": "double",
-              "show_submit_button": false
-            }
-          },
-          {
             "title": "farTag",
             "x": 900.0,
             "y": 450.0,
@@ -268,40 +255,6 @@
             "type": "Boolean Box",
             "properties": {
               "topic": "/PARTs/Vision-limelight-slimmy/farTag",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4283215696,
-              "false_color": 4294198070,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
-            "title": "farLeftTag",
-            "x": 750.0,
-            "y": 525.0,
-            "width": 150.0,
-            "height": 150.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/PARTs/Vision-limelight-slimmy/farLeftTag",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4283215696,
-              "false_color": 4294198070,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
-            "title": "closeLeftTag",
-            "x": 750.0,
-            "y": 675.0,
-            "width": 150.0,
-            "height": 150.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/PARTs/Vision-limelight-slimmy/closeLeftTag",
               "period": 0.06,
               "data_type": "boolean",
               "true_color": 4283215696,
@@ -345,16 +298,20 @@
             }
           },
           {
-            "title": "limelight-slimmy",
-            "x": 0.0,
-            "y": 0.0,
-            "width": 750.0,
-            "height": 600.0,
-            "type": "Camera Stream",
+            "title": "farLeftTag",
+            "x": 750.0,
+            "y": 525.0,
+            "width": 150.0,
+            "height": 150.0,
+            "type": "Boolean Box",
             "properties": {
-              "topic": "/CameraPublisher/limelight-slimmy",
+              "topic": "/PARTs/Vision-limelight-slimmy/farLeftTag",
               "period": 0.06,
-              "rotation_turns": 0
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
             }
           },
           {
@@ -372,6 +329,50 @@
               "false_color": 4294198070,
               "true_icon": "None",
               "false_icon": "None"
+            }
+          },
+          {
+            "title": "closeLeftTag",
+            "x": 750.0,
+            "y": 675.0,
+            "width": 150.0,
+            "height": 150.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/PARTs/Vision-limelight-slimmy/closeLeftTag",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "limelight-slimmy",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 750.0,
+            "height": 600.0,
+            "type": "Camera Stream",
+            "properties": {
+              "topic": "/CameraPublisher/limelight-slimmy",
+              "period": 0.06,
+              "rotation_turns": 0
+            }
+          },
+          {
+            "title": "tagID",
+            "x": 900.0,
+            "y": 600.0,
+            "width": 150.0,
+            "height": 150.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/PARTs/Vision-limelight-slimmy/tagID",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
             }
           }
         ]
@@ -3039,23 +3040,6 @@
               "topic": "/CameraPublisher/limelight-thereal",
               "period": 0.06,
               "rotation_turns": 0
-            }
-          },
-          {
-            "title": "tag",
-            "x": 525.0,
-            "y": 600.0,
-            "width": 150.0,
-            "height": 150.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/PARTs/Vision-limelight-slimmy/tag",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4283215696,
-              "false_color": 4294198070,
-              "true_icon": "None",
-              "false_icon": "None"
             }
           }
         ]

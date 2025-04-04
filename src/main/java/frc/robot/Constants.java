@@ -154,7 +154,7 @@ public final class Constants {
     public static final double kL23Speed = -0.25;
     public static final double kL4Speed = -.2;
     public static final double kIndexSpeed = -0.135;
-    public static final double kSpeedDifference = kL1Speed * 0.5;
+    public static final double kSpeedDifference = kL1Speed * 0.9;
     public static final double kInchIntakeSpeed = -.1;
   }
 
