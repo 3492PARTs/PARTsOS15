@@ -204,8 +204,13 @@ public class Vision extends PARTsSubsystem {
    * @return The target ID as a double.
    */
   public double getTargetID() {
+    try {
     double[] targetArray = LimelightHelpers.getT2DArray(LIMELIGHT_NAME);
     return targetArray[9];
+    }
+    catch (ArrayIndexOutOfBoundsException a) {
+      return -1;
+    }
   }
 
   /**
