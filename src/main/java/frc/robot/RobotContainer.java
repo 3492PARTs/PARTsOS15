@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.cmds.algae.Dealgae;
 import frc.robot.cmds.algae.PARTsAlignScoreAlgae;
 import frc.robot.cmds.coral.AlignScoreCoral;
+import frc.robot.cmds.coral.AutoAlignCoralStop;
 import frc.robot.cmds.coral.AutoAlignScoreCoral;
 import frc.robot.cmds.coral.L4ScoreCoral;
 import frc.robot.cmds.coral.ConditionalAlign;
@@ -83,9 +84,12 @@ public class RobotContainer {
                         Constants.VisionConstants.LIMELIGHT_ANGLE,
                         Constants.VisionConstants.LIMELIGHT_LENS_HEIGHT);
 
-        /*private final Vision backVision = new Vision(Constants.VisionConstants.ELEVATOR_LIMELIGHT,
-                        Constants.VisionConstants.LIMELIGHT_ANGLE,
-                        Constants.VisionConstants.LIMELIGHT_LENS_HEIGHT);*/
+        /*
+         * private final Vision backVision = new
+         * Vision(Constants.VisionConstants.ELEVATOR_LIMELIGHT,
+         * Constants.VisionConstants.LIMELIGHT_ANGLE,
+         * Constants.VisionConstants.LIMELIGHT_LENS_HEIGHT);
+         */
 
         public final Candle candle = new Candle();
 
@@ -154,10 +158,12 @@ public class RobotContainer {
                 // Drivetrain will execute this command periodically
                 drivetrain.setDefaultCommand(driveCommand);
 
-                /*new Trigger(() -> elevator.getElevatorPosition() >= Constants.Elevator.L2Height)
-                                .onTrue(Commands.runOnce(() -> fineGrainDrive = true))
-                                .onFalse(Commands.runOnce(() -> fineGrainDrive = false));
-                */
+                /*
+                 * new Trigger(() -> elevator.getElevatorPosition() >=
+                 * Constants.Elevator.L2Height)
+                 * .onTrue(Commands.runOnce(() -> fineGrainDrive = true))
+                 * .onFalse(Commands.runOnce(() -> fineGrainDrive = false));
+                 */
                 // fine grain controls
                 driveController.rightBumper().onTrue(Commands.runOnce(() -> fineGrainDrive = !fineGrainDrive));
 
@@ -176,10 +182,13 @@ public class RobotContainer {
                 // reset the field-centric heading on left bumper press
                 driveController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-                /*driveController.rightTrigger().whileTrue(drivetrain.alignCommand(
-                                new Pose2d(new PARTsUnit(-18, PARTsUnitType.Inch).to(PARTsUnitType.Meter), new PARTsUnit(0, PARTsUnitType.Inch).to(PARTsUnitType.Meter),
-                                                new Rotation2d()),
-                                frontVision));*/
+                /*
+                 * driveController.rightTrigger().whileTrue(drivetrain.alignCommand(
+                 * new Pose2d(new PARTsUnit(-18, PARTsUnitType.Inch).to(PARTsUnitType.Meter),
+                 * new PARTsUnit(0, PARTsUnitType.Inch).to(PARTsUnitType.Meter),
+                 * new Rotation2d()),
+                 * frontVision));
+                 */
 
                 driveController.leftTrigger().whileTrue(elevator.elevatorToLevelCommand(ElevatorState.L2));
 
@@ -421,14 +430,23 @@ public class RobotContainer {
                                                 ElevatorState.L4, drivetrain, elevator, coral, candle,
                                                 frontVision));
 
-                                                NamedCommands.registerCommand("Align L4 Stop",
-                                                new AutoAli(
-                                                                new Pose2d(Constants.Drivetrain.L4XDistance.to(PARTsUnitType.Meter),
-                                                                                Constants.Drivetrain.leftAlignDistance
-                                                                                                .to(PARTsUnitType.Meter),
-                                                                                new Rotation2d()),
-                                                                ElevatorState.L4, drivetrain, elevator, coral, candle,
-                                                                frontVision));
+                NamedCommands.registerCommand("Align Left L4 Stop",
+                                new AutoAlignCoralStop(
+                                                new Pose2d(Constants.Drivetrain.L4XDistance.to(PARTsUnitType.Meter),
+                                                                Constants.Drivetrain.leftAlignDistance
+                                                                                .to(PARTsUnitType.Meter),
+                                                                new Rotation2d()),
+                                                ElevatorState.L4, drivetrain, elevator, coral, candle,
+                                                frontVision));
+                                                
+                NamedCommands.registerCommand("Align Right L4 Stop",
+                                new AutoAlignCoralStop(
+                                                new Pose2d(Constants.Drivetrain.L4XDistance.to(PARTsUnitType.Meter),
+                                                                Constants.Drivetrain.rightAlignDistance
+                                                                                .to(PARTsUnitType.Meter),
+                                                                new Rotation2d()),
+                                                ElevatorState.L4, drivetrain, elevator, coral, candle,
+                                                frontVision));
 
                 autoChooser = AutoBuilder.buildAutoChooser();
                 SmartDashboard.putData("Auto Chooser", autoChooser);
