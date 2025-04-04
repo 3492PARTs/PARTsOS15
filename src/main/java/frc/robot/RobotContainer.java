@@ -421,6 +421,15 @@ public class RobotContainer {
                                                 ElevatorState.L4, drivetrain, elevator, coral, candle,
                                                 frontVision));
 
+                                                NamedCommands.registerCommand("Align L4 Stop",
+                                                new AutoAli(
+                                                                new Pose2d(Constants.Drivetrain.L4XDistance.to(PARTsUnitType.Meter),
+                                                                                Constants.Drivetrain.leftAlignDistance
+                                                                                                .to(PARTsUnitType.Meter),
+                                                                                new Rotation2d()),
+                                                                ElevatorState.L4, drivetrain, elevator, coral, candle,
+                                                                frontVision));
+
                 autoChooser = AutoBuilder.buildAutoChooser();
                 SmartDashboard.putData("Auto Chooser", autoChooser);
         }
