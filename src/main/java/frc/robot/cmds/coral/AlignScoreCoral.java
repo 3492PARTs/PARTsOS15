@@ -38,7 +38,7 @@ public class AlignScoreCoral extends SequentialCommandGroup {
                                                                                                 vision),
                                                                                 elevator.elevatorToLevelCommand(level)),
 
-                                                                new WaitCommand(.1),
+                                                                new WaitCommand(.2),
                                                                 coral.score(),
                                                                 new WaitCommand(.2),
                                                                 elevator.elevatorToLevelCommand(ElevatorState.STOW))))
