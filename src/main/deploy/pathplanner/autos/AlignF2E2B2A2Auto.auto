@@ -19,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "AlignFEFS"
+            "pathName": "AlignFFS"
           }
         },
         {
@@ -43,7 +43,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "AlignFEFS"
+            "pathName": "AlignEFS"
           }
         },
         {
@@ -67,7 +67,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "AlignRightABFS"
+            "pathName": "AlignRightBFS"
           }
         },
         {
@@ -91,7 +91,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "AlignRightABFS"
+            "pathName": "AlignRightAFS"
           }
         },
         {
