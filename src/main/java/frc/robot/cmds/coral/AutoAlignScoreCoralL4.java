@@ -23,17 +23,17 @@ import frc.robot.subsystems.Candle.CandleState;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class AutoAlignScoreCoral extends SequentialCommandGroup {
+public class AutoAlignScoreCoralL4 extends SequentialCommandGroup {
 
         /** Creates a new ScoreCoral. */
-        public AutoAlignScoreCoral(Pose2d holdDistance, ElevatorState level, PARTsDrivetrain drivetrain, Elevator elevator,
+        public AutoAlignScoreCoralL4(Pose2d holdDistance, ElevatorState level, PARTsDrivetrain drivetrain, Elevator elevator,
                         Coral coral, Candle candle, Vision vision) {
 
                 addCommands(candle.addStateCommand(CandleState.AUTO_ALIGN),
                                 new ParallelCommandGroup(
                                         drivetrain.alignCommand(holdDistance,vision),
                                         elevator.elevatorToLevelCommand(level)),
-                                new WaitCommand(.2),
+                                new WaitCommand(2),
                                 coral.autoScore(),
                                 new WaitCommand(.2),
                                 elevator.elevatorToLevelCommand(ElevatorState.STOW),
