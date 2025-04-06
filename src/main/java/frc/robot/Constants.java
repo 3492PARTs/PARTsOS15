@@ -14,6 +14,7 @@ import frc.robot.util.PARTsUnit.PARTsUnitType;
  */
 public final class Constants {
   public static class Drivetrain {
+    public static final String canBusName = "hi";
     public static final double kMaxAngularSpeed = Math.PI / 4; // Radians
     public static final double kMaxSpeed = .5; // Meters per second
 
@@ -26,7 +27,7 @@ public final class Constants {
     public static final double THETA_I = 0.01; // 0.01; //Gradual corretction
     public static final double THETA_D = 0.05; // 0.05; //Smooth oscilattions
 
-    public static final double RANGE_X_P = 12.5 ;//1.6;// 0.8; //12.5
+    public static final double RANGE_X_P = 12.5;//1.6;// 0.8; //12.5
     public static final double RANGE_I = 0.04; // 0.04 
     public static final double RANGE_D = 0.1; // 0.1
 
@@ -53,7 +54,7 @@ public final class Constants {
     String limelightName;
     PARTsUnit lensHeight;
     PARTsUnit limelightAngle;
-
+  
     LimelightData(String limelightName, PARTsUnit lensHeight, PARTsUnit limelightAngle) {
       this.limelightName = limelightName;
       this.lensHeight = lensHeight;
