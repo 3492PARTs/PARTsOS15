@@ -19,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "AlignIJFS"
+            "pathName": "AlignIFS"
           }
         },
         {
@@ -43,7 +43,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "AlignIJFS"
+            "pathName": "AlignJFS"
           }
         },
         {
@@ -67,7 +67,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "AlignABFS"
+            "pathName": "AlignAFS"
           }
         },
         {
@@ -91,7 +91,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "AlignABFS"
+            "pathName": "AlignBFS"
           }
         },
         {

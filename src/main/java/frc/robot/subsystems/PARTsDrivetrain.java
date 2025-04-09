@@ -36,7 +36,6 @@ import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.generated.TunerConstants;
-import frc.robot.util.AprilTagData;
 import frc.robot.util.IPARTsSubsystem;
 import frc.robot.util.PARTsLogger;
 import frc.robot.util.PARTsNT;
@@ -377,7 +376,6 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 initializeControllers();
                 sendToDashboard();
                 configureAutoBuilder();
-                AprilTagData.InitAprilTagObjects();
                 initializePoseEstimator();
         }
 

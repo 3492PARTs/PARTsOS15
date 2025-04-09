@@ -27,10 +27,10 @@ public class Robot extends TimedRobot {
   private final RobotContainer m_robotContainer;
 
   public Robot() {
-    if (Constants.Debug.debug) {
-      CanBridge.runTCP();
-    }
+    // This is needed for lasercan, without it causes robot to lag on boot
+    CanBridge.runTCP();
 
+    // Make elastic dashboard file available
     WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
 
     partsNT = new PARTsNT(this);

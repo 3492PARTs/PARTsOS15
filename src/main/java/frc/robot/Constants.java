@@ -14,19 +14,20 @@ import frc.robot.util.PARTsUnit.PARTsUnitType;
  */
 public final class Constants {
   public static class Drivetrain {
+    public static final String canBusName = "hi";
     public static final double kMaxAngularSpeed = Math.PI / 4; // Radians
     public static final double kMaxSpeed = .5; // Meters per second
 
     public static final double MAX_AIM_VELOCITY = 1.5 * Math.PI; // radd/s
     public static final double MAX_AIM_ACCELERATION = Math.PI / 2; // rad/s^2
-    public static final double MAX_RANGE_VELOCITY = 8.5;//7.0;//5.0; // m/s
-    public static final double MAX_RANGE_ACCELERATION = 8.5;//7.0;//5.0; // 0.5; // m/2^s
+    public static final double MAX_RANGE_VELOCITY = 6.5;//7.0;//5.0; // m/s
+    public static final double MAX_RANGE_ACCELERATION = 6.5;//7.0;//5.0; // 0.5; // m/2^s
 
     public static final double THETA_P = 8.0; // Proprotinal
     public static final double THETA_I = 0.01; // 0.01; //Gradual corretction
     public static final double THETA_D = 0.05; // 0.05; //Smooth oscilattions
 
-    public static final double RANGE_X_P = 12.5 ;//1.6;// 0.8; //12.5
+    public static final double RANGE_X_P = 12.5;//1.6;// 0.8; //12.5
     public static final double RANGE_I = 0.04; // 0.04 
     public static final double RANGE_D = 0.1; // 0.1
 
@@ -39,21 +40,21 @@ public final class Constants {
     public static final double leftSideOffset = 5.5;
 
     //more positive, more to left
-    public static final PARTsUnit leftAlignDistance = new PARTsUnit(6.5, PARTsUnitType.Inch);
+    public static final PARTsUnit leftAlignDistance = new PARTsUnit(7, PARTsUnitType.Inch);
 
     //more negative, more to right
-    public static final PARTsUnit rightAlignDistance = new PARTsUnit(-6.5, PARTsUnitType.Inch); //-7.5
+    public static final PARTsUnit rightAlignDistance = new PARTsUnit(-6, PARTsUnitType.Inch); //-7.5
 
-    public static final PARTsUnit L4XDistance = new PARTsUnit(-18 + (-6), PARTsUnitType.Inch);
+    public static final PARTsUnit L4XDistance = new PARTsUnit(-9 + (-4), PARTsUnitType.Inch);
 
-    public static final PARTsUnit xZeroHoldDistance = new PARTsUnit(-18, PARTsUnitType.Inch);
+    public static final PARTsUnit xZeroHoldDistance = new PARTsUnit(-9, PARTsUnitType.Inch);
   }
 
   /*public static class LimelightData {
     String limelightName;
     PARTsUnit lensHeight;
     PARTsUnit limelightAngle;
-
+  
     LimelightData(String limelightName, PARTsUnit lensHeight, PARTsUnit limelightAngle) {
       this.limelightName = limelightName;
       this.lensHeight = lensHeight;
@@ -62,8 +63,8 @@ public final class Constants {
   }*/
 
   public static class VisionConstants {
-    public static final String DRIVETRAIN_LIMELIGHT = "limelight-thereal"; //The_Real
-    public static final String ELEVATOR_LIMELIGHT = "limelight-slimmy";
+    public static final String DRIVETRAIN_LIMELIGHT = "limelight-slimmy"; //The_Real
+    public static final String ELEVATOR_LIMELIGHT = "limelight-thereal";
     public static final PARTsUnit LIMELIGHT_LENS_HEIGHT = new PARTsUnit(9, PARTsUnitType.Inch); // Inches
     public static final PARTsUnit LIMELIGHT_ANGLE = new PARTsUnit(0, PARTsUnitType.Angle); // Degrees
 
@@ -79,7 +80,7 @@ public final class Constants {
     public static final int StowHeight = 0;
     public static final double L2Height = 10.6;//8.785;
     public static final double L3Height = 34.1;//31.9;
-    public static final double L4Height = 73.38;//73.16;//73.80; //best so far 74.07373046875, 73.59748840332031
+    public static final double L4Height = 74;//73.38;//73.16;//73.80; //best so far 74.07373046875, 73.59748840332031
     public static final double LowAlgaeHeight = 33.00;//29.47;
     public static final double HighAlgaeHeight = 58;//55.548;
     public static final int L_SWITCH_PORT = 0;
@@ -151,10 +152,10 @@ public final class Constants {
     public static final double kIntakeSpeed = -0.15;//-0.3;
     public static final double kReverseSpeed = 0.6;
     public static final double kL1Speed = -0.2;
-    public static final double kL23Speed = -0.3;
+    public static final double kL23Speed = -0.25;
     public static final double kL4Speed = -.2;
     public static final double kIndexSpeed = -0.135;
-    public static final double kSpeedDifference = kL1Speed * 0.5;
+    public static final double kSpeedDifference = kL1Speed * 0.9;
     public static final double kInchIntakeSpeed = -.1;
   }
 

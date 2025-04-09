@@ -7,31 +7,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "AlignF"
+            "pathName": "AlignGH"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Right Align L2 Score"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "AlignFEFS"
+            "name": "Align L1"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Intake"
+            "name": "Score"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Right Align L2 Autos",
+  "folder": "Center Align L4 Autos",
   "choreoAuto": false
 }

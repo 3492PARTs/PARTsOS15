@@ -67,20 +67,27 @@ public class Vision extends PARTsSubsystem {
 
   @Override
   public void outputTelemetry() {
-    if (currentVisionPose3d != null) {
-      partsNT.setDouble("tagPoseX", new PARTsUnit(currentVisionPose3d.getX(), PARTsUnitType.Meter)
-          .to(PARTsUnitType.Inch));
-      partsNT.setDouble("tagPoseY", new PARTsUnit(currentVisionPose3d.getY(), PARTsUnitType.Meter)
-          .to(PARTsUnitType.Inch));
-      partsNT.setDouble("tagPoseRot", new PARTsUnit(currentVisionPose3d.getRotation().getAngle(),
-          PARTsUnitType.Radian).to(PARTsUnitType.Angle));
-      partsNT.setDouble("rawTagPoseX", currentVisionPose3d.getX());
-      partsNT.setDouble("rawTagPoseY", currentVisionPose3d.getY());
-      partsNT.setDouble("rawTagPoseRot", currentVisionPose3d.getRotation().getAngle());
-    }
+      partsNT.setDouble("tagPoseX", currentVisionPose3d != null ? new PARTsUnit(currentVisionPose3d.getX(), PARTsUnitType.Meter)
+          .to(PARTsUnitType.Inch) : -1);
+      partsNT.setDouble("tagPoseY", currentVisionPose3d != null ? new PARTsUnit(currentVisionPose3d.getY(), PARTsUnitType.Meter)
+          .to(PARTsUnitType.Inch) : -1);
+      partsNT.setDouble("tagPoseRot", currentVisionPose3d != null ? new PARTsUnit(currentVisionPose3d.getRotation().getAngle(),
+          PARTsUnitType.Radian).to(PARTsUnitType.Angle) : -1 );
+
+      partsNT.setDouble("rawTagPoseX", currentVisionPose3d != null ? currentVisionPose3d.getX() : -1);
+      partsNT.setDouble("rawTagPoseY", currentVisionPose3d != null ? currentVisionPose3d.getY() : -1);
+      partsNT.setDouble("rawTagPoseRot", currentVisionPose3d != null ? currentVisionPose3d.getRotation().getAngle() : -1);
 
     partsNT.setBoolean("tag", tagID > 0);
     partsNT.setDouble("tagID", tagID);
+
+    
+    partsNT.setBoolean("farTag", tagID == 21 || tagID == 10);
+    partsNT.setBoolean("farRightTag", tagID == 22 || tagID == 9);
+    partsNT.setBoolean("closeRightTag", tagID == 17 || tagID == 8);
+    partsNT.setBoolean("farLeftTag", tagID == 20 || tagID == 11);
+    partsNT.setBoolean("closeLeftTag", tagID == 19 || tagID == 6);
+    partsNT.setBoolean("closeTag", tagID == 18 || tagID == 7);
   }
 
   @Override
@@ -197,8 +204,13 @@ public class Vision extends PARTsSubsystem {
    * @return The target ID as a double.
    */
   public double getTargetID() {
+    try {
     double[] targetArray = LimelightHelpers.getT2DArray(LIMELIGHT_NAME);
     return targetArray[9];
+    }
+    catch (ArrayIndexOutOfBoundsException a) {
+      return -1;
+    }
   }
 
   /**

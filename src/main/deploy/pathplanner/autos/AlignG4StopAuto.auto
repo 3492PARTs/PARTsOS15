@@ -7,19 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "AlignI"
+            "pathName": "AlignGH"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "AlignIJFS"
+            "name": "Align Left L4 Stop"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Left Align L2 Autos",
+  "folder": "Center Align L4 Autos",
   "choreoAuto": false
 }
