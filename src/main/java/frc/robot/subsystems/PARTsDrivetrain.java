@@ -176,7 +176,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 },
                                 () -> {
                                         updatePoseEstimator();
-                                        setPoseEstimatorVisionMeasurement(vision);
+                                        //setPoseEstimatorVisionMeasurement(vision);
                                         currentEstimatedRobotPose3d = new Pose3d(
                                                         m_poseEstimator.getEstimatedPosition());
 
