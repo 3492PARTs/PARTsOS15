@@ -18,12 +18,12 @@ public final class Constants {
     public static final double kMaxAngularSpeed = Math.PI / 4; // Radians
     public static final double kMaxSpeed = .5; // Meters per second
 
-    public static final double MAX_AIM_VELOCITY = 1.5 * Math.PI; // radd/s
-    public static final double MAX_AIM_ACCELERATION = Math.PI / 2; // rad/s^2
+    public static final double MAX_AIM_VELOCITY = 24; // radd/s
+    public static final double MAX_AIM_ACCELERATION = Math.PI * 8; // rad/s^2
     public static final double MAX_RANGE_VELOCITY = 6.5;//7.0;//5.0; // m/s
     public static final double MAX_RANGE_ACCELERATION = 6.5;//7.0;//5.0; // 0.5; // m/2^s
 
-    public static final double THETA_P = 8.0; // Proprotinal
+    public static final double THETA_P = 10.0; // Proprotinal
     public static final double THETA_I = 0.01; // 0.01; //Gradual corretction
     public static final double THETA_D = 0.05; // 0.05; //Smooth oscilattions
 
@@ -33,9 +33,9 @@ public final class Constants {
 
     public static final double RANGE_Y_P = 15.5; // 15.5
 
-    public static final PARTsUnit yRControllerTolerance = new PARTsUnit(1, PARTsUnitType.Inch);
+    public static final double yRControllerTolerance = 1.0;
     public static final PARTsUnit xRControllerTolerance = new PARTsUnit(1.7, PARTsUnitType.Inch);
-    public static final PARTsUnit thetaControllerTolerance = new PARTsUnit(2, PARTsUnitType.Angle);
+    public static final PARTsUnit thetaControllerTolerance = new PARTsUnit(0.5, PARTsUnitType.Angle);
 
     public static final double leftSideOffset = 5.5;
 

@@ -169,14 +169,14 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                                                                                // to
                                                                                                                // target.
                                         yRangeController.setGoal(holdDistance.getY()); // Center to target.
-                                        yRangeController.setTolerance(Constants.Drivetrain.yRControllerTolerance
+                                        yRangeController.setTolerance(new PARTsUnit(Constants.Drivetrain.yRControllerTolerance, PARTsUnitType.Angle)
                                                         .to(PARTsUnitType.Meter));
 
                                         alignCommandInitTelemetry(holdDistance);
                                 },
                                 () -> {
                                         updatePoseEstimator();
-                                        setPoseEstimatorVisionMeasurement(vision);
+                                        //setPoseEstimatorVisionMeasurement(vision);
                                         currentEstimatedRobotPose3d = new Pose3d(
                                                         m_poseEstimator.getEstimatedPosition());
 
@@ -194,7 +194,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
                                         // Get dist. from drivetrain.
 
-                                        Translation2d translation = new Translation2d(rangeOutput.getX(),
+                                        Translation2d translation = new Translation2d(yRangeController.getPositionError() < Constants.Drivetrain.yRControllerTolerance ? rangeOutput.getX() : 0,
                                                         rangeOutput.getY());
 
                                         super.setControl(alignRequest
