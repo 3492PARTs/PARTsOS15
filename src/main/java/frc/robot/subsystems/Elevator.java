@@ -492,7 +492,7 @@ public class Elevator extends PARTsSubsystem {
       // If there was an error remove it
       if (mPeriodicIO.error && mPeriodicIO.state != ElevatorState.POS_CTL_TRAVEL_ERROR) {
         mPeriodicIO.error = false;
-        mPeriodicIO.state = ElevatorState.NONE;
+        mPeriodicIO.state = ElevatorState.STOW;
         candle.removeState(CandleState.ELEVATOR_ERROR);
         zeroElevatorCommand().schedule();
       }

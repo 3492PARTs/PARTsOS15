@@ -49,7 +49,7 @@ public final class Constants {
 
     public static final PARTsUnit xZeroHoldDistance = new PARTsUnit(-9, PARTsUnitType.Inch);
 
-    public static final double alignTime = 5; //seconds
+    public static final double alignTime = 3; //seconds
   }
 
   /*public static class LimelightData {
