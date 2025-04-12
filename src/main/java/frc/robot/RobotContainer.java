@@ -183,6 +183,7 @@ public class RobotContainer {
                 // reset the field-centric heading on left bumper press
                 driveController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
+                driveController.rightTrigger().onTrue(coral.autoIntake());
                 /*
                  * driveController.rightTrigger().whileTrue(drivetrain.alignCommand(
                  * new Pose2d(new PARTsUnit(-18, PARTsUnitType.Inch).to(PARTsUnitType.Meter),

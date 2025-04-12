@@ -126,10 +126,11 @@ public class Coral extends PARTsSubsystem {
       checkAutoTasks();
       // Help us index a little more if its still detected in entry
       if (isCoralInEntry() && mPeriodicIO.state != IntakeState.INTAKE) {
-        //mPeriodicIO.state = IntakeState.INDEX;
-        this.run(() -> {
+        index();
+        /*this.run(() -> {
           mPeriodicIO.rpm = Constants.Coral.kIndexSpeed;
         }).until(() -> !isCoralInEntry()).andThen(this.runOnce(() -> mPeriodicIO.rpm = 0)).schedule();
+        */
       }
     } else
       elevator.setGantryBlock(false);
@@ -335,7 +336,7 @@ public class Coral extends PARTsSubsystem {
           scoreL23();
           break;
       }
-    }).until(() -> !isCoralInEntry());
+    }).until(() -> !isCoralInEntry()).andThen(candle.removeStateCommand(CandleState.SCORING));
   }
 
   public Command scoreCommand() {

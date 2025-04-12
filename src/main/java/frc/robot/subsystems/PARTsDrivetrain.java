@@ -52,6 +52,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         private SwerveModule<TalonFX, TalonFX, CANcoder> backRightModule;
         private SwerveModule<TalonFX, TalonFX, CANcoder> backLeftModule;
 
+        private Timer alignTimer;
+
         // private boolean doRejectUpdate = false;
 
         private PARTsNT partsNT;
@@ -143,6 +145,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         public Command alignCommand(Pose2d holdDistance, Vision vision) {
                 Command c = new ConditionalCommand(new FunctionalCommand(
                                 () -> {
+                                        alignTimer = new Timer();
+                                        alignTimer.start();
                                         initializePoseEstimator();
 
                                         resetPoseEstimator(vision.getBotPose2d());
@@ -212,7 +216,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 },
                                 () -> ((xRangeController.atGoal() &&
                                                 yRangeController.atGoal() &&
-                                                thetaController.atGoal())),
+                                                thetaController.atGoal()) || alignTimer.hasElapsed(Constants.Drivetrain.alignTime)) ,
                                 this), new WaitCommand(0), () -> vision.getTargetID() > 0 && vision.getBotPose2d() != null);
                 c.setName("align");
                 return c;
