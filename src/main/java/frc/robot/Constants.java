@@ -33,14 +33,14 @@ public final class Constants {
 
     public static final double RANGE_Y_P = 15.5; // 15.5
 
-    public static final PARTsUnit yRControllerTolerance = new PARTsUnit(0.5, PARTsUnitType.Inch);
-    public static final PARTsUnit xRControllerTolerance = new PARTsUnit(0.5, PARTsUnitType.Inch);
-    public static final PARTsUnit thetaControllerTolerance = new PARTsUnit(0.5, PARTsUnitType.Angle);
+    public static final PARTsUnit yRControllerTolerance = new PARTsUnit(1, PARTsUnitType.Inch);
+    public static final PARTsUnit xRControllerTolerance = new PARTsUnit(1, PARTsUnitType.Inch);
+    public static final PARTsUnit thetaControllerTolerance = new PARTsUnit(0.75, PARTsUnitType.Angle);
 
     public static final double leftSideOffset = 5.5;
 
     //more positive, more to left
-    public static final PARTsUnit leftAlignDistance = new PARTsUnit(7, PARTsUnitType.Inch);
+    public static final PARTsUnit leftAlignDistance = new PARTsUnit(6, PARTsUnitType.Inch);
 
     //more negative, more to right
     public static final PARTsUnit rightAlignDistance = new PARTsUnit(-6, PARTsUnitType.Inch); //-7.5
