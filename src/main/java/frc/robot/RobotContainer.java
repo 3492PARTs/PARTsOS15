@@ -341,12 +341,13 @@ public class RobotContainer {
 
                 // operatorController.povLeft().onTrue(algae.stow());
 
-                operatorController.povUp().or(operatorController.povDown())
+                /*operatorController.povUp().or(operatorController.povDown())
                                 .onTrue(algae.joystickAlgaeControl(operatorController));
                 operatorController.povRight().or(operatorController.povLeft())
                                 .onTrue(algae.joystickAlgaeControl2(operatorController));
 
-                operatorController.x().onTrue(Commands.runOnce(() -> algae.setIntakeSpeed(0)));
+                operatorController.x().onTrue(Commands.runOnce(() -> algae.setI
+                ntakeSpeed(0)));*/
 
                 // operatorController.povRight().whileTrue(Commands.runOnce(() ->
                 // algae.reset()));
