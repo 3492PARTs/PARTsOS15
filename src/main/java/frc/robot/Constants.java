@@ -18,20 +18,20 @@ public final class Constants {
     public static final double kMaxAngularSpeed = Math.PI / 4; // Radians
     public static final double kMaxSpeed = .5; // Meters per second
 
-    public static final double MAX_AIM_VELOCITY = 24; // radd/s
-    public static final double MAX_AIM_ACCELERATION = Math.PI * 8; // rad/s^2
-    public static final double MAX_RANGE_VELOCITY = 6.5;//7.0;//5.0; // m/s
-    public static final double MAX_RANGE_ACCELERATION = 6.5;//7.0;//5.0; // 0.5; // m/2^s
+    public static final double MAX_AIM_VELOCITY = 5; // radd/s
+    public static final double MAX_AIM_ACCELERATION = Math.PI; // rad/s^2
+    public static final double MAX_RANGE_VELOCITY = 1;//7.0;//5.0; // m/s
+    public static final double MAX_RANGE_ACCELERATION = 0.5;//7.0;//5.0; // 0.5; // m/2^s
 
-    public static final double THETA_P = 10.0; // Proprotinal
+    public static final double THETA_P = 11.0; // Proprotinal
     public static final double THETA_I = 0.01; // 0.01; //Gradual corretction
     public static final double THETA_D = 0.05; // 0.05; //Smooth oscilattions
 
-    public static final double RANGE_X_P = 12.5;//1.6;// 0.8; //12.5
-    public static final double RANGE_I = 0.04; // 0.04 
-    public static final double RANGE_D = 0.1; // 0.1
+    public static final double RANGE_X_P = 20.0;//1.6;// 0.8; //12.5
+    public static final double RANGE_I = 0.05; // 0.04 
+    public static final double RANGE_D = 0; // 0.1
 
-    public static final double RANGE_Y_P = 15.5; // 15.5
+    public static final double RANGE_Y_P = 22; // 15.5
 
     public static final PARTsUnit yRControllerTolerance = new PARTsUnit(0.5, PARTsUnitType.Inch);
     public static final PARTsUnit xRControllerTolerance = new PARTsUnit(0.5, PARTsUnitType.Inch);
@@ -49,7 +49,7 @@ public final class Constants {
 
     public static final PARTsUnit xZeroHoldDistance = new PARTsUnit(-9, PARTsUnitType.Inch);
 
-    public static final double alignTime = 3; //seconds
+    public static final double alignTime = 10; //seconds
   }
 
   /*public static class LimelightData {

@@ -56,6 +56,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         private SwerveModule<TalonFX, TalonFX, CANcoder> backLeftModule;
 
         private Timer alignTimer;
+        private boolean yControllerAtGoal = false;
+        private boolean thetaControllerAtGoal = false;
 
         // private boolean doRejectUpdate = false;
 
@@ -148,8 +150,13 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         public Command alignCommand(Pose2d holdDistance, Vision vision) {
                 Command c = new ConditionalCommand(new FunctionalCommand(
                                 () -> {
+                                        yControllerAtGoal = false;
+
+                                        thetaControllerAtGoal = false;
+
                                         alignTimer = new Timer();
                                         alignTimer.start();
+
                                         initializePoseEstimator();
 
                                         resetPoseEstimator(vision.getBotPose2d());
@@ -182,6 +189,14 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                         alignCommandInitTelemetry(holdDistance);
                                 },
                                 () -> {
+                                        if (yRangeController.atGoal()) {
+                                                yControllerAtGoal = true;
+                                        }
+
+                                        if (thetaController.atGoal()) {
+                                                thetaControllerAtGoal = true;
+                                        }
+
                                         updatePoseEstimator();
                                         setPoseEstimatorVisionMeasurement(vision);
                                         currentEstimatedRobotPose3d = new Pose3d(
@@ -201,13 +216,23 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
                                         // Get dist. from drivetrain.
 
-                                        Translation2d translation = new Translation2d(yRangeController.getPositionError() < Constants.Drivetrain.yRControllerTolerance.to(PARTsUnitType.Meter) && thetaController.getPositionError() < Constants.Drivetrain.thetaControllerTolerance.to(PARTsUnitType.Radian) ? rangeOutput.getX() : 0,
+                                        Translation2d translation = new Translation2d(yRangeController
+                                                        .getPositionError() < Constants.Drivetrain.yRControllerTolerance
+                                                                        .to(PARTsUnitType.Meter)
+                                                        || yControllerAtGoal || true
+                                                                        // &&
+                                                                        // thetaController.getPositionError()
+                                                                        // <
+                                                                        // Constants.Drivetrain.thetaControllerTolerance.to(PARTsUnitType.Radian)
+                                                                        ? rangeOutput.getX()
+                                                                        : 0,
                                                         rangeOutput.getY());
 
                                         super.setControl(alignRequest
                                                         .withVelocityX(translation.getX())
-                                                        .withVelocityY(translation.getY())
-                                                        .withRotationalRate(thetaOutput.getRadians()));
+                                                        .withVelocityY(translation.getY()*0)
+                                                        .withRotationalRate(thetaControllerAtGoal ? 0
+                                                                        : thetaOutput.getRadians()*0));
 
                                         alignCommandExecuteTelemetry(thetaOutput, rangeOutput);
                                 },
@@ -219,8 +244,10 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 },
                                 () -> ((xRangeController.atGoal() &&
                                                 yRangeController.atGoal() &&
-                                                thetaController.atGoal()) || alignTimer.hasElapsed(Constants.Drivetrain.alignTime)) ,
-                                this), new WaitCommand(0), () -> vision.getTargetID() > 0 && vision.getBotPose2d() != null);
+                                                thetaController.atGoal())
+                                                || alignTimer.hasElapsed(Constants.Drivetrain.alignTime)),
+                                this), new WaitCommand(0),
+                                () -> vision.getTargetID() > 0 && vision.getBotPose2d() != null);
                 c.setName("align");
                 return c;
         }
