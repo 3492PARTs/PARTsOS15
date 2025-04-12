@@ -10,6 +10,9 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+
+import static edu.wpi.first.units.Units.Meter;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
@@ -159,7 +162,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                                                                           // is
                                                                                                           // centered.
                                         thetaController.setTolerance(
-                                                        new PARTsUnit(Constants.Drivetrain.thetaControllerTolerance, PARTsUnitType.Angle)
+                                                        Constants.Drivetrain.thetaControllerTolerance
                                                                         .to(PARTsUnitType.Radian));
 
                                         // Initialize the x-range controller.
@@ -173,7 +176,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                                                                                // to
                                                                                                                // target.
                                         yRangeController.setGoal(holdDistance.getY()); // Center to target.
-                                        yRangeController.setTolerance(new PARTsUnit(Constants.Drivetrain.yRControllerTolerance, PARTsUnitType.Inch)
+                                        yRangeController.setTolerance(Constants.Drivetrain.yRControllerTolerance
                                                         .to(PARTsUnitType.Meter));
 
                                         alignCommandInitTelemetry(holdDistance);
@@ -198,7 +201,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
                                         // Get dist. from drivetrain.
 
-                                        Translation2d translation = new Translation2d(yRangeController.getPositionError() < Constants.Drivetrain.yRControllerTolerance && thetaController.getPositionError() < Constants.Drivetrain.thetaControllerTolerance ? rangeOutput.getX() : 0,
+                                        Translation2d translation = new Translation2d(yRangeController.getPositionError() < Constants.Drivetrain.yRControllerTolerance.to(PARTsUnitType.Meter) && thetaController.getPositionError() < Constants.Drivetrain.thetaControllerTolerance.to(PARTsUnitType.Radian) ? rangeOutput.getX() : 0,
                                                         rangeOutput.getY());
 
                                         super.setControl(alignRequest
