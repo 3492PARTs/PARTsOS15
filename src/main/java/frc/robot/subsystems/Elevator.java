@@ -48,7 +48,6 @@ public class Elevator extends PARTsSubsystem {
   public enum ElevatorState {
     SENSOR_ERROR(-1),
     POS_CTL_TRAVEL_ERROR(-1),
-    NONE(-1),
     STOW(Constants.Elevator.StowHeight),
     L2(Constants.Elevator.L2Height),
     L3(Constants.Elevator.L3Height),
@@ -492,7 +491,7 @@ public class Elevator extends PARTsSubsystem {
       // If there was an error remove it
       if (mPeriodicIO.error && mPeriodicIO.state != ElevatorState.POS_CTL_TRAVEL_ERROR) {
         mPeriodicIO.error = false;
-        mPeriodicIO.state = ElevatorState.NONE;
+        mPeriodicIO.state = ElevatorState.STOW;
         candle.removeState(CandleState.ELEVATOR_ERROR);
         zeroElevatorCommand().schedule();
       }
