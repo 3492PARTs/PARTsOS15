@@ -127,9 +127,10 @@ public class Coral extends PARTsSubsystem {
       // Help us index a little more if its still detected in entry
       if (isCoralInEntry() && mPeriodicIO.state != IntakeState.INTAKE) {
         //mPeriodicIO.state = IntakeState.INDEX;
-        this.run(() -> {
+        /*this.run(() -> {
           mPeriodicIO.rpm = Constants.Coral.kIndexSpeed;
-        }).until(() -> !isCoralInEntry()).andThen(this.runOnce(() -> mPeriodicIO.rpm = 0)).schedule();
+        }).until(() -> !isCoralInEntry()).andThen(this.runOnce(() -> mPeriodicIO.rpm = 0)).schedule();*/
+        index();
       }
     } else
       elevator.setGantryBlock(false);
