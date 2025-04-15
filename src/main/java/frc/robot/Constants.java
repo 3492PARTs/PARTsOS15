@@ -48,6 +48,8 @@ public final class Constants {
     public static final PARTsUnit L4XDistance = new PARTsUnit(-9 + (-4), PARTsUnitType.Inch);
 
     public static final PARTsUnit xZeroHoldDistance = new PARTsUnit(-9, PARTsUnitType.Inch);
+
+    public static final double maxAlignTime = 4; //seconds
   }
 
   /*public static class LimelightData {

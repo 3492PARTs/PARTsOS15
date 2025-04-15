@@ -57,6 +57,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         private PARTsNT partsNT;
         private PARTsLogger partsLogger;
 
+        private Timer alignTimer;
+
         // Vision Variables
         // private Vision m_vision;
         private SwerveRequest.RobotCentric alignRequest;
@@ -143,6 +145,9 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         public Command alignCommand(Pose2d holdDistance, Vision vision) {
                 Command c = new ConditionalCommand(new FunctionalCommand(
                                 () -> {
+                                        alignTimer = new Timer();
+                                        alignTimer.start();
+
                                         initializePoseEstimator();
 
                                         resetPoseEstimator(vision.getBotPose2d());
@@ -212,8 +217,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 },
                                 () -> ((xRangeController.atGoal() &&
                                                 yRangeController.atGoal() &&
-                                                thetaController.atGoal())),
-                                this), new WaitCommand(0), () -> vision.getTargetID() > 0);
+                                                thetaController.atGoal()) || alignTimer.hasElapsed(Constants.Drivetrain.maxAlignTime)),
+                                this), new WaitCommand(0), () -> vision.getTargetID() > 0 && vision.getBotPose2d() != null);
                 c.setName("align");
                 return c;
         }
