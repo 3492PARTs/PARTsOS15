@@ -426,6 +426,6 @@ public class PARTsNT {
 
 
     public void sendNotificationToElasticDashboard(NotificationLevel notificationLevel, String message) {
-        Elastic.sendNotification(new Notification(notificationLevel, name, message));
+        Elastic.sendNotification(new Notification(notificationLevel, name, message, 1500));
     }
 }

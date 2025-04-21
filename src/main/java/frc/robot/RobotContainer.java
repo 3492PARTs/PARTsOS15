@@ -10,10 +10,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.CANBus;
+import com.ctre.phoenix6.CANBus.CANBusStatus;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.CAN;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -22,9 +29,12 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.lib.PARTsLib.IPARTsSubsystem;
 import frc.lib.PARTsLib.PARTsDashboard;
+import frc.lib.PARTsLib.PARTsSubsystem;
 import frc.lib.PARTsLib.PARTsUnit;
 import frc.lib.PARTsLib.PARTsUnit.PARTsUnitType;
 import frc.lib.PARTsLib.CheckPARTs.CheckPARTs;
+import frc.lib.PARTsLib.CheckPARTs.PARTsError;
+import frc.lib.PARTsLib.CheckPARTs.PARTsError.PartStatus;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.algae.AlgaeWrist;
 import frc.robot.subsystems.Algae;
@@ -257,5 +267,30 @@ public class RobotContainer {
     public void constructDashboard() {
         PARTsDashboard.setSubsystems(subsystems);
         PARTsDashboard.setCommandScheduler();
+    }
+
+    /**
+     * This tests all registered subsystems.
+     * Do not run this manually!
+     * This function gets ran in testInit in {@link Robot#testInit()}.
+     */
+    public void testSubsystems() {
+        for (IPARTsSubsystem part : subsystems) {
+            PARTsError partErr = part.test();
+            if (partErr.getStatus() != PartStatus.OK) {
+                // Report Error
+            }
+        }
+    }
+
+    public ArrayList<PARTsError> testSystem() {
+        ArrayList<PARTsError> errs = new ArrayList<>();
+        if (DriverStation.isTest() && DriverStation.isFMSAttached()) {
+            errs.add(new PARTsError("System Test", PartStatus.WARNING, "Robot is in test mode and connected to FMS!"));
+        }
+        if (RobotController.getBatteryVoltage() <= RobotController.getBrownoutVoltage()) {
+            errs.add(new PARTsError("System Test", PartStatus.FAILURE, "System brownout! Cutting power to problematic subsystems."));
+        }
+        return errs;
     }
 }

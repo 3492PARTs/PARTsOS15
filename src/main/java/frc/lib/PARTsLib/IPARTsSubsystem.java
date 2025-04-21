@@ -16,4 +16,12 @@ public interface IPARTsSubsystem extends Subsystem, Sendable, ICheckPARTs {
     public void report(PARTsError error);
 
     public void log();
+
+    /**
+     * Tests the subsystem.
+     * @return A PARTsError with the test status.
+     */
+    public PARTsError test();
+
+    public boolean isDisabled();
 }

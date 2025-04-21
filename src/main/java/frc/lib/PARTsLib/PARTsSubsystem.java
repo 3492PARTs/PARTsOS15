@@ -12,6 +12,7 @@ import frc.lib.PARTsLib.CheckPARTs.PARTsError;
 public abstract class PARTsSubsystem extends SubsystemBase implements IPARTsSubsystem {
   protected PARTsNT partsNT;
   protected PARTsLogger partsLogger;
+  protected boolean partDisabled = false;
 
   /**
    * Creates a new PARTsSubsystem.
@@ -40,13 +41,25 @@ public abstract class PARTsSubsystem extends SubsystemBase implements IPARTsSubs
     partsLogger = new PARTsLogger(className);
   }
 
+  @Override
+  public void periodic() {
+    if (partDisabled) return;
+    super.periodic();
+  }
+
 
   public Command commandFactory(String name, Command c) {
     c.setName(name);
     return c;
   }
 
+  @Override
   public void report(PARTsError error) {
       CheckPARTs.getInstance().getReport(error);
+  }
+
+  @Override
+  public boolean isDisabled() {
+    return partDisabled;
   }
 }

@@ -11,6 +11,7 @@ package frc.robot.subsystems;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.FireAnimation;
@@ -27,6 +28,8 @@ import frc.lib.PARTsLib.CheckPARTs.CheckPARTs;
 import frc.lib.PARTsLib.CheckPARTs.PARTsError;
 import frc.lib.PARTsLib.CheckPARTs.PARTsError.PartStatus;
 import frc.robot.Constants;
+import frc.robot.Robot;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class Candle extends PARTsSubsystem {
@@ -322,5 +325,23 @@ public class Candle extends PARTsSubsystem {
     @Override
     public void report(PARTsError error) {
         CheckPARTs.getInstance().getReport(error);
+    }
+
+    @Override
+    public PARTsError test() {
+        PARTsError status = new PARTsError("Candle Test", PartStatus.OK, partsLogger, partsNT);
+        if (Robot.isReal()) {
+            if (candle == null) {
+                status.setStatus(PartStatus.SENSOR_FAILURE);
+                status.setMessage("Candle object is null!");
+            }
+            else {
+                if (candle.getLastError() != ErrorCode.OK) {
+                    status.setStatus(PartStatus.SENSOR_FAILURE);
+                    status.setMessage(String.format("Candle is reporting error: %s!", candle.getLastError()));
+                }
+            }
+        }
+        return status;
     }
 }
