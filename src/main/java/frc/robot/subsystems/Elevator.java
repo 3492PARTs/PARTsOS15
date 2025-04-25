@@ -493,7 +493,7 @@ public class Elevator extends PARTsSubsystem {
         mPeriodicIO.error = false;
         mPeriodicIO.state = ElevatorState.STOW;
         candle.removeState(CandleState.ELEVATOR_ERROR);
-        zeroElevatorCommand().schedule();
+        //zeroElevatorCommand().schedule();
       }
     }
   }

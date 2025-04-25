@@ -125,7 +125,7 @@ public class Coral extends PARTsSubsystem {
       elevator.setGantryBlock(isCoralInEntry());
       checkAutoTasks();
       // Help us index a little more if its still detected in entry
-      if (isCoralInEntry() && mPeriodicIO.state != IntakeState.INTAKE) {
+      if (isCoralInEntry() && mPeriodicIO.state != IntakeState.INTAKE && mPeriodicIO.state != IntakeState.REVERSE) {
         //mPeriodicIO.state = IntakeState.INDEX;
         /*this.run(() -> {
           mPeriodicIO.rpm = Constants.Coral.kIndexSpeed;
