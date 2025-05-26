@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.util.PARTsUnit;
 import frc.robot.util.PARTsUnit.PARTsUnitType;
 
@@ -13,6 +14,20 @@ import frc.robot.util.PARTsUnit.PARTsUnitType;
  * Constants class to hold constants.
  */
 public final class Constants {
+  public static final Mode simMode = Mode.SIM;
+  public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
+
+  public static enum Mode {
+    /** Running on a real robot. */
+    REAL,
+
+    /** Running a physics simulator. */
+    SIM,
+
+    /** Replaying from a log file. */
+    REPLAY
+  }
+
   public static class Drivetrain {
     public static final String canBusName = "hi";
     public static final double kMaxAngularSpeed = Math.PI / 4; // Radians
