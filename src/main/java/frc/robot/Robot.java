@@ -35,6 +35,7 @@ public class Robot extends LoggedRobot {
 
   public Robot() {
     Logger.recordMetadata("ProjectName", "PARTsOS15");
+    Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
 
     if (isReal()) {
       // Logs to disk.
