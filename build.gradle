@@ -1,6 +1,8 @@
 plugins {
     id "java"
     id "edu.wpi.first.GradleRIO" version "2025.3.2"
+    // Version control within code. Mainly for AdvantageKit, but can be used anywhere.
+    id "com.peterabeles.gversion" version "1.10"
 }
 
 java {
