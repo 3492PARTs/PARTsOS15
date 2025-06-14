@@ -1584,4 +1584,7 @@ public class LimelightHelpers {
 
         return results;
     }
+    public static void SetIMUMode(String limelightName, int mode) {
+        setLimelightNTDouble(limelightName, "imumode_set", mode);
+    }
 }

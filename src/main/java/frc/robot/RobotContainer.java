@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.Drivetrain;
 import frc.robot.cmds.algae.Dealgae;
 import frc.robot.cmds.algae.PARTsAlignScoreAlgae;
 import frc.robot.cmds.coral.AlignScoreCoral;
@@ -51,6 +52,8 @@ import frc.robot.util.PARTsController.ControllerType;
 import frc.robot.util.PARTsUnit.PARTsUnitType;
 import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.LimelightVision;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -81,9 +84,9 @@ public class RobotContainer {
         private boolean elevatorManualControl = false;
 
         /** Subsystems */
-        private final Vision frontVision = new Vision(Constants.VisionConstants.DRIVETRAIN_LIMELIGHT,
+        /*private final Vision frontVision = new Vision(Constants.VisionConstants.DRIVETRAIN_LIMELIGHT,
                         Constants.VisionConstants.LIMELIGHT_ANGLE,
-                        Constants.VisionConstants.LIMELIGHT_LENS_HEIGHT);
+                        Constants.VisionConstants.LIMELIGHT_LENS_HEIGHT);*/
 
         /*
          * private final Vision backVision = new
@@ -109,12 +112,15 @@ public class RobotContainer {
 
         private final Climber climber = new Climber();
 
+        private final LimelightVision vision = new LimelightVision(drivetrain);
+
         private final ArrayList<IPARTsSubsystem> subsystems = new ArrayList<IPARTsSubsystem>(
-                        Arrays.asList(candle, coral, elevator, drivetrain, climber, algae, frontVision));
+                        Arrays.asList(candle, coral, elevator, drivetrain, climber, algae, vision));
 
         private SendableChooser<Command> autoChooser;
 
         private PARTsNT partsNT = new PARTsNT("RobotContainer");
+
 
         /** End Subsystems */
 
@@ -127,8 +133,10 @@ public class RobotContainer {
                                 .or(driveController.axisMagnitudeGreaterThan(1, 0.5))
                                 .or(driveController.rightTrigger());
 
-                configureAutonomousCommands();
+                //configureAutonomousCommands();
                 configureBindings();
+                partsNT.putSmartDashboardSendable("field", Field.FIELD2D);
+                vision.resetPose();
         }
 
         private void configureBindings() {
@@ -248,9 +256,10 @@ public class RobotContainer {
 
                 // buttonBoxController.escTrigger().onTrue(new Dealgae(ElevatorState.A1,
                 // elevator, algae));
-                buttonBoxController.escTrigger().onTrue(new PARTsAlignScoreAlgae(new Pose2d(0, 0,
+
+                /*buttonBoxController.escTrigger().onTrue(new PARTsAlignScoreAlgae(new Pose2d(0, 0,
                                 new Rotation2d()), ElevatorState.A1, drivetrain, elevator, algae, candle,
-                                buttonBoxController, frontVision));
+                                buttonBoxController, frontVision));*/
 
                 // buttonBoxController.enterTrigger().onTrue(new Dealgae(ElevatorState.A2,
                 // elevator, algae));
@@ -263,7 +272,7 @@ public class RobotContainer {
                 // *-----------------------------------------------------*//
 
                 // --------------------- Align, L2, Score --------------------//
-                buttonBoxController.mapTrigger()
+                /*buttonBoxController.mapTrigger()
                                 .onTrue(new ConditionalAlign(manualElevatorControlSupplier, elevator, ElevatorState.L2,
                                                 drivetrain, coral, candle, buttonBoxController,
                                                 new Pose2d(Constants.Drivetrain.xZeroHoldDistance
@@ -292,14 +301,14 @@ public class RobotContainer {
                                                                 Constants.Drivetrain.rightAlignDistance
                                                                                 .to(PARTsUnitType.Meter),
                                                                 new Rotation2d()),
-                                                frontVision, escapeBooleanSupplier));
+                                                frontVision, escapeBooleanSupplier));*/
 
                 // *---------------------------------------------------- *//
                 // * ---------------Left Reef Pole Controls ----------- *//
                 // *-----------------------------------------------------*//
 
                 // --------------------- Align, L2, Score --------------------//
-                buttonBoxController.wipeTrigger()
+                /*buttonBoxController.wipeTrigger()
                                 .onTrue(new ConditionalAlign(manualElevatorControlSupplier, elevator, ElevatorState.L2,
                                                 drivetrain, coral, candle, buttonBoxController,
                                                 new Pose2d(Constants.Drivetrain.xZeroHoldDistance
@@ -328,7 +337,7 @@ public class RobotContainer {
                                                                 Constants.Drivetrain.leftAlignDistance
                                                                                 .to(PARTsUnitType.Meter),
                                                                 new Rotation2d()),
-                                                frontVision, escapeBooleanSupplier));
+                                                frontVision, escapeBooleanSupplier)); */
 
                 // * */
                 // =============================================================================================
@@ -392,7 +401,7 @@ public class RobotContainer {
                  */
         }
 
-        public void configureAutonomousCommands() {
+        /*public void configureAutonomousCommands() {
                 NamedCommands.registerCommand("Elevator L2", elevator.elevatorToLevelCommand(ElevatorState.L2));
                 NamedCommands.registerCommand("Elevator Stow", elevator.elevatorToLevelCommand(ElevatorState.STOW));
                 NamedCommands.registerCommand("Elevator L4", elevator.elevatorToLevelCommand(ElevatorState.L4));
@@ -465,7 +474,7 @@ public class RobotContainer {
 
                 autoChooser = AutoBuilder.buildAutoChooser();
                 SmartDashboard.putData("Auto Chooser", autoChooser);
-        }
+        }*/
 
         public Command getAutonomousCommand() {
                 return autoChooser.getSelected();

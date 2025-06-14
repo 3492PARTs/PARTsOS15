@@ -29,12 +29,15 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
+import frc.robot.Field;
+import frc.robot.Robot;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.IPARTsSubsystem;
 import frc.robot.util.PARTsLogger;
@@ -51,6 +54,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         private SwerveModule<TalonFX, TalonFX, CANcoder> frontLeftModule;
         private SwerveModule<TalonFX, TalonFX, CANcoder> backRightModule;
         private SwerveModule<TalonFX, TalonFX, CANcoder> backLeftModule;
+
+        private FieldObject2d fieldObject2d;
 
         // private boolean doRejectUpdate = false;
 
@@ -137,7 +142,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         @Override
         public void periodic() {
                 super.periodic();
-
+                fieldObject2d.setPose(Robot.isBlue() ? getPose() : Field.transformToOppositeAlliance(getPose()));
         }
 
         /*---------------------------------- Custom Public Functions ----------------------------------*/
@@ -382,6 +387,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 sendToDashboard();
                 configureAutoBuilder();
                 initializePoseEstimator();
+                fieldObject2d = Field.FIELD2D.getObject("Target Pose");
         }
 
         private void sendToDashboard() {
@@ -581,6 +587,9 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 .withVelocityY(0)
                                 .withRotationalRate(thetaOutput.getRadians()))).until(() -> (thetaController.atGoal()));
 
+        }
+        public Pose2d getPose() {
+                return super.getState().Pose;
         }
 
 }

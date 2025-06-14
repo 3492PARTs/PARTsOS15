@@ -9,6 +9,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -25,6 +26,12 @@ public class Robot extends TimedRobot {
   PARTsLogger partsLogger;
 
   private final RobotContainer m_robotContainer;
+
+  private static Alliance alliance;
+
+  public static boolean isBlue() {
+        return alliance == Alliance.Blue;
+    }
 
   public Robot() {
     // This is needed for lasercan, without it causes robot to lag on boot
@@ -51,6 +58,10 @@ public class Robot extends TimedRobot {
     partsNT.setDouble("Match Time", DriverStation.getMatchTime());
     m_robotContainer.outputTelemetry();
     m_robotContainer.log();
+
+    if (DriverStation.getAlliance().isPresent()) {
+      alliance = DriverStation.getAlliance().get();
+  }
   }
 
   @Override
