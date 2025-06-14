@@ -191,15 +191,7 @@ public class RobotContainer {
                 // reset the field-centric heading on left bumper press
                 driveController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-                /*
-                 * driveController.rightTrigger().whileTrue(drivetrain.alignCommand(
-                 * new Pose2d(new PARTsUnit(-18, PARTsUnitType.Inch).to(PARTsUnitType.Meter),
-                 * new PARTsUnit(0, PARTsUnitType.Inch).to(PARTsUnitType.Meter),
-                 * new Rotation2d()),
-                 * frontVision));
-                 */
-
-                driveController.leftTrigger().whileTrue(elevator.elevatorToLevelCommand(ElevatorState.L2));
+                driveController.rightTrigger().onTrue(Commands.runOnce(() -> vision.resetPose()));
 
                 // logging
                 drivetrain.registerTelemetry(telemetryLogger::telemeterize);

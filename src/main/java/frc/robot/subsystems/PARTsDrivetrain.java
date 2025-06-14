@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
@@ -591,5 +592,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         public Pose2d getPose() {
                 return super.getState().Pose;
         }
-
+        @Override
+        public void addVisionMeasurement(Pose2d measurement, double timestamp) {
+                super.addVisionMeasurement(measurement, Utils.fpgaToCurrentTime(timestamp));
+        }
 }
