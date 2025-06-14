@@ -5,6 +5,7 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModule;
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -388,7 +389,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 sendToDashboard();
                 configureAutoBuilder();
                 initializePoseEstimator();
-                fieldObject2d = Field.FIELD2D.getObject("Target Pose");
+                fieldObject2d = Field.FIELD2D.getObject("Robot Pose");
         }
 
         private void sendToDashboard() {
@@ -596,4 +597,27 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         public void addVisionMeasurement(Pose2d measurement, double timestamp) {
                 super.addVisionMeasurement(measurement, Utils.fpgaToCurrentTime(timestamp));
         }
+        public void setChassisSpeeds(ChassisSpeeds robotSpeeds) {
+                setControl(new SwerveRequest.RobotCentric().withVelocityX(robotSpeeds.vxMetersPerSecond).withVelocityY(robotSpeeds.vyMetersPerSecond).withRotationalRate(robotSpeeds.omegaRadiansPerSecond));
+        }
+        public SwerveRequest.FieldCentric getFieldCentricSwerveRequest() {
+                return this.fieldCentricRequest;
+            }
+        
+            public SwerveRequest.RobotCentric getRobotCentricSwerveRequest() {
+                return this.robotCentricRequest;
+            }
+            private final SwerveRequest.FieldCentric fieldCentricRequest = new SwerveRequest.FieldCentric()
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
+            .withDeadband(0.1)
+            .withRotationalDeadband(0.1)
+            .withDesaturateWheelSpeeds(true);
+    
+        private final SwerveRequest.RobotCentric robotCentricRequest = new SwerveRequest.RobotCentric()
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
+            .withDeadband(0.1)
+            .withRotationalDeadband(0.1)
+            .withDesaturateWheelSpeeds(true);
+
+        
 }

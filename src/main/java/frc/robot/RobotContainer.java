@@ -31,6 +31,7 @@ import frc.robot.cmds.coral.AutoAlignScoreCoralL4;
 import frc.robot.cmds.coral.L4ScoreCoral;
 import frc.robot.cmds.coral.ConditionalAlign;
 import frc.robot.cmds.coral.PARTsAlignScoreCoral;
+import frc.robot.cmds.coral.SwerveDrivePIDToPose;
 //import frc.robot.commands.algae.AlgaeWrist;
 import frc.robot.subsystems.Algae;
 import frc.robot.subsystems.Candle;
@@ -191,7 +192,7 @@ public class RobotContainer {
                 // reset the field-centric heading on left bumper press
                 driveController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-                driveController.rightTrigger().onTrue(Commands.runOnce(() -> vision.resetPose()));
+                driveController.rightTrigger().onTrue(new SwerveDrivePIDToPose(Field.APRILTAGS[17].getLocation().toPose2d(),drivetrain));
 
                 // logging
                 drivetrain.registerTelemetry(telemetryLogger::telemeterize);
