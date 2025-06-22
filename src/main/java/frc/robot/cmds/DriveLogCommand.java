@@ -26,7 +26,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.PARTsDrivetrain;
-import frc.robot.subsystems.Vision;
 import frc.robot.util.PARTsUnit;
 import frc.robot.util.PARTsUnit.PARTsUnitType;
 
@@ -45,8 +44,6 @@ public class DriveLogCommand extends Command {
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
   final CommandXboxController joystick;
-
-  final Vision vision;
 
   // PID for driving.
   private static final double RANGE_P = 0.8;
@@ -101,14 +98,12 @@ public class DriveLogCommand extends Command {
   boolean doRejectUpdate = false;
 
   /** Creates a new DriveLog. */
-  public DriveLogCommand(PARTsDrivetrain drivetrain, CommandXboxController joystick, Vision vision) {
+  public DriveLogCommand(PARTsDrivetrain drivetrain, CommandXboxController joystick) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.drivetrain = drivetrain;
     this.joystick = joystick;
-    this.vision = vision;
 
     addRequirements(drivetrain);
-    addRequirements(vision);
 
     xRangeController = new ProfiledPIDController(RANGE_P, RANGE_I, RANGE_D, new TrapezoidProfile.Constraints(1.0, 0.5));
     yRangeController = new ProfiledPIDController(RANGE_P, RANGE_I, RANGE_D, new TrapezoidProfile.Constraints(1.0, 0.5));

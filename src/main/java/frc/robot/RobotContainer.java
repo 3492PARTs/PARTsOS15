@@ -22,8 +22,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.Drivetrain;
-import frc.robot.cmds.algae.Dealgae;
-import frc.robot.cmds.algae.PARTsAlignScoreAlgae;
 import frc.robot.cmds.coral.AlignScoreCoral;
 import frc.robot.cmds.coral.AutoAlignCoralStop;
 import frc.robot.cmds.coral.AutoAlignScoreCoral;
@@ -31,17 +29,12 @@ import frc.robot.cmds.coral.AutoAlignScoreCoralL4;
 import frc.robot.cmds.coral.L4ScoreCoral;
 import frc.robot.cmds.coral.ConditionalAlign;
 import frc.robot.cmds.coral.PARTsAlignScoreCoral;
-import frc.robot.cmds.coral.SwerveDrivePIDToPose;
 //import frc.robot.commands.algae.AlgaeWrist;
-import frc.robot.subsystems.Algae;
 import frc.robot.subsystems.Candle;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.Candle.CandleState;
 import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.PARTsDrivetrain;
-import frc.robot.subsystems.Climber;
-import frc.robot.subsystems.sysid.AlgaeSysId;
 import frc.robot.subsystems.sysid.ElevatorSysId;
 import frc.robot.util.IPARTsSubsystem;
 import frc.robot.util.PARTsButtonBoxController;
@@ -84,25 +77,12 @@ public class RobotContainer {
 
         private boolean elevatorManualControl = false;
 
-        /** Subsystems */
-        /*private final Vision frontVision = new Vision(Constants.VisionConstants.DRIVETRAIN_LIMELIGHT,
-                        Constants.VisionConstants.LIMELIGHT_ANGLE,
-                        Constants.VisionConstants.LIMELIGHT_LENS_HEIGHT);*/
-
-        /*
-         * private final Vision backVision = new
-         * Vision(Constants.VisionConstants.ELEVATOR_LIMELIGHT,
-         * Constants.VisionConstants.LIMELIGHT_ANGLE,
-         * Constants.VisionConstants.LIMELIGHT_LENS_HEIGHT);
-         */
+        /* Subsystems */
 
         public final Candle candle = new Candle();
 
         private final Elevator elevator = new Elevator(candle);
         // private final ElevatorSysId elevator = new ElevatorSysId();
-
-        private final Algae algae = new Algae();
-        // private final AlgaeSysId algae = new AlgaeSysId();
 
         private final Coral coral = new Coral(candle, elevator);
 
@@ -111,12 +91,11 @@ public class RobotContainer {
                         TunerConstants.FrontLeft, TunerConstants.FrontRight, TunerConstants.BackLeft,
                         TunerConstants.BackRight);
 
-        private final Climber climber = new Climber();
 
         private final LimelightVision vision = new LimelightVision(drivetrain);
 
         private final ArrayList<IPARTsSubsystem> subsystems = new ArrayList<IPARTsSubsystem>(
-                        Arrays.asList(candle, coral, elevator, drivetrain, climber, algae, vision));
+                        Arrays.asList(candle, coral, elevator, drivetrain, vision));
 
         private SendableChooser<Command> autoChooser;
 
@@ -168,12 +147,6 @@ public class RobotContainer {
                 // Drivetrain will execute this command periodically
                 drivetrain.setDefaultCommand(driveCommand);
 
-                /*
-                 * new Trigger(() -> elevator.getElevatorPosition() >=
-                 * Constants.Elevator.L2Height)
-                 * .onTrue(Commands.runOnce(() -> fineGrainDrive = true))
-                 * .onFalse(Commands.runOnce(() -> fineGrainDrive = false));
-                 */
                 // fine grain controls
                 driveController.rightBumper().onTrue(Commands.runOnce(() -> fineGrainDrive = !fineGrainDrive));
 
@@ -192,7 +165,7 @@ public class RobotContainer {
                 // reset the field-centric heading on left bumper press
                 driveController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-                driveController.rightTrigger().whileTrue(drivetrain.alignCommand(Field.APRILTAGS[17].getLocation().toPose2d(), null));
+                driveController.rightTrigger().whileTrue(drivetrain.alignCommand(Field.APRILTAGS[17].getLocation().toPose2d()));
 
                 // logging
                 drivetrain.registerTelemetry(telemetryLogger::telemeterize);
@@ -247,15 +220,6 @@ public class RobotContainer {
 
                 buttonBoxController.enginestartTrigger().onTrue(coral.score());
 
-                // buttonBoxController.escTrigger().onTrue(new Dealgae(ElevatorState.A1,
-                // elevator, algae));
-
-                /*buttonBoxController.escTrigger().onTrue(new PARTsAlignScoreAlgae(new Pose2d(0, 0,
-                                new Rotation2d()), ElevatorState.A1, drivetrain, elevator, algae, candle,
-                                buttonBoxController, frontVision));*/
-
-                // buttonBoxController.enterTrigger().onTrue(new Dealgae(ElevatorState.A2,
-                // elevator, algae));
 
                 // --------------------- Stow --------------------//
                 buttonBoxController.negative1Trigger().onTrue(elevator.goToElevatorStow());
@@ -332,41 +296,6 @@ public class RobotContainer {
                                                                 new Rotation2d()),
                                                 frontVision, escapeBooleanSupplier)); */
 
-                // * */
-                // =============================================================================================
-                // * */ ------------------------------------- Algae Control
-                // * */ -------------------------------------------
-                // * */
-                // ---------------------------------------------------------------------------------------------
-
-                // operatorController.povDown().onTrue(algae.grabReefAlgae());
-
-                // operatorController.povLeft().onTrue(algae.stow());
-
-                /*operatorController.povUp().or(operatorController.povDown())
-                                .onTrue(algae.joystickAlgaeControl(operatorController));
-                operatorController.povRight().or(operatorController.povLeft())
-                                .onTrue(algae.joystickAlgaeControl2(operatorController));
-
-                operatorController.x().onTrue(Commands.runOnce(() -> algae.setI
-                ntakeSpeed(0)));*/
-
-                // operatorController.povRight().whileTrue(Commands.runOnce(() ->
-                // algae.reset()));
-
-                // operatorController.povLeft().onTrue(algae.stopAlgae());
-                // operatorController.leftTrigger().onTrue(Commands.runOnce(algae::reset));
-                // operatorController.leftBumper().whileTrue(algae.score());
-
-                // =============================================================================================
-                // ------------------------------------- Climber
-                // -------------------------------------------
-                // ---------------------------------------------------------------------------------------------
-
-                operatorController.povUp().whileTrue(Commands.run(() -> climber.setSpeed(-.3)))
-                                .whileFalse(Commands.run(() -> climber.setSpeed(0)));
-                operatorController.povDown().whileTrue(Commands.run(() -> climber.setSpeed(.3)))
-                                .whileFalse(Commands.run(() -> climber.setSpeed(0)));
                 // =============================================================================================
                 // ------------------------------------- SysID
                 // -------------------------------------------
@@ -503,7 +432,5 @@ public class RobotContainer {
 
         public void resetStartPose() {
                 drivetrain.seedFieldCentric();
-                // drivetrain.resetRotation(new Rotation2d(Math.PI));
-                // drivetrain.setOperatorPerspectiveForward(new Rotation2d());
         }
 }

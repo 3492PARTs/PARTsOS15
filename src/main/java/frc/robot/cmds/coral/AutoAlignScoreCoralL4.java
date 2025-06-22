@@ -17,7 +17,6 @@ import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.PARTsDrivetrain;
-import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.Candle.CandleState;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -26,17 +25,19 @@ import frc.robot.subsystems.Candle.CandleState;
 public class AutoAlignScoreCoralL4 extends SequentialCommandGroup {
 
         /** Creates a new ScoreCoral. */
-        public AutoAlignScoreCoralL4(Pose2d holdDistance, ElevatorState level, PARTsDrivetrain drivetrain, Elevator elevator,
-                        Coral coral, Candle candle, Vision vision) {
+        public AutoAlignScoreCoralL4(Pose2d holdDistance, ElevatorState level, PARTsDrivetrain drivetrain,
+                        Elevator elevator,
+                        Coral coral, Candle candle) {
 
                 addCommands(candle.addStateCommand(CandleState.AUTO_ALIGN),
                                 new ParallelCommandGroup(
-                                        drivetrain.alignCommand(holdDistance,vision),
-                                        elevator.elevatorToLevelCommand(level)),
+                                                drivetrain.alignCommand(holdDistance),
+                                                elevator.elevatorToLevelCommand(level)),
                                 new WaitCommand(2),
                                 coral.autoScore(),
                                 new WaitCommand(.2),
                                 elevator.elevatorToLevelCommand(ElevatorState.STOW),
                                 candle.removeStateCommand(CandleState.AUTO_ALIGN));
-                                
-}}
+
+        }
+}
