@@ -30,6 +30,8 @@ public class SwerveDrivePIDToPose extends Command {
 
     private final PARTsDrivetrain swerve;
 
+    private FieldObject2d computedPose;
+
     private final HolonomicController controller;
     private final Supplier<Pose2d> targetPose;
 
@@ -60,6 +62,7 @@ public class SwerveDrivePIDToPose extends Command {
 
     public SwerveDrivePIDToPose(Supplier<Pose2d> targetPose, PARTsDrivetrain swerve) {
         targetObject2d = Field.FIELD2D.getObject("Target Pose");
+        //computedPose = Field.FIELD2D.getObject("Computed Pose");
         this.swerve = swerve;
 
         controller = new HolonomicController(
@@ -174,8 +177,10 @@ public class SwerveDrivePIDToPose extends Command {
         // Field.transformToOppositeAlliance(targetPose.get()));
 
         targetObject2d.setPose(targetPose.get());
+        Pose2d storedPose = targetPose.get(); // new Pose2d(translationSetpoint.get(), targetPose.get().getRotation());
+        //computedPose.setPose(storedPose);
 
-        ChassisSpeeds speeds = controller.update(new Pose2d(translationSetpoint.get(), targetPose.get().getRotation()),
+        ChassisSpeeds speeds = controller.update(storedPose,
                 swerve.getPose(), swerve.getPose().getRotation());
 
         swerve.setChassisSpeeds(speeds);
@@ -196,7 +201,7 @@ public class SwerveDrivePIDToPose extends Command {
 
     @Override
     public boolean isFinished() {
-        return isAligned.get() && canEnd.get();
+        return isAlignedX() && canEnd.get();
     }
 
     @Override
@@ -205,7 +210,5 @@ public class SwerveDrivePIDToPose extends Command {
                 .withVelocityX(0)
                 .withVelocityY(0)
                 .withRotationalRate(0));
-        Field.clearFieldObject(targetPose2d);
     }
-
 }

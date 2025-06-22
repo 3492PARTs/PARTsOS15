@@ -389,7 +389,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 sendToDashboard();
                 configureAutoBuilder();
                 initializePoseEstimator();
-                fieldObject2d = Field.FIELD2D.getObject("Robot Pose");
+                fieldObject2d = Field.FIELD2D.getObject("Robot");
         }
 
         private void sendToDashboard() {
@@ -598,7 +598,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 super.addVisionMeasurement(measurement, Utils.fpgaToCurrentTime(timestamp));
         }
         public void setChassisSpeeds(ChassisSpeeds robotSpeeds) {
-                setControl(new SwerveRequest.RobotCentric().withVelocityX(robotSpeeds.vxMetersPerSecond).withVelocityY(robotSpeeds.vyMetersPerSecond).withRotationalRate(robotSpeeds.omegaRadiansPerSecond));
+                setControl(new SwerveRequest.FieldCentric().withVelocityX(robotSpeeds.vxMetersPerSecond).withVelocityY(robotSpeeds.vyMetersPerSecond).withRotationalRate(robotSpeeds.omegaRadiansPerSecond));
         }
         public SwerveRequest.FieldCentric getFieldCentricSwerveRequest() {
                 return this.fieldCentricRequest;
