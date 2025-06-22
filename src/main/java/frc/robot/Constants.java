@@ -25,19 +25,19 @@ public final class Constants {
     public static final double MAX_RANGE_VELOCITY = 2;// 7.0;//5.0; // m/s
     public static final double MAX_RANGE_ACCELERATION = 2;// 7.0;//5.0; // 0.5; // m/2^s
 
-    public static final double THETA_P = 2; // Proprotinal
-    public static final double THETA_I = 0.01; // 0.01; //Gradual corretction
-    public static final double THETA_D = 0.05; // 0.05; //Smooth oscilattions
+    public static final double THETA_P = 5; // Proprotinal //4.5
+    public static final double THETA_I = 0; //Gradual corretction
+    public static final double THETA_D = 0; //Smooth oscilattions
 
-    public static final double RANGE_X_P = 2;// 1.6;// 0.8; //12.5
-    public static final double RANGE_I = 0; // 0.04
-    public static final double RANGE_D = 0; // 0.1
+    public static final double RANGE_X_P = 8.5; //6.5
+    public static final double RANGE_I = 0; 
+    public static final double RANGE_D = 0; 
 
-    public static final double RANGE_Y_P = 4; // 15.5
+    public static final double RANGE_Y_P = 4.5; //4.5
 
     public static final PARTsUnit yRControllerTolerance = new PARTsUnit(1, PARTsUnitType.Inch);
-    public static final PARTsUnit xRControllerTolerance = new PARTsUnit(1.7, PARTsUnitType.Inch);
-    public static final PARTsUnit thetaControllerTolerance = new PARTsUnit(2, PARTsUnitType.Angle);
+    public static final PARTsUnit xRControllerTolerance = new PARTsUnit(2, PARTsUnitType.Inch);
+    public static final PARTsUnit thetaControllerTolerance = new PARTsUnit(1, PARTsUnitType.Angle);
 
     public static final double leftSideOffset = 5.5;
 
