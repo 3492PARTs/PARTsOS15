@@ -35,7 +35,7 @@ public final class Constants {
     public static final double RANGE_I = 0; // 0.04 
     public static final double RANGE_D = 0; // 0.1
 
-    public static final double RANGE_Y_P = .1; // 15.5
+    public static final double RANGE_Y_P = 4; // 15.5
 
     public static final PARTsUnit yRControllerTolerance = new PARTsUnit(1, PARTsUnitType.Inch);
     public static final PARTsUnit xRControllerTolerance = new PARTsUnit(1.7, PARTsUnitType.Inch);

@@ -157,17 +157,17 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                         alignTimer = new Timer();
                                         alignTimer.start();
 
-                                        //initializePoseEstimator();
+                                        // initializePoseEstimator();
 
-                                        //resetPoseEstimator(vision.getBotPose2d());
+                                        // resetPoseEstimator(vision.getBotPose2d());
 
                                         // Initialize the aim controller.
                                         thetaController.reset(getPose().getRotation()
                                                         .getRadians());
 
                                         thetaController.setGoal(goalPose.getRotation().getRadians()); // tx=0
-                                                                                                          // is
-                                                                                                          // centered.
+                                                                                                      // is
+                                                                                                      // centered.
                                         thetaController.setTolerance(
                                                         Constants.Drivetrain.thetaControllerTolerance
                                                                         .to(PARTsUnitType.Radian));
@@ -180,8 +180,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
                                         // Initialize the y-range controller.
                                         yRangeController.reset(getPose().getY()); // Center
-                                                                                                               // to
-                                                                                                               // target.
+                                                                                  // to
+                                                                                  // target.
                                         yRangeController.setGoal(goalPose.getY()); // Center to target.
                                         yRangeController.setTolerance(Constants.Drivetrain.yRControllerTolerance
                                                         .to(PARTsUnitType.Meter));
@@ -189,10 +189,12 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                         alignCommandInitTelemetry(goalPose);
                                 },
                                 () -> {
-                                        //updatePoseEstimator();
-                                        //setPoseEstimatorVisionMeasurement(vision);
-                                        /*currentEstimatedRobotPose3d = new Pose3d(
-                                                        m_poseEstimator.getEstimatedPosition());*/
+                                        // updatePoseEstimator();
+                                        // setPoseEstimatorVisionMeasurement(vision);
+                                        /*
+                                         * currentEstimatedRobotPose3d = new Pose3d(
+                                         * m_poseEstimator.getEstimatedPosition());
+                                         */
 
                                         Rotation2d thetaOutput = new Rotation2d(
                                                         thetaController.calculate(
@@ -212,9 +214,9 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                         rangeOutput.getY());
 
                                         super.setControl(alignRequest
-                                                        .withVelocityX(translation.getX())
-                                                        .withVelocityY(translation.getY()*0)
-                                                        .withRotationalRate(thetaOutput.getRadians()*0));
+                                                        .withVelocityX(translation.getX() * 0)
+                                                        .withVelocityY(translation.getY())
+                                                        .withRotationalRate(thetaOutput.getRadians() * 0));
 
                                         alignCommandExecuteTelemetry(thetaOutput, rangeOutput);
                                 },
@@ -224,9 +226,9 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                         .withVelocityY(0)
                                                         .withRotationalRate(0));
                                 },
-                                () -> ((xRangeController.atGoal() /*&&
-                                                yRangeController.atGoal() &&
-                                                thetaController.atGoal()*/)));
+                                () -> ((/* xRangeController.atGoal() && */
+                                yRangeController.atGoal()
+                                /* thetaController.atGoal() */)));
                 c.setName("align");
                 return c;
         }
@@ -290,25 +292,33 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                  * PARTsUnitType.Radian).to(PARTsUnitType.Angle) : -9999);
                  */
 
-                /*partsLogger.logDouble("align/estPoseX",
-                                new PARTsUnit(m_poseEstimator.getEstimatedPosition().getX(), PARTsUnitType.Meter)
-                                                .to(PARTsUnitType.Inch));
-                partsLogger.logDouble("align/estPoseY",
-                                new PARTsUnit(m_poseEstimator.getEstimatedPosition().getY(), PARTsUnitType.Meter)
-                                                .to(PARTsUnitType.Inch));
-                partsLogger.logDouble("align/estPoseRot",
-                                new PARTsUnit(m_poseEstimator.getEstimatedPosition().getRotation().getRadians(),
-                                                PARTsUnitType.Radian).to(PARTsUnitType.Angle));
-
-                partsNT.setDouble("align/estPoseX",
-                                new PARTsUnit(m_poseEstimator.getEstimatedPosition().getX(), PARTsUnitType.Meter)
-                                                .to(PARTsUnitType.Inch));
-                partsNT.setDouble("align/estPoseY",
-                                new PARTsUnit(m_poseEstimator.getEstimatedPosition().getY(), PARTsUnitType.Meter)
-                                                .to(PARTsUnitType.Inch));
-                partsNT.setDouble("align/estPoseRot",
-                                new PARTsUnit(m_poseEstimator.getEstimatedPosition().getRotation().getRadians(),
-                                                PARTsUnitType.Radian).to(PARTsUnitType.Angle)); */
+                /*
+                 * partsLogger.logDouble("align/estPoseX",
+                 * new PARTsUnit(m_poseEstimator.getEstimatedPosition().getX(),
+                 * PARTsUnitType.Meter)
+                 * .to(PARTsUnitType.Inch));
+                 * partsLogger.logDouble("align/estPoseY",
+                 * new PARTsUnit(m_poseEstimator.getEstimatedPosition().getY(),
+                 * PARTsUnitType.Meter)
+                 * .to(PARTsUnitType.Inch));
+                 * partsLogger.logDouble("align/estPoseRot",
+                 * new
+                 * PARTsUnit(m_poseEstimator.getEstimatedPosition().getRotation().getRadians(),
+                 * PARTsUnitType.Radian).to(PARTsUnitType.Angle));
+                 * 
+                 * partsNT.setDouble("align/estPoseX",
+                 * new PARTsUnit(m_poseEstimator.getEstimatedPosition().getX(),
+                 * PARTsUnitType.Meter)
+                 * .to(PARTsUnitType.Inch));
+                 * partsNT.setDouble("align/estPoseY",
+                 * new PARTsUnit(m_poseEstimator.getEstimatedPosition().getY(),
+                 * PARTsUnitType.Meter)
+                 * .to(PARTsUnitType.Inch));
+                 * partsNT.setDouble("align/estPoseRot",
+                 * new
+                 * PARTsUnit(m_poseEstimator.getEstimatedPosition().getRotation().getRadians(),
+                 * PARTsUnitType.Radian).to(PARTsUnitType.Angle));
+                 */
 
                 partsLogger.logDouble("align/rPoseX",
                                 new PARTsUnit(getPose().getX(), PARTsUnitType.Meter)
@@ -592,34 +602,40 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 .withRotationalRate(thetaOutput.getRadians()))).until(() -> (thetaController.atGoal()));
 
         }
+
         public Pose2d getPose() {
                 return super.getState().Pose;
         }
+
         @Override
         public void addVisionMeasurement(Pose2d measurement, double timestamp) {
                 super.addVisionMeasurement(measurement, Utils.fpgaToCurrentTime(timestamp));
         }
+
         public void setChassisSpeeds(ChassisSpeeds robotSpeeds) {
-                setControl(new SwerveRequest.RobotCentric().withVelocityX(robotSpeeds.vxMetersPerSecond).withVelocityY(robotSpeeds.vyMetersPerSecond).withRotationalRate(robotSpeeds.omegaRadiansPerSecond));
+                setControl(new SwerveRequest.RobotCentric().withVelocityX(robotSpeeds.vxMetersPerSecond)
+                                .withVelocityY(robotSpeeds.vyMetersPerSecond)
+                                .withRotationalRate(robotSpeeds.omegaRadiansPerSecond));
         }
+
         public SwerveRequest.FieldCentric getFieldCentricSwerveRequest() {
                 return this.fieldCentricRequest;
-            }
-        
-            public SwerveRequest.RobotCentric getRobotCentricSwerveRequest() {
-                return this.robotCentricRequest;
-            }
-            private final SwerveRequest.FieldCentric fieldCentricRequest = new SwerveRequest.FieldCentric()
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
-            .withDeadband(0.1)
-            .withRotationalDeadband(0.1)
-            .withDesaturateWheelSpeeds(true);
-    
-        private final SwerveRequest.RobotCentric robotCentricRequest = new SwerveRequest.RobotCentric()
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
-            .withDeadband(0.1)
-            .withRotationalDeadband(0.1)
-            .withDesaturateWheelSpeeds(true);
+        }
 
-        
+        public SwerveRequest.RobotCentric getRobotCentricSwerveRequest() {
+                return this.robotCentricRequest;
+        }
+
+        private final SwerveRequest.FieldCentric fieldCentricRequest = new SwerveRequest.FieldCentric()
+                        .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
+                        .withDeadband(0.1)
+                        .withRotationalDeadband(0.1)
+                        .withDesaturateWheelSpeeds(true);
+
+        private final SwerveRequest.RobotCentric robotCentricRequest = new SwerveRequest.RobotCentric()
+                        .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
+                        .withDeadband(0.1)
+                        .withRotationalDeadband(0.1)
+                        .withDesaturateWheelSpeeds(true);
+
 }
