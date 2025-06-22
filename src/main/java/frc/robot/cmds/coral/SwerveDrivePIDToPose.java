@@ -189,6 +189,14 @@ public class SwerveDrivePIDToPose extends Command {
         SmartDashboard.putNumber("Alignment/Target y", targetPose.get().getY());
         SmartDashboard.putNumber("Alignment/Target angle", targetPose.get().getRotation().getDegrees());
 
+        SmartDashboard.putNumber("Alignment/Current x", swerve.getPose().getX());
+        SmartDashboard.putNumber("Alignment/Current y", swerve.getPose().getY());
+        SmartDashboard.putNumber("Alignment/Current angle", swerve.getPose().getRotation().getDegrees());
+
+        SmartDashboard.putNumber("Alignment/Error x", targetPose.get().getX() - swerve.getPose().getX());
+        SmartDashboard.putNumber("Alignment/Error y", targetPose.get().getY() - swerve.getPose().getY());
+        SmartDashboard.putNumber("Alignment/Error angle", targetPose.get().getRotation().getDegrees() - swerve.getPose().getRotation().getDegrees());
+
         SmartDashboard.putNumber("Alignment/Target Velocity Robot Relative X (m per s)", speeds.vxMetersPerSecond);
         SmartDashboard.putNumber("Alignment/Target Velocity Robot Relative Y (m per s)", speeds.vyMetersPerSecond);
         SmartDashboard.putNumber("Alignment/Target Angular Velocity (rad per s)", speeds.omegaRadiansPerSecond);
@@ -201,7 +209,7 @@ public class SwerveDrivePIDToPose extends Command {
 
     @Override
     public boolean isFinished() {
-        return isAlignedX() && canEnd.get();
+        return isAlignedY() && canEnd.get();
     }
 
     @Override

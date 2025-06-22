@@ -27,8 +27,8 @@ public class HolonomicController {
     public ChassisSpeeds update(Pose2d measurement, Pose2d goal, Rotation2d angle) {
         
         return ChassisSpeeds.fromFieldRelativeSpeeds(
-            xController.calculate(measurement.getX(), goal.getX()) *-1 ,
-            yController.calculate(measurement.getY(), goal.getY()) *-1 * 0,
+            xController.calculate(measurement.getX(), goal.getX()) *-1 *0,
+            yController.calculate(measurement.getY(), goal.getY()),
             angleController.calculate(goal.getRotation().getRadians(), measurement.getRotation().getRadians())*0,
                 angle);
     }

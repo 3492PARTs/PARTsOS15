@@ -168,7 +168,7 @@ public class LimelightVision extends PARTsSubsystem{
                     : getMegaTag1PoseEstimate(camera.getName());
                 
                 if (poseEstimate != null && poseEstimate.tagCount > 0) {
-                    System.out.println("hi" + poseEstimate.pose);
+                    //System.out.println("hi" + poseEstimate.pose);
                     drivetrain.addVisionMeasurement(poseEstimate.pose, poseEstimate.timestampSeconds);
                     SmartDashboard.putBoolean("Vision/" + camera.getName() + "/Has Data", true);
                     SmartDashboard.putNumber("Vision/" + camera.getName() + "/Tag Count", poseEstimate.tagCount);
