@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.subsystems.Candle.CandleState;
@@ -146,30 +145,6 @@ public class Elevator extends PARTsSubsystem {
             .andThen(this.runOnce(() -> resetEncoder()))
             .onlyIf(() -> getElevatorPosition() <= Constants.Elevator.bottomLimitPositionErrorMargin));
 
-    /*
-     * new Trigger(() -> getElevatorPosition() < Constants.Elevator.L2Height)
-     * .onTrue(Commands.runOnce(() -> candle.addState(CandleState.ELEVATOR_STOW)))
-     * .onFalse(Commands.runOnce(() ->
-     * candle.removeState(CandleState.ELEVATOR_STOW)));
-     * 
-     * new Trigger(() -> getElevatorPosition() >= Constants.Elevator.L2Height &&
-     * getElevatorPosition() < Constants.Elevator.L3Height)
-     * .onTrue(Commands.runOnce(() -> candle.addState(CandleState.ELEVATOR_L2)))
-     * .onFalse(Commands.runOnce(() ->
-     * candle.removeState(CandleState.ELEVATOR_L2)));
-     * 
-     * new Trigger(() -> getElevatorPosition() >= Constants.Elevator.L3Height &&
-     * getElevatorPosition() < Constants.Elevator.L4Height)
-     * .onTrue(Commands.runOnce(() -> candle.addState(CandleState.ELEVATOR_L3)))
-     * .onFalse(Commands.runOnce(() ->
-     * candle.removeState(CandleState.ELEVATOR_L3)));
-     * 
-     * new Trigger(() -> getElevatorPosition() >= Constants.Elevator.L4Height)
-     * .onTrue(Commands.runOnce(() -> candle.addState(CandleState.ELEVATOR_L4)))
-     * .onFalse(Commands.runOnce(() ->
-     * candle.removeState(CandleState.ELEVATOR_L4)));
-     */
-
     super.partsNT.putSmartDashboardSendable("PID", mElevatorPIDController);
     super.partsNT.putSmartDashboardSendable("Zero Elevator", zeroElevatorCommand());
     super.partsNT.putSmartDashboardSendable("Toggle LaserCan Active", toggleLaserCanActive());
@@ -203,19 +178,6 @@ public class Elevator extends PARTsSubsystem {
         setVoltage(mPeriodicIO.elevator_power);
 
         mPeriodicIO.elevator_position_debounce++;
-
-        // Check to make sure we move, or trigger error
-        if (mPeriodicIO.elevator_position_debounce > 100 && false) {
-          mPeriodicIO.elevator_position_debounce = 0;
-          double position = getElevatorPosition();
-          if (mPeriodicIO.elevator_previous_position - position == 0) {
-            mPeriodicIO.error = true;
-            mPeriodicIO.state = ElevatorState.POS_CTL_TRAVEL_ERROR;
-            candle.addState(CandleState.ELEVATOR_ERROR);
-            setSpeed(0);
-          }
-          mPeriodicIO.elevator_previous_position = getElevatorPosition();
-        }
 
       } else if (Math.abs(mPeriodicIO.elevator_power) > 0 && !mPeriodicIO.gantry_blocked)
         setSpeed(mPeriodicIO.elevator_power);
@@ -457,11 +419,6 @@ public class Elevator extends PARTsSubsystem {
      * The bottom limit is hit for more than 10 loop runs and we are reporting a
      * current position higher than the margin of error
      */
-
-    // mPeriodicIO.elevator_bottom_limit_error = (getBottomLimit()
-    // && getElevatorPosition() >
-    // Constants.Elevator.bottomLimitPositionErrorMargin);
-
     if (mPeriodicIO.elevator_bottom_limit_error)
       mPeriodicIO.elevator_bottom_limit_debounce++;
     else
@@ -485,15 +442,11 @@ public class Elevator extends PARTsSubsystem {
       if (mPeriodicIO.lasercan_error_debounce > 10)
         mPeriodicIO.useLaserCan = false;
     } else {
-      // mPeriodicIO.lasercan_error_debounce = 0;
-      // mPeriodicIO.useLaserCan = true; dont turn back on. originally thought i would
-
       // If there was an error remove it
       if (mPeriodicIO.error && mPeriodicIO.state != ElevatorState.POS_CTL_TRAVEL_ERROR) {
         mPeriodicIO.error = false;
         mPeriodicIO.state = ElevatorState.STOW;
         candle.removeState(CandleState.ELEVATOR_ERROR);
-        //zeroElevatorCommand().schedule();
       }
     }
   }

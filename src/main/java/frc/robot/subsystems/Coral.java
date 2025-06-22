@@ -126,10 +126,6 @@ public class Coral extends PARTsSubsystem {
       checkAutoTasks();
       // Help us index a little more if its still detected in entry
       if (isCoralInEntry() && mPeriodicIO.state != IntakeState.INTAKE && mPeriodicIO.state != IntakeState.REVERSE) {
-        //mPeriodicIO.state = IntakeState.INDEX;
-        /*this.run(() -> {
-          mPeriodicIO.rpm = Constants.Coral.kIndexSpeed;
-        }).until(() -> !isCoralInEntry()).andThen(this.runOnce(() -> mPeriodicIO.rpm = 0)).schedule();*/
         index();
       }
     } else
@@ -137,8 +133,6 @@ public class Coral extends PARTsSubsystem {
 
     mLeftMotor.set(mPeriodicIO.rpm - mPeriodicIO.speed_diff);
     mRightMotor.set(-mPeriodicIO.rpm);
-
-    //setCoralCandleState();
   }
 
   @Override
@@ -267,28 +261,25 @@ public class Coral extends PARTsSubsystem {
   }
 
   public void index() {
-          mPeriodicIO.speed_diff = 0.0;
-          mPeriodicIO.rpm = Constants.Coral.kIndexSpeed;
-          mPeriodicIO.state = IntakeState.INDEX;
+    mPeriodicIO.speed_diff = 0.0;
+    mPeriodicIO.rpm = Constants.Coral.kIndexSpeed;
+    mPeriodicIO.state = IntakeState.INDEX;
 
   }
 
   public void scoreL1() {
-    // return this.runOnce(() -> {
     mPeriodicIO.speed_diff = Constants.Coral.kSpeedDifference;
     mPeriodicIO.rpm = Constants.Coral.kL1Speed;
     mPeriodicIO.state = IntakeState.SCORE;
   }
 
   public void scoreL23() {
-    // return this.runOnce(() -> {
     mPeriodicIO.speed_diff = 0.0;
     mPeriodicIO.rpm = Constants.Coral.kL23Speed;
     mPeriodicIO.state = IntakeState.SCORE;
   }
 
   public void scoreL4() {
-    // return this.runOnce(() -> {
     mPeriodicIO.speed_diff = 0.0;
     mPeriodicIO.rpm = Constants.Coral.kL4Speed;
     mPeriodicIO.state = IntakeState.SCORE;
@@ -296,9 +287,8 @@ public class Coral extends PARTsSubsystem {
 
   public void stopCoral() {
     mPeriodicIO.rpm = 0.0;
-          mPeriodicIO.speed_diff = 0.0;
-          mPeriodicIO.state = IntakeState.NONE;
-
+    mPeriodicIO.speed_diff = 0.0;
+    mPeriodicIO.state = IntakeState.NONE;
   }
 
   public Command stopCoralCommand() {
@@ -424,21 +414,6 @@ public class Coral extends PARTsSubsystem {
         candle.removeState(CandleState.CORAL_LASER_EXIT_ERROR);
         candle.removeState(CandleState.CORAL_LASER_ENTRY_ERROR);
       }
-    }
-  }
-
-  private void setCoralCandleState() {
-    if (isCoralInEntry()) {
-      candle.removeState(mPeriodicIO.candleState);
-      mPeriodicIO.candleState = CandleState.CORAL_ENTERING;
-      candle.addState(mPeriodicIO.candleState);
-    } else if (isCoralInExit()) {
-      candle.removeState(mPeriodicIO.candleState);
-      mPeriodicIO.candleState = CandleState.HAS_CORAL;
-      candle.addState(mPeriodicIO.candleState);
-    } else if (mPeriodicIO.candleState != null) {
-      candle.removeState(mPeriodicIO.candleState);
-      mPeriodicIO.candleState = null;
     }
   }
 }

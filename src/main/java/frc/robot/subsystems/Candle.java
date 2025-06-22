@@ -32,7 +32,7 @@ import frc.robot.util.PARTsSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class Candle extends PARTsSubsystem {
-    //https://github.com/CrossTheRoadElec/Phoenix5-Examples/blob/master/Java%20General/CANdle%20MultiAnimation/src/main/java/frc/robot/subsystems/CANdleSystem.java
+    // https://github.com/CrossTheRoadElec/Phoenix5-Examples/blob/master/Java%20General/CANdle%20MultiAnimation/src/main/java/frc/robot/subsystems/CANdleSystem.java
     private static CANdle candle;
     private final int LED_LENGTH = Constants.Candle.ledLength;
     private Animation animation = null;
@@ -175,8 +175,6 @@ public class Candle extends PARTsSubsystem {
         CANdleConfiguration configAll = new CANdleConfiguration();
         configAll.statusLedOffWhenActive = true;
         configAll.disableWhenLOS = false;
-        //TODo: See if this fixes the red and green being swapped
-        //configAll.stripType = LEDStripType.RGB;
         configAll.stripType = LEDStripType.GRB;
         configAll.brightnessScalar = 0.5;
         configAll.vBatOutputMode = VBatOutputMode.Modulated; // does this do anything?
@@ -188,7 +186,6 @@ public class Candle extends PARTsSubsystem {
 
     /*---------------------------------- Custom Private Functions ---------------------------------*/
     private void setState() {
-        CandleState previousState = mPeriodicIO.state;
 
         if (mPeriodicIO.robotStates.contains(CandleState.ELEVATOR_ERROR))
             mPeriodicIO.state = CandleState.ELEVATOR_ERROR;
@@ -205,23 +202,13 @@ public class Candle extends PARTsSubsystem {
             mPeriodicIO.state = CandleState.AUTO_ALIGN;
         else if (mPeriodicIO.robotStates.contains(CandleState.SCORING))
             mPeriodicIO.state = CandleState.SCORING;
-            else if (mPeriodicIO.robotStates.contains(CandleState.HAS_CORAL))
+        else if (mPeriodicIO.robotStates.contains(CandleState.HAS_CORAL))
             mPeriodicIO.state = CandleState.HAS_CORAL;
         else if (mPeriodicIO.robotStates.contains(CandleState.FINE_GRAIN_DRIVE))
             mPeriodicIO.state = CandleState.FINE_GRAIN_DRIVE;
-
-        /*else if (mPeriodicIO.robotStates.contains(CandleState.ELEVATOR_L4))
-            mPeriodicIO.state = CandleState.ELEVATOR_L4;
-        else if (mPeriodicIO.robotStates.contains(CandleState.ELEVATOR_L3))
-            mPeriodicIO.state = CandleState.ELEVATOR_L3;
-        else if (mPeriodicIO.robotStates.contains(CandleState.ELEVATOR_L2))
-            mPeriodicIO.state = CandleState.ELEVATOR_L2;
-        else if (mPeriodicIO.robotStates.contains(CandleState.ELEVATOR_STOW))
-            mPeriodicIO.state = CandleState.ELEVATOR_STOW;;*/
         else if (mPeriodicIO.robotStates.contains(CandleState.IDLE))
             mPeriodicIO.state = CandleState.IDLE;
 
-        //if (previousState != mPeriodicIO.state)
         setStateAnimation();
     }
 
@@ -364,7 +351,7 @@ public class Candle extends PARTsSubsystem {
 
     private LarsonAnimation getLarsonAnimation(Color color, double speed, LarsonAnimation.BounceMode bounceMode,
             int size) {
-        //Size max is 7
+        // Size max is 7
         return new LarsonAnimation(color.r, color.g, color.b, 0, speed, LED_LENGTH, bounceMode, size);
     }
 
@@ -473,18 +460,18 @@ public class Candle extends PARTsSubsystem {
     @Override
     public void stop() {
         // TODO Auto-generated method stub
-        //throw new UnsupportedOperationException("Unimplemented method 'stop'");
+        // throw new UnsupportedOperationException("Unimplemented method 'stop'");
     }
 
     @Override
     public void reset() {
         // TODO Auto-generated method stub
-        //throw new UnsupportedOperationException("Unimplemented method 'reset'");
+        // throw new UnsupportedOperationException("Unimplemented method 'reset'");
     }
 
     @Override
     public void log() {
         // TODO Auto-generated method stub
-        //throw new UnsupportedOperationException("Unimplemented method 'log'");
+        // throw new UnsupportedOperationException("Unimplemented method 'log'");
     }
 }

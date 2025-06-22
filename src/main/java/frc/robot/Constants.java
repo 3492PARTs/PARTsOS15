@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import java.util.Vector;
-
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -24,15 +22,15 @@ public final class Constants {
 
     public static final double MAX_AIM_VELOCITY = 1.5 * Math.PI; // radd/s
     public static final double MAX_AIM_ACCELERATION = Math.PI / 2; // rad/s^2
-    public static final double MAX_RANGE_VELOCITY = 2;//7.0;//5.0; // m/s
-    public static final double MAX_RANGE_ACCELERATION = 2;//7.0;//5.0; // 0.5; // m/2^s
+    public static final double MAX_RANGE_VELOCITY = 2;// 7.0;//5.0; // m/s
+    public static final double MAX_RANGE_ACCELERATION = 2;// 7.0;//5.0; // 0.5; // m/2^s
 
     public static final double THETA_P = 2; // Proprotinal
     public static final double THETA_I = 0.01; // 0.01; //Gradual corretction
     public static final double THETA_D = 0.05; // 0.05; //Smooth oscilattions
 
-    public static final double RANGE_X_P = 2;//1.6;// 0.8; //12.5
-    public static final double RANGE_I = 0; // 0.04 
+    public static final double RANGE_X_P = 2;// 1.6;// 0.8; //12.5
+    public static final double RANGE_I = 0; // 0.04
     public static final double RANGE_D = 0; // 0.1
 
     public static final double RANGE_Y_P = 4; // 15.5
@@ -43,43 +41,31 @@ public final class Constants {
 
     public static final double leftSideOffset = 5.5;
 
-    //more positive, more to left
+    // more positive, more to left
     public static final PARTsUnit leftAlignDistance = new PARTsUnit(6, PARTsUnitType.Inch);
 
-    //more negative, more to right
-    public static final PARTsUnit rightAlignDistance = new PARTsUnit(-6, PARTsUnitType.Inch); //-7.5
+    // more negative, more to right
+    public static final PARTsUnit rightAlignDistance = new PARTsUnit(-6, PARTsUnitType.Inch); // -7.5
 
     public static final PARTsUnit L4XDistance = new PARTsUnit(-9 + (-4), PARTsUnitType.Inch);
 
     public static final PARTsUnit xZeroHoldDistance = new PARTsUnit(-9, PARTsUnitType.Inch);
 
-    public static final double maxAlignTime = 4; //seconds
+    public static final double maxAlignTime = 4; // seconds
   }
 
-  /*public static class LimelightData {
-    String limelightName;
-    PARTsUnit lensHeight;
-    PARTsUnit limelightAngle;
-  
-    LimelightData(String limelightName, PARTsUnit lensHeight, PARTsUnit limelightAngle) {
-      this.limelightName = limelightName;
-      this.lensHeight = lensHeight;
-      this.limelightAngle = limelightAngle;
-    }
-  }*/
-
   public static class VisionConstants {
-    public static final String DRIVETRAIN_LIMELIGHT = "limelight-slimmy"; //The_Real
+    public static final String DRIVETRAIN_LIMELIGHT = "limelight-slimmy"; // The_Real
     public static final String ELEVATOR_LIMELIGHT = "limelight-thereal";
     public static final PARTsUnit LIMELIGHT_LENS_HEIGHT = new PARTsUnit(9, PARTsUnitType.Inch); // Inches
     public static final PARTsUnit LIMELIGHT_ANGLE = new PARTsUnit(0, PARTsUnitType.Angle); // Degrees
 
-    public static final double REEF_APRILTAG_HEIGHT = 16; //Distance.ofBaseUnits(6.875, Inches);
+    public static final double REEF_APRILTAG_HEIGHT = 16; // Distance.ofBaseUnits(6.875, Inches);
     public static final double PROCCESSOR_APRILTAG_HEIGHT = 45.875; // Inches
     public static final double CORAL_APRILTAG_HEIGHT = 53.25; // Inches
 
-     public static final edu.wpi.first.math.Vector<N3> MT1_STDEVS = VecBuilder.fill(0.5, 0.5, 1.0);
-     public static final edu.wpi.first.math.Vector<N3> MT2_STDEVS = VecBuilder.fill(0.7, 0.7, 3492);
+    public static final edu.wpi.first.math.Vector<N3> MT1_STDEVS = VecBuilder.fill(0.5, 0.5, 1.0);
+    public static final edu.wpi.first.math.Vector<N3> MT2_STDEVS = VecBuilder.fill(0.7, 0.7, 3492);
   }
 
   public static class Elevator {
@@ -87,11 +73,11 @@ public final class Constants {
     public static final int rightElevatorId = 1;
     public static final int laserCanId = 32;
     public static final int StowHeight = 0;
-    public static final double L2Height = 10.6;//8.785;
-    public static final double L3Height = 34.1;//31.9;
-    public static final double L4Height = 74;//73.38;//73.16;//73.80; //best so far 74.07373046875, 73.59748840332031
-    public static final double LowAlgaeHeight = 33.00;//29.47;
-    public static final double HighAlgaeHeight = 58;//55.548;
+    public static final double L2Height = 10.6;// 8.785;
+    public static final double L3Height = 34.1;// 31.9;
+    public static final double L4Height = 74;// 73.38;//73.16;//73.80; //best so far 74.07373046875, 73.59748840332031
+    public static final double LowAlgaeHeight = 33.00;// 29.47;
+    public static final double HighAlgaeHeight = 58;// 55.548;
     public static final int L_SWITCH_PORT = 0;
     public static final double kP = 1;
     public static final double kI = 0;
@@ -101,13 +87,13 @@ public final class Constants {
     public static final int kMaxCurrent = 40;
     public static final int kMaxVelocity = 100;
     public static final int kMaxAcceleration = 300;
-    public static final double kG = 0.18162;//0.3766;
-    public static final double kS = 0.22467;//0.24105;
-    public static final double kV = 0.020157;//0.020009;
-    public static final double kA = 0.0022691;//0.0022395;
+    public static final double kG = 0.18162;// 0.3766;
+    public static final double kS = 0.22467;// 0.24105;
+    public static final double kV = 0.020157;// 0.020009;
+    public static final double kA = 0.0022691;// 0.0022395;
     public static final double maxSpeed = 0.5;
     public static final double maxHeight = 74.0;
-    public static final double maxLaserCanHeight = 27;//40;
+    public static final double maxLaserCanHeight = 27;// 40;
     public static final double gearRatio = 16 / 1;
     public static final double homingSpeed = -0.1;
     public static final double bottomLimitPositionErrorMargin = 30;
@@ -130,7 +116,7 @@ public final class Constants {
     public static final double kWristKV = 0.0019276;
     public static final double kWristKA = 0.00032922;
 
-    public static final double kWristOffset = 0;//141.0;
+    public static final double kWristOffset = 0;// 141.0;
 
     public static final double kWristMaxVelocity = 690.0;
     public static final double kWristMaxAcceleration = 1380.0;
@@ -158,7 +144,7 @@ public final class Constants {
     public static final int laserCanId = 30;
     public static final int laserCan2Id = 31;
 
-    public static final double kIntakeSpeed = -0.15;//-0.3;
+    public static final double kIntakeSpeed = -0.15;// -0.3;
     public static final double kReverseSpeed = 0.6;
     public static final double kL1Speed = -0.22;
     public static final double kL23Speed = -0.25;
