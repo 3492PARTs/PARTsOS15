@@ -214,9 +214,9 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                         rangeOutput.getY());
 
                                         super.setControl(alignRequest
-                                                        .withVelocityX(translation.getX() * 0)
+                                                        .withVelocityX(translation.getX())
                                                         .withVelocityY(translation.getY())
-                                                        .withRotationalRate(thetaOutput.getRadians() * 0));
+                                                        .withRotationalRate(thetaOutput.getRadians()));
 
                                         alignCommandExecuteTelemetry(thetaOutput, rangeOutput);
                                 },
@@ -226,9 +226,9 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                         .withVelocityY(0)
                                                         .withRotationalRate(0));
                                 },
-                                () -> ((/* xRangeController.atGoal() && */
-                                yRangeController.atGoal()
-                                /* thetaController.atGoal() */)));
+                                () -> ((xRangeController.atGoal() &&
+                                                yRangeController.atGoal() &&
+                                                thetaController.atGoal())));
                 c.setName("align");
                 return c;
         }

@@ -27,7 +27,7 @@ public final class Constants {
     public static final double MAX_RANGE_VELOCITY = 2;//7.0;//5.0; // m/s
     public static final double MAX_RANGE_ACCELERATION = 2;//7.0;//5.0; // 0.5; // m/2^s
 
-    public static final double THETA_P = 8.0; // Proprotinal
+    public static final double THETA_P = 2; // Proprotinal
     public static final double THETA_I = 0.01; // 0.01; //Gradual corretction
     public static final double THETA_D = 0.05; // 0.05; //Smooth oscilattions
 
