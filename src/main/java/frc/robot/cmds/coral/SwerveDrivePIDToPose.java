@@ -151,6 +151,8 @@ public class SwerveDrivePIDToPose extends Command {
     @Override
     public void initialize() {
         translationSetpoint = getNewTranslationSetpointGenerator();
+        controller.reset(swerve.getPose());
+        controller.setGoal(targetPose.get());
     }
 
     private boolean isAlignedX() {
@@ -180,8 +182,8 @@ public class SwerveDrivePIDToPose extends Command {
         Pose2d goalPose = targetPose.get(); // new Pose2d(translationSetpoint.get(), targetPose.get().getRotation());
         // computedPose.setPose(storedPose);
 
-        ChassisSpeeds speeds = controller.update(swerve.getPose(),
-                goalPose, swerve.getPose().getRotation());
+        ChassisSpeeds speeds = controller.calculate(swerve.getPose(), swerve.getPose().getRotation());
+        
 
         swerve.setChassisSpeeds(speeds);
 
@@ -205,11 +207,16 @@ public class SwerveDrivePIDToPose extends Command {
         SmartDashboard.putBoolean("Alignment/Is Aligned X", isAlignedX());
         SmartDashboard.putBoolean("Alignment/Is Aligned Y", isAlignedY());
         SmartDashboard.putBoolean("Alignment/Is Aligned Theta", isAlignedTheta());
+
+        SmartDashboard.putNumber("Alignment/getYError", controller.getYError());
+        SmartDashboard.putNumber("Alignment/getYGoal", controller.getYGoal().position);
+        SmartDashboard.putNumber("Alignment/getXError", controller.getXError());
+        SmartDashboard.putNumber("Alignment/getYSetPoint", controller.getYSetPoint().position);
     }
 
     @Override
     public boolean isFinished() {
-        return isAlignedY() && canEnd.get();
+        return isAlignedX() && canEnd.get();
     }
 
     @Override

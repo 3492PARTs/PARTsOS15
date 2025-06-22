@@ -192,7 +192,7 @@ public class RobotContainer {
                 // reset the field-centric heading on left bumper press
                 driveController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-                driveController.rightTrigger().whileTrue(new SwerveDrivePIDToPose(Field.APRILTAGS[17].getLocation().toPose2d(), drivetrain));
+                driveController.rightTrigger().whileTrue(drivetrain.alignCommand(Field.APRILTAGS[17].getLocation().toPose2d(), null));
 
                 // logging
                 drivetrain.registerTelemetry(telemetryLogger::telemeterize);

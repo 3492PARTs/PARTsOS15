@@ -1,6 +1,5 @@
 package frc.robot;
 
-
 import edu.wpi.first.math.controller.ProfiledPIDController;
 
 /************************ PROJECT MARY *************************/
@@ -12,6 +11,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 
 public class HolonomicController {
     private ProfiledPIDController xController;
@@ -24,13 +24,25 @@ public class HolonomicController {
         this.angleController = angleController;
     }
 
-    public ChassisSpeeds update(Pose2d measurement, Pose2d goal, Rotation2d angle) {
+    public ChassisSpeeds calculate(Pose2d measurement, Rotation2d angle) {
         
         return ChassisSpeeds.fromFieldRelativeSpeeds(
-            xController.calculate(measurement.getX(), goal.getX()) *-1 *0,
-            yController.calculate(measurement.getY(), goal.getY()),
-            angleController.calculate(goal.getRotation().getRadians(), measurement.getRotation().getRadians())*0,
+            xController.calculate(measurement.getX()) *-1,
+            yController.calculate(measurement.getY()) * 0,
+            angleController.calculate(measurement.getRotation().getRadians())*0,
                 angle);
+    }
+
+    public void setGoal(Pose2d goal) {
+        xController.setGoal(goal.getX());
+        yController.setGoal(goal.getY());
+        angleController.setGoal(goal.getRotation().getRadians());
+    }
+
+    public void reset(Pose2d goal) {
+        xController.reset(goal.getX());
+        yController.reset(goal.getY());
+        angleController.reset(goal.getRotation().getRadians());
     }
 
     public ChassisSpeeds getError() {
@@ -48,5 +60,21 @@ public class HolonomicController {
         return xController.atGoal()
                 && yController.atGoal()
                 && angleController.atGoal();
+    }
+
+    public State getYGoal() {
+        return yController.getGoal();
+    }
+    
+    public double getYError() {
+        return yController.getPositionError();
+    }
+
+    public double getXError() {
+        return xController.getPositionError();
+    }
+
+    public State getYSetPoint() {
+        return yController.getSetpoint();
     }
 }
