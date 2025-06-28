@@ -156,7 +156,7 @@ public class LimelightVision extends PARTsSubsystem{
     @Override
     public void periodic() {
         this.maxTagCount = 0;
-        partsNT.setString("Megatag Mode", megaTagMode.nam
+        partsNT.setString("Megatag Mode", megaTagMode.name());
 
         //updateWhitelistMode();
 
