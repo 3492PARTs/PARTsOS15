@@ -6,13 +6,27 @@ import edu.wpi.first.math.util.Units;
 
 /** This interface stores information about each camera. */
 public interface Cameras {
+    public enum CameraName {
+        FRONT_CAMERA("limelight-slimmy"),
+        BACK_CAMERA("limelight-thereal");
+
+        private String cameraName = "";
+
+        private CameraName(String name) {
+            cameraName = name;
+        }
+
+        public String getCameraName() {
+            return cameraName;
+        }
+    }
 
     public Camera[] LimelightCameras = new Camera[] {
-            new Camera("limelight-slimmy",
+            new Camera(CameraName.FRONT_CAMERA.getCameraName(),
                     new Pose3d(.270, 0, .22, // meters
                             new Rotation3d(0, 0, 0)),
                     true),
-            new Camera("limelight-thereal",
+            new Camera(CameraName.BACK_CAMERA.getCameraName(),
                     new Pose3d(-.265, 0, .545, // meters
                             new Rotation3d(0, 0,
                                     Units.degreesToRadians(180))),
