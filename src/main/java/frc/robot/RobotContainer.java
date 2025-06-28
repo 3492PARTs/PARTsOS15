@@ -150,7 +150,7 @@ public class RobotContainer {
                                                                 0, new Rotation2d(PARTsUnit.DegreesToRadians
                                                                                 .apply(-180.0))))));
 
-                driveController.leftTrigger().whileTrue(Reef.alignToVisibleTag(true, drivetrain, elevator, ElevatorState.L2));
+                driveController.leftTrigger().whileTrue(Reef.alignToVisibleTag(true, drivetrain, elevator, ElevatorState.L2, coral));
 
                 // logging
                 drivetrain.registerTelemetry(telemetryLogger::telemeterize);

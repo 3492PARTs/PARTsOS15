@@ -180,7 +180,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                 alignTimer.reset();
                                         }
 
-                                        if (alignTimer.hasElapsed(0.25)) {
+                                        if (alignTimer.hasElapsed(0.5)) {
                                                 timerElapsed = true;
                                         }
 
@@ -213,6 +213,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                         .withVelocityX(0)
                                                         .withVelocityY(0)
                                                         .withRotationalRate(0));
+                                        timerElapsed = false;
+                                        alignTimer.reset();
                                 },
                                 () -> ((xRangeController.atGoal() &&
                                                 yRangeController.atGoal() &&

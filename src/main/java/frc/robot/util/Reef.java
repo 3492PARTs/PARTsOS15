@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.Field;
 import frc.robot.Cameras.CameraName;
+import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.LimelightVision;
 import frc.robot.subsystems.PARTsDrivetrain;
@@ -24,7 +25,8 @@ import frc.robot.util.PARTsUnit.PARTsUnitType;
 public class Reef {
     private static Pose2d targetPose2d;
 
-    public static Command alignToVisibleTag(boolean rightSide, PARTsDrivetrain drivetrain, Elevator elevator, ElevatorState elevatorState) {
+    public static Command alignToVisibleTag(boolean rightSide, PARTsDrivetrain drivetrain, Elevator elevator,
+            ElevatorState elevatorState, Coral coral) {
         Command c = new ConditionalCommand(Commands.runOnce(() -> {
             int tagID = LimelightVision.getVisibleTagId(CameraName.FRONT_CAMERA.getCameraName());
             targetPose2d = Field.getTag(tagID)
@@ -33,9 +35,11 @@ public class Reef {
                     .transformBy(new Transform2d(Constants.Robot.frontRobotVisionOffset.to(PARTsUnitType.Meter),
                             (rightSide ? 1 : -1) * Constants.Drivetrain.poleDistanceOffset.to(PARTsUnitType.Meter),
                             new Rotation2d(PARTsUnit.DegreesToRadians.apply(180.0))));
-        }).andThen(drivetrain.alignCommand(()-> targetPose2d)).andThen(elevator.elevatorToLevelCommand(elevatorState)), new WaitCommand(0), () -> {
-            return LimelightVision.cameraSeesTag(CameraName.FRONT_CAMERA.getCameraName());
-        });
+        }).andThen(drivetrain.alignCommand(() -> targetPose2d)).andThen(elevator.elevatorToLevelCommand(elevatorState))
+                .andThen(coral.scoreCommand()).andThen(new WaitCommand(0.25)).andThen(elevator.goToElevatorStow()),
+                new WaitCommand(0), () -> {
+                    return LimelightVision.cameraSeesTag(CameraName.FRONT_CAMERA.getCameraName());
+                });
         c.setName("alignToVisibleTag");
         return c;
     }
