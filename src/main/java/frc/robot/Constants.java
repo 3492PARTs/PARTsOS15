@@ -29,7 +29,7 @@ public final class Constants {
     public static final double THETA_I = 0; //Gradual corretction
     public static final double THETA_D = 0; //Smooth oscilattions
 
-    public static final double RANGE_X_P = 8.5; //6.5
+    public static final double RANGE_X_P = 10; //6.5
     public static final double RANGE_I = 0; 
     public static final double RANGE_D = 0; 
 
