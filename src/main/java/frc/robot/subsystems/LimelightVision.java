@@ -44,6 +44,7 @@ public class LimelightVision extends PARTsSubsystem{
     private int maxTagCount;
 
     public LimelightVision(PARTsDrivetrain drivetrain) {
+        super("LimelightVision");
         this.drivetrain = drivetrain;
         for (Camera camera : Cameras.LimelightCameras) {
             Pose3d robotRelativePose = camera.getLocation();
@@ -155,6 +156,7 @@ public class LimelightVision extends PARTsSubsystem{
     @Override
     public void periodic() {
         this.maxTagCount = 0;
+        partsNT.setString("Megatag Mode", megaTagMode.nam
 
         //updateWhitelistMode();
 
@@ -216,6 +218,7 @@ public class LimelightVision extends PARTsSubsystem{
         //throw new UnsupportedOperationException("Unimplemented method 'log'");
     }
     public void resetPose() {
+        setMegaTagMode(MegaTagMode.MEGATAG1);
         for (Camera camera : Cameras.LimelightCameras) {
             LimelightHelpers.SetRobotOrientation(
                 camera.getName(), 
@@ -233,15 +236,16 @@ public class LimelightVision extends PARTsSubsystem{
                 
                 if (poseEstimate != null && poseEstimate.tagCount > 0) {
                     drivetrain.resetPose(poseEstimate.pose);
-                    SmartDashboard.putBoolean("Vision/" + camera.getName() + "/Has Data", true);
-                    SmartDashboard.putNumber("Vision/" + camera.getName() + "/Tag Count", poseEstimate.tagCount);
+                    partsNT.setBoolean(camera.getName() + "/Has Data", true);
+                    partsNT.setInteger(camera.getName() + "/Tag Count", poseEstimate.tagCount);
                     maxTagCount = Math.max(maxTagCount, poseEstimate.tagCount);
                 }
                 else {
-                    SmartDashboard.putBoolean("Vision/" + camera.getName() + "/Has Data", false);
-                    SmartDashboard.putNumber("Vision/" + camera.getName() + "/Tag Count", 0);
+                    partsNT.setBoolean(camera.getName() + "/Has Data", false);
+                    partsNT.setInteger(camera.getName() + "/Tag Count", 0);
                 }
             }
         }
+        setMegaTagMode(MegaTagMode.MEGATAG2);
     }
 }

@@ -1,6 +1,6 @@
 {
   "version": 1.0,
-  "grid_size": 75,
+  "grid_size": 100,
   "tabs": [
     {
       "name": "Teleoperated",
@@ -2654,6 +2654,20 @@
                   "data_type": "double",
                   "show_submit_button": false
                 }
+              },
+              {
+                "title": "robotPose",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 200.0,
+                "height": 200.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/Pose/robotPose",
+                  "period": 0.06,
+                  "data_type": "double[]",
+                  "show_submit_button": false
+                }
               }
             ]
           },
@@ -3040,6 +3054,273 @@
               "topic": "/CameraPublisher/limelight-thereal",
               "period": 0.06,
               "rotation_turns": 0
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Vision Testing",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": "field",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 900.0,
+            "height": 900.0,
+            "type": "Field",
+            "properties": {
+              "topic": "/SmartDashboard/RobotContainer/field",
+              "period": 0.06,
+              "field_game": "Reefscape",
+              "robot_width": 1.0,
+              "robot_length": 1.0,
+              "show_other_objects": true,
+              "show_trajectories": true,
+              "field_rotation": -180.0,
+              "robot_color": 4282398452,
+              "trajectory_color": 4294967295
+            }
+          },
+          {
+            "title": "holdDistRot",
+            "x": 900.0,
+            "y": 0.0,
+            "width": 200.0,
+            "height": 200.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/PARTs/PARTsDrivetrain/align/holdDistRot",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "holdDistX",
+            "x": 1300.0,
+            "y": 0.0,
+            "width": 200.0,
+            "height": 200.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/PARTs/PARTsDrivetrain/align/holdDistX",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "holdDistY",
+            "x": 1700.0,
+            "y": 0.0,
+            "width": 200.0,
+            "height": 200.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/PARTs/PARTsDrivetrain/align/holdDistY",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "rPoseRot",
+            "x": 900.0,
+            "y": 200.0,
+            "width": 200.0,
+            "height": 200.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/PARTs/PARTsDrivetrain/align/rPoseRot",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "rPoseX",
+            "x": 1300.0,
+            "y": 200.0,
+            "width": 200.0,
+            "height": 200.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/PARTs/PARTsDrivetrain/align/rPoseX",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "rPoseY",
+            "x": 1700.0,
+            "y": 200.0,
+            "width": 200.0,
+            "height": 200.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/PARTs/PARTsDrivetrain/align/rPoseY",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "rangeXAtGoal",
+            "x": 1300.0,
+            "y": 400.0,
+            "width": 200.0,
+            "height": 100.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/PARTs/PARTsDrivetrain/align/Goal/rangeXAtGoal",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "rangeYAtGoal",
+            "x": 1700.0,
+            "y": 400.0,
+            "width": 200.0,
+            "height": 100.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/PARTs/PARTsDrivetrain/align/Goal/rangeYAtGoal",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "thetaAtGoal",
+            "x": 900.0,
+            "y": 400.0,
+            "width": 200.0,
+            "height": 100.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/PARTs/PARTsDrivetrain/align/Goal/thetaAtGoal",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "timerHasElapsed",
+            "x": 900.0,
+            "y": 500.0,
+            "width": 200.0,
+            "height": 100.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/PARTs/PARTsDrivetrain/align/timerHasElapsed",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "pigeonMovementX",
+            "x": 1300.0,
+            "y": 500.0,
+            "width": 200.0,
+            "height": 200.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/PARTs/PARTsDrivetrain/align/pigeonMovementX",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "pigeonMovementY",
+            "x": 1700.0,
+            "y": 500.0,
+            "width": 200.0,
+            "height": 200.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/PARTs/PARTsDrivetrain/align/pigeonMovementY",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "timer",
+            "x": 900.0,
+            "y": 600.0,
+            "width": 200.0,
+            "height": 200.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/PARTs/PARTsDrivetrain/align/timer",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Has Data",
+            "x": 1100.0,
+            "y": 0.0,
+            "width": 200.0,
+            "height": 200.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/PARTs/LimelightVision/limelight-slimmy/Has Data",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Tag Count",
+            "x": 1100.0,
+            "y": 200.0,
+            "width": 200.0,
+            "height": 200.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/PARTs/LimelightVision/limelight-slimmy/Tag Count",
+              "period": 0.06,
+              "data_type": "int",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Megatag Mode",
+            "x": 1100.0,
+            "y": 400.0,
+            "width": 200.0,
+            "height": 200.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/PARTs/LimelightVision/Megatag Mode",
+              "period": 0.06,
+              "data_type": "string",
+              "show_submit_button": false
             }
           }
         ]
