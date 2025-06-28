@@ -10,6 +10,7 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -25,6 +26,7 @@ import frc.robot.util.PARTsButtonBoxController;
 import frc.robot.util.PARTsCommandController;
 import frc.robot.util.PARTsDashboard;
 import frc.robot.util.PARTsNT;
+import frc.robot.util.PARTsUnit;
 import frc.robot.util.PARTsController.ControllerType;
 import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.Elevator;
@@ -68,7 +70,6 @@ public class RobotContainer {
                         TunerConstants.FrontLeft, TunerConstants.FrontRight, TunerConstants.BackLeft,
                         TunerConstants.BackRight);
 
-
         private final LimelightVision vision = new LimelightVision(drivetrain);
 
         private final ArrayList<IPARTsSubsystem> subsystems = new ArrayList<IPARTsSubsystem>(
@@ -77,7 +78,6 @@ public class RobotContainer {
         private SendableChooser<Command> autoChooser;
 
         private PARTsNT partsNT = new PARTsNT("RobotContainer");
-
 
         /** End Subsystems */
 
@@ -90,7 +90,7 @@ public class RobotContainer {
                                 .or(driveController.axisMagnitudeGreaterThan(1, 0.5))
                                 .or(driveController.rightTrigger());
 
-                //configureAutonomousCommands();
+                // configureAutonomousCommands();
                 configureBindings();
                 partsNT.putSmartDashboardSendable("field", Field.FIELD2D);
                 vision.resetPose();
@@ -142,7 +142,17 @@ public class RobotContainer {
                 // reset the field-centric heading on left bumper press
                 driveController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-                driveController.rightTrigger().whileTrue(drivetrain.alignCommand(Field.APRILTAGS[17].getLocation().toPose2d()));
+                driveController.rightTrigger().whileTrue(drivetrain.alignCommand(
+                                Field.getTag(18).getLocation().toPose2d().transformBy(
+                                                new Transform2d(PARTsUnit.InchesToMeters.apply(13.5 + 4),
+                                                                0, new Rotation2d(PARTsUnit.DegreesToRadians
+                                                                                .apply(-180.0))))));
+
+                driveController.leftTrigger().whileTrue(drivetrain.alignCommand(
+                                Field.getTag(12).getLocation().toPose2d().transformBy(
+                                                new Transform2d(PARTsUnit.InchesToMeters.apply(13.5 + 4),
+                                                                0, new Rotation2d(PARTsUnit.DegreesToRadians
+                                                                                .apply(0.0))))));
 
                 // logging
                 drivetrain.registerTelemetry(telemetryLogger::telemeterize);
@@ -197,7 +207,6 @@ public class RobotContainer {
 
                 buttonBoxController.enginestartTrigger().onTrue(coral.score());
 
-
                 // --------------------- Stow --------------------//
                 buttonBoxController.negative1Trigger().onTrue(elevator.goToElevatorStow());
 
@@ -206,72 +215,82 @@ public class RobotContainer {
                 // *-----------------------------------------------------*//
 
                 // --------------------- Align, L2, Score --------------------//
-                /*buttonBoxController.mapTrigger()
-                                .onTrue(new ConditionalAlign(manualElevatorControlSupplier, elevator, ElevatorState.L2,
-                                                drivetrain, coral, candle, buttonBoxController,
-                                                new Pose2d(Constants.Drivetrain.xZeroHoldDistance
-                                                                .to(PARTsUnitType.Meter),
-                                                                Constants.Drivetrain.rightAlignDistance
-                                                                                .to(PARTsUnitType.Meter),
-                                                                new Rotation2d()),
-                                                frontVision, escapeBooleanSupplier));
-
-                // --------------------- Align, L3, Score --------------------//
-                buttonBoxController.audioTrigger().onTrue(
-                                new ConditionalAlign(manualElevatorControlSupplier, elevator, ElevatorState.L3,
-                                                drivetrain, coral, candle, buttonBoxController,
-                                                new Pose2d(Constants.Drivetrain.xZeroHoldDistance
-                                                                .to(PARTsUnitType.Meter),
-                                                                Constants.Drivetrain.rightAlignDistance
-                                                                                .to(PARTsUnitType.Meter),
-                                                                new Rotation2d()),
-                                                frontVision, escapeBooleanSupplier));
-
-                // --------------------- Align, L4, Score --------------------//
-                buttonBoxController.cruiseTrigger()
-                                .onTrue(new ConditionalAlign(manualElevatorControlSupplier, elevator, ElevatorState.L4,
-                                                drivetrain, coral, candle, buttonBoxController,
-                                                new Pose2d(Constants.Drivetrain.L4XDistance.to(PARTsUnitType.Meter),
-                                                                Constants.Drivetrain.rightAlignDistance
-                                                                                .to(PARTsUnitType.Meter),
-                                                                new Rotation2d()),
-                                                frontVision, escapeBooleanSupplier));*/
+                /*
+                 * buttonBoxController.mapTrigger()
+                 * .onTrue(new ConditionalAlign(manualElevatorControlSupplier, elevator,
+                 * ElevatorState.L2,
+                 * drivetrain, coral, candle, buttonBoxController,
+                 * new Pose2d(Constants.Drivetrain.xZeroHoldDistance
+                 * .to(PARTsUnitType.Meter),
+                 * Constants.Drivetrain.rightAlignDistance
+                 * .to(PARTsUnitType.Meter),
+                 * new Rotation2d()),
+                 * frontVision, escapeBooleanSupplier));
+                 * 
+                 * // --------------------- Align, L3, Score --------------------//
+                 * buttonBoxController.audioTrigger().onTrue(
+                 * new ConditionalAlign(manualElevatorControlSupplier, elevator,
+                 * ElevatorState.L3,
+                 * drivetrain, coral, candle, buttonBoxController,
+                 * new Pose2d(Constants.Drivetrain.xZeroHoldDistance
+                 * .to(PARTsUnitType.Meter),
+                 * Constants.Drivetrain.rightAlignDistance
+                 * .to(PARTsUnitType.Meter),
+                 * new Rotation2d()),
+                 * frontVision, escapeBooleanSupplier));
+                 * 
+                 * // --------------------- Align, L4, Score --------------------//
+                 * buttonBoxController.cruiseTrigger()
+                 * .onTrue(new ConditionalAlign(manualElevatorControlSupplier, elevator,
+                 * ElevatorState.L4,
+                 * drivetrain, coral, candle, buttonBoxController,
+                 * new Pose2d(Constants.Drivetrain.L4XDistance.to(PARTsUnitType.Meter),
+                 * Constants.Drivetrain.rightAlignDistance
+                 * .to(PARTsUnitType.Meter),
+                 * new Rotation2d()),
+                 * frontVision, escapeBooleanSupplier));
+                 */
 
                 // *---------------------------------------------------- *//
                 // * ---------------Left Reef Pole Controls ----------- *//
                 // *-----------------------------------------------------*//
 
                 // --------------------- Align, L2, Score --------------------//
-                /*buttonBoxController.wipeTrigger()
-                                .onTrue(new ConditionalAlign(manualElevatorControlSupplier, elevator, ElevatorState.L2,
-                                                drivetrain, coral, candle, buttonBoxController,
-                                                new Pose2d(Constants.Drivetrain.xZeroHoldDistance
-                                                                .to(PARTsUnitType.Meter),
-                                                                Constants.Drivetrain.leftAlignDistance
-                                                                                .to(PARTsUnitType.Meter),
-                                                                new Rotation2d()),
-                                                frontVision, escapeBooleanSupplier));
-
-                // --------------------- Align, L3, Score --------------------//
-                buttonBoxController.flashTrigger()
-                                .onTrue(new ConditionalAlign(manualElevatorControlSupplier, elevator, ElevatorState.L3,
-                                                drivetrain, coral, candle, buttonBoxController,
-                                                new Pose2d(Constants.Drivetrain.xZeroHoldDistance
-                                                                .to(PARTsUnitType.Meter),
-                                                                Constants.Drivetrain.leftAlignDistance
-                                                                                .to(PARTsUnitType.Meter),
-                                                                new Rotation2d()),
-                                                frontVision, escapeBooleanSupplier));
-
-                // --------------------- Align, L4, Score --------------------//
-                buttonBoxController.handleTrigger()
-                                .onTrue(new ConditionalAlign(manualElevatorControlSupplier, elevator, ElevatorState.L4,
-                                                drivetrain, coral, candle, buttonBoxController,
-                                                new Pose2d(Constants.Drivetrain.L4XDistance.to(PARTsUnitType.Meter),
-                                                                Constants.Drivetrain.leftAlignDistance
-                                                                                .to(PARTsUnitType.Meter),
-                                                                new Rotation2d()),
-                                                frontVision, escapeBooleanSupplier)); */
+                /*
+                 * buttonBoxController.wipeTrigger()
+                 * .onTrue(new ConditionalAlign(manualElevatorControlSupplier, elevator,
+                 * ElevatorState.L2,
+                 * drivetrain, coral, candle, buttonBoxController,
+                 * new Pose2d(Constants.Drivetrain.xZeroHoldDistance
+                 * .to(PARTsUnitType.Meter),
+                 * Constants.Drivetrain.leftAlignDistance
+                 * .to(PARTsUnitType.Meter),
+                 * new Rotation2d()),
+                 * frontVision, escapeBooleanSupplier));
+                 * 
+                 * // --------------------- Align, L3, Score --------------------//
+                 * buttonBoxController.flashTrigger()
+                 * .onTrue(new ConditionalAlign(manualElevatorControlSupplier, elevator,
+                 * ElevatorState.L3,
+                 * drivetrain, coral, candle, buttonBoxController,
+                 * new Pose2d(Constants.Drivetrain.xZeroHoldDistance
+                 * .to(PARTsUnitType.Meter),
+                 * Constants.Drivetrain.leftAlignDistance
+                 * .to(PARTsUnitType.Meter),
+                 * new Rotation2d()),
+                 * frontVision, escapeBooleanSupplier));
+                 * 
+                 * // --------------------- Align, L4, Score --------------------//
+                 * buttonBoxController.handleTrigger()
+                 * .onTrue(new ConditionalAlign(manualElevatorControlSupplier, elevator,
+                 * ElevatorState.L4,
+                 * drivetrain, coral, candle, buttonBoxController,
+                 * new Pose2d(Constants.Drivetrain.L4XDistance.to(PARTsUnitType.Meter),
+                 * Constants.Drivetrain.leftAlignDistance
+                 * .to(PARTsUnitType.Meter),
+                 * new Rotation2d()),
+                 * frontVision, escapeBooleanSupplier));
+                 */
 
                 // =============================================================================================
                 // ------------------------------------- SysID
@@ -300,80 +319,86 @@ public class RobotContainer {
                  */
         }
 
-        /*public void configureAutonomousCommands() {
-                NamedCommands.registerCommand("Elevator L2", elevator.elevatorToLevelCommand(ElevatorState.L2));
-                NamedCommands.registerCommand("Elevator Stow", elevator.elevatorToLevelCommand(ElevatorState.STOW));
-                NamedCommands.registerCommand("Elevator L4", elevator.elevatorToLevelCommand(ElevatorState.L4));
-
-                NamedCommands.registerCommand("Intake", coral.autoIntake());
-                NamedCommands.registerCommand("Score", coral.autoScore());
-
-                NamedCommands.registerCommand("Right Align L2 Score",
-                                new AutoAlignScoreCoral(new Pose2d(
-                                                Constants.Drivetrain.xZeroHoldDistance.to(PARTsUnitType.Meter),
-                                                Constants.Drivetrain.rightAlignDistance
-                                                                .to(PARTsUnitType.Meter),
-                                                new Rotation2d()), ElevatorState.L2, drivetrain, elevator, coral,
-                                                candle, frontVision));
-                NamedCommands.registerCommand("Left Align L2 Score",
-                                new AutoAlignScoreCoral(new Pose2d(
-                                                Constants.Drivetrain.xZeroHoldDistance.to(PARTsUnitType.Meter),
-                                                Constants.Drivetrain.leftAlignDistance
-                                                                .to(PARTsUnitType.Meter),
-                                                new Rotation2d()), ElevatorState.L2, drivetrain, elevator, coral,
-                                                candle, frontVision));
-
-                NamedCommands.registerCommand("Right Align L4 Score",
-                                new AutoAlignScoreCoralL4(
-                                                new Pose2d(Constants.Drivetrain.L4XDistance.to(PARTsUnitType.Meter),
-                                                                Constants.Drivetrain.rightAlignDistance
-                                                                                .to(PARTsUnitType.Meter),
-                                                                new Rotation2d()),
-                                                ElevatorState.L4, drivetrain, elevator, coral, candle,
-                                                frontVision));
-                NamedCommands.registerCommand("Left Align L4 Score",
-                                new AutoAlignScoreCoralL4(
-                                                new Pose2d(Constants.Drivetrain.L4XDistance.to(PARTsUnitType.Meter),
-                                                                Constants.Drivetrain.leftAlignDistance
-                                                                                .to(PARTsUnitType.Meter),
-                                                                new Rotation2d()),
-                                                ElevatorState.L4, drivetrain, elevator, coral, candle,
-                                                frontVision));
-
-                NamedCommands.registerCommand("Align Left L4 Stop",
-                                new AutoAlignCoralStop(
-                                                new Pose2d(Constants.Drivetrain.L4XDistance.to(PARTsUnitType.Meter),
-                                                                Constants.Drivetrain.leftAlignDistance
-                                                                                .to(PARTsUnitType.Meter),
-                                                                new Rotation2d()),
-                                                ElevatorState.L4, drivetrain, elevator, coral, candle,
-                                                frontVision));
-                                                
-                NamedCommands.registerCommand("Align Right L4 Stop",
-                                new AutoAlignCoralStop(
-                                                new Pose2d(Constants.Drivetrain.L4XDistance.to(PARTsUnitType.Meter),
-                                                                Constants.Drivetrain.rightAlignDistance
-                                                                                .to(PARTsUnitType.Meter),
-                                                                new Rotation2d()),
-                                                ElevatorState.L4, drivetrain, elevator, coral, candle,
-                                                frontVision));
-
-                                                NamedCommands.registerCommand("Align Middle L1 Score",
-                                                new AutoAlignScoreCoral(
-                                                                new Pose2d(Constants.Drivetrain.xZeroHoldDistance.to(PARTsUnitType.Meter),
-                                                                                0,
-                                                                                new Rotation2d()),
-                                                                ElevatorState.STOW, drivetrain, elevator, coral, candle,
-                                                                frontVision));
-
-                                                                NamedCommands.registerCommand("Align L1",
-                                                                drivetrain.alignCommand(new Pose2d(Constants.Drivetrain.xZeroHoldDistance.to(PARTsUnitType.Meter),
-                                                                0,
-                                                                new Rotation2d()), frontVision));
-
-                autoChooser = AutoBuilder.buildAutoChooser();
-                SmartDashboard.putData("Auto Chooser", autoChooser);
-        }*/
+        /*
+         * public void configureAutonomousCommands() {
+         * NamedCommands.registerCommand("Elevator L2",
+         * elevator.elevatorToLevelCommand(ElevatorState.L2));
+         * NamedCommands.registerCommand("Elevator Stow",
+         * elevator.elevatorToLevelCommand(ElevatorState.STOW));
+         * NamedCommands.registerCommand("Elevator L4",
+         * elevator.elevatorToLevelCommand(ElevatorState.L4));
+         * 
+         * NamedCommands.registerCommand("Intake", coral.autoIntake());
+         * NamedCommands.registerCommand("Score", coral.autoScore());
+         * 
+         * NamedCommands.registerCommand("Right Align L2 Score",
+         * new AutoAlignScoreCoral(new Pose2d(
+         * Constants.Drivetrain.xZeroHoldDistance.to(PARTsUnitType.Meter),
+         * Constants.Drivetrain.rightAlignDistance
+         * .to(PARTsUnitType.Meter),
+         * new Rotation2d()), ElevatorState.L2, drivetrain, elevator, coral,
+         * candle, frontVision));
+         * NamedCommands.registerCommand("Left Align L2 Score",
+         * new AutoAlignScoreCoral(new Pose2d(
+         * Constants.Drivetrain.xZeroHoldDistance.to(PARTsUnitType.Meter),
+         * Constants.Drivetrain.leftAlignDistance
+         * .to(PARTsUnitType.Meter),
+         * new Rotation2d()), ElevatorState.L2, drivetrain, elevator, coral,
+         * candle, frontVision));
+         * 
+         * NamedCommands.registerCommand("Right Align L4 Score",
+         * new AutoAlignScoreCoralL4(
+         * new Pose2d(Constants.Drivetrain.L4XDistance.to(PARTsUnitType.Meter),
+         * Constants.Drivetrain.rightAlignDistance
+         * .to(PARTsUnitType.Meter),
+         * new Rotation2d()),
+         * ElevatorState.L4, drivetrain, elevator, coral, candle,
+         * frontVision));
+         * NamedCommands.registerCommand("Left Align L4 Score",
+         * new AutoAlignScoreCoralL4(
+         * new Pose2d(Constants.Drivetrain.L4XDistance.to(PARTsUnitType.Meter),
+         * Constants.Drivetrain.leftAlignDistance
+         * .to(PARTsUnitType.Meter),
+         * new Rotation2d()),
+         * ElevatorState.L4, drivetrain, elevator, coral, candle,
+         * frontVision));
+         * 
+         * NamedCommands.registerCommand("Align Left L4 Stop",
+         * new AutoAlignCoralStop(
+         * new Pose2d(Constants.Drivetrain.L4XDistance.to(PARTsUnitType.Meter),
+         * Constants.Drivetrain.leftAlignDistance
+         * .to(PARTsUnitType.Meter),
+         * new Rotation2d()),
+         * ElevatorState.L4, drivetrain, elevator, coral, candle,
+         * frontVision));
+         * 
+         * NamedCommands.registerCommand("Align Right L4 Stop",
+         * new AutoAlignCoralStop(
+         * new Pose2d(Constants.Drivetrain.L4XDistance.to(PARTsUnitType.Meter),
+         * Constants.Drivetrain.rightAlignDistance
+         * .to(PARTsUnitType.Meter),
+         * new Rotation2d()),
+         * ElevatorState.L4, drivetrain, elevator, coral, candle,
+         * frontVision));
+         * 
+         * NamedCommands.registerCommand("Align Middle L1 Score",
+         * new AutoAlignScoreCoral(
+         * new Pose2d(Constants.Drivetrain.xZeroHoldDistance.to(PARTsUnitType.Meter),
+         * 0,
+         * new Rotation2d()),
+         * ElevatorState.STOW, drivetrain, elevator, coral, candle,
+         * frontVision));
+         * 
+         * NamedCommands.registerCommand("Align L1",
+         * drivetrain.alignCommand(new
+         * Pose2d(Constants.Drivetrain.xZeroHoldDistance.to(PARTsUnitType.Meter),
+         * 0,
+         * new Rotation2d()), frontVision));
+         * 
+         * autoChooser = AutoBuilder.buildAutoChooser();
+         * SmartDashboard.putData("Auto Chooser", autoChooser);
+         * }
+         */
 
         public Command getAutonomousCommand() {
                 return autoChooser.getSelected();
