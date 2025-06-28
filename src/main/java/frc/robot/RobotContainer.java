@@ -20,6 +20,7 @@ import frc.robot.cmds.coral.L4ScoreCoral;
 import frc.robot.subsystems.Candle;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Candle.CandleState;
+import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.PARTsDrivetrain;
 import frc.robot.util.IPARTsSubsystem;
 import frc.robot.util.PARTsButtonBoxController;
@@ -149,7 +150,7 @@ public class RobotContainer {
                                                                 0, new Rotation2d(PARTsUnit.DegreesToRadians
                                                                                 .apply(-180.0))))));
 
-                driveController.leftTrigger().whileTrue(Reef.alignToVisibleTag(true, drivetrain));
+                driveController.leftTrigger().whileTrue(Reef.alignToVisibleTag(true, drivetrain, elevator, ElevatorState.L2));
 
                 // logging
                 drivetrain.registerTelemetry(telemetryLogger::telemeterize);

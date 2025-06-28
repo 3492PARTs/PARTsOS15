@@ -14,26 +14,26 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.Field;
 import frc.robot.Cameras.CameraName;
+import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.LimelightVision;
 import frc.robot.subsystems.PARTsDrivetrain;
+import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.util.PARTsUnit.PARTsUnitType;
 
 /** Add your docs here. */
 public class Reef {
     private static Pose2d targetPose2d;
 
-    public static Command alignToVisibleTag(boolean rightSide, PARTsDrivetrain drivetrain) {
+    public static Command alignToVisibleTag(boolean rightSide, PARTsDrivetrain drivetrain, Elevator elevator, ElevatorState elevatorState) {
         Command c = new ConditionalCommand(Commands.runOnce(() -> {
             int tagID = LimelightVision.getVisibleTagId(CameraName.FRONT_CAMERA.getCameraName());
-            System.out.println(tagID);
             targetPose2d = Field.getTag(tagID)
                     .getLocation().toPose2d();
             targetPose2d = targetPose2d
                     .transformBy(new Transform2d(Constants.Robot.frontRobotVisionOffset.to(PARTsUnitType.Meter),
                             (rightSide ? 1 : -1) * Constants.Drivetrain.poleDistanceOffset.to(PARTsUnitType.Meter),
                             new Rotation2d(PARTsUnit.DegreesToRadians.apply(180.0))));
-            System.out.println(targetPose2d);
-        }).andThen(drivetrain.alignCommand(()-> targetPose2d)), new WaitCommand(0), () -> {
+        }).andThen(drivetrain.alignCommand(()-> targetPose2d)).andThen(elevator.elevatorToLevelCommand(elevatorState)), new WaitCommand(0), () -> {
             return LimelightVision.cameraSeesTag(CameraName.FRONT_CAMERA.getCameraName());
         });
         c.setName("alignToVisibleTag");

@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModule;
@@ -59,6 +60,9 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         private PARTsLogger partsLogger;
 
         private Timer alignTimer;
+        private double pigeonMovementX;
+        private double pigeonMovementY;
+        private boolean timerElapsed = false;
 
         // Vision Variables
         private SwerveRequest.FieldCentric alignRequest;
@@ -136,7 +140,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         public Command alignCommand(Supplier<Pose2d> goalPose) {
                 Command c = new FunctionalCommand(
                                 () -> {
-                                        System.out.println(goalPose.get());
+                                        timerElapsed = false;
                                         targetObject2d.setPose(goalPose.get());
                                         alignTimer = new Timer();
                                         alignTimer.start();
@@ -169,6 +173,17 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                         alignCommandInitTelemetry(goalPose.get());
                                 },
                                 () -> {
+                                        pigeonMovementX = getPigeon2().getAccelerationX().getValueAsDouble();
+                                        pigeonMovementY = getPigeon2().getAccelerationY().getValueAsDouble();
+
+                                        if (pigeonMovementX > 0 || pigeonMovementY > 0) {
+                                                alignTimer.reset();
+                                        }
+
+                                        if (alignTimer.hasElapsed(0.25)) {
+                                                timerElapsed = true;
+                                        }
+
                                         Rotation2d thetaOutput = new Rotation2d(
                                                         thetaController.calculate(
                                                                         getPose().getRotation()
@@ -201,7 +216,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 },
                                 () -> ((xRangeController.atGoal() &&
                                                 yRangeController.atGoal() &&
-                                                thetaController.atGoal())));
+                                                thetaController.atGoal()) || timerElapsed));
                 c.setName("align");
                 return c;
         }
@@ -322,6 +337,12 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 yRangeController.getVelocityError());
                 partsNT.setDouble("align/Output/thetaVelocityError",
                                 thetaController.getVelocityError());
+                
+                partsNT.setDouble("align/timer", alignTimer.get());
+                partsNT.setBoolean("align/timerHasElapsed", timerElapsed);
+
+                partsNT.setDouble("align/pigeonMovementX", pigeonMovementX);
+                partsNT.setDouble("align/pigeonMovementY", pigeonMovementY);
         }
 
         private void initialize() {

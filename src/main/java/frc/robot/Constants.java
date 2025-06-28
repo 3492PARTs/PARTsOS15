@@ -20,10 +20,10 @@ public final class Constants {
     public static final double kMaxAngularSpeed = Math.PI / 4; // Radians
     public static final double kMaxSpeed = .5; // Meters per second
 
-    public static final double MAX_AIM_VELOCITY = 0.5 * Math.PI;//1.5 * Math.PI; // radd/s 
-    public static final double MAX_AIM_ACCELERATION = Math.PI / 4; // rad/s^2 //2
-    public static final double MAX_RANGE_VELOCITY = 1;// 7.0;//5.0; //2.0;// m/s 
-    public static final double MAX_RANGE_ACCELERATION = 1;// 7.0;//5.0; // 0.5; //2.0; // m/2^s
+    public static final double MAX_AIM_VELOCITY = 1.5 * Math.PI; // radd/s 
+    public static final double MAX_AIM_ACCELERATION = Math.PI / 2; // rad/s^2 
+    public static final double MAX_RANGE_VELOCITY = 2;// m/s 
+    public static final double MAX_RANGE_ACCELERATION = 2;// m/2^s
 
     public static final double THETA_P = 5; // Proprotinal //4.5
     public static final double THETA_I = 0; //Gradual corretction
