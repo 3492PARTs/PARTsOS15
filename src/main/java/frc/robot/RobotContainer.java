@@ -150,7 +150,8 @@ public class RobotContainer {
                                                                 0, new Rotation2d(PARTsUnit.DegreesToRadians
                                                                                 .apply(-180.0))))));
 
-                driveController.leftTrigger().whileTrue(Reef.alignToVisibleTag(true, drivetrain, elevator, ElevatorState.L2, coral));
+                driveController.leftTrigger()
+                                .whileTrue(Reef.alignToVisibleTag(true, drivetrain, elevator, ElevatorState.L2, coral, escapeBooleanSupplier, candle));
 
                 // logging
                 drivetrain.registerTelemetry(telemetryLogger::telemeterize);
@@ -213,82 +214,38 @@ public class RobotContainer {
                 // *-----------------------------------------------------*//
 
                 // --------------------- Align, L2, Score --------------------//
-                /*
-                 * buttonBoxController.mapTrigger()
-                 * .onTrue(new ConditionalAlign(manualElevatorControlSupplier, elevator,
-                 * ElevatorState.L2,
-                 * drivetrain, coral, candle, buttonBoxController,
-                 * new Pose2d(Constants.Drivetrain.xZeroHoldDistance
-                 * .to(PARTsUnitType.Meter),
-                 * Constants.Drivetrain.rightAlignDistance
-                 * .to(PARTsUnitType.Meter),
-                 * new Rotation2d()),
-                 * frontVision, escapeBooleanSupplier));
-                 * 
-                 * // --------------------- Align, L3, Score --------------------//
-                 * buttonBoxController.audioTrigger().onTrue(
-                 * new ConditionalAlign(manualElevatorControlSupplier, elevator,
-                 * ElevatorState.L3,
-                 * drivetrain, coral, candle, buttonBoxController,
-                 * new Pose2d(Constants.Drivetrain.xZeroHoldDistance
-                 * .to(PARTsUnitType.Meter),
-                 * Constants.Drivetrain.rightAlignDistance
-                 * .to(PARTsUnitType.Meter),
-                 * new Rotation2d()),
-                 * frontVision, escapeBooleanSupplier));
-                 * 
-                 * // --------------------- Align, L4, Score --------------------//
-                 * buttonBoxController.cruiseTrigger()
-                 * .onTrue(new ConditionalAlign(manualElevatorControlSupplier, elevator,
-                 * ElevatorState.L4,
-                 * drivetrain, coral, candle, buttonBoxController,
-                 * new Pose2d(Constants.Drivetrain.L4XDistance.to(PARTsUnitType.Meter),
-                 * Constants.Drivetrain.rightAlignDistance
-                 * .to(PARTsUnitType.Meter),
-                 * new Rotation2d()),
-                 * frontVision, escapeBooleanSupplier));
-                 */
+                buttonBoxController.mapTrigger()
+                                .onTrue(Reef.alignToVisibleTag(true, drivetrain, elevator, ElevatorState.L2, coral,
+                                                escapeBooleanSupplier, candle));
+
+                // --------------------- Align, L3, Score --------------------//
+                buttonBoxController.audioTrigger().onTrue(Reef.alignToVisibleTag(true, drivetrain, elevator,
+                                ElevatorState.L3, coral, escapeBooleanSupplier, candle));
+
+                // --------------------- Align, L4, Score --------------------//
+                buttonBoxController.cruiseTrigger()
+                                .onTrue(Reef.alignToVisibleTag(true, drivetrain, elevator, ElevatorState.L4, coral,
+                                                escapeBooleanSupplier, candle));
 
                 // *---------------------------------------------------- *//
                 // * ---------------Left Reef Pole Controls ----------- *//
                 // *-----------------------------------------------------*//
 
                 // --------------------- Align, L2, Score --------------------//
-                /*
-                 * buttonBoxController.wipeTrigger()
-                 * .onTrue(new ConditionalAlign(manualElevatorControlSupplier, elevator,
-                 * ElevatorState.L2,
-                 * drivetrain, coral, candle, buttonBoxController,
-                 * new Pose2d(Constants.Drivetrain.xZeroHoldDistance
-                 * .to(PARTsUnitType.Meter),
-                 * Constants.Drivetrain.leftAlignDistance
-                 * .to(PARTsUnitType.Meter),
-                 * new Rotation2d()),
-                 * frontVision, escapeBooleanSupplier));
-                 * 
-                 * // --------------------- Align, L3, Score --------------------//
-                 * buttonBoxController.flashTrigger()
-                 * .onTrue(new ConditionalAlign(manualElevatorControlSupplier, elevator,
-                 * ElevatorState.L3,
-                 * drivetrain, coral, candle, buttonBoxController,
-                 * new Pose2d(Constants.Drivetrain.xZeroHoldDistance
-                 * .to(PARTsUnitType.Meter),
-                 * Constants.Drivetrain.leftAlignDistance
-                 * .to(PARTsUnitType.Meter),
-                 * new Rotation2d()),
-                 * frontVision, escapeBooleanSupplier));
-                 * 
-                 * // --------------------- Align, L4, Score --------------------//
-                 * buttonBoxController.handleTrigger()
-                 * .onTrue(new ConditionalAlign(manualElevatorControlSupplier, elevator,
-                 * ElevatorState.L4,
-                 * drivetrain, coral, candle, buttonBoxController,
-                 * new Pose2d(Constants.Drivetrain.L4XDistance.to(PARTsUnitType.Meter),
-                 * Constants.Drivetrain.leftAlignDistance
-                 * .to(PARTsUnitType.Meter),
-                 * new Rotation2d()),
-                 * frontVision, escapeBooleanSupplier));
-                 */
+
+                buttonBoxController.wipeTrigger()
+                                .onTrue(Reef.alignToVisibleTag(false, drivetrain, elevator, ElevatorState.L2, coral,
+                                                escapeBooleanSupplier, candle));
+
+                // --------------------- Align, L3, Score --------------------//
+                buttonBoxController.flashTrigger()
+                                .onTrue(Reef.alignToVisibleTag(false, drivetrain, elevator, ElevatorState.L3, coral,
+                                                escapeBooleanSupplier, candle));
+
+                // --------------------- Align, L4, Score --------------------//
+                buttonBoxController.handleTrigger()
+                                .onTrue(Reef.alignToVisibleTag(false, drivetrain, elevator, ElevatorState.L4, coral,
+                                                escapeBooleanSupplier, candle));
 
                 // =============================================================================================
                 // ------------------------------------- SysID
