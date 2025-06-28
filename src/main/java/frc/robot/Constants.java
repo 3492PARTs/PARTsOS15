@@ -47,6 +47,8 @@ public final class Constants {
     // more negative, more to right
     public static final PARTsUnit rightAlignDistance = new PARTsUnit(-6, PARTsUnitType.Inch); // -7.5
 
+    public static final PARTsUnit poleDistanceOffset = new PARTsUnit(6, PARTsUnitType.Inch);
+
     public static final PARTsUnit L4XDistance = new PARTsUnit(-9 + (-4), PARTsUnitType.Inch);
 
     public static final PARTsUnit xZeroHoldDistance = new PARTsUnit(-9, PARTsUnitType.Inch);
@@ -167,5 +169,10 @@ public final class Constants {
     public static boolean logging = true;
     public static boolean debug = true;
     public static boolean allowAutoControllerDetection = false;
+  }
+  public static class Robot {
+    public static final PARTsUnit halfRobotWidth = new PARTsUnit(13.5, PARTsUnitType.Inch);
+    public static final PARTsUnit bumperWidth = new PARTsUnit(4, PARTsUnitType.Inch);
+    public static final PARTsUnit frontRobotVisionOffset = new PARTsUnit(halfRobotWidth.getValue() + bumperWidth.getValue(),PARTsUnitType.Inch);
   }
 }

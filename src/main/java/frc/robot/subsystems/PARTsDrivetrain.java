@@ -12,6 +12,9 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+
+import java.util.function.Supplier;
+
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -126,11 +129,15 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         }
 
         /*---------------------------------- Custom Public Functions ----------------------------------*/
+        public Command alignCommand(Pose2d goalPose) { 
+                return alignCommand(()-> goalPose);
+        }
 
-        public Command alignCommand(Pose2d goalPose) {
+        public Command alignCommand(Supplier<Pose2d> goalPose) {
                 Command c = new FunctionalCommand(
                                 () -> {
-                                        targetObject2d.setPose(goalPose);
+                                        System.out.println(goalPose.get());
+                                        targetObject2d.setPose(goalPose.get());
                                         alignTimer = new Timer();
                                         alignTimer.start();
 
@@ -138,7 +145,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                         thetaController.reset(getPose().getRotation()
                                                         .getRadians());
 
-                                        thetaController.setGoal(goalPose.getRotation().getRadians()); // tx=0
+                                        thetaController.setGoal(goalPose.get().getRotation().getRadians()); // tx=0
                                                                                                       // is
                                                                                                       // centered.
                                         thetaController.setTolerance(
@@ -147,7 +154,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
                                         // Initialize the x-range controller.
                                         xRangeController.reset(getPose().getX());
-                                        xRangeController.setGoal(goalPose.getX());
+                                        xRangeController.setGoal(goalPose.get().getX());
                                         xRangeController.setTolerance(Constants.Drivetrain.xRControllerTolerance
                                                         .to(PARTsUnitType.Meter));
 
@@ -155,11 +162,11 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                         yRangeController.reset(getPose().getY()); // Center
                                                                                   // to
                                                                                   // target.
-                                        yRangeController.setGoal(goalPose.getY()); // Center to target.
+                                        yRangeController.setGoal(goalPose.get().getY()); // Center to target.
                                         yRangeController.setTolerance(Constants.Drivetrain.yRControllerTolerance
                                                         .to(PARTsUnitType.Meter));
 
-                                        alignCommandInitTelemetry(goalPose);
+                                        alignCommandInitTelemetry(goalPose.get());
                                 },
                                 () -> {
                                         Rotation2d thetaOutput = new Rotation2d(
@@ -169,9 +176,9 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
                                         Pose2d rangeOutput = new Pose2d(
                                                         xRangeController.calculate(getPose().getX(),
-                                                                        goalPose.getX()),
+                                                                        goalPose.get().getX()),
                                                         yRangeController.calculate(getPose().getY(),
-                                                                        goalPose.getY()),
+                                                                        goalPose.get().getY()),
                                                         null);
 
                                         // Get dist. from drivetrain.

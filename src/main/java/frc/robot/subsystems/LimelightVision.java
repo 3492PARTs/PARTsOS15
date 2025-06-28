@@ -6,6 +6,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Cameras;
 import frc.robot.Cameras.Camera;
+import frc.robot.Cameras.CameraName;
 import frc.robot.Constants;
 import frc.robot.Field;
 import frc.robot.Robot;
@@ -136,6 +137,18 @@ public class LimelightVision extends PARTsSubsystem{
         }
         if (!robotIsOnBlueSide() && getWhitelistMode() == WhitelistMode.BLUE_REEF_TAGS) {
             setWhitelistMode(WhitelistMode.RED_REEF_TAGS);
+        }
+    }
+    public static boolean cameraSeesTag(String cameraName) {
+        return LimelightHelpers.getTV(cameraName);
+    }
+    public static int getVisibleTagId(String cameraName) {
+        try{
+            double[] targetArray = LimelightHelpers.getT2DArray(cameraName);
+            return (int)targetArray[9];
+        }
+        catch(ArrayIndexOutOfBoundsException a) {
+            return -1;
         }
     }
 

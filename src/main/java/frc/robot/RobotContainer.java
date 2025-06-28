@@ -27,6 +27,7 @@ import frc.robot.util.PARTsCommandController;
 import frc.robot.util.PARTsDashboard;
 import frc.robot.util.PARTsNT;
 import frc.robot.util.PARTsUnit;
+import frc.robot.util.Reef;
 import frc.robot.util.PARTsController.ControllerType;
 import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.Elevator;
@@ -148,11 +149,7 @@ public class RobotContainer {
                                                                 0, new Rotation2d(PARTsUnit.DegreesToRadians
                                                                                 .apply(-180.0))))));
 
-                driveController.leftTrigger().whileTrue(drivetrain.alignCommand(
-                                Field.getTag(12).getLocation().toPose2d().transformBy(
-                                                new Transform2d(PARTsUnit.InchesToMeters.apply(13.5 + 4),
-                                                                0, new Rotation2d(PARTsUnit.DegreesToRadians
-                                                                                .apply(0.0))))));
+                driveController.leftTrigger().whileTrue(Reef.alignToVisibleTag(true, drivetrain));
 
                 // logging
                 drivetrain.registerTelemetry(telemetryLogger::telemeterize);
