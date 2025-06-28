@@ -4,6 +4,8 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.util.Units;
 
+//move to constants pls
+
 /** This interface stores information about each camera. */
 public interface Cameras {
     public enum CameraName {

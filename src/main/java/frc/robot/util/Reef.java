@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
-import frc.robot.Field;
 import frc.robot.Cameras.CameraName;
 import frc.robot.subsystems.Candle;
 import frc.robot.subsystems.Coral;

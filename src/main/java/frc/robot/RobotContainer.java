@@ -16,12 +16,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.cmds.coral.L4ScoreCoral;
 import frc.robot.subsystems.Candle;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Candle.CandleState;
 import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.PARTsDrivetrain;
+import frc.robot.util.Field;
 import frc.robot.util.IPARTsSubsystem;
 import frc.robot.util.PARTsButtonBoxController;
 import frc.robot.util.PARTsCommandController;
@@ -192,7 +192,6 @@ public class RobotContainer {
                 buttonBoxController.povTrigger0().whileTrue(coral.L4Intake()).onFalse(coral.stopCoralCommand());
 
                 buttonBoxController.povTrigger180().whileTrue(coral.L4OutTake()).onFalse(coral.stopCoralCommand());
-                operatorController.rightBumper().onTrue(new L4ScoreCoral(drivetrain, elevator, coral, candle));
 
                 // =============================================================================================
                 // * */ ------------------------------------- Elevator and Score Control
