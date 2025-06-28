@@ -129,7 +129,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         @Override
         public void periodic() {
                 super.periodic();
-                fieldObject2d.setPose(Robot.isBlue() ? getPose() : Field.transformToOppositeAlliance(getPose()));
+                fieldObject2d.setPose(getFieldCentricPose());
         }
 
         /*---------------------------------- Custom Public Functions ----------------------------------*/
@@ -146,7 +146,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                         alignTimer.start();
 
                                         // Initialize the aim controller.
-                                        thetaController.reset(getPose().getRotation()
+                                        thetaController.reset(getFieldCentricPose().getRotation()
                                                         .getRadians());
 
                                         thetaController.setGoal(goalPose.get().getRotation().getRadians()); // tx=0
@@ -157,13 +157,13 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                                         .to(PARTsUnitType.Radian));
 
                                         // Initialize the x-range controller.
-                                        xRangeController.reset(getPose().getX());
+                                        xRangeController.reset(getFieldCentricPose().getX());
                                         xRangeController.setGoal(goalPose.get().getX());
                                         xRangeController.setTolerance(Constants.Drivetrain.xRControllerTolerance
                                                         .to(PARTsUnitType.Meter));
 
                                         // Initialize the y-range controller.
-                                        yRangeController.reset(getPose().getY()); // Center
+                                        yRangeController.reset(getFieldCentricPose().getY()); // Center
                                                                                   // to
                                                                                   // target.
                                         yRangeController.setGoal(goalPose.get().getY()); // Center to target.
@@ -186,13 +186,13 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
                                         Rotation2d thetaOutput = new Rotation2d(
                                                         thetaController.calculate(
-                                                                        getPose().getRotation()
+                                                                getFieldCentricPose().getRotation()
                                                                                         .getRadians()));
 
                                         Pose2d rangeOutput = new Pose2d(
-                                                        xRangeController.calculate(getPose().getX(),
+                                                        xRangeController.calculate(getFieldCentricPose().getX(),
                                                                         goalPose.get().getX()),
-                                                        yRangeController.calculate(getPose().getY(),
+                                                        yRangeController.calculate(getFieldCentricPose().getY(),
                                                                         goalPose.get().getY()),
                                                         null);
 
@@ -225,6 +225,10 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
         public Pose2d getPose() {
                 return super.getState().Pose;
+        }
+
+        public Pose2d getFieldCentricPose() {
+                return Robot.isBlue() ? super.getState().Pose : Field.transformToOppositeAlliance(super.getState().Pose);
         }
 
         public Command snapToAngle(double angle) {
