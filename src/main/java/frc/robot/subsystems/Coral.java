@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants;
+import frc.robot.constants.CoralConstants.coralConstants;
 import frc.robot.subsystems.Candle.CandleState;
 import frc.robot.util.PARTsSubsystem;
 
@@ -56,8 +56,8 @@ public class Coral extends PARTsSubsystem {
 
     mPeriodicIO = new PeriodicIO();
 
-    mLeftMotor = new SparkMax(Constants.Coral.coralLeftMotorId, MotorType.kBrushless);
-    mRightMotor = new SparkMax(Constants.Coral.coralRightMotorId, MotorType.kBrushless);
+    mLeftMotor = new SparkMax(coralConstants.coralLeftMotorId, MotorType.kBrushless);
+    mRightMotor = new SparkMax(coralConstants.coralRightMotorId, MotorType.kBrushless);
 
     SparkMaxConfig coralConfig = new SparkMaxConfig();
 
@@ -72,7 +72,7 @@ public class Coral extends PARTsSubsystem {
         ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
 
-    entrySensor = new LaserCan(Constants.Coral.laserCanId);
+    entrySensor = new LaserCan(coralConstants.laserCanId);
     try {
       entrySensor.setRangingMode(LaserCan.RangingMode.SHORT);
       entrySensor.setRegionOfInterest(new LaserCan.RegionOfInterest(4, 4, 4, 4));
@@ -81,7 +81,7 @@ public class Coral extends PARTsSubsystem {
       System.out.println("Configuration failed! " + e);
     }
 
-    exitSensor = new LaserCan(Constants.Coral.laserCan2Id);
+    exitSensor = new LaserCan(coralConstants.laserCan2Id);
     try {
       exitSensor.setRangingMode(LaserCan.RangingMode.SHORT);
       exitSensor.setRegionOfInterest(new LaserCan.RegionOfInterest(4, 4, 4, 4));
@@ -221,7 +221,7 @@ public class Coral extends PARTsSubsystem {
     return super.commandFactory("coralIntake",
         this.runOnce(() -> {
           mPeriodicIO.speed_diff = 0.0;
-          mPeriodicIO.rpm = Constants.Coral.kIntakeSpeed;
+          mPeriodicIO.rpm = coralConstants.kIntakeSpeed;
           mPeriodicIO.state = IntakeState.INTAKE;
         }));
   }
@@ -230,7 +230,7 @@ public class Coral extends PARTsSubsystem {
     return super.commandFactory("coralIntake",
         this.runOnce(() -> {
           mPeriodicIO.speed_diff = 0.0;
-          mPeriodicIO.rpm = Constants.Coral.kInchIntakeSpeed;
+          mPeriodicIO.rpm = coralConstants.kInchIntakeSpeed;
         }));
   }
 
@@ -238,7 +238,7 @@ public class Coral extends PARTsSubsystem {
     return super.commandFactory("coralIntake",
         this.runOnce(() -> {
           mPeriodicIO.speed_diff = 0.0;
-          mPeriodicIO.rpm = -Constants.Coral.kInchIntakeSpeed;
+          mPeriodicIO.rpm = -coralConstants.kInchIntakeSpeed;
         }));
   }
 
@@ -246,7 +246,7 @@ public class Coral extends PARTsSubsystem {
     return super.commandFactory("coralIntake",
         this.runOnce(() -> {
           mPeriodicIO.speed_diff = 0.0;
-          mPeriodicIO.rpm = Constants.Coral.kIntakeSpeed;
+          mPeriodicIO.rpm = coralConstants.kIntakeSpeed;
           mPeriodicIO.state = IntakeState.INTAKE;
         })).andThen(new WaitUntilCommand(() -> mPeriodicIO.state == IntakeState.READY));
   }
@@ -255,33 +255,33 @@ public class Coral extends PARTsSubsystem {
     return super.commandFactory("coralReverse",
         this.runOnce(() -> {
           mPeriodicIO.speed_diff = 0.0;
-          mPeriodicIO.rpm = Constants.Coral.kReverseSpeed;
+          mPeriodicIO.rpm = coralConstants.kReverseSpeed;
           mPeriodicIO.state = IntakeState.REVERSE;
         }));
   }
 
   public void index() {
     mPeriodicIO.speed_diff = 0.0;
-    mPeriodicIO.rpm = Constants.Coral.kIndexSpeed;
+    mPeriodicIO.rpm = coralConstants.kIndexSpeed;
     mPeriodicIO.state = IntakeState.INDEX;
 
   }
 
   public void scoreL1() {
-    mPeriodicIO.speed_diff = Constants.Coral.kSpeedDifference;
-    mPeriodicIO.rpm = Constants.Coral.kL1Speed;
+    mPeriodicIO.speed_diff = coralConstants.kSpeedDifference;
+    mPeriodicIO.rpm = coralConstants.kL1Speed;
     mPeriodicIO.state = IntakeState.SCORE;
   }
 
   public void scoreL23() {
     mPeriodicIO.speed_diff = 0.0;
-    mPeriodicIO.rpm = Constants.Coral.kL23Speed;
+    mPeriodicIO.rpm = coralConstants.kL23Speed;
     mPeriodicIO.state = IntakeState.SCORE;
   }
 
   public void scoreL4() {
     mPeriodicIO.speed_diff = 0.0;
-    mPeriodicIO.rpm = Constants.Coral.kL4Speed;
+    mPeriodicIO.rpm = coralConstants.kL4Speed;
     mPeriodicIO.state = IntakeState.SCORE;
   }
 

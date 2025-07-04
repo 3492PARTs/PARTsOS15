@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants;
+import frc.robot.constants.DebugConstants.debugConstants;
 import frc.robot.util.PARTsController.ControllerType;
 
 public class PARTsCommandController {
@@ -30,7 +30,7 @@ public class PARTsCommandController {
     private String err_msg = "";
 
     public PARTsCommandController(int port) {
-        if (Constants.Debug.allowAutoControllerDetection) {
+        if (debugConstants.allowAutoControllerDetection) {
             if (DriverStation.getJoystickIsXbox(port)) {
                 controllerType = ControllerType.XBOX;
             } else if (DriverStation.getJoystickName(port).toLowerCase().contains("dualsense")) {

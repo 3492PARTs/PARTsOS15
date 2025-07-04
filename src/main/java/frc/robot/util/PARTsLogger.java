@@ -6,7 +6,7 @@ import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.util.datalog.StringLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.Constants;
+import frc.robot.constants.DebugConstants.debugConstants;
 
 public class PARTsLogger {
     private static DataLog log;
@@ -27,7 +27,7 @@ public class PARTsLogger {
     }
 
     private void instantiate() {
-        if (Constants.Debug.logging) {
+        if (debugConstants.logging) {
             // Starts recording to data log
             DataLogManager.start();
 
@@ -37,7 +37,7 @@ public class PARTsLogger {
     }
 
     public boolean logBoolean(String key, boolean b) {
-        if (Constants.Debug.logging) {
+        if (debugConstants.logging) {
             new BooleanLogEntry(log, name.length() > 0 ? String.format("%s/%s", name, key) : key).append(b);
             return true;
         } else
@@ -45,7 +45,7 @@ public class PARTsLogger {
     }
 
     public boolean logDouble(String key, double d) {
-        if (Constants.Debug.logging) {
+        if (debugConstants.logging) {
             new DoubleLogEntry(log, name.length() > 0 ? String.format("%s/%s", name, key) : key).append(d);
             return true;
         } else
@@ -53,7 +53,7 @@ public class PARTsLogger {
     }
 
     public boolean logString(String key, String s) {
-        if (Constants.Debug.logging) {
+        if (debugConstants.logging) {
             new StringLogEntry(log, name.length() > 0 ? String.format("%s/%s", name, key) : key).append(s);
             return true;
         } else

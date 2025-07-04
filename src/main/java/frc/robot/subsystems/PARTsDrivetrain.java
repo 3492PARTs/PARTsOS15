@@ -34,9 +34,9 @@ import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
-import frc.robot.Constants;
 import frc.robot.Robot;
-import frc.robot.generated.TunerConstants;
+import frc.robot.constants.DrivetrainConstants.drivetrainConstants;
+import frc.robot.constants.generated.TunerConstants;
 import frc.robot.util.Field;
 import frc.robot.util.IPARTsSubsystem;
 import frc.robot.util.PARTsLogger;
@@ -153,13 +153,13 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                                                                       // is
                                                                                                       // centered.
                                         thetaController.setTolerance(
-                                                        Constants.Drivetrain.thetaControllerTolerance
+                                                        drivetrainConstants.thetaControllerTolerance
                                                                         .to(PARTsUnitType.Radian));
 
                                         // Initialize the x-range controller.
                                         xRangeController.reset(getFieldCentricPose().getX());
                                         xRangeController.setGoal(goalPose.get().getX());
-                                        xRangeController.setTolerance(Constants.Drivetrain.xRControllerTolerance
+                                        xRangeController.setTolerance(drivetrainConstants.xRControllerTolerance
                                                         .to(PARTsUnitType.Meter));
 
                                         // Initialize the y-range controller.
@@ -167,7 +167,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                                                   // to
                                                                                   // target.
                                         yRangeController.setGoal(goalPose.get().getY()); // Center to target.
-                                        yRangeController.setTolerance(Constants.Drivetrain.yRControllerTolerance
+                                        yRangeController.setTolerance(drivetrainConstants.yRControllerTolerance
                                                         .to(PARTsUnitType.Meter));
 
                                         alignCommandInitTelemetry(goalPose.get());
@@ -407,22 +407,22 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 .withDeadband(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * 0.1)
                                 .withRotationalDeadband(0.1);
 
-                thetaController = new ProfiledPIDController(Constants.Drivetrain.THETA_P, Constants.Drivetrain.THETA_I,
-                                Constants.Drivetrain.THETA_D,
-                                new TrapezoidProfile.Constraints(Constants.Drivetrain.MAX_AIM_VELOCITY,
-                                                Constants.Drivetrain.MAX_AIM_ACCELERATION));
+                thetaController = new ProfiledPIDController(drivetrainConstants.THETA_P, drivetrainConstants.THETA_I,
+                                drivetrainConstants.THETA_D,
+                                new TrapezoidProfile.Constraints(drivetrainConstants.MAX_AIM_VELOCITY,
+                                                drivetrainConstants.MAX_AIM_ACCELERATION));
                 thetaController.enableContinuousInput(-Math.PI, Math.PI); // Wrpa from -pi to ip
 
-                xRangeController = new ProfiledPIDController(Constants.Drivetrain.RANGE_X_P,
-                                Constants.Drivetrain.RANGE_I,
-                                Constants.Drivetrain.RANGE_D,
-                                new TrapezoidProfile.Constraints(Constants.Drivetrain.MAX_RANGE_VELOCITY,
-                                                Constants.Drivetrain.MAX_RANGE_ACCELERATION));
-                yRangeController = new ProfiledPIDController(Constants.Drivetrain.RANGE_Y_P,
-                                Constants.Drivetrain.RANGE_I,
-                                Constants.Drivetrain.RANGE_D,
-                                new TrapezoidProfile.Constraints(Constants.Drivetrain.MAX_RANGE_VELOCITY,
-                                                Constants.Drivetrain.MAX_RANGE_ACCELERATION));
+                xRangeController = new ProfiledPIDController(drivetrainConstants.RANGE_X_P,
+                                drivetrainConstants.RANGE_I,
+                                drivetrainConstants.RANGE_D,
+                                new TrapezoidProfile.Constraints(drivetrainConstants.MAX_RANGE_VELOCITY,
+                                                drivetrainConstants.MAX_RANGE_ACCELERATION));
+                yRangeController = new ProfiledPIDController(drivetrainConstants.RANGE_Y_P,
+                                drivetrainConstants.RANGE_I,
+                                drivetrainConstants.RANGE_D,
+                                new TrapezoidProfile.Constraints(drivetrainConstants.MAX_RANGE_VELOCITY,
+                                                drivetrainConstants.MAX_RANGE_ACCELERATION));
 
         }
 

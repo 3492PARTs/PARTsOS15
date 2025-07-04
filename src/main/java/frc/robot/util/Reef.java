@@ -15,8 +15,9 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import frc.robot.Constants;
-import frc.robot.Cameras.CameraName;
+import frc.robot.constants.CameraConstants.CameraName;
+import frc.robot.constants.DrivetrainConstants.drivetrainConstants;
+import frc.robot.constants.RobotConstants.robotConstants;
 import frc.robot.subsystems.Candle;
 import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.Elevator;
@@ -41,10 +42,10 @@ public class Reef {
                             targetPose2d = targetPose2d
                                     .transformBy(new Transform2d(
                                             (elevatorState == ElevatorState.L4
-                                                    ? Constants.Robot.frontRobotVisionL4Offset.to(PARTsUnitType.Meter)
-                                                    : Constants.Robot.frontRobotVisionOffset.to(PARTsUnitType.Meter)),
+                                                    ? robotConstants.frontRobotVisionL4Offset.to(PARTsUnitType.Meter)
+                                                    : robotConstants.frontRobotVisionOffset.to(PARTsUnitType.Meter)),
                                             (rightSide ? 1 : -1)
-                                                    * Constants.Drivetrain.poleDistanceOffset.to(PARTsUnitType.Meter),
+                                                    * drivetrainConstants.poleDistanceOffset.to(PARTsUnitType.Meter),
                                             new Rotation2d(PARTsUnit.DegreesToRadians.apply(180.0))));
                         }).andThen(drivetrain.alignCommand(() -> targetPose2d))
                                 .andThen(elevator.elevatorToLevelCommand(elevatorState))

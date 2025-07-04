@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.PS5Controller;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.event.BooleanEvent;
 import edu.wpi.first.wpilibj.event.EventLoop;
-import frc.robot.Constants;
+import frc.robot.constants.DebugConstants.debugConstants;
 
 public class PARTsController {
 
@@ -43,7 +43,7 @@ public class PARTsController {
      * @param port The controller port.
      */
     public PARTsController(int port) {
-        if (Constants.Debug.allowAutoControllerDetection) {
+        if (debugConstants.allowAutoControllerDetection) {
             if (DriverStation.getJoystickIsXbox(port)) {
                 controllerType = ControllerType.XBOX;
             } else if (DriverStation.getJoystickName(port).toLowerCase().contains("dualsense")) {

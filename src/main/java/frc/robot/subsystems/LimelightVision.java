@@ -4,11 +4,11 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Cameras;
-import frc.robot.Cameras.Camera;
-import frc.robot.Cameras.CameraName;
-import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.constants.CameraConstants;
+import frc.robot.constants.CameraConstants.Camera;
+import frc.robot.constants.CameraConstants.CameraName;
+import frc.robot.constants.VisionConstants.visionConstants;
 import frc.robot.util.Field;
 import frc.robot.util.LimelightHelpers;
 import frc.robot.util.LimelightHelpers.PoseEstimate;
@@ -46,7 +46,7 @@ public class LimelightVision extends PARTsSubsystem{
     public LimelightVision(PARTsDrivetrain drivetrain) {
         super("LimelightVision");
         this.drivetrain = drivetrain;
-        for (Camera camera : Cameras.LimelightCameras) {
+        for (Camera camera : CameraConstants.LimelightCameras) {
             Pose3d robotRelativePose = camera.getLocation();
             LimelightHelpers.setCameraPose_RobotSpace(
                 camera.getName(), 
@@ -70,10 +70,10 @@ public class LimelightVision extends PARTsSubsystem{
         this.megaTagMode = mode;
         switch (mode) {
             case MEGATAG1:
-                drivetrain.setVisionMeasurementStdDevs(Constants.VisionConstants.MT1_STDEVS);
+                drivetrain.setVisionMeasurementStdDevs(visionConstants.MT1_STDEVS);
                 break;
             case MEGATAG2:
-                drivetrain.setVisionMeasurementStdDevs(Constants.VisionConstants.MT2_STDEVS);
+                drivetrain.setVisionMeasurementStdDevs(visionConstants.MT2_STDEVS);
                 break;
         }
     }
@@ -95,14 +95,14 @@ public class LimelightVision extends PARTsSubsystem{
     }
 
     private void setTagWhitelist(int... ids) {
-        for (Camera camera : Cameras.LimelightCameras) {
+        for (Camera camera : CameraConstants.LimelightCameras) {
             LimelightHelpers.SetFiducialIDFiltersOverride(camera.getName(), ids);
         }
     }
 
     public void setIMUMode(int mode) {
         this.imuMode = mode;
-        for (Camera camera : Cameras.LimelightCameras) {
+        for (Camera camera : CameraConstants.LimelightCameras) {
             LimelightHelpers.SetIMUMode(camera.getName(), mode);
         }
     }
@@ -160,7 +160,7 @@ public class LimelightVision extends PARTsSubsystem{
 
         //updateWhitelistMode();
 
-        for (Camera camera : Cameras.LimelightCameras) {
+        for (Camera camera : CameraConstants.LimelightCameras) {
             LimelightHelpers.SetRobotOrientation(
                 camera.getName(), 
                 (drivetrain.getPose().getRotation().getDegrees() + (Robot.isBlue() ? 0 : 180)) % 360, 
@@ -219,7 +219,7 @@ public class LimelightVision extends PARTsSubsystem{
     }
     public void resetPose() {
         setMegaTagMode(MegaTagMode.MEGATAG1);
-        for (Camera camera : Cameras.LimelightCameras) {
+        for (Camera camera : CameraConstants.LimelightCameras) {
             LimelightHelpers.SetRobotOrientation(
                 camera.getName(), 
                 (drivetrain.getPose().getRotation().getDegrees() + (Robot.isBlue() ? 0 : 180)) % 360, 

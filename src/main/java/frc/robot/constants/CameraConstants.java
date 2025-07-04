@@ -1,4 +1,4 @@
-package frc.robot;
+package frc.robot.constants;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -7,7 +7,7 @@ import edu.wpi.first.math.util.Units;
 //move to constants pls
 
 /** This interface stores information about each camera. */
-public interface Cameras {
+public interface CameraConstants {
     public enum CameraName {
         FRONT_CAMERA("limelight-slimmy"),
         BACK_CAMERA("limelight-thereal");
