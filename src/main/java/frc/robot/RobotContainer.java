@@ -36,6 +36,7 @@ import frc.robot.util.PARTs.PARTsController.ControllerType;
 import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.LimelightVision;
+import frc.robot.subsystems.LimelightVision.MegaTagMode;
 
 public class RobotContainer {
         private boolean fineGrainDrive = false;
@@ -98,7 +99,7 @@ public class RobotContainer {
                 // configureAutonomousCommands();
                 configureBindings();
                 partsNT.putSmartDashboardSendable("field", Field.FIELD2D);
-                vision.resetPose();
+                
         }
 
         private void configureBindings() {
@@ -361,4 +362,8 @@ public class RobotContainer {
         public void resetStartPose() {
                 drivetrain.seedFieldCentric();
         }
+        public void setMegaTagMode(MegaTagMode mode) {
+                vision.setMegaTagMode(mode);
+        }
+
 }

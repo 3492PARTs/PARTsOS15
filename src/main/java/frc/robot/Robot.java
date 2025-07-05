@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.DebugConstants;
+import frc.robot.subsystems.LimelightVision.MegaTagMode;
 import frc.robot.util.PARTs.PARTsDashboard;
 import frc.robot.util.PARTs.PARTsLogger;
 import frc.robot.util.PARTs.PARTsNT;
@@ -49,7 +50,10 @@ public class Robot extends TimedRobot {
 
     CameraServer.startAutomaticCapture();
 
-    m_robotContainer.resetStartPose();
+    //m_robotContainer.resetStartPose();
+    m_robotContainer.setMegaTagMode(MegaTagMode.MEGATAG1);
+    
+
   }
 
   @Override
@@ -66,6 +70,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledInit() {
+    m_robotContainer.setMegaTagMode(MegaTagMode.MEGATAG1);
     m_robotContainer.stop();
     m_robotContainer.setCandleDisabledState();
   }
@@ -80,6 +85,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+    m_robotContainer.setMegaTagMode(MegaTagMode.MEGATAG2);
     if (!DebugConstants.debug) {
       PARTsDashboard.setTab(DashboardTab.AUTONOMOUS);
     }
@@ -101,6 +107,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    m_robotContainer.setMegaTagMode(MegaTagMode.MEGATAG2);
     if (!DebugConstants.debug) {
       PARTsDashboard.setTab(DashboardTab.TELEOPERATED);
     }

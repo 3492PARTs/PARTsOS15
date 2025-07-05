@@ -4,6 +4,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Robot;
 import frc.robot.constants.CameraConstants;
 import frc.robot.constants.CameraConstants.Camera;
@@ -64,6 +66,9 @@ public class LimelightVision extends PARTsSubsystem{
         setMegaTagMode(MegaTagMode.MEGATAG2);
         //setWhitelistMode(WhitelistMode.BLUE_REEF_TAGS);
         setIMUMode(1);
+
+        super.partsNT.putSmartDashboardSendable("Set MT-1", commandMegaTagMode(MegaTagMode.MEGATAG1));
+        super.partsNT.putSmartDashboardSendable("Set MT-2", commandMegaTagMode(MegaTagMode.MEGATAG2));
     }
 
     public void setMegaTagMode(MegaTagMode mode) {
@@ -76,6 +81,12 @@ public class LimelightVision extends PARTsSubsystem{
                 drivetrain.setVisionMeasurementStdDevs(VisionConstants.MT2_STDEVS);
                 break;
         }
+    }
+    public Command commandMegaTagMode (MegaTagMode mode) {
+        Command c = Commands.runOnce(()-> setMegaTagMode(mode) );
+        c.setName("commandMegaTagMode");
+        c=c.ignoringDisable(true);
+        return c;
     }
 
     public void setWhitelistMode(WhitelistMode mode) {
