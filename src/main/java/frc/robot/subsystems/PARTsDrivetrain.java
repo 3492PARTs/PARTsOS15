@@ -12,13 +12,16 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
 import com.pathplanner.lib.util.FileVersionException;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.function.Supplier;
 
 import org.json.simple.parser.ParseException;
@@ -45,6 +48,7 @@ import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Robot;
 import frc.robot.constants.DrivetrainConstants;
+import frc.robot.constants.RobotConstants;
 import frc.robot.constants.generated.TunerConstants;
 import frc.robot.util.Field.Field;
 import frc.robot.util.PARTs.IPARTsSubsystem;
@@ -79,6 +83,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         private ProfiledPIDController thetaController;
         private ProfiledPIDController xRangeController;
         private ProfiledPIDController yRangeController;
+        private PathPlannerPath path;
+        private Supplier<PathPlannerPath> pathSupplier = () -> path;
 
         public PARTsDrivetrain(
                         SwerveDrivetrainConstants DrivetrainConstants,
@@ -192,7 +198,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                         drivetrainVelocityY.getMagnitude()) > 0.01
                                                         || Math.abs(diff.getTranslation()
                                                                         .getNorm()) > PARTsUnit.InchesToMeters
-                                                                                        .apply(2.0)) {
+                                                                                        .apply(24.0)) {
                                                 alignTimer.reset();
                                         }
 
@@ -314,10 +320,11 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         }
 
         public Command pathFindToPose(Pose2d pose) {
+
                 // Create the constraints to use while pathfinding. The constraints defined in
                 // the path will only be used for the path.
                 PathConstraints constraints = new PathConstraints(
-                                0.5, 0.5,
+                                1, 1,
                                 PARTsUnit.DegreesToRadians.apply(540.0),
                                 PARTsUnit.DegreesToRadians.apply(720.0));
 
@@ -329,6 +336,39 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 System.out.println("anything");
                 return pathfindingCommand;
         }
+
+        /*public Command commandPathOnTheFly(Pose2d pose) {
+                
+                Command c = this.runOnce(()->{
+                PathConstraints constraints = new PathConstraints(0.01, 0.01, 2 * Math.PI, 4 * Math.PI); // The
+                                                                                                       // constraints
+                                                                                                       // for this path.
+                // PathConstraints constraints = PathConstraints.unlimitedConstraints(12.0); //
+                // You can also use unlimited constraints, only limited by motor torque and
+                // nominal battery voltage
+                Pose2d middlePoint = pose.transformBy(new Transform2d(1 + RobotConstants.frontRobotVisionOffset.getValue(),0, new Rotation2d()));
+                Pose2d lastPoint = pose.transformBy(new Transform2d(RobotConstants.frontRobotVisionOffset.getValue(),0, new Rotation2d()));
+                // Create the path using the waypoints created above
+                path = new PathPlannerPath(
+                                PathPlannerPath.waypointsFromPoses(getPose(),middlePoint,lastPoint),
+                                constraints,
+                                null, // The ideal starting state, this is only relevant for pre-planned paths, so can
+                                      // be null for on-the-fly paths.
+                                new GoalEndState(0.0, pose.getRotation()) // Goal end state. You can set a
+                                                                                   // holonomic rotation here. If using
+                                                                                   // a differential drivetrain, the
+                                                                                   // rotation will have no effect.
+                );
+
+                // Prevent the path from being flipped if the coordinates are already correct
+                path.preventFlipping = false;
+        }).andThen(AutoBuilder.followPath(pathSupplier.get()));
+                c.setName("commandPathOnTheFly");
+                return c;
+        }
+        */
+
+
 
         /*---------------------------------- Custom Private Functions ---------------------------------*/
         private void alignCommandInitTelemetry(Pose2d holdDist) {
@@ -436,7 +476,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 sendToDashboard();
                 configureAutoBuilder();
                 fieldObject2d = Field.FIELD2D.getObject("Robot");
-                targetObject2d = Field.FIELD2D.getObject("Target Pose");
+                targetObject2d = Field.FIELD2D.getObject("target pose");
         }
 
         private void sendToDashboard() {

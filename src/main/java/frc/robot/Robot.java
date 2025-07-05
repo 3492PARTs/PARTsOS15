@@ -47,6 +47,7 @@ public class Robot extends TimedRobot {
     m_robotContainer.constructDashboard();
 
     partsLogger.logCommandScheduler();
+    partsLogger.logPathPlanner();
 
     CameraServer.startAutomaticCapture();
 

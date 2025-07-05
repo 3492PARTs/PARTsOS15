@@ -67,8 +67,9 @@ public class LimelightVision extends PARTsSubsystem{
         //setWhitelistMode(WhitelistMode.BLUE_REEF_TAGS);
         setIMUMode(1);
 
-        super.partsNT.putSmartDashboardSendable("Set MT-1", commandMegaTagMode(MegaTagMode.MEGATAG1));
-        super.partsNT.putSmartDashboardSendable("Set MT-2", commandMegaTagMode(MegaTagMode.MEGATAG2));
+        //elastic crashes :(
+        //super.partsNT.putSmartDashboardSendable("Set MT-1", commandMegaTagMode(MegaTagMode.MEGATAG1));
+        //super.partsNT.putSmartDashboardSendable("Set MT-2", commandMegaTagMode(MegaTagMode.MEGATAG2));
     }
 
     public void setMegaTagMode(MegaTagMode mode) {
@@ -83,7 +84,7 @@ public class LimelightVision extends PARTsSubsystem{
         }
     }
     public Command commandMegaTagMode (MegaTagMode mode) {
-        Command c = Commands.runOnce(()-> setMegaTagMode(mode) );
+        Command c = this.runOnce(()-> setMegaTagMode(mode));
         c.setName("commandMegaTagMode");
         c=c.ignoringDisable(true);
         return c;

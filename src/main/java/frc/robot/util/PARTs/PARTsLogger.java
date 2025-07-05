@@ -1,5 +1,7 @@
 package frc.robot.util.PARTs;
 
+import com.pathplanner.lib.util.PathPlannerLogging;
+
 import edu.wpi.first.util.datalog.BooleanLogEntry;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
@@ -7,6 +9,7 @@ import edu.wpi.first.util.datalog.StringLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.DebugConstants;
+import frc.robot.util.Field.Field;
 
 public class PARTsLogger {
     private static DataLog log;
@@ -78,5 +81,18 @@ public class PARTsLogger {
                         command -> {
                             logString(command.getName(), "Command finished");
                         });
+    }
+    public void logPathPlanner() {
+        // Logging callback for target robot pose
+        PathPlannerLogging.setLogTargetPoseCallback((pose) -> {
+            // Do whatever you want with the pose here
+            Field.FIELD2D.getObject("target pose").setPose(pose);
+        });
+
+        // Logging callback for the active path, this is sent as a list of poses
+        PathPlannerLogging.setLogActivePathCallback((poses) -> {
+            // Do whatever you want with the poses here
+            Field.FIELD2D.getObject("path").setPoses(poses);
+        });
     }
 }

@@ -326,7 +326,7 @@ public class Coral extends PARTsSubsystem {
           scoreL23();
           break;
       }
-    }).until(() -> !isCoralInEntry());
+    }).until(() -> !isCoralInExit());
   }
 
   public Command scoreCommand() {
