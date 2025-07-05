@@ -28,6 +28,7 @@ import com.ctre.phoenix.led.CANdleConfiguration;
 import com.ctre.phoenix.led.ColorFlowAnimation;
 
 import frc.robot.constants.CandleConstants;
+import frc.robot.util.PARTs.PARTsCommandUtils;
 import frc.robot.util.PARTs.PARTsSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -262,11 +263,11 @@ public class Candle extends PARTsSubsystem {
     }
 
     private Command setColorGreenCommand() {
-        return super.commandFactory("CANdleColorGreen", runOnce(() -> setColor(Color.GREEN)));
+        return PARTsCommandUtils.setCommandName("CANdleColorGreen", runOnce(() -> setColor(Color.GREEN)));
     }
 
     private Command setNoColorCommand() {
-        return super.commandFactory("CANdleColorOff", runOnce(() -> setNoColor()));
+        return PARTsCommandUtils.setCommandName("CANdleColorOff", runOnce(() -> setNoColor()));
     }
 
     private FireAnimation getBurnyBurnAnimation() {
@@ -397,11 +398,11 @@ public class Candle extends PARTsSubsystem {
     }
 
     public Command addStateCommand(CandleState state) {
-        return super.commandFactory("addStateCommand", this.runOnce(() -> addState(state)));
+        return PARTsCommandUtils.setCommandName("addStateCommand", this.runOnce(() -> addState(state)));
     }
 
     public Command removeStateCommand(CandleState state) {
-        return super.commandFactory("removeStateCommand", this.runOnce(() -> removeState(state)));
+        return PARTsCommandUtils.setCommandName("removeStateCommand", this.runOnce(() -> removeState(state)));
     }
 
     /* Wrappers so we can access the CANdle from the subsystem */

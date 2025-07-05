@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.subsystems.Candle.CandleState;
 import frc.robot.util.PARTs.PARTsCommandController;
+import frc.robot.util.PARTs.PARTsCommandUtils;
 import frc.robot.util.PARTs.PARTsSubsystem;
 
 public class Elevator extends PARTsSubsystem {
@@ -270,14 +271,14 @@ public class Elevator extends PARTsSubsystem {
   }
 
   public Command joystickElevatorControl(PARTsCommandController controller) {
-    return super.commandFactory("joystickElevatorControl", this.run(() -> {
+    return PARTsCommandUtils.setCommandName("joystickElevatorControl", this.run(() -> {
       double speed = -controller.getRightY() * ElevatorConstants.maxSpeed;
       setElevatorPower(speed);
     }).until(() -> Math.abs(controller.getRightY()) < 0.1).andThen(() -> setElevatorPower(0)));
   }
 
   public Command elevatorToLevelCommand(ElevatorState state) {
-    return super.commandFactory("elevatorToStateCommand", this.runOnce(() -> {
+    return PARTsCommandUtils.setCommandName("elevatorToStateCommand", this.runOnce(() -> {
       if (state.height != -1) {
         mPeriodicIO.is_elevator_pos_control = true;
         mPeriodicIO.elevator_target = state.height;
@@ -300,7 +301,7 @@ public class Elevator extends PARTsSubsystem {
   }
 
   public Command goToElevatorStow() {
-    return super.commandFactory("goToElevatorStow", this.runOnce(() -> {
+    return PARTsCommandUtils.setCommandName("goToElevatorStow", this.runOnce(() -> {
       mPeriodicIO.is_elevator_pos_control = true;
       mPeriodicIO.elevator_target = ElevatorConstants.StowHeight;
       mPeriodicIO.state = ElevatorState.STOW;
@@ -308,7 +309,7 @@ public class Elevator extends PARTsSubsystem {
   }
 
   public Command goToElevatorL2() {
-    return super.commandFactory("goToElevatorL2", this.runOnce(() -> {
+    return PARTsCommandUtils.setCommandName("goToElevatorL2", this.runOnce(() -> {
       mPeriodicIO.is_elevator_pos_control = true;
       mPeriodicIO.elevator_target = ElevatorConstants.L2Height;
       mPeriodicIO.state = ElevatorState.L2;
@@ -316,7 +317,7 @@ public class Elevator extends PARTsSubsystem {
   }
 
   public Command goToElevatorL3() {
-    return super.commandFactory("goToElevatorL3", this.runOnce(() -> {
+    return PARTsCommandUtils.setCommandName("goToElevatorL3", this.runOnce(() -> {
       mPeriodicIO.is_elevator_pos_control = true;
       mPeriodicIO.elevator_target = ElevatorConstants.L3Height;
       mPeriodicIO.state = ElevatorState.L3;
@@ -324,7 +325,7 @@ public class Elevator extends PARTsSubsystem {
   }
 
   public Command goToElevatorL4() {
-    return super.commandFactory("goToElevatorL4", this.runOnce(() -> {
+    return PARTsCommandUtils.setCommandName("goToElevatorL4", this.runOnce(() -> {
       mPeriodicIO.is_elevator_pos_control = true;
       mPeriodicIO.elevator_target = ElevatorConstants.L4Height;
       mPeriodicIO.state = ElevatorState.L4;
@@ -332,7 +333,7 @@ public class Elevator extends PARTsSubsystem {
   }
 
   public Command goToAlgaeLow() {
-    return super.commandFactory("goToAlgaeLow", this.runOnce(() -> {
+    return PARTsCommandUtils.setCommandName("goToAlgaeLow", this.runOnce(() -> {
       mPeriodicIO.is_elevator_pos_control = true;
       mPeriodicIO.elevator_target = ElevatorConstants.LowAlgaeHeight;
       mPeriodicIO.state = ElevatorState.A1;
@@ -340,7 +341,7 @@ public class Elevator extends PARTsSubsystem {
   }
 
   public Command goToAlgaeHigh() {
-    return super.commandFactory("goToAlgaeHigh", this.runOnce(() -> {
+    return PARTsCommandUtils.setCommandName("goToAlgaeHigh", this.runOnce(() -> {
       mPeriodicIO.is_elevator_pos_control = true;
       mPeriodicIO.elevator_target = ElevatorConstants.HighAlgaeHeight;
       mPeriodicIO.state = ElevatorState.A2;
@@ -348,7 +349,7 @@ public class Elevator extends PARTsSubsystem {
   }
 
   public Command zeroElevatorCommand() {
-    return super.commandFactory("zeroElevatorCommand",
+    return PARTsCommandUtils.setCommandName("zeroElevatorCommand",
         this.run(() -> {
           setSpeedWithoutLimits(ElevatorConstants.homingSpeed);
         })
@@ -407,7 +408,7 @@ public class Elevator extends PARTsSubsystem {
   }
 
   private Command toggleLaserCanActive() {
-    return super.commandFactory("toggleLaserCanActive",
+    return PARTsCommandUtils.setCommandName("toggleLaserCanActive",
         this.runOnce(() -> mPeriodicIO.useLaserCan = !mPeriodicIO.useLaserCan));
   }
 

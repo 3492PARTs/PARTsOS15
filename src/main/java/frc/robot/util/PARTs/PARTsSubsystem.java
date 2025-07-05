@@ -41,9 +41,4 @@ public abstract class PARTsSubsystem extends SubsystemBase implements IPARTsSubs
     partsLogger = new PARTsLogger(className);
     partsPrefrences = new PARTsPreferences();
   }
-
-  public Command commandFactory(String name, Command c) {
-    c.setName(name);
-    return c;
-  }
 }

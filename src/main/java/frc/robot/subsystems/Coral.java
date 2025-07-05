@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.constants.CoralConstants;
 import frc.robot.subsystems.Candle.CandleState;
+import frc.robot.util.PARTs.PARTsCommandUtils;
 import frc.robot.util.PARTs.PARTsSubsystem;
 
 public class Coral extends PARTsSubsystem {
@@ -218,7 +219,7 @@ public class Coral extends PARTsSubsystem {
   }
 
   public Command intake() {
-    return super.commandFactory("coralIntake",
+    return PARTsCommandUtils.setCommandName("coralIntake",
         this.runOnce(() -> {
           mPeriodicIO.speed_diff = 0.0;
           mPeriodicIO.rpm = CoralConstants.kIntakeSpeed;
@@ -227,7 +228,7 @@ public class Coral extends PARTsSubsystem {
   }
 
   public Command L4Intake() {
-    return super.commandFactory("coralIntake",
+    return PARTsCommandUtils.setCommandName("coralIntake",
         this.runOnce(() -> {
           mPeriodicIO.speed_diff = 0.0;
           mPeriodicIO.rpm = CoralConstants.kInchIntakeSpeed;
@@ -235,7 +236,7 @@ public class Coral extends PARTsSubsystem {
   }
 
   public Command L4OutTake() {
-    return super.commandFactory("coralIntake",
+    return PARTsCommandUtils.setCommandName("coralIntake",
         this.runOnce(() -> {
           mPeriodicIO.speed_diff = 0.0;
           mPeriodicIO.rpm = -CoralConstants.kInchIntakeSpeed;
@@ -243,7 +244,7 @@ public class Coral extends PARTsSubsystem {
   }
 
   public Command autoIntake() {
-    return super.commandFactory("coralIntake",
+    return PARTsCommandUtils.setCommandName("coralIntake",
         this.runOnce(() -> {
           mPeriodicIO.speed_diff = 0.0;
           mPeriodicIO.rpm = CoralConstants.kIntakeSpeed;
@@ -252,7 +253,7 @@ public class Coral extends PARTsSubsystem {
   }
 
   public Command reverse() {
-    return super.commandFactory("coralReverse",
+    return PARTsCommandUtils.setCommandName("coralReverse",
         this.runOnce(() -> {
           mPeriodicIO.speed_diff = 0.0;
           mPeriodicIO.rpm = CoralConstants.kReverseSpeed;
@@ -292,7 +293,7 @@ public class Coral extends PARTsSubsystem {
   }
 
   public Command stopCoralCommand() {
-    return super.commandFactory("stopCoralCommand", super.runOnce(() -> stopCoral()));
+    return PARTsCommandUtils.setCommandName("stopCoralCommand", super.runOnce(() -> stopCoral()));
   }
 
   public Command score() {
@@ -330,7 +331,7 @@ public class Coral extends PARTsSubsystem {
   }
 
   public Command scoreCommand() {
-    return super.commandFactory("coralScoreCmd",
+    return PARTsCommandUtils.setCommandName("coralScoreCmd",
         score().andThen(new WaitUntilCommand(() -> mPeriodicIO.state == IntakeState.NONE))
             .andThen(elevator.goToElevatorStow()));
   }
