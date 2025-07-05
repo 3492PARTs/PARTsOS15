@@ -8,11 +8,14 @@ import java.util.function.BooleanSupplier;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -151,7 +154,8 @@ public class RobotContainer {
                                                                                 .apply(-180.0))))));
 
                 driveController.leftTrigger()
-                                .whileTrue(Reef.alignToVisibleTag(true, drivetrain, elevator, ElevatorState.L2, coral, escapeBooleanSupplier, candle));
+                                .whileTrue(Reef.alignToVisibleTagSideScore(true, drivetrain, elevator, ElevatorState.L2, coral,
+                                                escapeBooleanSupplier, candle));
 
                 // logging
                 drivetrain.registerTelemetry(telemetryLogger::telemeterize);
@@ -214,16 +218,16 @@ public class RobotContainer {
 
                 // --------------------- Align, L2, Score --------------------//
                 buttonBoxController.mapTrigger()
-                                .onTrue(Reef.alignToVisibleTag(true, drivetrain, elevator, ElevatorState.L2, coral,
+                                .onTrue(Reef.alignToVisibleTagSideScore(true, drivetrain, elevator, ElevatorState.L2, coral,
                                                 escapeBooleanSupplier, candle));
 
                 // --------------------- Align, L3, Score --------------------//
-                buttonBoxController.audioTrigger().onTrue(Reef.alignToVisibleTag(true, drivetrain, elevator,
+                buttonBoxController.audioTrigger().onTrue(Reef.alignToVisibleTagSideScore(true, drivetrain, elevator,
                                 ElevatorState.L3, coral, escapeBooleanSupplier, candle));
 
                 // --------------------- Align, L4, Score --------------------//
                 buttonBoxController.cruiseTrigger()
-                                .onTrue(Reef.alignToVisibleTag(true, drivetrain, elevator, ElevatorState.L4, coral,
+                                .onTrue(Reef.alignToVisibleTagSideScore(true, drivetrain, elevator, ElevatorState.L4, coral,
                                                 escapeBooleanSupplier, candle));
 
                 // *---------------------------------------------------- *//
@@ -233,17 +237,17 @@ public class RobotContainer {
                 // --------------------- Align, L2, Score --------------------//
 
                 buttonBoxController.wipeTrigger()
-                                .onTrue(Reef.alignToVisibleTag(false, drivetrain, elevator, ElevatorState.L2, coral,
+                                .onTrue(Reef.alignToVisibleTagSideScore(false, drivetrain, elevator, ElevatorState.L2, coral,
                                                 escapeBooleanSupplier, candle));
 
                 // --------------------- Align, L3, Score --------------------//
                 buttonBoxController.flashTrigger()
-                                .onTrue(Reef.alignToVisibleTag(false, drivetrain, elevator, ElevatorState.L3, coral,
+                                .onTrue(Reef.alignToVisibleTagSideScore(false, drivetrain, elevator, ElevatorState.L3, coral,
                                                 escapeBooleanSupplier, candle));
 
                 // --------------------- Align, L4, Score --------------------//
                 buttonBoxController.handleTrigger()
-                                .onTrue(Reef.alignToVisibleTag(false, drivetrain, elevator, ElevatorState.L4, coral,
+                                .onTrue(Reef.alignToVisibleTagSideScore(false, drivetrain, elevator, ElevatorState.L4, coral,
                                                 escapeBooleanSupplier, candle));
 
                 // =============================================================================================
@@ -273,86 +277,58 @@ public class RobotContainer {
                  */
         }
 
-        /*
-         * public void configureAutonomousCommands() {
-         * NamedCommands.registerCommand("Elevator L2",
-         * elevator.elevatorToLevelCommand(ElevatorState.L2));
-         * NamedCommands.registerCommand("Elevator Stow",
-         * elevator.elevatorToLevelCommand(ElevatorState.STOW));
-         * NamedCommands.registerCommand("Elevator L4",
-         * elevator.elevatorToLevelCommand(ElevatorState.L4));
-         * 
-         * NamedCommands.registerCommand("Intake", coral.autoIntake());
-         * NamedCommands.registerCommand("Score", coral.autoScore());
-         * 
-         * NamedCommands.registerCommand("Right Align L2 Score",
-         * new AutoAlignScoreCoral(new Pose2d(
-         * Constants.Drivetrain.xZeroHoldDistance.to(PARTsUnitType.Meter),
-         * Constants.Drivetrain.rightAlignDistance
-         * .to(PARTsUnitType.Meter),
-         * new Rotation2d()), ElevatorState.L2, drivetrain, elevator, coral,
-         * candle, frontVision));
-         * NamedCommands.registerCommand("Left Align L2 Score",
-         * new AutoAlignScoreCoral(new Pose2d(
-         * Constants.Drivetrain.xZeroHoldDistance.to(PARTsUnitType.Meter),
-         * Constants.Drivetrain.leftAlignDistance
-         * .to(PARTsUnitType.Meter),
-         * new Rotation2d()), ElevatorState.L2, drivetrain, elevator, coral,
-         * candle, frontVision));
-         * 
-         * NamedCommands.registerCommand("Right Align L4 Score",
-         * new AutoAlignScoreCoralL4(
-         * new Pose2d(Constants.Drivetrain.L4XDistance.to(PARTsUnitType.Meter),
-         * Constants.Drivetrain.rightAlignDistance
-         * .to(PARTsUnitType.Meter),
-         * new Rotation2d()),
-         * ElevatorState.L4, drivetrain, elevator, coral, candle,
-         * frontVision));
-         * NamedCommands.registerCommand("Left Align L4 Score",
-         * new AutoAlignScoreCoralL4(
-         * new Pose2d(Constants.Drivetrain.L4XDistance.to(PARTsUnitType.Meter),
-         * Constants.Drivetrain.leftAlignDistance
-         * .to(PARTsUnitType.Meter),
-         * new Rotation2d()),
-         * ElevatorState.L4, drivetrain, elevator, coral, candle,
-         * frontVision));
-         * 
-         * NamedCommands.registerCommand("Align Left L4 Stop",
-         * new AutoAlignCoralStop(
-         * new Pose2d(Constants.Drivetrain.L4XDistance.to(PARTsUnitType.Meter),
-         * Constants.Drivetrain.leftAlignDistance
-         * .to(PARTsUnitType.Meter),
-         * new Rotation2d()),
-         * ElevatorState.L4, drivetrain, elevator, coral, candle,
-         * frontVision));
-         * 
-         * NamedCommands.registerCommand("Align Right L4 Stop",
-         * new AutoAlignCoralStop(
-         * new Pose2d(Constants.Drivetrain.L4XDistance.to(PARTsUnitType.Meter),
-         * Constants.Drivetrain.rightAlignDistance
-         * .to(PARTsUnitType.Meter),
-         * new Rotation2d()),
-         * ElevatorState.L4, drivetrain, elevator, coral, candle,
-         * frontVision));
-         * 
-         * NamedCommands.registerCommand("Align Middle L1 Score",
-         * new AutoAlignScoreCoral(
-         * new Pose2d(Constants.Drivetrain.xZeroHoldDistance.to(PARTsUnitType.Meter),
-         * 0,
-         * new Rotation2d()),
-         * ElevatorState.STOW, drivetrain, elevator, coral, candle,
-         * frontVision));
-         * 
-         * NamedCommands.registerCommand("Align L1",
-         * drivetrain.alignCommand(new
-         * Pose2d(Constants.Drivetrain.xZeroHoldDistance.to(PARTsUnitType.Meter),
-         * 0,
-         * new Rotation2d()), frontVision));
-         * 
-         * autoChooser = AutoBuilder.buildAutoChooser();
-         * SmartDashboard.putData("Auto Chooser", autoChooser);
-         * }
-         */
+        public void configureAutonomousCommands() {
+                NamedCommands.registerCommand("Elevator L2",
+                                elevator.elevatorToLevelCommand(ElevatorState.L2));
+                NamedCommands.registerCommand("Elevator Stow",
+                                elevator.elevatorToLevelCommand(ElevatorState.STOW));
+                NamedCommands.registerCommand("Elevator L4",
+                                elevator.elevatorToLevelCommand(ElevatorState.L4));
+
+                NamedCommands.registerCommand("Intake", coral.autoIntake());
+                NamedCommands.registerCommand("Score", coral.autoScore());
+
+                NamedCommands.registerCommand("Right Align L2 Score",
+                                Reef.alignToVisibleTagSideScore(true, drivetrain, elevator, ElevatorState.L2, coral,
+                                                escapeBooleanSupplier, candle));
+                NamedCommands.registerCommand("Left Align L2 Score",
+                                Reef.alignToVisibleTagSideScore(false, drivetrain, elevator, ElevatorState.L2, coral,
+                                                escapeBooleanSupplier, candle));
+
+                NamedCommands.registerCommand("Right Align L4 Score",
+                                Reef.alignToVisibleTagSideScore(true, drivetrain, elevator, ElevatorState.L4, coral,
+                                                escapeBooleanSupplier, candle));
+                NamedCommands.registerCommand("Left Align L4 Score",
+                                Reef.alignToVisibleTagSideScore(false, drivetrain, elevator, ElevatorState.L4, coral,
+                                                escapeBooleanSupplier, candle));
+
+                NamedCommands.registerCommand("Align Left L4 Stop",
+                                Reef.alignToVisibleTagStop(false, drivetrain, elevator, ElevatorState.L4, coral,
+                                                escapeBooleanSupplier, candle));
+
+                NamedCommands.registerCommand("Align Right L4 Stop",
+                                Reef.alignToVisibleTagStop(true, drivetrain, elevator, ElevatorState.L4, coral,
+                                                escapeBooleanSupplier, candle));
+
+                /*NamedCommands.registerCommand("Align Middle L1 Score",
+                                new AutoAlignScoreCoral(
+                                                new Pose2d(Constants.Drivetrain.xZeroHoldDistance
+                                                                .to(PARTsUnitType.Meter),
+                                                                0,
+                                                                new Rotation2d()),
+                                                ElevatorState.STOW, drivetrain, elevator, coral, candle,
+                                                frontVision));
+
+                NamedCommands.registerCommand("Align L1",
+                                drivetrain.alignCommand(new Pose2d(
+                                                Constants.Drivetrain.xZeroHoldDistance.to(PARTsUnitType.Meter),
+                                                0,
+                                                new Rotation2d()), frontVision));
+                */
+
+                autoChooser = AutoBuilder.buildAutoChooser();
+                SmartDashboard.putData("Auto Chooser", autoChooser);
+        }
 
         public Command getAutonomousCommand() {
                 return autoChooser.getSelected();
