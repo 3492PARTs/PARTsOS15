@@ -281,7 +281,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 return new PARTsUnit(super.getState().Speeds.vyMetersPerSecond, PARTsUnitType.MetersPerSecond);
         }
 
-        public Command getOnPath(String pathname) {
+        public Command pathFindToPath(String pathname) {
                 try {
                         // Load the path we want to pathfind to and follow
                         PathPlannerPath path = PathPlannerPath.fromPathFile(pathname);
@@ -297,7 +297,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                         Command pathfindingCommand = AutoBuilder.pathfindThenFollowPath(
                                         path,
                                         constraints);
-                        pathfindingCommand.setName("pathFindingCommand");
+                        pathfindingCommand.setName("pathFindToPathCommand");
                         System.out.println("anything");
                         return pathfindingCommand;
 
@@ -311,6 +311,23 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                         e.printStackTrace();
                 }
                 return new WaitCommand(0);
+        }
+
+        public Command pathFindToPose(Pose2d pose) {
+                // Create the constraints to use while pathfinding. The constraints defined in
+                // the path will only be used for the path.
+                PathConstraints constraints = new PathConstraints(
+                                0.5, 0.5,
+                                PARTsUnit.DegreesToRadians.apply(540.0),
+                                PARTsUnit.DegreesToRadians.apply(720.0));
+
+                // Since AutoBuilder is configured, we can use it to build pathfinding commands
+                Command pathfindingCommand = AutoBuilder.pathfindToPose(
+                                pose,
+                                constraints, 0.0); // Goal end velocity in meters/sec
+                pathfindingCommand.setName("pathFindToPoseCommand");
+                System.out.println("anything");
+                return pathfindingCommand;
         }
 
         /*---------------------------------- Custom Private Functions ---------------------------------*/

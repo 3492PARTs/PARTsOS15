@@ -147,7 +147,7 @@ public class RobotContainer {
                 // reset the field-centric heading on left bumper press
                 driveController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-                driveController.rightTrigger().whileTrue(drivetrain.getOnPath("TestPath18"));
+                driveController.rightTrigger().whileTrue(drivetrain.pathFindToPose(Field.getTag(18).getLocation().toPose2d()));
 
                 driveController.leftTrigger()
                                 .whileTrue(Reef.alignToVisibleTagSideScore(true, drivetrain, elevator, ElevatorState.L2, coral,
