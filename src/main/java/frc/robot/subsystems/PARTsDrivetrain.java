@@ -12,9 +12,16 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.util.FileVersionException;
+
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
+import java.io.IOException;
 import java.util.function.Supplier;
+
+import org.json.simple.parser.ParseException;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -35,6 +42,7 @@ import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Robot;
 import frc.robot.constants.DrivetrainConstants;
 import frc.robot.constants.generated.TunerConstants;
@@ -134,8 +142,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         }
 
         /*---------------------------------- Custom Public Functions ----------------------------------*/
-        public Command alignCommand(Pose2d goalPose) { 
-                return alignCommand(()-> goalPose);
+        public Command alignCommand(Pose2d goalPose) {
+                return alignCommand(() -> goalPose);
         }
 
         public Command alignCommand(Supplier<Pose2d> goalPose) {
@@ -151,8 +159,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                         .getRadians());
 
                                         thetaController.setGoal(goalPose.get().getRotation().getRadians()); // tx=0
-                                                                                                      // is
-                                                                                                      // centered.
+                                                                                                            // is
+                                                                                                            // centered.
                                         thetaController.setTolerance(
                                                         DrivetrainConstants.thetaControllerTolerance
                                                                         .to(PARTsUnitType.Radian));
@@ -165,8 +173,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
                                         // Initialize the y-range controller.
                                         yRangeController.reset(getFieldCentricPose().getY()); // Center
-                                                                                  // to
-                                                                                  // target.
+                                        // to
+                                        // target.
                                         yRangeController.setGoal(goalPose.get().getY()); // Center to target.
                                         yRangeController.setTolerance(DrivetrainConstants.yRControllerTolerance
                                                         .to(PARTsUnitType.Meter));
@@ -180,7 +188,11 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                         drivetrainVelocityX = getXVelocity();
                                         drivetrainVelocityY = getYVelocity();
 
-                                        if (Math.max(drivetrainVelocityX.getMagnitude(), drivetrainVelocityY.getMagnitude()) > 0.01 || Math.abs(diff.getTranslation().getNorm()) > PARTsUnit.InchesToMeters.apply(2.0)) {
+                                        if (Math.max(drivetrainVelocityX.getMagnitude(),
+                                                        drivetrainVelocityY.getMagnitude()) > 0.01
+                                                        || Math.abs(diff.getTranslation()
+                                                                        .getNorm()) > PARTsUnit.InchesToMeters
+                                                                                        .apply(2.0)) {
                                                 alignTimer.reset();
                                         }
 
@@ -190,7 +202,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
                                         Rotation2d thetaOutput = new Rotation2d(
                                                         thetaController.calculate(
-                                                                getFieldCentricPose().getRotation()
+                                                                        getFieldCentricPose().getRotation()
                                                                                         .getRadians()));
 
                                         Pose2d rangeOutput = new Pose2d(
@@ -232,7 +244,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         }
 
         public Pose2d getFieldCentricPose() {
-                return Robot.isBlue() ? super.getState().Pose : Field.transformToOppositeAlliance(super.getState().Pose);
+                return Robot.isBlue() ? super.getState().Pose
+                                : Field.transformToOppositeAlliance(super.getState().Pose);
         }
 
         public Command snapToAngle(double angle) {
@@ -266,6 +279,38 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
         public PARTsUnit getYVelocity() {
                 return new PARTsUnit(super.getState().Speeds.vyMetersPerSecond, PARTsUnitType.MetersPerSecond);
+        }
+
+        public Command getOnPath(String pathname) {
+                try {
+                        // Load the path we want to pathfind to and follow
+                        PathPlannerPath path = PathPlannerPath.fromPathFile(pathname);
+
+                        // Create the constraints to use while pathfinding. The constraints defined in
+                        // the path will only be used for the path.
+                        PathConstraints constraints = new PathConstraints(
+                                        0.5, 0.5,
+                                        PARTsUnit.DegreesToRadians.apply(540.0),
+                                        PARTsUnit.DegreesToRadians.apply(720.0));
+
+                        // Since AutoBuilder is configured, we can use it to build pathfinding commands
+                        Command pathfindingCommand = AutoBuilder.pathfindThenFollowPath(
+                                        path,
+                                        constraints);
+                        pathfindingCommand.setName("pathFindingCommand");
+                        System.out.println("anything");
+                        return pathfindingCommand;
+
+                } catch (IOException e) {
+                        e.printStackTrace();
+                } catch (FileVersionException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                } catch (ParseException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                }
+                return new WaitCommand(0);
         }
 
         /*---------------------------------- Custom Private Functions ---------------------------------*/
@@ -355,7 +400,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 yRangeController.getVelocityError());
                 partsNT.setDouble("align/Output/thetaVelocityError",
                                 thetaController.getVelocityError());
-                
+
                 partsNT.setDouble("align/timer", alignTimer.get());
                 partsNT.setBoolean("align/timerHasElapsed", timerElapsed);
 
@@ -443,11 +488,13 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 partsNT = new PARTsNT(this);
                 partsLogger = new PARTsLogger(this);
         }
+
         /*---------------------------------- Override Functions ----------------------------------*/
         @Override
         public void addVisionMeasurement(Pose2d measurement, double timestamp) {
                 super.addVisionMeasurement(measurement, Utils.fpgaToCurrentTime(timestamp));
         }
+
         /*---------------------------------- Interface Functions ----------------------------------*/
         @Override
         public void initSendable(SendableBuilder builder) {
