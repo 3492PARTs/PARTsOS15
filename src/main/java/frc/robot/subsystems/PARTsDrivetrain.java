@@ -20,6 +20,7 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
@@ -173,10 +174,13 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                         alignCommandInitTelemetry(goalPose.get());
                                 },
                                 () -> {
+                                        Pose2d pose = getFieldCentricPose();
+                                        Transform2d diff = goalPose.get().minus(pose);
+
                                         pigeonMovementX = getPigeon2().getAccelerationX().getValueAsDouble();
                                         pigeonMovementY = getPigeon2().getAccelerationY().getValueAsDouble();
 
-                                        if (pigeonMovementX > 0 || pigeonMovementY > 0) {
+                                        if (pigeonMovementX > 0 || pigeonMovementY > 0 || Math.abs(diff.getTranslation().getNorm()) < 1) {
                                                 alignTimer.reset();
                                         }
 
