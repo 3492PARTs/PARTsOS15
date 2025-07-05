@@ -61,7 +61,7 @@ public class Reef {
         return c;
     }
 
-    public static Command alignToVisibleTagStop(boolean rightSide, PARTsDrivetrain drivetrain, Elevator elevator,
+    public static Command alignToVisibleTagSideStop(boolean rightSide, PARTsDrivetrain drivetrain, Elevator elevator,
             ElevatorState elevatorState, Coral coral, BooleanSupplier escapeBoolean, Candle candle) {
         Command c = candle.addStateCommand(CandleState.AUTO_ALIGN)
                 .andThen(new ParallelDeadlineGroup(new WaitUntilCommand(escapeBoolean),
