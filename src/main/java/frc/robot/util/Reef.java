@@ -25,7 +25,8 @@ import frc.robot.subsystems.LimelightVision;
 import frc.robot.subsystems.PARTsDrivetrain;
 import frc.robot.subsystems.Candle.CandleState;
 import frc.robot.subsystems.Elevator.ElevatorState;
-import frc.robot.util.PARTsUnit.PARTsUnitType;
+import frc.robot.util.PARTs.PARTsUnit;
+import frc.robot.util.PARTs.PARTsUnit.PARTsUnitType;
 
 /** Add your docs here. */
 public class Reef {

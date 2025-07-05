@@ -1,9 +1,10 @@
-package frc.robot.util;
+package frc.robot.util.PARTs;
 
 import java.util.ArrayList;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.util.Elastic;
 
 public class PARTsDashboard {
     private static DashboardTab state = DashboardTab.AUTONOMOUS;

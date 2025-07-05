@@ -1,7 +1,7 @@
 package frc.robot.constants;
 
-import frc.robot.util.PARTsUnit;
-import frc.robot.util.PARTsUnit.PARTsUnitType;
+import frc.robot.util.PARTs.PARTsUnit;
+import frc.robot.util.PARTs.PARTsUnit.PARTsUnitType;
 
 public class DrivetrainConstants {
     public static class drivetrainConstants {

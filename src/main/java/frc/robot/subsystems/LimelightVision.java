@@ -12,7 +12,7 @@ import frc.robot.constants.VisionConstants.visionConstants;
 import frc.robot.util.Field;
 import frc.robot.util.LimelightHelpers;
 import frc.robot.util.LimelightHelpers.PoseEstimate;
-import frc.robot.util.PARTsSubsystem;
+import frc.robot.util.PARTs.PARTsSubsystem;
 
 public class LimelightVision extends PARTsSubsystem{
 

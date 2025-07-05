@@ -28,7 +28,7 @@ import com.ctre.phoenix.led.CANdleConfiguration;
 import com.ctre.phoenix.led.ColorFlowAnimation;
 
 import frc.robot.constants.CandleConstants.candleConstants;
-import frc.robot.util.PARTsSubsystem;
+import frc.robot.util.PARTs.PARTsSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class Candle extends PARTsSubsystem {

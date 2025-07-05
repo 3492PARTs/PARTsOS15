@@ -14,10 +14,10 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.DebugConstants.debugConstants;
-import frc.robot.util.PARTsDashboard;
-import frc.robot.util.PARTsLogger;
-import frc.robot.util.PARTsNT;
-import frc.robot.util.PARTsDashboard.DashboardTab;
+import frc.robot.util.PARTs.PARTsDashboard;
+import frc.robot.util.PARTs.PARTsLogger;
+import frc.robot.util.PARTs.PARTsNT;
+import frc.robot.util.PARTs.PARTsDashboard.DashboardTab;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;

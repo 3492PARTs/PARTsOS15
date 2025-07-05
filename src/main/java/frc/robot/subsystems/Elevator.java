@@ -20,8 +20,8 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.constants.ElevatorConstants.elevatorConstants;
 import frc.robot.subsystems.Candle.CandleState;
-import frc.robot.util.PARTsCommandController;
-import frc.robot.util.PARTsSubsystem;
+import frc.robot.util.PARTs.PARTsCommandController;
+import frc.robot.util.PARTs.PARTsSubsystem;
 
 public class Elevator extends PARTsSubsystem {
 
