@@ -303,11 +303,11 @@ public class RobotContainer {
                                                 escapeBooleanSupplier, candle));
 
                 NamedCommands.registerCommand("Align Left L4 Stop",
-                                Reef.alignToVisibleTagStop(false, drivetrain, elevator, ElevatorState.L4, coral,
+                                Reef.alignToVisibleTagSideStop(false, drivetrain, elevator, ElevatorState.L4, coral,
                                                 escapeBooleanSupplier, candle));
 
                 NamedCommands.registerCommand("Align Right L4 Stop",
-                                Reef.alignToVisibleTagStop(true, drivetrain, elevator, ElevatorState.L4, coral,
+                                Reef.alignToVisibleTagSideStop(true, drivetrain, elevator, ElevatorState.L4, coral,
                                                 escapeBooleanSupplier, candle));
 
                 /*NamedCommands.registerCommand("Align Middle L1 Score",
