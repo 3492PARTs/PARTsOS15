@@ -8,9 +8,9 @@ import frc.robot.Robot;
 import frc.robot.constants.CameraConstants;
 import frc.robot.constants.CameraConstants.Camera;
 import frc.robot.constants.CameraConstants.CameraName;
-import frc.robot.constants.VisionConstants.visionConstants;
-import frc.robot.util.Field;
+import frc.robot.constants.VisionConstants;
 import frc.robot.util.LimelightHelpers;
+import frc.robot.util.Field.Field;
 import frc.robot.util.LimelightHelpers.PoseEstimate;
 import frc.robot.util.PARTs.PARTsSubsystem;
 
@@ -70,10 +70,10 @@ public class LimelightVision extends PARTsSubsystem{
         this.megaTagMode = mode;
         switch (mode) {
             case MEGATAG1:
-                drivetrain.setVisionMeasurementStdDevs(visionConstants.MT1_STDEVS);
+                drivetrain.setVisionMeasurementStdDevs(VisionConstants.MT1_STDEVS);
                 break;
             case MEGATAG2:
-                drivetrain.setVisionMeasurementStdDevs(visionConstants.MT2_STDEVS);
+                drivetrain.setVisionMeasurementStdDevs(VisionConstants.MT2_STDEVS);
                 break;
         }
     }

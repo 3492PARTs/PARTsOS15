@@ -114,14 +114,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * through
      * getters in the classes.
      * 
-     * @param drivetrainConstants Drivetrain-wide constants for the swerve drive
+     * @param DrivetrainConstants Drivetrain-wide constants for the swerve drive
      * @param modules             Constants for each specific module
      */
 
     public CommandSwerveDrivetrain(
-            SwerveDrivetrainConstants drivetrainConstants,
+            SwerveDrivetrainConstants DrivetrainConstants,
             SwerveModuleConstants<?, ?, ?>... modules) {
-        super(drivetrainConstants, modules);
+        super(DrivetrainConstants, modules);
         if (Utils.isSimulation()) {
             startSimThread();
         }
@@ -136,17 +136,17 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * through
      * getters in the classes.
      *
-     * @param drivetrainConstants     Drivetrain-wide constants for the swerve drive
+     * @param DrivetrainConstants     Drivetrain-wide constants for the swerve drive
      * @param odometryUpdateFrequency The frequency to run the odometry loop. If
      *                                unspecified or set to 0 Hz, this is 250 Hz on
      *                                CAN FD, and 100 Hz on CAN 2.0.
      * @param modules                 Constants for each specific module
      */
     public CommandSwerveDrivetrain(
-            SwerveDrivetrainConstants drivetrainConstants,
+            SwerveDrivetrainConstants DrivetrainConstants,
             double odometryUpdateFrequency,
             SwerveModuleConstants<?, ?, ?>... modules) {
-        super(drivetrainConstants, odometryUpdateFrequency, modules);
+        super(DrivetrainConstants, odometryUpdateFrequency, modules);
         if (Utils.isSimulation()) {
             startSimThread();
         }
@@ -161,7 +161,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * through
      * getters in the classes.
      *
-     * @param drivetrainConstants       Drivetrain-wide constants for the swerve
+     * @param DrivetrainConstants       Drivetrain-wide constants for the swerve
      *                                  drive
      * @param odometryUpdateFrequency   The frequency to run the odometry loop. If
      *                                  unspecified or set to 0 Hz, this is 250 Hz
@@ -176,12 +176,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * @param modules                   Constants for each specific module
      */
     public CommandSwerveDrivetrain(
-            SwerveDrivetrainConstants drivetrainConstants,
+            SwerveDrivetrainConstants DrivetrainConstants,
             double odometryUpdateFrequency,
             Matrix<N3, N1> odometryStandardDeviation,
             Matrix<N3, N1> visionStandardDeviation,
             SwerveModuleConstants<?, ?, ?>... modules) {
-        super(drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation,
+        super(DrivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation,
                 modules);
         if (Utils.isSimulation()) {
             startSimThread();

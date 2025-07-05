@@ -27,14 +27,14 @@ import com.ctre.phoenix.led.TwinkleAnimation.TwinklePercent;
 import com.ctre.phoenix.led.CANdleConfiguration;
 import com.ctre.phoenix.led.ColorFlowAnimation;
 
-import frc.robot.constants.CandleConstants.candleConstants;
+import frc.robot.constants.CandleConstants;
 import frc.robot.util.PARTs.PARTsSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class Candle extends PARTsSubsystem {
     // https://github.com/CrossTheRoadElec/Phoenix5-Examples/blob/master/Java%20General/CANdle%20MultiAnimation/src/main/java/frc/robot/subsystems/CANdleSystem.java
     private static CANdle candle;
-    private final int LED_LENGTH = candleConstants.ledLength;
+    private final int LED_LENGTH = CandleConstants.ledLength;
     private Animation animation = null;
 
     private PeriodicIO mPeriodicIO;
@@ -170,7 +170,7 @@ public class Candle extends PARTsSubsystem {
     public Candle() {
         super("Candle");
         mPeriodicIO = new PeriodicIO();
-        candle = new CANdle(candleConstants.candleId, "rio");
+        candle = new CANdle(CandleConstants.candleId, "rio");
 
         CANdleConfiguration configAll = new CANdleConfiguration();
         configAll.statusLedOffWhenActive = true;

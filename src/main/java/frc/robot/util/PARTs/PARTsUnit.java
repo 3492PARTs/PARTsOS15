@@ -12,13 +12,14 @@ import java.util.function.Function;
 public class PARTsUnit {
 
     public enum PARTsUnitType {
-        Angle, // Degrees.
+        Angle, // Degrees. todo: change to degree?
         Radian,
         Meter,
         Inch,
         Foot,
         Percent,
-        Rotations
+        Rotations,
+        MetersPerSecond
     }
 
     private double value;
@@ -40,6 +41,14 @@ public class PARTsUnit {
      */
     public double getValue() {
         return value;
+    }
+
+    /**
+     * Gets the absolute value as a double.
+     * @return The value as a double.
+     */
+    public double getMagnitude() {
+        return Math.abs(value);
     }
 
     /**

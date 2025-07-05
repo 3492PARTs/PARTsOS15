@@ -4,7 +4,6 @@ import frc.robot.util.PARTs.PARTsUnit;
 import frc.robot.util.PARTs.PARTsUnit.PARTsUnitType;
 
 public class DrivetrainConstants {
-    public static class drivetrainConstants {
         public static final String canBusName = "hi";
         public static final double kMaxAngularSpeed = Math.PI / 4; // Radians
         public static final double kMaxSpeed = .5; // Meters per second
@@ -43,5 +42,4 @@ public class DrivetrainConstants {
         public static final PARTsUnit xZeroHoldDistance = new PARTsUnit(-9, PARTsUnitType.Inch);
 
         public static final double maxAlignTime = 4; // seconds
-    }
 }

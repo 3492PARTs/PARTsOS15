@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.constants.DebugConstants.debugConstants;
+import frc.robot.constants.DebugConstants;
 import frc.robot.util.PARTs.PARTsDashboard;
 import frc.robot.util.PARTs.PARTsLogger;
 import frc.robot.util.PARTs.PARTsNT;
@@ -80,7 +80,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    if (!debugConstants.debug) {
+    if (!DebugConstants.debug) {
       PARTsDashboard.setTab(DashboardTab.AUTONOMOUS);
     }
     m_robotContainer.setIdleCandleState();
@@ -101,7 +101,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    if (!debugConstants.debug) {
+    if (!DebugConstants.debug) {
       PARTsDashboard.setTab(DashboardTab.TELEOPERATED);
     }
 

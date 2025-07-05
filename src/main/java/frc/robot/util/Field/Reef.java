@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.util;
+package frc.robot.util.Field;
 
 import java.util.function.BooleanSupplier;
 
@@ -16,8 +16,8 @@ import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.constants.CameraConstants.CameraName;
-import frc.robot.constants.DrivetrainConstants.drivetrainConstants;
-import frc.robot.constants.RobotConstants.robotConstants;
+import frc.robot.constants.DrivetrainConstants;
+import frc.robot.constants.RobotConstants;
 import frc.robot.subsystems.Candle;
 import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.Elevator;
@@ -42,10 +42,10 @@ public class Reef {
                             targetPose2d = targetPose2d
                                     .transformBy(new Transform2d(
                                             (elevatorState == ElevatorState.L4
-                                                    ? robotConstants.frontRobotVisionL4Offset.to(PARTsUnitType.Meter)
-                                                    : robotConstants.frontRobotVisionOffset.to(PARTsUnitType.Meter)),
+                                                    ? RobotConstants.frontRobotVisionL4Offset.to(PARTsUnitType.Meter)
+                                                    : RobotConstants.frontRobotVisionOffset.to(PARTsUnitType.Meter)),
                                             (rightSide ? 1 : -1)
-                                                    * drivetrainConstants.poleDistanceOffset.to(PARTsUnitType.Meter),
+                                                    * DrivetrainConstants.poleDistanceOffset.to(PARTsUnitType.Meter),
                                             new Rotation2d(PARTsUnit.DegreesToRadians.apply(180.0))));
                         }).andThen(drivetrain.alignCommand(() -> targetPose2d))
                                 .andThen(elevator.elevatorToLevelCommand(elevatorState))
@@ -72,10 +72,10 @@ public class Reef {
                             targetPose2d = targetPose2d
                                     .transformBy(new Transform2d(
                                             (elevatorState == ElevatorState.L4
-                                                    ? robotConstants.frontRobotVisionL4Offset.to(PARTsUnitType.Meter)
-                                                    : robotConstants.frontRobotVisionOffset.to(PARTsUnitType.Meter)),
+                                                    ? RobotConstants.frontRobotVisionL4Offset.to(PARTsUnitType.Meter)
+                                                    : RobotConstants.frontRobotVisionOffset.to(PARTsUnitType.Meter)),
                                             (rightSide ? 1 : -1)
-                                                    * drivetrainConstants.poleDistanceOffset.to(PARTsUnitType.Meter),
+                                                    * DrivetrainConstants.poleDistanceOffset.to(PARTsUnitType.Meter),
                                             new Rotation2d(PARTsUnit.DegreesToRadians.apply(180.0))));
                         }).andThen(drivetrain.alignCommand(() -> targetPose2d))
                                 .andThen(elevator.elevatorToLevelCommand(elevatorState)),

@@ -36,9 +36,9 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.Robot;
-import frc.robot.constants.DrivetrainConstants.drivetrainConstants;
+import frc.robot.constants.DrivetrainConstants;
 import frc.robot.constants.generated.TunerConstants;
-import frc.robot.util.Field;
+import frc.robot.util.Field.Field;
 import frc.robot.util.PARTs.IPARTsSubsystem;
 import frc.robot.util.PARTs.PARTsLogger;
 import frc.robot.util.PARTs.PARTsNT;
@@ -61,8 +61,8 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         private PARTsLogger partsLogger;
 
         private Timer alignTimer;
-        private double pigeonMovementX;
-        private double pigeonMovementY;
+        private PARTsUnit drivetrainVelocityX;
+        private PARTsUnit drivetrainVelocityY;
         private boolean timerElapsed = false;
 
         // Vision Variables
@@ -73,29 +73,29 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         private ProfiledPIDController yRangeController;
 
         public PARTsDrivetrain(
-                        SwerveDrivetrainConstants drivetrainConstants,
+                        SwerveDrivetrainConstants DrivetrainConstants,
                         SwerveModuleConstants<?, ?, ?>... modules) {
-                super(drivetrainConstants, modules);
+                super(DrivetrainConstants, modules);
 
                 initialize();
         }
 
         public PARTsDrivetrain(
-                        SwerveDrivetrainConstants drivetrainConstants,
+                        SwerveDrivetrainConstants DrivetrainConstants,
                         double odometryUpdateFrequency,
                         SwerveModuleConstants<?, ?, ?>... modules) {
-                super(drivetrainConstants, odometryUpdateFrequency, modules);
+                super(DrivetrainConstants, odometryUpdateFrequency, modules);
 
                 initialize();
         }
 
         public PARTsDrivetrain(
-                        SwerveDrivetrainConstants drivetrainConstants,
+                        SwerveDrivetrainConstants DrivetrainConstants,
                         double odometryUpdateFrequency,
                         Matrix<N3, N1> odometryStandardDeviation,
                         Matrix<N3, N1> visionStandardDeviation,
                         SwerveModuleConstants<?, ?, ?>... modules) {
-                super(drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation,
+                super(DrivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation,
                                 modules);
 
                 initialize();
@@ -154,13 +154,13 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                                                                       // is
                                                                                                       // centered.
                                         thetaController.setTolerance(
-                                                        drivetrainConstants.thetaControllerTolerance
+                                                        DrivetrainConstants.thetaControllerTolerance
                                                                         .to(PARTsUnitType.Radian));
 
                                         // Initialize the x-range controller.
                                         xRangeController.reset(getFieldCentricPose().getX());
                                         xRangeController.setGoal(goalPose.get().getX());
-                                        xRangeController.setTolerance(drivetrainConstants.xRControllerTolerance
+                                        xRangeController.setTolerance(DrivetrainConstants.xRControllerTolerance
                                                         .to(PARTsUnitType.Meter));
 
                                         // Initialize the y-range controller.
@@ -168,7 +168,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                                                   // to
                                                                                   // target.
                                         yRangeController.setGoal(goalPose.get().getY()); // Center to target.
-                                        yRangeController.setTolerance(drivetrainConstants.yRControllerTolerance
+                                        yRangeController.setTolerance(DrivetrainConstants.yRControllerTolerance
                                                         .to(PARTsUnitType.Meter));
 
                                         alignCommandInitTelemetry(goalPose.get());
@@ -177,14 +177,14 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                         Pose2d pose = getFieldCentricPose();
                                         Transform2d diff = goalPose.get().minus(pose);
 
-                                        pigeonMovementX = getPigeon2().getAccelerationX().getValueAsDouble();
-                                        pigeonMovementY = getPigeon2().getAccelerationY().getValueAsDouble();
+                                        drivetrainVelocityX = getXVelocity();
+                                        drivetrainVelocityY = getYVelocity();
 
-                                        if (pigeonMovementX > 0 || pigeonMovementY > 0 || Math.abs(diff.getTranslation().getNorm()) < 1) {
+                                        if (Math.max(drivetrainVelocityX.getMagnitude(), drivetrainVelocityY.getMagnitude()) > 0.01 || Math.abs(diff.getTranslation().getNorm()) > PARTsUnit.InchesToMeters.apply(2.0)) {
                                                 alignTimer.reset();
                                         }
 
-                                        if (alignTimer.hasElapsed(0.5)) {
+                                        if (alignTimer.hasElapsed(0.25)) {
                                                 timerElapsed = true;
                                         }
 
@@ -210,7 +210,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                         .withVelocityY(translation.getY())
                                                         .withRotationalRate(thetaOutput.getRadians()));
 
-                                        alignCommandExecuteTelemetry(thetaOutput, rangeOutput);
+                                        alignCommandExecuteTelemetry(thetaOutput, rangeOutput, diff);
                                 },
                                 (Boolean b) -> {
                                         super.setControl(alignRequest
@@ -260,6 +260,14 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 .withRotationalRate(robotSpeeds.omegaRadiansPerSecond));
         }
 
+        public PARTsUnit getXVelocity() {
+                return new PARTsUnit(super.getState().Speeds.vxMetersPerSecond, PARTsUnitType.MetersPerSecond);
+        }
+
+        public PARTsUnit getYVelocity() {
+                return new PARTsUnit(super.getState().Speeds.vyMetersPerSecond, PARTsUnitType.MetersPerSecond);
+        }
+
         /*---------------------------------- Custom Private Functions ---------------------------------*/
         private void alignCommandInitTelemetry(Pose2d holdDist) {
                 partsNT.setDouble("align/holdDistX", new PARTsUnit(holdDist.getX(), PARTsUnitType.Meter)
@@ -277,7 +285,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
         }
 
-        private void alignCommandExecuteTelemetry(Rotation2d thetaOutput, Pose2d rangeOutput) {
+        private void alignCommandExecuteTelemetry(Rotation2d thetaOutput, Pose2d rangeOutput, Transform2d diff) {
                 partsLogger.logDouble("align/rPoseX",
                                 new PARTsUnit(getPose().getX(), PARTsUnitType.Meter)
                                                 .to(PARTsUnitType.Inch));
@@ -351,8 +359,9 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 partsNT.setDouble("align/timer", alignTimer.get());
                 partsNT.setBoolean("align/timerHasElapsed", timerElapsed);
 
-                partsNT.setDouble("align/pigeonMovementX", pigeonMovementX);
-                partsNT.setDouble("align/pigeonMovementY", pigeonMovementY);
+                partsNT.setDouble("align/pigeonMovementX", drivetrainVelocityX.getValue());
+                partsNT.setDouble("align/pigeonMovementY", drivetrainVelocityY.getValue());
+                partsNT.setDouble("align/goalPoseError", Math.abs(diff.getTranslation().getNorm()));
         }
 
         private void initialize() {
@@ -411,22 +420,22 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 .withDeadband(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * 0.1)
                                 .withRotationalDeadband(0.1);
 
-                thetaController = new ProfiledPIDController(drivetrainConstants.THETA_P, drivetrainConstants.THETA_I,
-                                drivetrainConstants.THETA_D,
-                                new TrapezoidProfile.Constraints(drivetrainConstants.MAX_AIM_VELOCITY,
-                                                drivetrainConstants.MAX_AIM_ACCELERATION));
+                thetaController = new ProfiledPIDController(DrivetrainConstants.THETA_P, DrivetrainConstants.THETA_I,
+                                DrivetrainConstants.THETA_D,
+                                new TrapezoidProfile.Constraints(DrivetrainConstants.MAX_AIM_VELOCITY,
+                                                DrivetrainConstants.MAX_AIM_ACCELERATION));
                 thetaController.enableContinuousInput(-Math.PI, Math.PI); // Wrpa from -pi to ip
 
-                xRangeController = new ProfiledPIDController(drivetrainConstants.RANGE_X_P,
-                                drivetrainConstants.RANGE_I,
-                                drivetrainConstants.RANGE_D,
-                                new TrapezoidProfile.Constraints(drivetrainConstants.MAX_RANGE_VELOCITY,
-                                                drivetrainConstants.MAX_RANGE_ACCELERATION));
-                yRangeController = new ProfiledPIDController(drivetrainConstants.RANGE_Y_P,
-                                drivetrainConstants.RANGE_I,
-                                drivetrainConstants.RANGE_D,
-                                new TrapezoidProfile.Constraints(drivetrainConstants.MAX_RANGE_VELOCITY,
-                                                drivetrainConstants.MAX_RANGE_ACCELERATION));
+                xRangeController = new ProfiledPIDController(DrivetrainConstants.RANGE_X_P,
+                                DrivetrainConstants.RANGE_I,
+                                DrivetrainConstants.RANGE_D,
+                                new TrapezoidProfile.Constraints(DrivetrainConstants.MAX_RANGE_VELOCITY,
+                                                DrivetrainConstants.MAX_RANGE_ACCELERATION));
+                yRangeController = new ProfiledPIDController(DrivetrainConstants.RANGE_Y_P,
+                                DrivetrainConstants.RANGE_I,
+                                DrivetrainConstants.RANGE_D,
+                                new TrapezoidProfile.Constraints(DrivetrainConstants.MAX_RANGE_VELOCITY,
+                                                DrivetrainConstants.MAX_RANGE_ACCELERATION));
 
         }
 
