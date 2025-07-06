@@ -17,9 +17,12 @@ import frc.robot.constants.generated.TunerConstants;
 import frc.robot.subsystems.Candle;
 import frc.robot.subsystems.Candle.CandleState;
 import frc.robot.subsystems.PARTsDrivetrain;
+import frc.robot.subsystems.Coral.Coral;
+import frc.robot.subsystems.Coral.CoralPhys;
+import frc.robot.subsystems.Coral.CoralSim;
 import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Elevator.Elevator.ElevatorState;
-import frc.robot.subsystems.Elevator.ElevatorImp;
+import frc.robot.subsystems.Elevator.ElevatorPhys;
 import frc.robot.subsystems.Elevator.ElevatorSim;
 import frc.robot.util.Field.Field;
 import frc.robot.util.Field.Reef;
@@ -30,7 +33,6 @@ import frc.robot.util.PARTs.PARTsDashboard;
 import frc.robot.util.PARTs.PARTsNT;
 import frc.robot.util.PARTs.Interfaces.IPARTsSubsystem;
 import frc.robot.util.PARTs.PARTsController.ControllerType;
-import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.LimelightVision;
 import frc.robot.subsystems.LimelightVision.MegaTagMode;
 
@@ -47,10 +49,10 @@ public class RobotContainer {
 
         public final Candle candle = new Candle();
 
-        private final Elevator elevator = Robot.isReal() ? new ElevatorImp(candle) : new ElevatorSim(candle);
+        private final Elevator elevator = Robot.isReal() ? new ElevatorPhys(candle) : new ElevatorSim(candle);
         // private final ElevatorSysId elevator = new ElevatorSysId();
 
-        private final Coral coral = new Coral(candle, elevator);
+        private final Coral coral = Robot.isReal() ? new CoralPhys(candle, elevator) : new CoralSim(candle, elevator);
 
         public final PARTsDrivetrain drivetrain = new PARTsDrivetrain(
                         TunerConstants.DrivetrainConstants,

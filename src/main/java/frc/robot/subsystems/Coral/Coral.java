@@ -1,8 +1,9 @@
+package frc.robot.subsystems.Coral;
+
 // Copyright (c) FIRST and other WPILib contributors.
+
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
-
-package frc.robot.subsystems;
 
 import java.util.ArrayList;
 
@@ -22,16 +23,17 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.constants.CoralConstants;
+import frc.robot.subsystems.Candle;
 import frc.robot.subsystems.Candle.CandleState;
 import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.util.PARTs.PARTsCommandUtils;
 import frc.robot.util.PARTs.Abstracts.PARTsSubsystem;
 
-public class Coral extends PARTsSubsystem {
+public abstract class Coral extends PARTsSubsystem {
   private Elevator elevator;
 
   /*-------------------------------- Private instance variables ---------------------------------*/
-  private PeriodicIO mPeriodicIO;
+  protected PeriodicIO mPeriodicIO;
   private final Candle candle;
 
   public enum IntakeState {
@@ -44,12 +46,6 @@ public class Coral extends PARTsSubsystem {
     ERROR
   }
 
-  private SparkMax mLeftMotor;
-  private SparkMax mRightMotor;
-
-  private LaserCan entrySensor;
-  private LaserCan exitSensor;
-
   public Coral(Candle candle, Elevator elevator) {
     super("Coral");
 
@@ -58,40 +54,6 @@ public class Coral extends PARTsSubsystem {
 
     mPeriodicIO = new PeriodicIO();
 
-    mLeftMotor = new SparkMax(CoralConstants.coralLeftMotorId, MotorType.kBrushless);
-    mRightMotor = new SparkMax(CoralConstants.coralRightMotorId, MotorType.kBrushless);
-
-    SparkMaxConfig coralConfig = new SparkMaxConfig();
-
-    coralConfig.idleMode(IdleMode.kBrake);
-
-    mLeftMotor.configure(
-        coralConfig,
-        ResetMode.kResetSafeParameters,
-        PersistMode.kPersistParameters);
-    mRightMotor.configure(
-        coralConfig,
-        ResetMode.kResetSafeParameters,
-        PersistMode.kPersistParameters);
-
-    entrySensor = new LaserCan(CoralConstants.laserCanId);
-    try {
-      entrySensor.setRangingMode(LaserCan.RangingMode.SHORT);
-      entrySensor.setRegionOfInterest(new LaserCan.RegionOfInterest(4, 4, 4, 4));
-      entrySensor.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
-    } catch (ConfigurationFailedException e) {
-      System.out.println("Configuration failed! " + e);
-    }
-
-    exitSensor = new LaserCan(CoralConstants.laserCan2Id);
-    try {
-      exitSensor.setRangingMode(LaserCan.RangingMode.SHORT);
-      exitSensor.setRegionOfInterest(new LaserCan.RegionOfInterest(4, 4, 4, 4));
-      exitSensor.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
-    } catch (ConfigurationFailedException e) {
-      System.out.println("Configuration failed! " + e);
-    }
-
     new Trigger(this::isCoralInEntry).onTrue(Commands.runOnce(() -> candle.addState(CandleState.CORAL_ENTERING)))
         .onFalse(Commands.runOnce(() -> candle.removeState(CandleState.CORAL_ENTERING)));
 
@@ -99,7 +61,7 @@ public class Coral extends PARTsSubsystem {
         .onFalse(Commands.runOnce(() -> candle.removeState(CandleState.HAS_CORAL)));
   }
 
-  private static class PeriodicIO {
+  protected static class PeriodicIO {
     double rpm = 0.0;
     double speed_diff = 0.0;
 
@@ -118,8 +80,6 @@ public class Coral extends PARTsSubsystem {
 
   @Override
   public void periodic() {
-    mPeriodicIO.entryLaserMeasurement = entrySensor.getMeasurement();
-    mPeriodicIO.exitLaserMeasurement = exitSensor.getMeasurement();
 
     checkErrors();
 
@@ -132,9 +92,6 @@ public class Coral extends PARTsSubsystem {
       }
     } else
       elevator.setGantryBlock(false);
-
-    mLeftMotor.set(mPeriodicIO.rpm - mPeriodicIO.speed_diff);
-    mRightMotor.set(-mPeriodicIO.rpm);
   }
 
   @Override
@@ -178,12 +135,6 @@ public class Coral extends PARTsSubsystem {
 
     super.partsNT.putBoolean("LaserEntry/hasCoral", isCoralInEntry());
     super.partsNT.putBoolean("LaserExit/hasCoral", isCoralInExit());
-
-    super.partsNT.putDouble("Current/Left", mLeftMotor.getOutputCurrent());
-    super.partsNT.putDouble("Current/Right", mRightMotor.getOutputCurrent());
-
-    super.partsNT.putDouble("Output/Left", mLeftMotor.getAppliedOutput());
-    super.partsNT.putDouble("Output/Right", mRightMotor.getAppliedOutput());
 
     super.partsNT.putString("State", mPeriodicIO.state.toString());
   }

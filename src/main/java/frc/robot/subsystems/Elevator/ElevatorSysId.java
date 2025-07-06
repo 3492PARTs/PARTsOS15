@@ -16,7 +16,7 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.InchesPerSecond;
 
 /** Add your docs here. */
-public class ElevatorSysId extends ElevatorImp {
+public class ElevatorSysId extends ElevatorPhys {
     private MutVoltage appliedVoltage;
 
     private MutDistance elevatorPosition;

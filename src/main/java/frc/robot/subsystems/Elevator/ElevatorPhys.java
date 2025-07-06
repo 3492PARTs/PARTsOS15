@@ -16,7 +16,7 @@ import frc.robot.constants.ElevatorConstants;
 import frc.robot.subsystems.Candle;
 
 /** Add your docs here. */
-public class ElevatorImp extends Elevator {
+public class ElevatorPhys extends Elevator {
 
     protected SparkMax mRightMotor;
     protected SparkMax mLeftMotor;
@@ -24,7 +24,7 @@ public class ElevatorImp extends Elevator {
     protected RelativeEncoder mLeftEncoder;
     protected RelativeEncoder mRightEncoder;
 
-    public ElevatorImp(Candle candle) {
+    public ElevatorPhys(Candle candle) {
         super(candle);
 
         SparkMaxConfig elevatorConfig = new SparkMaxConfig();
