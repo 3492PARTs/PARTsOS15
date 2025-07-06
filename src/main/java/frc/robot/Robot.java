@@ -72,7 +72,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    partsNT.setDouble("Match Time", DriverStation.getMatchTime());
+    partsNT.putDouble("Match Time", DriverStation.getMatchTime());
     m_robotContainer.outputTelemetry();
     m_robotContainer.log();
 

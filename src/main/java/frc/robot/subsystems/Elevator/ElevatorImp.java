@@ -57,11 +57,11 @@ public class ElevatorImp extends Elevator {
     public void outputTelemetry() {
         super.outputTelemetry();
 
-        super.partsNT.setDouble("Current/Left", mLeftMotor.getOutputCurrent());
-        super.partsNT.setDouble("Current/Right", mRightMotor.getOutputCurrent());
+        super.partsNT.putDouble("Current/Left", mLeftMotor.getOutputCurrent());
+        super.partsNT.putDouble("Current/Right", mRightMotor.getOutputCurrent());
 
-        super.partsNT.setDouble("Output/Left", mLeftMotor.getAppliedOutput());
-        super.partsNT.setDouble("Output/Right", mRightMotor.getAppliedOutput());
+        super.partsNT.putDouble("Output/Left", mLeftMotor.getAppliedOutput());
+        super.partsNT.putDouble("Output/Right", mRightMotor.getAppliedOutput());
     }
 
     @Override

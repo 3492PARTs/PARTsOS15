@@ -79,6 +79,7 @@ public class RobotContainer {
                 configureDrivetrainBindings();
                 configureElevatorBindings();
                 configureCoralBindings();
+
                 partsNT.putSmartDashboardSendable("field", Field.FIELD2D);
 
         }
@@ -296,8 +297,8 @@ public class RobotContainer {
 
         public void outputTelemetry() {
                 subsystems.forEach(s -> s.outputTelemetry());
-                partsNT.setBoolean("Vision Mode", visionAlignActive);
-                partsNT.setDouble("Battery Voltage", RobotController.getBatteryVoltage());
+                partsNT.putBoolean("Vision Mode", visionAlignActive);
+                partsNT.putDouble("Battery Voltage", RobotController.getBatteryVoltage());
         }
 
         public void stop() {

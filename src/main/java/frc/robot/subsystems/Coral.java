@@ -146,13 +146,13 @@ public class Coral extends PARTsSubsystem {
 
   @Override
   public void outputTelemetry() {
-    super.partsNT.setDouble("RPM/target", mPeriodicIO.rpm);
+    super.partsNT.putDouble("RPM/target", mPeriodicIO.rpm);
 
     if (mPeriodicIO.entryLaserMeasurement != null) {
-      super.partsNT.setDouble("LaserEntry/distance", mPeriodicIO.entryLaserMeasurement.distance_mm);
-      super.partsNT.setDouble("LaserEntry/ambient", mPeriodicIO.entryLaserMeasurement.ambient);
-      super.partsNT.setDouble("LaserEntry/budget_ms", mPeriodicIO.entryLaserMeasurement.budget_ms);
-      super.partsNT.setDouble("LaserEntry/status", mPeriodicIO.entryLaserMeasurement.status);
+      super.partsNT.putDouble("LaserEntry/distance", mPeriodicIO.entryLaserMeasurement.distance_mm);
+      super.partsNT.putDouble("LaserEntry/ambient", mPeriodicIO.entryLaserMeasurement.ambient);
+      super.partsNT.putDouble("LaserEntry/budget_ms", mPeriodicIO.entryLaserMeasurement.budget_ms);
+      super.partsNT.putDouble("LaserEntry/status", mPeriodicIO.entryLaserMeasurement.status);
     }
 
     if (mPeriodicIO.entryLaserMeasurement != null)
@@ -163,10 +163,10 @@ public class Coral extends PARTsSubsystem {
     partsLogger.logBoolean("LaserEntry/laserMeasurementExists", (mPeriodicIO.entryLaserMeasurement != null));
 
     if (mPeriodicIO.exitLaserMeasurement != null) {
-      super.partsNT.setDouble("LaserExit/distance", mPeriodicIO.exitLaserMeasurement.distance_mm);
-      super.partsNT.setDouble("LaserExit/ambient", mPeriodicIO.exitLaserMeasurement.ambient);
-      super.partsNT.setDouble("LaserExit/budget_ms", mPeriodicIO.exitLaserMeasurement.budget_ms);
-      super.partsNT.setDouble("LaserExit/status", mPeriodicIO.exitLaserMeasurement.status);
+      super.partsNT.putDouble("LaserExit/distance", mPeriodicIO.exitLaserMeasurement.distance_mm);
+      super.partsNT.putDouble("LaserExit/ambient", mPeriodicIO.exitLaserMeasurement.ambient);
+      super.partsNT.putDouble("LaserExit/budget_ms", mPeriodicIO.exitLaserMeasurement.budget_ms);
+      super.partsNT.putDouble("LaserExit/status", mPeriodicIO.exitLaserMeasurement.status);
     }
 
     if (mPeriodicIO.exitLaserMeasurement != null)
@@ -176,16 +176,16 @@ public class Coral extends PARTsSubsystem {
 
     partsLogger.logBoolean("LaserExit/laserMeasurementExists", (mPeriodicIO.exitLaserMeasurement != null));
 
-    super.partsNT.setBoolean("LaserEntry/hasCoral", isCoralInEntry());
-    super.partsNT.setBoolean("LaserExit/hasCoral", isCoralInExit());
+    super.partsNT.putBoolean("LaserEntry/hasCoral", isCoralInEntry());
+    super.partsNT.putBoolean("LaserExit/hasCoral", isCoralInExit());
 
-    super.partsNT.setDouble("Current/Left", mLeftMotor.getOutputCurrent());
-    super.partsNT.setDouble("Current/Right", mRightMotor.getOutputCurrent());
+    super.partsNT.putDouble("Current/Left", mLeftMotor.getOutputCurrent());
+    super.partsNT.putDouble("Current/Right", mRightMotor.getOutputCurrent());
 
-    super.partsNT.setDouble("Output/Left", mLeftMotor.getAppliedOutput());
-    super.partsNT.setDouble("Output/Right", mRightMotor.getAppliedOutput());
+    super.partsNT.putDouble("Output/Left", mLeftMotor.getAppliedOutput());
+    super.partsNT.putDouble("Output/Right", mRightMotor.getAppliedOutput());
 
-    super.partsNT.setString("State", mPeriodicIO.state.toString());
+    super.partsNT.putString("State", mPeriodicIO.state.toString());
   }
 
   @Override

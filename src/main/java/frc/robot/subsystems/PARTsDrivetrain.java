@@ -453,17 +453,17 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
         /*---------------------------------- Custom Private Functions ---------------------------------*/
         private void alignCommandInitTelemetry(Pose2d holdDist) {
-                partsNT.setDouble("align/holdDistX", new PARTsUnit(holdDist.getX(), PARTsUnitType.Meter)
+                partsNT.putDouble("align/holdDistX", new PARTsUnit(holdDist.getX(), PARTsUnitType.Meter)
                                 .to(PARTsUnitType.Inch));
-                partsNT.setDouble("align/holdDistY", new PARTsUnit(holdDist.getY(), PARTsUnitType.Meter)
+                partsNT.putDouble("align/holdDistY", new PARTsUnit(holdDist.getY(), PARTsUnitType.Meter)
                                 .to(PARTsUnitType.Inch));
-                partsNT.setDouble("align/holdDistRot",
+                partsNT.putDouble("align/holdDistRot",
                                 new PARTsUnit(holdDist.getRotation().getRadians(), PARTsUnitType.Radian)
                                                 .to(PARTsUnitType.Angle));
 
                 partsLogger.logDouble("align/thetaControllerSetpoint",
                                 thetaController.getSetpoint().position);
-                partsNT.setDouble("align/thetaControllerSetpoint",
+                partsNT.putDouble("align/thetaControllerSetpoint",
                                 thetaController.getSetpoint().position);
 
         }
@@ -479,13 +479,13 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 new PARTsUnit(getPose().getRotation().getRadians(),
                                                 PARTsUnitType.Radian).to(PARTsUnitType.Angle));
 
-                partsNT.setDouble("align/rPoseX",
+                partsNT.putDouble("align/rPoseX",
                                 new PARTsUnit(getPose().getX(), PARTsUnitType.Meter)
                                                 .to(PARTsUnitType.Inch));
-                partsNT.setDouble("align/rPoseY",
+                partsNT.putDouble("align/rPoseY",
                                 new PARTsUnit(getPose().getY(), PARTsUnitType.Meter)
                                                 .to(PARTsUnitType.Inch));
-                partsNT.setDouble("align/rPoseRot",
+                partsNT.putDouble("align/rPoseRot",
                                 new PARTsUnit(getPose().getRotation().getRadians(),
                                                 PARTsUnitType.Radian).to(PARTsUnitType.Angle));
 
@@ -493,9 +493,9 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 partsLogger.logDouble("align/Output/rangeControllerX", rangeOutput.getX());
                 partsLogger.logDouble("align/Output/rangeControllerY", rangeOutput.getY());
 
-                partsNT.setDouble("align/Output/thetaController", thetaOutput.getDegrees());
-                partsNT.setDouble("align/Output/rangeControllerX", rangeOutput.getX());
-                partsNT.setDouble("align/Output/rangeControllerY", rangeOutput.getY());
+                partsNT.putDouble("align/Output/thetaController", thetaOutput.getDegrees());
+                partsNT.putDouble("align/Output/rangeControllerX", rangeOutput.getX());
+                partsNT.putDouble("align/Output/rangeControllerY", rangeOutput.getY());
 
                 partsLogger.logBoolean("align/Goal/thetaAtGoal", thetaController.atGoal());
                 partsLogger.logBoolean("align/Goal/rangeXAtGoal",
@@ -503,13 +503,13 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 partsLogger.logBoolean("align/Goal/rangeYAtGoal",
                                 yRangeController.atGoal());
 
-                partsNT.setDouble("align/Goal/x setpoint", xRangeController.getSetpoint().position);
-                partsNT.setDouble("align/Goal/y setpoint", yRangeController.getSetpoint().position);
-                partsNT.setDouble("align/Goal/x setpoint", thetaController.getSetpoint().position);
+                partsNT.putDouble("align/Goal/x setpoint", xRangeController.getSetpoint().position);
+                partsNT.putDouble("align/Goal/y setpoint", yRangeController.getSetpoint().position);
+                partsNT.putDouble("align/Goal/x setpoint", thetaController.getSetpoint().position);
 
-                partsNT.setBoolean("align/Goal/thetaAtGoal", thetaController.atGoal());
-                partsNT.setBoolean("align/Goal/rangeXAtGoal", xRangeController.atGoal());
-                partsNT.setBoolean("align/Goal/rangeYAtGoal", yRangeController.atGoal());
+                partsNT.putBoolean("align/Goal/thetaAtGoal", thetaController.atGoal());
+                partsNT.putBoolean("align/Goal/rangeXAtGoal", xRangeController.atGoal());
+                partsNT.putBoolean("align/Goal/rangeYAtGoal", yRangeController.atGoal());
 
                 partsLogger.logDouble("align/Output/PosErrorX",
                                 xRangeController.getPositionError());
@@ -525,26 +525,26 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 partsLogger.logDouble("align/Output/thetaVelocityError",
                                 thetaController.getVelocityError());
 
-                partsNT.setDouble("align/Output/PosErrorX",
+                partsNT.putDouble("align/Output/PosErrorX",
                                 xRangeController.getPositionError());
-                partsNT.setDouble("align/Output/PosErrorY",
+                partsNT.putDouble("align/Output/PosErrorY",
                                 yRangeController.getPositionError());
-                partsNT.setDouble("align/Output/thetaPosError",
+                partsNT.putDouble("align/Output/thetaPosError",
                                 thetaController.getPositionError());
 
-                partsNT.setDouble("align/Output/velocityErrorX",
+                partsNT.putDouble("align/Output/velocityErrorX",
                                 xRangeController.getVelocityError());
-                partsNT.setDouble("align/Output/velocityErrorY",
+                partsNT.putDouble("align/Output/velocityErrorY",
                                 yRangeController.getVelocityError());
-                partsNT.setDouble("align/Output/thetaVelocityError",
+                partsNT.putDouble("align/Output/thetaVelocityError",
                                 thetaController.getVelocityError());
 
-                partsNT.setDouble("align/timer", alignTimer.get());
-                partsNT.setBoolean("align/timerHasElapsed", timerElapsed);
+                partsNT.putDouble("align/timer", alignTimer.get());
+                partsNT.putBoolean("align/timerHasElapsed", timerElapsed);
 
-                partsNT.setDouble("align/pigeonMovementX", drivetrainVelocityX.getValue());
-                partsNT.setDouble("align/pigeonMovementY", drivetrainVelocityY.getValue());
-                partsNT.setDouble("align/goalPoseError", Math.abs(diff.getTranslation().getNorm()));
+                partsNT.putDouble("align/pigeonMovementX", drivetrainVelocityX.getValue());
+                partsNT.putDouble("align/pigeonMovementY", drivetrainVelocityY.getValue());
+                partsNT.putDouble("align/goalPoseError", Math.abs(diff.getTranslation().getNorm()));
         }
 
         private void sendToDashboard() {

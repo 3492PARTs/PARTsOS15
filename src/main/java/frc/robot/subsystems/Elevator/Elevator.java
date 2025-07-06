@@ -174,29 +174,29 @@ public abstract class Elevator extends PARTsSubsystem {
 
   @Override
   public void outputTelemetry() {
-    super.partsNT.setDouble("Position/Current", getElevatorPosition());
-    super.partsNT.setDouble("Position/Target", mPeriodicIO.elevator_target);
-    super.partsNT.setBoolean("Position/At Goal", mElevatorPIDController.atGoal());
+    super.partsNT.putDouble("Position/Current", getElevatorPosition());
+    super.partsNT.putDouble("Position/Target", mPeriodicIO.elevator_target);
+    super.partsNT.putBoolean("Position/At Goal", mElevatorPIDController.atGoal());
 
-    super.partsNT.setDouble("Velocity/Current", getRPS());
-    super.partsNT.setDouble("Velocity/Setpoint", mElevatorPIDController.getSetpoint().velocity);
+    super.partsNT.putDouble("Velocity/Current", getRPS());
+    super.partsNT.putDouble("Velocity/Setpoint", mElevatorPIDController.getSetpoint().velocity);
 
-    super.partsNT.setBoolean("Limit/Bottom", getBottomLimit());
-    super.partsNT.setBoolean("Limit/Top", getTopLimit());
+    super.partsNT.putBoolean("Limit/Bottom", getBottomLimit());
+    super.partsNT.putBoolean("Limit/Top", getTopLimit());
 
     if (mPeriodicIO.elevator_measurement != null) {
-      super.partsNT.setDouble("Laser/distance", mPeriodicIO.elevator_measurement.distance_mm);
-      super.partsNT.setDouble("Laser/ambient", mPeriodicIO.elevator_measurement.ambient);
-      super.partsNT.setDouble("Laser/budget_ms", mPeriodicIO.elevator_measurement.budget_ms);
-      super.partsNT.setDouble("Laser/status", mPeriodicIO.elevator_measurement.status);
+      super.partsNT.putDouble("Laser/distance", mPeriodicIO.elevator_measurement.distance_mm);
+      super.partsNT.putDouble("Laser/ambient", mPeriodicIO.elevator_measurement.ambient);
+      super.partsNT.putDouble("Laser/budget_ms", mPeriodicIO.elevator_measurement.budget_ms);
+      super.partsNT.putDouble("Laser/status", mPeriodicIO.elevator_measurement.status);
     }
 
-    super.partsNT.setDouble("RPS", getRPS());
-    super.partsNT.setDouble("Power", mPeriodicIO.elevator_power);
-    super.partsNT.setString("State", mPeriodicIO.state.toString());
-    super.partsNT.setBoolean("Is Position Control", mPeriodicIO.is_elevator_pos_control);
-    super.partsNT.setBoolean("Gantry Blocked", mPeriodicIO.gantry_blocked);
-    super.partsNT.setBoolean("Using LaserCan", mPeriodicIO.useLaserCan);
+    super.partsNT.putDouble("RPS", getRPS());
+    super.partsNT.putDouble("Power", mPeriodicIO.elevator_power);
+    super.partsNT.putString("State", mPeriodicIO.state.toString());
+    super.partsNT.putBoolean("Is Position Control", mPeriodicIO.is_elevator_pos_control);
+    super.partsNT.putBoolean("Gantry Blocked", mPeriodicIO.gantry_blocked);
+    super.partsNT.putBoolean("Using LaserCan", mPeriodicIO.useLaserCan);
   }
 
   @Override

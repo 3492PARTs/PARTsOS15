@@ -454,9 +454,9 @@ public class Candle extends PARTsSubsystem {
     }
 
     private void publishDashboardValues() {
-        super.partsNT.setString("State", mPeriodicIO.state.toString());
+        super.partsNT.putString("State", mPeriodicIO.state.toString());
         if (animation != null)
-            super.partsNT.setString("Animation", animation.toString().replace("com.ctre.phoenix.led.", ""));
+            super.partsNT.putString("Animation", animation.toString().replace("com.ctre.phoenix.led.", ""));
     }
 
     @Override

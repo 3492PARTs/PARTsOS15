@@ -234,6 +234,16 @@ public interface Field {
                 return null;
         }
 
+        public static int[] getAllTagIDs() {
+                int[] ids = new int[APRILTAGS.length];
+
+                for (int i = 0; i < APRILTAGS.length; i++) {
+                        ids[i] = APRILTAGS[i].getID();
+                }
+
+                return ids;
+        }
+
         public int[] BLUE_REEF_TAG_IDS = { 17, 18, 19, 20, 21, 22 };
         public int[] RED_REEF_TAG_IDS = { 6, 7, 8, 9, 10, 11 };
 

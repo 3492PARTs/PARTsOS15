@@ -210,7 +210,7 @@ public class PARTsNT {
     private void addEntryToList(EasyGenericEntry entry) {
         // Check if the entry already exists in the list.
         for (int i = 0; i < topicsList.size(); i++) {
-            if (topicsList.get(i).topicName == entry.topicName) {
+            if (topicsList.get(i).topicName.equals(entry.topicName)) {
                 return; // It exists so we abort adding it to avoid dupes.
             }
         }
@@ -225,7 +225,7 @@ public class PARTsNT {
      */
     private EasyGenericEntry getEntry(String name) {
         for (EasyGenericEntry entry : topicsList) {
-            if (entry.topicName == name)
+            if (entry.topicName.equals(name))
                 return entry;
         }
         return null;
@@ -240,7 +240,7 @@ public class PARTsNT {
      */
     private EasyBooleanEntry getBooleanEntry(String name) {
         for (EasyBooleanEntry entry : booleanEntries) {
-            if (entry.topicName == name)
+            if (entry.topicName.equals(name))
                 return entry;
         }
         return null;
@@ -279,7 +279,7 @@ public class PARTsNT {
      */
     private EasyStringEntry getStringEntry(String name) {
         for (EasyStringEntry entry : stringEntries) {
-            if (entry.topicName == name)
+            if (entry.topicName.equals(name))
                 return entry;
         }
         return null;
@@ -302,7 +302,7 @@ public class PARTsNT {
      * @param name The name of the entry.
      * @param value The new value to publish to the entry.
      */
-    public void setBoolean(String name, boolean value) {
+    public void putBoolean(String name, boolean value) {
         EasyBooleanEntry entry = getBooleanEntry(name);
         if (entry == null) {
             booleanEntries.add(new EasyBooleanEntry(name, value));
@@ -328,7 +328,7 @@ public class PARTsNT {
      * @param name The name of the entry.
      * @param value The new value to publish to the entry.
      */
-    public void setInteger(String name, int value) {
+    public void putInteger(String name, int value) {
         EasyIntegerEntry entry = getIntegerEntry(name);
         if (entry == null) {
             integerEntries.add(new EasyIntegerEntry(name, value));
@@ -354,13 +354,31 @@ public class PARTsNT {
      * @param name The name of the entry.
      * @param value The new value to publish to the entry.
      */
-    public void setDouble(String name, double value) {
+    public void putDouble(String name, double value) {
         EasyDoubleEntry entry = getDoubleEntry(name);
         if (entry == null) {
             doubleEntries.add(new EasyDoubleEntry(name, value));
         } else if (entry.cachedValue != value) {
             entry.entry.set((entry.cachedValue = value));
         }
+    }
+
+    /**
+     * Sets the double value for the requested entry.
+     * @param name The name of the entry.
+     * @param value The new value to publish to the entry.
+     */
+    public void putNumber(String name, double value) {
+        putDouble(name, value);
+    }
+
+    /**
+     * Sets the integer value for the requested entry.
+     * @param name The name of the entry.
+     * @param value The new value to publish to the entry.
+     */
+    public void putNumber(String name, int value) {
+        putInteger(name, value);
     }
 
     //* -------- STRING FUNCTIONS -------- *//
@@ -380,7 +398,7 @@ public class PARTsNT {
      * @param name The name of the entry.
      * @param value The new value to publish to the entry.
      */
-    public void setString(String name, String value) {
+    public void putString(String name, String value) {
         EasyStringEntry entry = getStringEntry(name);
         if (entry == null) {
             stringEntries.add(new EasyStringEntry(name, value));
@@ -410,7 +428,7 @@ public class PARTsNT {
     public void removeEntry(String name) {
         for (int i = 0; i < masterList.size(); i++) {
             for (int j = 0; j < masterList.get(i).size(); j++) {
-                if (((EasyGenericEntry) masterList.get(i).get(j)).topicName == name) {
+                if (((EasyGenericEntry) masterList.get(i).get(j)).topicName.equals(name)) {
                     masterList.get(i).set(j, null);
                     masterList.get(i).remove(j);
                 }
