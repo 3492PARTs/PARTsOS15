@@ -23,7 +23,7 @@ import frc.robot.subsystems.Candle;
 import frc.robot.subsystems.Candle.CandleState;
 import frc.robot.util.PARTs.PARTsCommandController;
 import frc.robot.util.PARTs.PARTsCommandUtils;
-import frc.robot.util.PARTs.PARTsSubsystem;
+import frc.robot.util.PARTs.Abstracts.PARTsSubsystem;
 
 public abstract class Elevator extends PARTsSubsystem {
 

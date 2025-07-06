@@ -14,7 +14,8 @@ import frc.robot.constants.VisionConstants;
 import frc.robot.util.LimelightHelpers;
 import frc.robot.util.Field.Field;
 import frc.robot.util.LimelightHelpers.PoseEstimate;
-import frc.robot.util.PARTs.PARTsSubsystem;
+import frc.robot.util.PARTs.PARTsCommandUtils;
+import frc.robot.util.PARTs.Abstracts.PARTsSubsystem;
 
 public class LimelightVision extends PARTsSubsystem {
 
@@ -86,8 +87,7 @@ public class LimelightVision extends PARTsSubsystem {
     }
 
     public Command commandMegaTagMode(MegaTagMode mode) {
-        Command c = this.runOnce(() -> setMegaTagMode(mode));
-        c.setName("commandMegaTagMode");
+        Command c = PARTsCommandUtils.setCommandName("commandMegaTagMode", this.runOnce(() -> setMegaTagMode(mode)));
         c = c.ignoringDisable(true);
         return c;
     }
@@ -177,7 +177,6 @@ public class LimelightVision extends PARTsSubsystem {
     @Override
     public void periodic() {
         this.maxTagCount = 0;
-        partsNT.putString("Megatag Mode", megaTagMode.name());
 
         //updateWhitelistMode();
 
@@ -198,8 +197,10 @@ public class LimelightVision extends PARTsSubsystem {
                 if (poseEstimate != null && poseEstimate.tagCount > 0) {
                     //System.out.println("hi" + poseEstimate.pose);
                     drivetrain.addVisionMeasurement(poseEstimate.pose, poseEstimate.timestampSeconds);
+
                     partsNT.putBoolean(camera.getName() + "/Has Data", true);
                     partsNT.putNumber(camera.getName() + "/Tag Count", poseEstimate.tagCount);
+
                     maxTagCount = Math.max(maxTagCount, poseEstimate.tagCount);
                 } else {
                     partsNT.putBoolean(camera.getName() + "/Has Data", false);

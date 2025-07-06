@@ -25,7 +25,7 @@ import frc.robot.constants.CoralConstants;
 import frc.robot.subsystems.Candle.CandleState;
 import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.util.PARTs.PARTsCommandUtils;
-import frc.robot.util.PARTs.PARTsSubsystem;
+import frc.robot.util.PARTs.Abstracts.PARTsSubsystem;
 
 public class Coral extends PARTsSubsystem {
   private Elevator elevator;
