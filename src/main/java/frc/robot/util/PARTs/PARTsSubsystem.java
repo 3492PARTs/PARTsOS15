@@ -17,8 +17,9 @@ public abstract class PARTsSubsystem extends SubsystemBase implements IPARTsSubs
    * <p>Comes with a PARTsNT generic instance.
    */
   public PARTsSubsystem() {
-    partsNT = new PARTsNT();
-    partsLogger = new PARTsLogger();
+    String s = this.getName();
+    partsNT = new PARTsNT(this.getName());
+    partsLogger = new PARTsLogger(this.getName());
     partsPrefrences = new PARTsPreferences();
   }
 

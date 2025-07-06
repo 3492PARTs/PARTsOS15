@@ -10,6 +10,7 @@ import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.RuntimeType;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -31,8 +32,18 @@ public class Robot extends TimedRobot {
   private static Alliance alliance;
 
   public static boolean isBlue() {
-        return alliance == Alliance.Blue;
-    }
+    return alliance == Alliance.Blue;
+  }
+
+  /**
+  * Get if the robot is real.
+  *
+  * @return If the robot is running in the real world.
+  */
+  public static boolean isReal() {
+    RuntimeType runtimeType = getRuntimeType();
+    return runtimeType == RuntimeType.kRoboRIO || runtimeType == RuntimeType.kRoboRIO2;
+  }
 
   public Robot() {
     // This is needed for lasercan, without it causes robot to lag on boot
@@ -53,7 +64,8 @@ public class Robot extends TimedRobot {
 
     //m_robotContainer.resetStartPose();
     m_robotContainer.setMegaTagMode(MegaTagMode.MEGATAG1);
-    
+
+    DriverStation.silenceJoystickConnectionWarning(!isReal());
 
   }
 
@@ -66,7 +78,7 @@ public class Robot extends TimedRobot {
 
     if (DriverStation.getAlliance().isPresent()) {
       alliance = DriverStation.getAlliance().get();
-  }
+    }
   }
 
   @Override

@@ -21,11 +21,11 @@ import frc.robot.constants.DrivetrainConstants;
 import frc.robot.constants.RobotConstants;
 import frc.robot.subsystems.Candle;
 import frc.robot.subsystems.Coral;
-import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.LimelightVision;
 import frc.robot.subsystems.PARTsDrivetrain;
+import frc.robot.subsystems.Elevator.Elevator;
+import frc.robot.subsystems.Elevator.Elevator.ElevatorState;
 import frc.robot.subsystems.Candle.CandleState;
-import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.util.PARTs.PARTsUnit;
 import frc.robot.util.PARTs.PARTsUnit.PARTsUnitType;
 
@@ -88,7 +88,8 @@ public class Reef {
                 Command c = new SequentialCommandGroup(drivetrain.pathFindToPose(feederStation1M),
                                 drivetrain.alignCommand(feederStationGoal), coral.autoIntake(),
                                 drivetrain.pathFindToPose(reefGoal1M), drivetrain.alignCommand(reefGoal),
-                                elevator.elevatorToLevelCommand(ElevatorState.L2), coral.autoScore(), new WaitCommand(0.25),
+                                elevator.elevatorToLevelCommand(ElevatorState.L2), coral.autoScore(),
+                                new WaitCommand(0.25),
                                 elevator.elevatorToLevelCommand(ElevatorState.STOW));
                 c.setName("commandIntakeScoreIntake");
                 return c;

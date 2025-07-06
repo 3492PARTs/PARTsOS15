@@ -27,6 +27,7 @@ import com.ctre.phoenix.led.TwinkleAnimation.TwinklePercent;
 import com.ctre.phoenix.led.CANdleConfiguration;
 import com.ctre.phoenix.led.ColorFlowAnimation;
 
+import frc.robot.Robot;
 import frc.robot.constants.CandleConstants;
 import frc.robot.util.PARTs.PARTsCommandUtils;
 import frc.robot.util.PARTs.PARTsSubsystem;
@@ -442,7 +443,7 @@ public class Candle extends PARTsSubsystem {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-        if (animation != null) {
+        if (Robot.isReal() && animation != null) {
             candle.animate(animation);
         }
     }

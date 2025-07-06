@@ -1,5 +1,7 @@
 package frc.robot.constants;
 
+import edu.wpi.first.math.util.Units;
+
 public class ElevatorConstants {
     public static final int leftElevatorId = 2;
     public static final int rightElevatorId = 1;
@@ -30,4 +32,19 @@ public class ElevatorConstants {
     public static final double gearRatio = 16 / 1;
     public static final double homingSpeed = -0.1;
     public static final double bottomLimitPositionErrorMargin = 30;
+
+    public static final double MIN_HEIGHT_METERS = Units.inchesToMeters(40.85); // FROM FLOOR TO TOP OF ELEVATOR
+    public static final double MAX_HEIGHT_METERS = Units.inchesToMeters(69.85); // FROM FLOOR TO TOP OF ELEVATOR
+
+    public static final double MASS_KG = Units.lbsToKilograms(10); // Currently for sim only, not confirmed
+    public static final double DRUM_RADIUS_METERS = ((MAX_HEIGHT_METERS - MIN_HEIGHT_METERS)
+            / (Encoders.NUM_ROTATIONS_TO_REACH_TOP / Encoders.GEAR_RATIO)) / 2 / Math.PI;
+
+    public interface Encoders {
+        double GEAR_RATIO = 52.0 / 12.0;
+
+        double NUM_ROTATIONS_TO_REACH_TOP = (MAX_HEIGHT_METERS - MIN_HEIGHT_METERS) / (0.480 / 13); // Number of rotations that the motor has to spin, NOT the gear
+        double POSITION_CONVERSION_FACTOR = (MAX_HEIGHT_METERS - MIN_HEIGHT_METERS) / NUM_ROTATIONS_TO_REACH_TOP;
+        double VELOCITY_CONVERSION_FACTOR = (MAX_HEIGHT_METERS - MIN_HEIGHT_METERS) / NUM_ROTATIONS_TO_REACH_TOP / 60;
+    }
 }

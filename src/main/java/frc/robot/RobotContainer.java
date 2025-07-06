@@ -22,8 +22,11 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.constants.generated.TunerConstants;
 import frc.robot.subsystems.Candle;
 import frc.robot.subsystems.Candle.CandleState;
-import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.PARTsDrivetrain;
+import frc.robot.subsystems.Elevator.Elevator;
+import frc.robot.subsystems.Elevator.Elevator.ElevatorState;
+import frc.robot.subsystems.Elevator.ElevatorImp;
+import frc.robot.subsystems.Elevator.ElevatorSim;
 import frc.robot.util.Field.Field;
 import frc.robot.util.Field.Reef;
 import frc.robot.util.PARTs.IPARTsSubsystem;
@@ -34,7 +37,6 @@ import frc.robot.util.PARTs.PARTsNT;
 import frc.robot.util.PARTs.PARTsUnit;
 import frc.robot.util.PARTs.PARTsController.ControllerType;
 import frc.robot.subsystems.Coral;
-import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.LimelightVision;
 import frc.robot.subsystems.LimelightVision.MegaTagMode;
 
@@ -66,7 +68,7 @@ public class RobotContainer {
 
         public final Candle candle = new Candle();
 
-        private final Elevator elevator = new Elevator(candle);
+        private final Elevator elevator = Robot.isReal() ? new ElevatorImp(candle) : new ElevatorSim(candle);
         // private final ElevatorSysId elevator = new ElevatorSysId();
 
         private final Coral coral = new Coral(candle, elevator);
@@ -99,7 +101,7 @@ public class RobotContainer {
                 // configureAutonomousCommands();
                 configureBindings();
                 partsNT.putSmartDashboardSendable("field", Field.FIELD2D);
-                
+
         }
 
         private void configureBindings() {
@@ -212,7 +214,8 @@ public class RobotContainer {
 
                 // --------------------- Align, L2, Score --------------------//
                 buttonBoxController.mapTrigger()
-                                .onTrue(Reef.alignToVisibleTagSideScore(true, drivetrain, elevator, ElevatorState.L2, coral,
+                                .onTrue(Reef.alignToVisibleTagSideScore(true, drivetrain, elevator, ElevatorState.L2,
+                                                coral,
                                                 escapeBooleanSupplier, candle));
 
                 // --------------------- Align, L3, Score --------------------//
@@ -221,7 +224,8 @@ public class RobotContainer {
 
                 // --------------------- Align, L4, Score --------------------//
                 buttonBoxController.cruiseTrigger()
-                                .onTrue(Reef.alignToVisibleTagSideScore(true, drivetrain, elevator, ElevatorState.L4, coral,
+                                .onTrue(Reef.alignToVisibleTagSideScore(true, drivetrain, elevator, ElevatorState.L4,
+                                                coral,
                                                 escapeBooleanSupplier, candle));
 
                 // *---------------------------------------------------- *//
@@ -231,17 +235,20 @@ public class RobotContainer {
                 // --------------------- Align, L2, Score --------------------//
 
                 buttonBoxController.wipeTrigger()
-                                .onTrue(Reef.alignToVisibleTagSideScore(false, drivetrain, elevator, ElevatorState.L2, coral,
+                                .onTrue(Reef.alignToVisibleTagSideScore(false, drivetrain, elevator, ElevatorState.L2,
+                                                coral,
                                                 escapeBooleanSupplier, candle));
 
                 // --------------------- Align, L3, Score --------------------//
                 buttonBoxController.flashTrigger()
-                                .onTrue(Reef.alignToVisibleTagSideScore(false, drivetrain, elevator, ElevatorState.L3, coral,
+                                .onTrue(Reef.alignToVisibleTagSideScore(false, drivetrain, elevator, ElevatorState.L3,
+                                                coral,
                                                 escapeBooleanSupplier, candle));
 
                 // --------------------- Align, L4, Score --------------------//
                 buttonBoxController.handleTrigger()
-                                .onTrue(Reef.alignToVisibleTagSideScore(false, drivetrain, elevator, ElevatorState.L4, coral,
+                                .onTrue(Reef.alignToVisibleTagSideScore(false, drivetrain, elevator, ElevatorState.L4,
+                                                coral,
                                                 escapeBooleanSupplier, candle));
 
                 // =============================================================================================
@@ -312,7 +319,7 @@ public class RobotContainer {
                                                                 new Rotation2d()),
                                                 ElevatorState.STOW, drivetrain, elevator, coral, candle,
                                                 frontVision));
-
+                
                 NamedCommands.registerCommand("Align L1",
                                 drivetrain.alignCommand(new Pose2d(
                                                 Constants.Drivetrain.xZeroHoldDistance.to(PARTsUnitType.Meter),
@@ -359,6 +366,7 @@ public class RobotContainer {
         public void resetStartPose() {
                 drivetrain.seedFieldCentric();
         }
+
         public void setMegaTagMode(MegaTagMode mode) {
                 vision.setMegaTagMode(mode);
         }

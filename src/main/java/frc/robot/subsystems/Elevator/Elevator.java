@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.Elevator;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -19,25 +19,17 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.constants.ElevatorConstants;
+import frc.robot.subsystems.Candle;
 import frc.robot.subsystems.Candle.CandleState;
 import frc.robot.util.PARTs.PARTsCommandController;
 import frc.robot.util.PARTs.PARTsCommandUtils;
 import frc.robot.util.PARTs.PARTsSubsystem;
 
-public class Elevator extends PARTsSubsystem {
+public abstract class Elevator extends PARTsSubsystem {
 
   /*-------------------------------- Private instance variables ---------------------------------*/
   private PeriodicIO mPeriodicIO;
   private Candle candle;
-
-  // private static final double kPivotCLRampRate = 0.5;
-  // private static final double kCLRampRate = 0.5;
-
-  private SparkMax mRightMotor;
-  protected SparkMax mLeftMotor;
-
-  protected RelativeEncoder mLeftEncoder;
-  private RelativeEncoder mRightEncoder;
 
   private final ProfiledPIDController mElevatorPIDController;
   private final ElevatorFeedforward mElevatorFeedForward;
@@ -100,29 +92,6 @@ public class Elevator extends PARTsSubsystem {
       System.out.println("Configuration failed! " + e);
     }
 
-    SparkMaxConfig elevatorConfig = new SparkMaxConfig();
-
-    elevatorConfig.smartCurrentLimit(ElevatorConstants.kMaxCurrent);
-
-    elevatorConfig.idleMode(IdleMode.kBrake);
-    elevatorConfig.limitSwitch.reverseLimitSwitchEnabled(true);
-
-    // LEFT ELEVATOR MOTOR
-    mLeftMotor = new SparkMax(ElevatorConstants.leftElevatorId, MotorType.kBrushless);
-    mLeftEncoder = mLeftMotor.getEncoder();
-    mLeftMotor.configure(
-        elevatorConfig,
-        ResetMode.kResetSafeParameters,
-        PersistMode.kPersistParameters);
-
-    // RIGHT ELEVATOR MOTOR
-    mRightMotor = new SparkMax(ElevatorConstants.rightElevatorId, MotorType.kBrushless);
-    mRightEncoder = mRightMotor.getEncoder();
-    mRightMotor.configure(
-        elevatorConfig.follow(mLeftMotor, true),
-        ResetMode.kResetSafeParameters,
-        PersistMode.kPersistParameters);
-
     // Elevator PID
     mElevatorPIDController = new ProfiledPIDController(
         ElevatorConstants.kP,
@@ -156,7 +125,6 @@ public class Elevator extends PARTsSubsystem {
 
   @Override
   public void periodic() {
-    // TODO: TEST
     errorTasks();
 
     mPeriodicIO.elevator_measurement = upperLimitLaserCAN.getMeasurement();
@@ -213,12 +181,6 @@ public class Elevator extends PARTsSubsystem {
     super.partsNT.setDouble("Velocity/Current", getRPS());
     super.partsNT.setDouble("Velocity/Setpoint", mElevatorPIDController.getSetpoint().velocity);
 
-    super.partsNT.setDouble("Current/Left", mLeftMotor.getOutputCurrent());
-    super.partsNT.setDouble("Current/Right", mRightMotor.getOutputCurrent());
-
-    super.partsNT.setDouble("Output/Left", mLeftMotor.getAppliedOutput());
-    super.partsNT.setDouble("Output/Right", mRightMotor.getAppliedOutput());
-
     super.partsNT.setBoolean("Limit/Bottom", getBottomLimit());
     super.partsNT.setBoolean("Limit/Top", getTopLimit());
 
@@ -249,17 +211,13 @@ public class Elevator extends PARTsSubsystem {
   }
 
   /*---------------------------------- Custom Public Functions ----------------------------------*/
-  public double getElevatorPosition() {
-    return mLeftEncoder.getPosition();
-  }
+  public abstract double getElevatorPosition();
 
   public void setGantryBlock(boolean b) {
     mPeriodicIO.gantry_blocked = b;
   }
 
-  public double getRPS() {
-    return mLeftEncoder.getVelocity() * 60 / ElevatorConstants.gearRatio; // 16 is the gear reduction
-  }
+  public abstract double getRPS();
 
   public ElevatorState getState() {
     return mPeriodicIO.state;
@@ -388,24 +346,22 @@ public class Elevator extends PARTsSubsystem {
       stop();
   }
 
-  private void setSpeedWithoutLimits(double speed) {
-    mLeftMotor.set(speed);
-  }
+  protected abstract void setSpeedWithoutLimits(double speed);
 
   private void setVoltage(double voltage) {
     // Full control in limits
     if (!getBottomLimit() && !getTopLimit())
-      mLeftMotor.setVoltage(voltage);
+      setSpeedVoltageLimits(voltage);
     // Directional control at limits
     else if ((getBottomLimit() && voltage > 0) || (getTopLimit() && voltage < 0))
-      mLeftMotor.setVoltage(voltage);
+      setSpeedVoltageLimits(voltage);
     else
       stop();
   }
 
-  private void resetEncoder() {
-    mLeftEncoder.setPosition(0.0);
-  }
+  protected abstract void setSpeedVoltageLimits(double voltage);
+
+  protected abstract void resetEncoder();
 
   private Command toggleLaserCanActive() {
     return PARTsCommandUtils.setCommandName("toggleLaserCanActive",
