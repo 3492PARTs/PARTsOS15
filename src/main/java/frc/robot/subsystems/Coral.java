@@ -219,8 +219,8 @@ public class Coral extends PARTsSubsystem {
     mPeriodicIO.rpm = rpm;
   }
 
-  public Command intake() {
-    return PARTsCommandUtils.setCommandName("coralIntake",
+  public Command commandIntake() {
+    return PARTsCommandUtils.setCommandName("commandIntake",
         this.runOnce(() -> {
           mPeriodicIO.speed_diff = 0.0;
           mPeriodicIO.rpm = CoralConstants.kIntakeSpeed;
@@ -228,24 +228,24 @@ public class Coral extends PARTsSubsystem {
         }));
   }
 
-  public Command L4Intake() {
-    return PARTsCommandUtils.setCommandName("coralIntake",
+  public Command commandL4Intake() {
+    return PARTsCommandUtils.setCommandName("commandL4Intake",
         this.runOnce(() -> {
           mPeriodicIO.speed_diff = 0.0;
           mPeriodicIO.rpm = CoralConstants.kInchIntakeSpeed;
         }));
   }
 
-  public Command L4OutTake() {
-    return PARTsCommandUtils.setCommandName("coralIntake",
+  public Command commandL4OutTake() {
+    return PARTsCommandUtils.setCommandName("commandL4OutTake",
         this.runOnce(() -> {
           mPeriodicIO.speed_diff = 0.0;
           mPeriodicIO.rpm = -CoralConstants.kInchIntakeSpeed;
         }));
   }
 
-  public Command autoIntake() {
-    return PARTsCommandUtils.setCommandName("coralIntake",
+  public Command commandAutoIntake() {
+    return PARTsCommandUtils.setCommandName("commandAutoIntake",
         this.runOnce(() -> {
           mPeriodicIO.speed_diff = 0.0;
           mPeriodicIO.rpm = CoralConstants.kIntakeSpeed;
@@ -253,8 +253,8 @@ public class Coral extends PARTsSubsystem {
         })).andThen(new WaitUntilCommand(() -> mPeriodicIO.state == IntakeState.READY));
   }
 
-  public Command reverse() {
-    return PARTsCommandUtils.setCommandName("coralReverse",
+  public Command commandReverse() {
+    return PARTsCommandUtils.setCommandName("commandReverse",
         this.runOnce(() -> {
           mPeriodicIO.speed_diff = 0.0;
           mPeriodicIO.rpm = CoralConstants.kReverseSpeed;
@@ -293,12 +293,12 @@ public class Coral extends PARTsSubsystem {
     mPeriodicIO.state = IntakeState.NONE;
   }
 
-  public Command stopCoralCommand() {
-    return PARTsCommandUtils.setCommandName("stopCoralCommand", super.runOnce(() -> stopCoral()));
+  public Command commandStop() {
+    return PARTsCommandUtils.setCommandName("commandStop", super.runOnce(() -> stopCoral()));
   }
 
-  public Command score() {
-    return this.runOnce(() -> {
+  public Command commandScore() {
+    return PARTsCommandUtils.setCommandName("commandScore", this.runOnce(() -> {
       candle.addState(CandleState.SCORING);
       switch (elevator.getState()) {
         case STOW:
@@ -311,7 +311,7 @@ public class Coral extends PARTsSubsystem {
           scoreL23();
           break;
       }
-    });
+    }));
   }
 
   public Command autoScore() {
@@ -333,8 +333,8 @@ public class Coral extends PARTsSubsystem {
 
   public Command scoreCommand() {
     return PARTsCommandUtils.setCommandName("coralScoreCmd",
-        score().andThen(new WaitUntilCommand(() -> mPeriodicIO.state == IntakeState.NONE))
-            .andThen(elevator.goToElevatorStow()));
+        commandScore().andThen(new WaitUntilCommand(() -> mPeriodicIO.state == IntakeState.NONE))
+            .andThen(elevator.commandStow()));
   }
 
   /*---------------------------------- Custom Private Functions ---------------------------------*/

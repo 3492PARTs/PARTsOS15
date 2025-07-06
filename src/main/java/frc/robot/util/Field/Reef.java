@@ -26,6 +26,7 @@ import frc.robot.subsystems.PARTsDrivetrain;
 import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Elevator.Elevator.ElevatorState;
 import frc.robot.subsystems.Candle.CandleState;
+import frc.robot.util.PARTs.PARTsCommandUtils;
 import frc.robot.util.PARTs.PARTsUnit;
 import frc.robot.util.PARTs.PARTsUnit.PARTsUnitType;
 
@@ -33,43 +34,60 @@ import frc.robot.util.PARTs.PARTsUnit.PARTsUnitType;
 public class Reef {
         private static Pose2d targetPose2d;
 
-        public static Command alignToVisibleTagSideScore(boolean rightSide, PARTsDrivetrain drivetrain,
+        public static Command commandAlignAndScoreToVisibleTag(boolean rightSide, PARTsDrivetrain drivetrain,
                         Elevator elevator,
-                        ElevatorState elevatorState, Coral coral, BooleanSupplier escapeBoolean, Candle candle) {
-                Command c = candle.addStateCommand(CandleState.AUTO_ALIGN)
-                                .andThen(new ParallelDeadlineGroup(new WaitUntilCommand(escapeBoolean),
-                                                new ConditionalCommand(Commands.runOnce(() -> {
-                                                        int tagID = LimelightVision.getVisibleTagId(
-                                                                        CameraName.FRONT_CAMERA.getCameraName());
-                                                        targetPose2d = Field.getTag(tagID)
-                                                                        .getLocation().toPose2d();
-                                                        targetPose2d = targetPose2d
-                                                                        .transformBy(new Transform2d(
-                                                                                        (elevatorState == ElevatorState.L4
-                                                                                                        ? RobotConstants.frontRobotVisionL4Offset
-                                                                                                                        .to(PARTsUnitType.Meter)
-                                                                                                        : RobotConstants.frontRobotVisionOffset
-                                                                                                                        .to(PARTsUnitType.Meter)),
-                                                                                        (rightSide ? 1 : -1)
-                                                                                                        * DrivetrainConstants.poleDistanceOffset
-                                                                                                                        .to(PARTsUnitType.Meter),
-                                                                                        new Rotation2d(PARTsUnit.DegreesToRadians
-                                                                                                        .apply(180.0))));
-                                                }).andThen(drivetrain.alignCommand(() -> targetPose2d))
-                                                                .andThen(elevator.elevatorToLevelCommand(elevatorState))
-                                                                .andThen(coral.scoreCommand())
-                                                                .andThen(new WaitCommand(0.25))
-                                                                .andThen(elevator.goToElevatorStow()),
-                                                                new WaitCommand(0), () -> {
-                                                                        return LimelightVision.cameraSeesTag(
-                                                                                        CameraName.FRONT_CAMERA
-                                                                                                        .getCameraName());
-                                                                })))
-                                .finallyDo(() -> {
-                                        candle.removeState(CandleState.AUTO_ALIGN);
-                                });
-                c.setName("alignToVisibleTagSide");
-                return c;
+                        ElevatorState elevatorState, Coral coral, BooleanSupplier escapeBoolean, Candle candle,
+                        BooleanSupplier visionActiveBooleanSupplier) {
+                return PARTsCommandUtils.setCommandName("commandAlignAndScoreToVisibleTag",
+                                Commands.either(
+                                                candle.addStateCommand(CandleState.AUTO_ALIGN)
+                                                                .andThen(new ParallelDeadlineGroup(
+                                                                                new WaitUntilCommand(escapeBoolean),
+                                                                                new ConditionalCommand(
+                                                                                                Commands.runOnce(() -> {
+                                                                                                        int tagID = LimelightVision
+                                                                                                                        .getVisibleTagId(
+                                                                                                                                        CameraName.FRONT_CAMERA
+                                                                                                                                                        .getCameraName());
+                                                                                                        targetPose2d = Field
+                                                                                                                        .getTag(tagID)
+                                                                                                                        .getLocation()
+                                                                                                                        .toPose2d();
+                                                                                                        targetPose2d = targetPose2d
+                                                                                                                        .transformBy(new Transform2d(
+                                                                                                                                        (elevatorState == ElevatorState.L4
+                                                                                                                                                        ? RobotConstants.frontRobotVisionL4Offset
+                                                                                                                                                                        .to(PARTsUnitType.Meter)
+                                                                                                                                                        : RobotConstants.frontRobotVisionOffset
+                                                                                                                                                                        .to(PARTsUnitType.Meter)),
+                                                                                                                                        (rightSide ? 1
+                                                                                                                                                        : -1)
+                                                                                                                                                        * DrivetrainConstants.poleDistanceOffset
+                                                                                                                                                                        .to(PARTsUnitType.Meter),
+                                                                                                                                        new Rotation2d(PARTsUnit.DegreesToRadians
+                                                                                                                                                        .apply(180.0))));
+                                                                                                }).andThen(drivetrain
+                                                                                                                .alignCommand(() -> targetPose2d))
+                                                                                                                .andThen(elevator
+                                                                                                                                .commandToLevel(
+                                                                                                                                                elevatorState))
+                                                                                                                .andThen(coral.scoreCommand())
+                                                                                                                .andThen(new WaitCommand(
+                                                                                                                                0.25))
+                                                                                                                .andThen(elevator
+                                                                                                                                .commandStow()),
+                                                                                                new WaitCommand(0),
+                                                                                                () -> {
+                                                                                                        return LimelightVision
+                                                                                                                        .cameraSeesTag(
+                                                                                                                                        CameraName.FRONT_CAMERA
+                                                                                                                                                        .getCameraName());
+                                                                                                })))
+                                                                .finallyDo(() -> {
+                                                                        candle.removeState(CandleState.AUTO_ALIGN);
+                                                                }),
+                                                elevator.commandToLevel(elevatorState),
+                                                visionActiveBooleanSupplier));
         }
 
         public static Command commandIntakeScoreIntake(PARTsDrivetrain drivetrain, Coral coral, Elevator elevator) {
@@ -86,11 +104,11 @@ public class Reef {
                 Pose2d reefGoal1M = reefGoal.transformBy(new Transform2d(-1, 0, new Rotation2d()));
 
                 Command c = new SequentialCommandGroup(drivetrain.pathFindToPose(feederStation1M),
-                                drivetrain.alignCommand(feederStationGoal), coral.autoIntake(),
+                                drivetrain.alignCommand(feederStationGoal), coral.commandAutoIntake(),
                                 drivetrain.pathFindToPose(reefGoal1M), drivetrain.alignCommand(reefGoal),
-                                elevator.elevatorToLevelCommand(ElevatorState.L2), coral.autoScore(),
+                                elevator.commandToLevel(ElevatorState.L2), coral.autoScore(),
                                 new WaitCommand(0.25),
-                                elevator.elevatorToLevelCommand(ElevatorState.STOW));
+                                elevator.commandToLevel(ElevatorState.STOW));
                 c.setName("commandIntakeScoreIntake");
                 return c;
         }
@@ -119,7 +137,7 @@ public class Reef {
                                                                                                         .apply(180.0))));
                                                 }).andThen(drivetrain.alignCommand(() -> targetPose2d))
                                                                 .andThen(elevator
-                                                                                .elevatorToLevelCommand(elevatorState)),
+                                                                                .commandToLevel(elevatorState)),
                                                                 new WaitCommand(0), () -> {
                                                                         return LimelightVision.cameraSeesTag(
                                                                                         CameraName.FRONT_CAMERA

@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.PS5Controller;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.event.BooleanEvent;
 import edu.wpi.first.wpilibj.event.EventLoop;
-import frc.robot.constants.DebugConstants;
+import frc.robot.constants.RobotConstants;
 
 public class PARTsController {
 
@@ -43,7 +43,7 @@ public class PARTsController {
      * @param port The controller port.
      */
     public PARTsController(int port) {
-        if (DebugConstants.allowAutoControllerDetection) {
+        if (RobotConstants.allowAutoControllerDetection) {
             if (DriverStation.getJoystickIsXbox(port)) {
                 controllerType = ControllerType.XBOX;
             } else if (DriverStation.getJoystickName(port).toLowerCase().contains("dualsense")) {
@@ -80,7 +80,8 @@ public class PARTsController {
                 joystick = new Joystick(port);
                 break;
             default:
-                throw new UnsupportedOperationException("Unknown controller option '" + controllerType + "' for PARTsController.");
+                throw new UnsupportedOperationException(
+                        "Unknown controller option '" + controllerType + "' for PARTsController.");
         }
         err_msg = "Unimplemented controller button for " + this.controllerType.name();
     }

@@ -8,7 +8,7 @@ import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.util.datalog.StringLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.constants.DebugConstants;
+import frc.robot.constants.RobotConstants;
 import frc.robot.util.Field.Field;
 
 public class PARTsLogger {
@@ -30,7 +30,7 @@ public class PARTsLogger {
     }
 
     private void instantiate() {
-        if (DebugConstants.logging) {
+        if (RobotConstants.logging) {
             // Starts recording to data log
             DataLogManager.start();
 
@@ -40,7 +40,7 @@ public class PARTsLogger {
     }
 
     public boolean logBoolean(String key, boolean b) {
-        if (DebugConstants.logging) {
+        if (RobotConstants.logging) {
             new BooleanLogEntry(log, name.length() > 0 ? String.format("%s/%s", name, key) : key).append(b);
             return true;
         } else
@@ -48,7 +48,7 @@ public class PARTsLogger {
     }
 
     public boolean logDouble(String key, double d) {
-        if (DebugConstants.logging) {
+        if (RobotConstants.logging) {
             new DoubleLogEntry(log, name.length() > 0 ? String.format("%s/%s", name, key) : key).append(d);
             return true;
         } else
@@ -56,7 +56,7 @@ public class PARTsLogger {
     }
 
     public boolean logString(String key, String s) {
-        if (DebugConstants.logging) {
+        if (RobotConstants.logging) {
             new StringLogEntry(log, name.length() > 0 ? String.format("%s/%s", name, key) : key).append(s);
             return true;
         } else
@@ -82,6 +82,7 @@ public class PARTsLogger {
                             logString(command.getName(), "Command finished");
                         });
     }
+
     public void logPathPlanner() {
         // Logging callback for target robot pose
         PathPlannerLogging.setLogTargetPoseCallback((pose) -> {

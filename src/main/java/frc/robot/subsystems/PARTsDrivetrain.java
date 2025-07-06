@@ -6,6 +6,7 @@ import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModule;
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -19,9 +20,12 @@ import com.pathplanner.lib.path.Waypoint;
 import com.pathplanner.lib.util.FileVersionException;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 import org.json.simple.parser.ParseException;
@@ -47,11 +51,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Robot;
+import frc.robot.Telemetry;
 import frc.robot.constants.DrivetrainConstants;
 import frc.robot.constants.RobotConstants;
 import frc.robot.constants.generated.TunerConstants;
 import frc.robot.util.Field.Field;
 import frc.robot.util.PARTs.IPARTsSubsystem;
+import frc.robot.util.PARTs.PARTsCommandController;
+import frc.robot.util.PARTs.PARTsCommandUtils;
 import frc.robot.util.PARTs.PARTsLogger;
 import frc.robot.util.PARTs.PARTsNT;
 import frc.robot.util.PARTs.PARTsUnit;
@@ -59,6 +66,12 @@ import frc.robot.util.PARTs.PARTsUnit.PARTsUnitType;
 
 public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSubsystem {
         /*-------------------------------- Private instance variables ---------------------------------*/
+        private boolean fineGrainDrive = false;
+        private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+        private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+
+        private Telemetry telemetryLogger;
+        /// check which are needed.
         private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
 
         private SwerveModule<TalonFX, TalonFX, CANcoder> frontRightModule;
@@ -91,7 +104,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                         SwerveModuleConstants<?, ?, ?>... modules) {
                 super(DrivetrainConstants, modules);
 
-                initialize();
+                instantiate();
         }
 
         public PARTsDrivetrain(
@@ -100,7 +113,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                         SwerveModuleConstants<?, ?, ?>... modules) {
                 super(DrivetrainConstants, odometryUpdateFrequency, modules);
 
-                initialize();
+                instantiate();
         }
 
         public PARTsDrivetrain(
@@ -112,8 +125,23 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 super(DrivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation,
                                 modules);
 
-                initialize();
+                instantiate();
 
+        }
+
+        private void instantiate() {
+                frontLeftModule = getModule(0);
+                frontRightModule = getModule(1);
+                backLeftModule = getModule(2);
+                backRightModule = getModule(3);
+                initializeClasses();
+                initializeControllers();
+                sendToDashboard();
+                configureAutoBuilder();
+                fieldObject2d = Field.FIELD2D.getObject("Robot");
+                targetObject2d = Field.FIELD2D.getObject("target pose");
+                telemetryLogger = new Telemetry(MaxSpeed);
+                registerTelemetry(telemetryLogger::telemeterize);
         }
 
         /*-------------------------------- Generic Subsystem Functions --------------------------------*/
@@ -148,6 +176,61 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         }
 
         /*---------------------------------- Custom Public Functions ----------------------------------*/
+
+        public SwerveRequest.FieldCentric getFieldCentricDriveRequest() {
+                /* Setting up bindings for necessary control of the swerve drive platform */
+                return new SwerveRequest.FieldCentric()
+                                .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+                                .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive
+        }
+
+        public SwerveRequest.SwerveDriveBrake getBrakeDriveRequest() {
+                return new SwerveRequest.SwerveDriveBrake();
+        }
+
+        public SwerveRequest.PointWheelsAt getPointDriveRequest() {
+                return new SwerveRequest.PointWheelsAt();
+        }
+
+        public void toggleFineGrainDrive() {
+                fineGrainDrive = !fineGrainDrive;
+        }
+
+        public Command commandDefault(PARTsCommandController controller) {
+                // Note that X is defined as forward according to WPILib convention,
+                // and Y is defined as to the left according to WPILib convention.
+                return PARTsCommandUtils.setCommandName("commandDefault", applyRequest(() -> {
+                        double limit = MaxSpeed;
+                        if (fineGrainDrive)
+                                limit *= 0.25;
+                        return getFieldCentricDriveRequest().withVelocityX(-controller.getLeftY() * limit) // Drive forward with negative Y
+                                        // (forward)
+                                        .withVelocityY(-controller.getLeftX() * limit) // Drive left with negative
+                                        // X (left)
+                                        .withRotationalRate(-controller.getRightX() * MaxAngularRate); // Drive
+                                                                                                       // counterclockwise
+                                                                                                       // with
+                                                                                                       // negative
+                                                                                                       // X (left)
+                }));
+        }
+
+        public Command commandBrake() {
+                return PARTsCommandUtils.setCommandName("commandBrake",
+                                applyRequest(() -> getBrakeDriveRequest()));
+        }
+
+        public Command commandPointWheels(PARTsCommandController controller) {
+                return PARTsCommandUtils.setCommandName("commandPointWheels", applyRequest(() -> getPointDriveRequest()
+                                .withModuleDirection(new Rotation2d(-controller.getLeftY(),
+                                                -controller.getLeftX()))));
+        }
+
+        public Command commandSeedFieldCentric() {
+                return PARTsCommandUtils.setCommandName("commandSeedFieldCentric",
+                                this.runOnce(() -> super.seedFieldCentric()));
+        }
+
         public Command alignCommand(Pose2d goalPose) {
                 return alignCommand(() -> goalPose);
         }
@@ -359,7 +442,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                                                    // a differential drivetrain, the
                                                                                    // rotation will have no effect.
                 );
-
+        
                 // Prevent the path from being flipped if the coordinates are already correct
                 path.preventFlipping = false;
         }).andThen(AutoBuilder.followPath(pathSupplier.get()));
@@ -367,8 +450,6 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 return c;
         }
         */
-
-
 
         /*---------------------------------- Custom Private Functions ---------------------------------*/
         private void alignCommandInitTelemetry(Pose2d holdDist) {
@@ -464,19 +545,6 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 partsNT.setDouble("align/pigeonMovementX", drivetrainVelocityX.getValue());
                 partsNT.setDouble("align/pigeonMovementY", drivetrainVelocityY.getValue());
                 partsNT.setDouble("align/goalPoseError", Math.abs(diff.getTranslation().getNorm()));
-        }
-
-        private void initialize() {
-                frontLeftModule = getModule(0);
-                frontRightModule = getModule(1);
-                backLeftModule = getModule(2);
-                backRightModule = getModule(3);
-                initializeClasses();
-                initializeControllers();
-                sendToDashboard();
-                configureAutoBuilder();
-                fieldObject2d = Field.FIELD2D.getObject("Robot");
-                targetObject2d = Field.FIELD2D.getObject("target pose");
         }
 
         private void sendToDashboard() {

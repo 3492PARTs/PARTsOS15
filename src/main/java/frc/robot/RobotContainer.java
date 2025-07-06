@@ -1,24 +1,18 @@
 package frc.robot;
 
-import static edu.wpi.first.units.Units.*;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.function.BooleanSupplier;
 
-import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
-import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.constants.RobotConstants;
 import frc.robot.constants.generated.TunerConstants;
 import frc.robot.subsystems.Candle;
 import frc.robot.subsystems.Candle.CandleState;
@@ -32,37 +26,22 @@ import frc.robot.util.Field.Reef;
 import frc.robot.util.PARTs.IPARTsSubsystem;
 import frc.robot.util.PARTs.PARTsButtonBoxController;
 import frc.robot.util.PARTs.PARTsCommandController;
+import frc.robot.util.PARTs.PARTsCommandUtils;
 import frc.robot.util.PARTs.PARTsDashboard;
 import frc.robot.util.PARTs.PARTsNT;
-import frc.robot.util.PARTs.PARTsUnit;
 import frc.robot.util.PARTs.PARTsController.ControllerType;
 import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.LimelightVision;
 import frc.robot.subsystems.LimelightVision.MegaTagMode;
 
 public class RobotContainer {
-        private boolean fineGrainDrive = false;
-        private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top
-                                                                                      // speed
-        private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per
-                                                                                          // second
-                                                                                          // max angular velocity
-
-        /* Setting up bindings for necessary control of the swerve drive platform */
-        private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-                        .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
-                        .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive
-                                                                                 // motors
-        private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-        private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
-
-        private final Telemetry telemetryLogger = new Telemetry(MaxSpeed);
 
         private final PARTsCommandController driveController = new PARTsCommandController(0, ControllerType.DS5);
         private final PARTsCommandController operatorController = new PARTsCommandController(1, ControllerType.XBOX);
         private final PARTsButtonBoxController buttonBoxController = new PARTsButtonBoxController(2);
 
-        private boolean elevatorManualControl = false;
+        private boolean visionAlignActive = true;
+        private BooleanSupplier visionAlignActiveBooleanSupplier = () -> visionAlignActive;
 
         /* Subsystems */
 
@@ -83,14 +62,13 @@ public class RobotContainer {
         private final ArrayList<IPARTsSubsystem> subsystems = new ArrayList<IPARTsSubsystem>(
                         Arrays.asList(candle, coral, elevator, drivetrain, vision));
 
+        /** End Subsystems */
+
         private SendableChooser<Command> autoChooser;
 
         private PARTsNT partsNT = new PARTsNT("RobotContainer");
 
-        /** End Subsystems */
-
-        BooleanSupplier manualElevatorControlSupplier = () -> elevatorManualControl;
-        BooleanSupplier escapeBooleanSupplier;
+        private BooleanSupplier escapeBooleanSupplier;
 
         public RobotContainer() {
                 escapeBooleanSupplier = buttonBoxController.negative3Trigger()
@@ -98,63 +76,40 @@ public class RobotContainer {
                                 .or(driveController.axisMagnitudeGreaterThan(1, 0.5))
                                 .or(driveController.rightTrigger());
 
-                // configureAutonomousCommands();
-                configureBindings();
+                configureDrivetrainBindings();
+                configureElevatorBindings();
+                configureCoralBindings();
                 partsNT.putSmartDashboardSendable("field", Field.FIELD2D);
 
         }
 
-        private void configureBindings() {
-                // * */
-                // =============================================================================================
-                // * */ ------------------------------------- DriveTrain
-                // * */ -------------------------------------------
-                // * */
-                // ---------------------------------------------------------------------------------------------
+        private void configureDrivetrainBindings() {
 
-                // Note that X is defined as forward according to WPILib convention,
-                // and Y is defined as to the left according to WPILib convention.
-                Command driveCommand = drivetrain.applyRequest(() -> {
-                        double limit = MaxSpeed;
-                        if (fineGrainDrive)
-                                limit *= 0.25;
-                        return drive.withVelocityX(-driveController.getLeftY() * limit) // Drive forward with negative Y
-                                        // (forward)
-                                        .withVelocityY(-driveController.getLeftX() * limit) // Drive left with negative
-                                        // X (left)
-                                        .withRotationalRate(-driveController.getRightX() * MaxAngularRate); // Drive
-                                                                                                            // counterclockwise
-                                                                                                            // with
-                                                                                                            // negative
-                                                                                                            // X (left)
-                });
-                driveCommand.setName("DefaultDrive");
                 // Drivetrain will execute this command periodically
-                drivetrain.setDefaultCommand(driveCommand);
+                drivetrain.setDefaultCommand(drivetrain.commandDefault(driveController));
 
                 // fine grain controls
-                driveController.rightBumper().onTrue(Commands.runOnce(() -> fineGrainDrive = !fineGrainDrive));
+                //driveController.rightBumper().onTrue(Commands.runOnce(() -> fineGrainDrive = !fineGrainDrive));
 
-                new Trigger(() -> fineGrainDrive)
-                                .onTrue(Commands.runOnce(() -> candle.addState(CandleState.FINE_GRAIN_DRIVE)))
-                                .onFalse(Commands.runOnce(() -> candle.removeState(CandleState.FINE_GRAIN_DRIVE)));
+                //new Trigger(() -> fineGrainDrive)
+                //                .onTrue(Commands.runOnce(() -> candle.addState(CandleState.FINE_GRAIN_DRIVE)))
+                //                .onFalse(Commands.runOnce(() -> candle.removeState(CandleState.FINE_GRAIN_DRIVE)));
 
                 // brakes swerve, puts modules into x configuration
-                driveController.a().whileTrue(drivetrain.applyRequest(() -> brake));
+                driveController.a().whileTrue(drivetrain.commandBrake());
 
                 // manual module direction control
-                driveController.b().whileTrue(drivetrain.applyRequest(() -> point
-                                .withModuleDirection(new Rotation2d(-driveController.getLeftY(),
-                                                -driveController.getLeftX()))));
+                driveController.b().whileTrue(drivetrain.commandPointWheels(driveController));
 
                 // reset the field-centric heading on left bumper press
-                driveController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+                driveController.leftBumper().onTrue(drivetrain.commandSeedFieldCentric());
 
-                driveController.rightTrigger().whileTrue(Reef.commandIntakeScoreIntake(drivetrain, coral, elevator));
-                driveController.leftTrigger()
-                                .whileTrue(vision.commandMegaTagMode(MegaTagMode.MEGATAG2));
-                // logging
-                drivetrain.registerTelemetry(telemetryLogger::telemeterize);
+                if (RobotConstants.debug) {
+                        driveController.rightTrigger()
+                                        .whileTrue(Reef.commandIntakeScoreIntake(drivetrain, coral, elevator));
+                        driveController.leftTrigger()
+                                        .whileTrue(vision.commandMegaTagMode(MegaTagMode.MEGATAG2));
+                }
 
                 // Run SysId routines when holding back/start and X/Y.
                 // Note that each routine should be run exactly once in a single log.
@@ -170,43 +125,23 @@ public class RobotContainer {
                  * sysIdQuasistatic(Direction.kReverse));
                  */
 
-                // * */
-                // =============================================================================================
-                // * */ ------------------------------------- Elevator
-                // * */ -------------------------------------------
-                // * */
-                // ---------------------------------------------------------------------------------------------
+        }
 
+        private void configureElevatorBindings() {
                 operatorController.axisMagnitudeGreaterThan(5, 0.1)
                                 .onTrue(elevator.joystickElevatorControl(operatorController));
 
-                // =============================================================================================
-                // * */ ------------------------------------- Coral Intake
-                // * */ -------------------------------------------
-                // * */
-                // ---------------------------------------------------------------------------------------------
-
-                buttonBoxController.positive4Trigger().onTrue(coral.intake()).onFalse(coral.stopCoralCommand());
-                buttonBoxController.negative4Trigger().onTrue(coral.reverse()).onFalse(coral.stopCoralCommand());
-
-                buttonBoxController.povTrigger0().whileTrue(coral.L4Intake()).onFalse(coral.stopCoralCommand());
-
-                buttonBoxController.povTrigger180().whileTrue(coral.L4OutTake()).onFalse(coral.stopCoralCommand());
-
-                // =============================================================================================
-                // * */ ------------------------------------- Elevator and Score Control
-                // * */ -------------------------------------------
-                // * */
-                // ---------------------------------------------------------------------------------------------
-
-                buttonBoxController.nukeTrigger().onTrue(Commands.runOnce(() -> {
-                        elevatorManualControl = !elevatorManualControl;
-                }));
-
-                buttonBoxController.enginestartTrigger().onTrue(coral.score());
-
                 // --------------------- Stow --------------------//
-                buttonBoxController.negative1Trigger().onTrue(elevator.goToElevatorStow());
+                buttonBoxController.negative1Trigger().onTrue(elevator.commandStow());
+
+                buttonBoxController.nukeTrigger().toggleOnTrue(
+                                PARTsCommandUtils.setCommandName("Toggle Vision Control", Commands.startEnd(
+                                                () -> {
+                                                        visionAlignActive = true;
+                                                },
+                                                () -> {
+                                                        visionAlignActive = false;
+                                                })));
 
                 // *---------------------------------------------------- *//
                 // * ---------------Right Reef Pole Controls ----------- *//
@@ -214,19 +149,23 @@ public class RobotContainer {
 
                 // --------------------- Align, L2, Score --------------------//
                 buttonBoxController.mapTrigger()
-                                .onTrue(Reef.alignToVisibleTagSideScore(true, drivetrain, elevator, ElevatorState.L2,
+                                .onTrue(Reef.commandAlignAndScoreToVisibleTag(true, drivetrain, elevator,
+                                                ElevatorState.L2,
                                                 coral,
-                                                escapeBooleanSupplier, candle));
+                                                escapeBooleanSupplier, candle, visionAlignActiveBooleanSupplier));
 
                 // --------------------- Align, L3, Score --------------------//
-                buttonBoxController.audioTrigger().onTrue(Reef.alignToVisibleTagSideScore(true, drivetrain, elevator,
-                                ElevatorState.L3, coral, escapeBooleanSupplier, candle));
+                buttonBoxController.audioTrigger()
+                                .onTrue(Reef.commandAlignAndScoreToVisibleTag(true, drivetrain, elevator,
+                                                ElevatorState.L3, coral, escapeBooleanSupplier, candle,
+                                                visionAlignActiveBooleanSupplier));
 
                 // --------------------- Align, L4, Score --------------------//
                 buttonBoxController.cruiseTrigger()
-                                .onTrue(Reef.alignToVisibleTagSideScore(true, drivetrain, elevator, ElevatorState.L4,
+                                .onTrue(Reef.commandAlignAndScoreToVisibleTag(true, drivetrain, elevator,
+                                                ElevatorState.L4,
                                                 coral,
-                                                escapeBooleanSupplier, candle));
+                                                escapeBooleanSupplier, candle, visionAlignActiveBooleanSupplier));
 
                 // *---------------------------------------------------- *//
                 // * ---------------Left Reef Pole Controls ----------- *//
@@ -235,21 +174,24 @@ public class RobotContainer {
                 // --------------------- Align, L2, Score --------------------//
 
                 buttonBoxController.wipeTrigger()
-                                .onTrue(Reef.alignToVisibleTagSideScore(false, drivetrain, elevator, ElevatorState.L2,
+                                .onTrue(Reef.commandAlignAndScoreToVisibleTag(false, drivetrain, elevator,
+                                                ElevatorState.L2,
                                                 coral,
-                                                escapeBooleanSupplier, candle));
+                                                escapeBooleanSupplier, candle, visionAlignActiveBooleanSupplier));
 
                 // --------------------- Align, L3, Score --------------------//
                 buttonBoxController.flashTrigger()
-                                .onTrue(Reef.alignToVisibleTagSideScore(false, drivetrain, elevator, ElevatorState.L3,
+                                .onTrue(Reef.commandAlignAndScoreToVisibleTag(false, drivetrain, elevator,
+                                                ElevatorState.L3,
                                                 coral,
-                                                escapeBooleanSupplier, candle));
+                                                escapeBooleanSupplier, candle, visionAlignActiveBooleanSupplier));
 
                 // --------------------- Align, L4, Score --------------------//
                 buttonBoxController.handleTrigger()
-                                .onTrue(Reef.alignToVisibleTagSideScore(false, drivetrain, elevator, ElevatorState.L4,
+                                .onTrue(Reef.commandAlignAndScoreToVisibleTag(false, drivetrain, elevator,
+                                                ElevatorState.L4,
                                                 coral,
-                                                escapeBooleanSupplier, candle));
+                                                escapeBooleanSupplier, candle, visionAlignActiveBooleanSupplier));
 
                 // =============================================================================================
                 // ------------------------------------- SysID
@@ -278,30 +220,47 @@ public class RobotContainer {
                  */
         }
 
+        private void configureCoralBindings() {
+                buttonBoxController.positive4Trigger().onTrue(coral.commandIntake()).onFalse(coral.commandStop());
+
+                buttonBoxController.negative4Trigger().onTrue(coral.commandReverse()).onFalse(coral.commandStop());
+
+                buttonBoxController.povTrigger0().whileTrue(coral.commandL4Intake()).onFalse(coral.commandStop());
+
+                buttonBoxController.povTrigger180().whileTrue(coral.commandL4OutTake())
+                                .onFalse(coral.commandStop());
+
+                buttonBoxController.enginestartTrigger().onTrue(coral.commandScore());
+        }
+
         public void configureAutonomousCommands() {
                 NamedCommands.registerCommand("Elevator L2",
-                                elevator.elevatorToLevelCommand(ElevatorState.L2));
+                                elevator.commandToLevel(ElevatorState.L2));
                 NamedCommands.registerCommand("Elevator Stow",
-                                elevator.elevatorToLevelCommand(ElevatorState.STOW));
+                                elevator.commandToLevel(ElevatorState.STOW));
                 NamedCommands.registerCommand("Elevator L4",
-                                elevator.elevatorToLevelCommand(ElevatorState.L4));
+                                elevator.commandToLevel(ElevatorState.L4));
 
-                NamedCommands.registerCommand("Intake", coral.autoIntake());
+                NamedCommands.registerCommand("Intake", coral.commandAutoIntake());
                 NamedCommands.registerCommand("Score", coral.autoScore());
 
                 NamedCommands.registerCommand("Right Align L2 Score",
-                                Reef.alignToVisibleTagSideScore(true, drivetrain, elevator, ElevatorState.L2, coral,
-                                                escapeBooleanSupplier, candle));
+                                Reef.commandAlignAndScoreToVisibleTag(true, drivetrain, elevator, ElevatorState.L2,
+                                                coral,
+                                                escapeBooleanSupplier, candle, visionAlignActiveBooleanSupplier));
                 NamedCommands.registerCommand("Left Align L2 Score",
-                                Reef.alignToVisibleTagSideScore(false, drivetrain, elevator, ElevatorState.L2, coral,
-                                                escapeBooleanSupplier, candle));
+                                Reef.commandAlignAndScoreToVisibleTag(false, drivetrain, elevator, ElevatorState.L2,
+                                                coral,
+                                                escapeBooleanSupplier, candle, visionAlignActiveBooleanSupplier));
 
                 NamedCommands.registerCommand("Right Align L4 Score",
-                                Reef.alignToVisibleTagSideScore(true, drivetrain, elevator, ElevatorState.L4, coral,
-                                                escapeBooleanSupplier, candle));
+                                Reef.commandAlignAndScoreToVisibleTag(true, drivetrain, elevator, ElevatorState.L4,
+                                                coral,
+                                                escapeBooleanSupplier, candle, visionAlignActiveBooleanSupplier));
                 NamedCommands.registerCommand("Left Align L4 Score",
-                                Reef.alignToVisibleTagSideScore(false, drivetrain, elevator, ElevatorState.L4, coral,
-                                                escapeBooleanSupplier, candle));
+                                Reef.commandAlignAndScoreToVisibleTag(false, drivetrain, elevator, ElevatorState.L4,
+                                                coral,
+                                                escapeBooleanSupplier, candle, visionAlignActiveBooleanSupplier));
 
                 NamedCommands.registerCommand("Align Left L4 Stop",
                                 Reef.alignToVisibleTagSideStop(false, drivetrain, elevator, ElevatorState.L4, coral,
@@ -337,7 +296,7 @@ public class RobotContainer {
 
         public void outputTelemetry() {
                 subsystems.forEach(s -> s.outputTelemetry());
-                partsNT.setBoolean("Manual Mode", elevatorManualControl);
+                partsNT.setBoolean("Vision Mode", visionAlignActive);
                 partsNT.setDouble("Battery Voltage", RobotController.getBatteryVoltage());
         }
 

@@ -116,7 +116,7 @@ public abstract class Elevator extends PARTsSubsystem {
             .onlyIf(() -> getElevatorPosition() <= ElevatorConstants.bottomLimitPositionErrorMargin));
 
     super.partsNT.putSmartDashboardSendable("PID", mElevatorPIDController);
-    super.partsNT.putSmartDashboardSendable("Zero Elevator", zeroElevatorCommand());
+    super.partsNT.putSmartDashboardSendable("Zero Elevator", commandZero());
     super.partsNT.putSmartDashboardSendable("Toggle LaserCan Active", toggleLaserCanActive());
 
     mPeriodicIO.elevator_previous_position = getElevatorPosition();
@@ -229,13 +229,13 @@ public abstract class Elevator extends PARTsSubsystem {
   }
 
   public Command joystickElevatorControl(PARTsCommandController controller) {
-    return PARTsCommandUtils.setCommandName("joystickElevatorControl", this.run(() -> {
+    return PARTsCommandUtils.setCommandName("JoystickElevatorCommand", this.run(() -> {
       double speed = -controller.getRightY() * ElevatorConstants.maxSpeed;
       setElevatorPower(speed);
     }).until(() -> Math.abs(controller.getRightY()) < 0.1).andThen(() -> setElevatorPower(0)));
   }
 
-  public Command elevatorToLevelCommand(ElevatorState state) {
+  public Command commandToLevel(ElevatorState state) {
     return PARTsCommandUtils.setCommandName("elevatorToStateCommand", this.runOnce(() -> {
       if (state.height != -1) {
         mPeriodicIO.is_elevator_pos_control = true;
@@ -258,61 +258,61 @@ public abstract class Elevator extends PARTsSubsystem {
 
   }
 
-  public Command goToElevatorStow() {
-    return PARTsCommandUtils.setCommandName("goToElevatorStow", this.runOnce(() -> {
+  public Command commandStow() {
+    return PARTsCommandUtils.setCommandName("commandStow", this.runOnce(() -> {
       mPeriodicIO.is_elevator_pos_control = true;
       mPeriodicIO.elevator_target = ElevatorConstants.StowHeight;
       mPeriodicIO.state = ElevatorState.STOW;
     }));
   }
 
-  public Command goToElevatorL2() {
-    return PARTsCommandUtils.setCommandName("goToElevatorL2", this.runOnce(() -> {
+  public Command commandL2() {
+    return PARTsCommandUtils.setCommandName("commandL2", this.runOnce(() -> {
       mPeriodicIO.is_elevator_pos_control = true;
       mPeriodicIO.elevator_target = ElevatorConstants.L2Height;
       mPeriodicIO.state = ElevatorState.L2;
     }));
   }
 
-  public Command goToElevatorL3() {
-    return PARTsCommandUtils.setCommandName("goToElevatorL3", this.runOnce(() -> {
+  public Command commandL3() {
+    return PARTsCommandUtils.setCommandName("commandL3", this.runOnce(() -> {
       mPeriodicIO.is_elevator_pos_control = true;
       mPeriodicIO.elevator_target = ElevatorConstants.L3Height;
       mPeriodicIO.state = ElevatorState.L3;
     }));
   }
 
-  public Command goToElevatorL4() {
-    return PARTsCommandUtils.setCommandName("goToElevatorL4", this.runOnce(() -> {
+  public Command commandL4() {
+    return PARTsCommandUtils.setCommandName("commandL4", this.runOnce(() -> {
       mPeriodicIO.is_elevator_pos_control = true;
       mPeriodicIO.elevator_target = ElevatorConstants.L4Height;
       mPeriodicIO.state = ElevatorState.L4;
     }));
   }
 
-  public Command goToAlgaeLow() {
-    return PARTsCommandUtils.setCommandName("goToAlgaeLow", this.runOnce(() -> {
+  public Command commandAlgaeLow() {
+    return PARTsCommandUtils.setCommandName("commandAlgaeLow", this.runOnce(() -> {
       mPeriodicIO.is_elevator_pos_control = true;
       mPeriodicIO.elevator_target = ElevatorConstants.LowAlgaeHeight;
       mPeriodicIO.state = ElevatorState.A1;
     }));
   }
 
-  public Command goToAlgaeHigh() {
-    return PARTsCommandUtils.setCommandName("goToAlgaeHigh", this.runOnce(() -> {
+  public Command commandAlgaeHigh() {
+    return PARTsCommandUtils.setCommandName("commandAlgaeHigh", this.runOnce(() -> {
       mPeriodicIO.is_elevator_pos_control = true;
       mPeriodicIO.elevator_target = ElevatorConstants.HighAlgaeHeight;
       mPeriodicIO.state = ElevatorState.A2;
     }));
   }
 
-  public Command zeroElevatorCommand() {
-    return PARTsCommandUtils.setCommandName("zeroElevatorCommand",
+  public Command commandZero() {
+    return PARTsCommandUtils.setCommandName("commandZero",
         this.run(() -> {
           setSpeedWithoutLimits(ElevatorConstants.homingSpeed);
         })
             .unless(() -> mPeriodicIO.gantry_blocked).until(this::getBottomLimit)
-            .andThen(this.runOnce(() -> stop())).andThen(goToElevatorStow()));
+            .andThen(this.runOnce(() -> stop())).andThen(commandStow()));
   }
 
   public boolean isPositionControl() {
