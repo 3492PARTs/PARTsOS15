@@ -84,14 +84,14 @@ public abstract class Coral extends PARTsSubsystem {
     checkErrors();
 
     if (mPeriodicIO.state != IntakeState.ERROR) {
-      elevator.setGantryBlock(isCoralInEntry());
+      elevator.gantryBlocked(isCoralInEntry());
       checkAutoTasks();
       // Help us index a little more if its still detected in entry
       if (isCoralInEntry() && mPeriodicIO.state != IntakeState.INTAKE && mPeriodicIO.state != IntakeState.REVERSE) {
         index();
       }
     } else
-      elevator.setGantryBlock(false);
+      elevator.gantryBlocked(false);
   }
 
   @Override

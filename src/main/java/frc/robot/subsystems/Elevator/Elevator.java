@@ -1,11 +1,9 @@
 package frc.robot.subsystems.Elevator;
 
-import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -20,55 +18,73 @@ import frc.robot.util.PARTs.Abstracts.PARTsSubsystem;
 public abstract class Elevator extends PARTsSubsystem {
 
   /*-------------------------------- Private instance variables ---------------------------------*/
-  protected PeriodicIO mPeriodicIO;
+  private ElevatorState elevatorState;
   private Candle candle;
 
   private final ProfiledPIDController mElevatorPIDController;
   protected ElevatorFeedforward mElevatorFeedForward;
 
   public enum ElevatorState {
-    SENSOR_ERROR(-1),
-    POS_CTL_TRAVEL_ERROR(-1),
-    STOW(ElevatorConstants.StowHeight),
-    L2(ElevatorConstants.L2Height),
-    L3(ElevatorConstants.L3Height),
-    L4(ElevatorConstants.L4Height),
-    A1(ElevatorConstants.LowAlgaeHeight),
-    A2(ElevatorConstants.HighAlgaeHeight);
+    SENSOR_ERROR(-1, true),
+    POS_CTL_TRAVEL_ERROR(-1, true),
+    GANTRY_BLOCKED(-1, true),
+    MANUAL(-1, false),
+    STOP(-1, false),
+    STOW(ElevatorConstants.StowHeight, false),
+    L2(ElevatorConstants.L2Height, false),
+    L3(ElevatorConstants.L3Height, false),
+    L4(ElevatorConstants.L4Height, false),
+    A1(ElevatorConstants.LowAlgaeHeight, false),
+    A2(ElevatorConstants.HighAlgaeHeight, false);
 
-    double height;
+    private final double height;
+    private final boolean isError;
 
-    ElevatorState(double height) {
+    ElevatorState(double height, boolean isError) {
       this.height = height;
+      this.isError = isError;
+    }
+
+    public boolean hasTarget() {
+      return height >= 0;
+    }
+
+    public double getTarget() {
+      return height;
+    }
+
+    public boolean isErrorState() {
+      return isError;
     }
   }
 
-  protected static class PeriodicIO {
+  /*protected static class PeriodicIO {
     double elevator_previous_position = 0.0;
     int elevator_position_debounce = 0;
-
+  
     double elevator_target = 0.0;
     double elevator_power = 0.0;
     LaserCan.Measurement elevator_measurement = null;
-
+  
     boolean is_elevator_pos_control = false;
     boolean error = false;
     boolean gantry_blocked = false;
-
+  
     ElevatorState state = ElevatorState.STOW;
-
+  
     boolean useLaserCan = true;
     int lasercan_error_debounce = 0;
-
+  
     boolean elevator_bottom_limit_error = false;
     int elevator_bottom_limit_debounce = 0;
-  }
+  }*/
 
   public Elevator(Candle candle) {
     super("Elevator");
 
     this.candle = candle;
-    mPeriodicIO = new PeriodicIO();
+
+    elevatorState = ElevatorState.STOW;
 
     // Elevator PID
     mElevatorPIDController = new ProfiledPIDController(
@@ -95,40 +111,40 @@ public abstract class Elevator extends PARTsSubsystem {
 
     super.partsNT.putSmartDashboardSendable("PID", mElevatorPIDController);
     super.partsNT.putSmartDashboardSendable("Zero Elevator", commandZero());
-    super.partsNT.putSmartDashboardSendable("Toggle LaserCan Active", toggleLaserCanActive());
+    //super.partsNT.putSmartDashboardSendable("Toggle LaserCan Active", toggleLaserCanActive());
     super.partsNT.putSmartDashboardSendable("Position Commands/STOW", commandStow());
     super.partsNT.putSmartDashboardSendable("Position Commands/L2", commandL2());
     super.partsNT.putSmartDashboardSendable("Position Commands/L3", commandL3());
     super.partsNT.putSmartDashboardSendable("Position Commands/L4", commandL4());
-
-    mPeriodicIO.elevator_previous_position = getElevatorPosition();
   }
   /*-------------------------------- Generic Subsystem Functions --------------------------------*/
 
   @Override
   public void periodic() {
-    errorTasks();
+    //errorTasks();
 
-    if (!mPeriodicIO.error) {
-      if (mPeriodicIO.is_elevator_pos_control && !mPeriodicIO.gantry_blocked) {
-        mElevatorPIDController.setGoal(mPeriodicIO.elevator_target);
+    if (elevatorState == ElevatorState.STOP) {
+      setSpeed(0);
+    } else if (!elevatorState.isErrorState()) {
+      if (elevatorState != ElevatorState.MANUAL) {
+        double voltage = 0;
 
-        if (mPeriodicIO.state == ElevatorState.STOW && !getBottomLimit() && mElevatorPIDController.atGoal()) {
-          mPeriodicIO.elevator_power = ElevatorConstants.homingSpeed;
-        } else if (mPeriodicIO.state == ElevatorState.STOW && getBottomLimit()) {
-          mPeriodicIO.elevator_power = 0;
+        mElevatorPIDController.setGoal(elevatorState.getTarget());
+
+        if (elevatorState == ElevatorState.STOW && !getBottomLimit() && mElevatorPIDController.atGoal()) {
+          voltage = ElevatorConstants.homingSpeed;
+        } else if (elevatorState == ElevatorState.STOW && getBottomLimit()) {
+          voltage = 0;
         } else {
           double pidCalc = mElevatorPIDController.atGoal() ? 0
-              : mElevatorPIDController.calculate(getElevatorPosition(), mPeriodicIO.elevator_target);
+              : mElevatorPIDController.calculate(getElevatorPosition(), elevatorState.getTarget());
           double ffCalc = mElevatorFeedForward.calculate(mElevatorPIDController.getSetpoint().velocity);
 
-          mPeriodicIO.elevator_power = pidCalc + ffCalc;
+          voltage = pidCalc + ffCalc;
         }
-        setVoltage(mPeriodicIO.elevator_power);
+        setVoltage(voltage);
 
-        mPeriodicIO.elevator_position_debounce++;
-
-      } else if (Math.abs(mPeriodicIO.elevator_power) > 0 && !mPeriodicIO.gantry_blocked)
+      } else if (elevatorState == ElevatorState.MANUAL)
         setSpeed(mPeriodicIO.elevator_power);
       else
         setVoltage(mElevatorFeedForward.calculate(0));
@@ -136,7 +152,7 @@ public abstract class Elevator extends PARTsSubsystem {
     }
     // Error controls
     else {
-      if (Math.abs(mPeriodicIO.elevator_power) > 0 && !mPeriodicIO.gantry_blocked)
+      if (Math.abs(mPeriodicIO.elevator_power) > 0 && elevatorState != ElevatorState.GANTRY_BLOCKED)
         setSpeed(mPeriodicIO.elevator_power);
       else
         setVoltage(mElevatorFeedForward.calculate(0));
@@ -146,16 +162,13 @@ public abstract class Elevator extends PARTsSubsystem {
 
   @Override
   public void stop() {
-    mPeriodicIO.is_elevator_pos_control = false;
-    mPeriodicIO.elevator_power = 0.0;
-
-    setSpeedWithoutLimits(0.0);
+    elevatorState = ElevatorState.STOP;
   }
 
   @Override
   public void outputTelemetry() {
     super.partsNT.putDouble("Position/Current", getElevatorPosition());
-    super.partsNT.putDouble("Position/Target", mPeriodicIO.elevator_target);
+    super.partsNT.putDouble("Position/Target", elevatorState.getTarget());
     super.partsNT.putBoolean("Position/At Goal", mElevatorPIDController.atGoal());
 
     super.partsNT.putDouble("Velocity/Current", getRPS());
@@ -173,9 +186,8 @@ public abstract class Elevator extends PARTsSubsystem {
 
     super.partsNT.putDouble("RPS", getRPS());
     super.partsNT.putDouble("Power", mPeriodicIO.elevator_power);
-    super.partsNT.putString("State", mPeriodicIO.state.toString());
-    super.partsNT.putBoolean("Is Position Control", mPeriodicIO.is_elevator_pos_control);
-    super.partsNT.putBoolean("Gantry Blocked", mPeriodicIO.gantry_blocked);
+    super.partsNT.putString("State", elevatorState.toString());
+    super.partsNT.putBoolean("Gantry Blocked", elevatorState == ElevatorState.GANTRY_BLOCKED);
     super.partsNT.putBoolean("Using LaserCan", mPeriodicIO.useLaserCan);
   }
 
@@ -193,14 +205,14 @@ public abstract class Elevator extends PARTsSubsystem {
   /*---------------------------------- Custom Public Functions ----------------------------------*/
   public abstract double getElevatorPosition();
 
-  public void setGantryBlock(boolean b) {
-    mPeriodicIO.gantry_blocked = b;
+  public void gantryBlocked() {
+    elevatorState = ElevatorState.GANTRY_BLOCKED;
   }
 
   public abstract double getRPS();
 
   public ElevatorState getState() {
-    return mPeriodicIO.state;
+    return elevatorState;
   }
 
   public void setElevatorPower(double power) {
@@ -217,72 +229,52 @@ public abstract class Elevator extends PARTsSubsystem {
 
   public Command commandToLevel(ElevatorState state) {
     return PARTsCommandUtils.setCommandName("elevatorToStateCommand", this.runOnce(() -> {
-      if (state.height != -1) {
-        mPeriodicIO.is_elevator_pos_control = true;
-        mPeriodicIO.elevator_target = state.height;
-        mPeriodicIO.state = state;
-
-        mElevatorPIDController.reset(getElevatorPosition());
-        mElevatorPIDController.setGoal(mPeriodicIO.elevator_target);
-      }
-    }).andThen(new WaitUntilCommand(() -> mElevatorPIDController.atGoal() || mPeriodicIO.error)));
+      toLevel(state);
+    }).andThen(new WaitUntilCommand(() -> mElevatorPIDController.atGoal() || !elevatorState.hasTarget())));
   }
 
-  public void elevatorToLevel(ElevatorState state) {
+  public void toLevel(ElevatorState state) {
+    if (state.hasTarget()) {
+      elevatorState = state;
 
-    if (state.height != -1) {
-      mPeriodicIO.is_elevator_pos_control = true;
-      mPeriodicIO.elevator_target = state.height;
-      mPeriodicIO.state = state;
+      mElevatorPIDController.reset(getElevatorPosition());
+      mElevatorPIDController.setGoal(elevatorState.getTarget());
     }
-
   }
 
   public Command commandStow() {
     return PARTsCommandUtils.setCommandName("commandStow", this.runOnce(() -> {
-      mPeriodicIO.is_elevator_pos_control = true;
-      mPeriodicIO.elevator_target = ElevatorConstants.StowHeight;
-      mPeriodicIO.state = ElevatorState.STOW;
+      elevatorState = ElevatorState.STOW;
     }));
   }
 
   public Command commandL2() {
     return PARTsCommandUtils.setCommandName("commandL2", this.runOnce(() -> {
-      mPeriodicIO.is_elevator_pos_control = true;
-      mPeriodicIO.elevator_target = ElevatorConstants.L2Height;
-      mPeriodicIO.state = ElevatorState.L2;
+      elevatorState = ElevatorState.L2;
     }));
   }
 
   public Command commandL3() {
     return PARTsCommandUtils.setCommandName("commandL3", this.runOnce(() -> {
-      mPeriodicIO.is_elevator_pos_control = true;
-      mPeriodicIO.elevator_target = ElevatorConstants.L3Height;
-      mPeriodicIO.state = ElevatorState.L3;
+      elevatorState = ElevatorState.L3;
     }));
   }
 
   public Command commandL4() {
     return PARTsCommandUtils.setCommandName("commandL4", this.runOnce(() -> {
-      mPeriodicIO.is_elevator_pos_control = true;
-      mPeriodicIO.elevator_target = ElevatorConstants.L4Height;
-      mPeriodicIO.state = ElevatorState.L4;
+      elevatorState = ElevatorState.L4;
     }));
   }
 
   public Command commandAlgaeLow() {
     return PARTsCommandUtils.setCommandName("commandAlgaeLow", this.runOnce(() -> {
-      mPeriodicIO.is_elevator_pos_control = true;
-      mPeriodicIO.elevator_target = ElevatorConstants.LowAlgaeHeight;
-      mPeriodicIO.state = ElevatorState.A1;
+      elevatorState = ElevatorState.A1;
     }));
   }
 
   public Command commandAlgaeHigh() {
     return PARTsCommandUtils.setCommandName("commandAlgaeHigh", this.runOnce(() -> {
-      mPeriodicIO.is_elevator_pos_control = true;
-      mPeriodicIO.elevator_target = ElevatorConstants.HighAlgaeHeight;
-      mPeriodicIO.state = ElevatorState.A2;
+      elevatorState = ElevatorState.A2;
     }));
   }
 
@@ -291,12 +283,12 @@ public abstract class Elevator extends PARTsSubsystem {
         this.run(() -> {
           setSpeedWithoutLimits(ElevatorConstants.homingSpeed);
         })
-            .unless(() -> mPeriodicIO.gantry_blocked).until(this::getBottomLimit)
+            .unless(() -> elevatorState == ElevatorState.GANTRY_BLOCKED).until(this::getBottomLimit)
             .andThen(this.runOnce(() -> stop())).andThen(commandStow()));
   }
 
   public boolean isPositionControl() {
-    return mPeriodicIO.is_elevator_pos_control;
+    return elevatorState == ElevatorState.MANUAL;
   }
 
   public abstract boolean getBottomLimit();
@@ -307,10 +299,11 @@ public abstract class Elevator extends PARTsSubsystem {
 
   private void setSpeed(double speed) {
     // Full control in limits
-    if (!getBottomLimit() && !getTopLimit() && !mPeriodicIO.gantry_blocked)
+    if (!getBottomLimit() && !getTopLimit() && elevatorState != ElevatorState.GANTRY_BLOCKED)
       setSpeedWithoutLimits(speed);
     // Directional control at limits
-    else if (((getBottomLimit() && speed > 0) || (getTopLimit() && speed < 0)) && !mPeriodicIO.gantry_blocked)
+    else if (((getBottomLimit() && speed > 0) || (getTopLimit() && speed < 0))
+        && elevatorState != ElevatorState.GANTRY_BLOCKED)
       setSpeedWithoutLimits(speed);
     else
       stop();
@@ -333,39 +326,40 @@ public abstract class Elevator extends PARTsSubsystem {
 
   protected abstract void resetEncoder();
 
+  /*
   private Command toggleLaserCanActive() {
     return PARTsCommandUtils.setCommandName("toggleLaserCanActive",
         this.runOnce(() -> mPeriodicIO.useLaserCan = !mPeriodicIO.useLaserCan));
-  }
+  }*/
 
-  private void errorTasks() {
+  /*private void errorTasks() {
     /*
      * Error Conditions
      * Bottom and top limit hit at same time
      * Laser can in use and the measurement is null or status is not good
      * The bottom limit is hit for more than 10 loop runs and we are reporting a
      * current position higher than the margin of error
-     */
+     *
     if (mPeriodicIO.elevator_bottom_limit_error)
       mPeriodicIO.elevator_bottom_limit_debounce++;
     else
       mPeriodicIO.elevator_bottom_limit_debounce = 0;
-
+  
     if ((getBottomLimit() && getTopLimit()) ||
         (mPeriodicIO.useLaserCan
             && (mPeriodicIO.elevator_measurement == null || mPeriodicIO.elevator_measurement.status != 0))
         || (mPeriodicIO.elevator_bottom_limit_error && mPeriodicIO.elevator_bottom_limit_debounce >= 10)) {
       // If there wasn't an error report it.
       mPeriodicIO.lasercan_error_debounce++;
-
+  
       if (!mPeriodicIO.error) {
         mPeriodicIO.error = true;
-
+  
         setElevatorPower(0);
         mPeriodicIO.state = ElevatorState.SENSOR_ERROR;
         candle.addState(CandleState.ELEVATOR_ERROR);
       }
-
+  
       if (mPeriodicIO.lasercan_error_debounce > 10)
         mPeriodicIO.useLaserCan = false;
     } else {
@@ -376,5 +370,5 @@ public abstract class Elevator extends PARTsSubsystem {
         candle.removeState(CandleState.ELEVATOR_ERROR);
       }
     }
-  }
+  }*/
 }

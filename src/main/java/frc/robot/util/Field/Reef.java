@@ -96,25 +96,27 @@ public class Reef {
                 Command c = Commands.defer(() -> {
                         Pose2d feederStationGoal = Field.getTag(12).getLocation().toPose2d();
                         feederStationGoal = feederStationGoal.transformBy(
-                                        new Transform2d(RobotConstants.frontRobotVisionOffset.to(PARTsUnitType.Meter), 0,
+                                        new Transform2d(RobotConstants.frontRobotVisionOffset.to(PARTsUnitType.Meter),
+                                                        0,
                                                         new Rotation2d(PARTsUnit.DegreesToRadians.apply(0.0))));
 
                         Pose2d feederStation1M = feederStationGoal.transformBy(new Transform2d(1, 0, new Rotation2d()));
-        
+
                         Pose2d reefGoal = Field.getTag(18).getLocation().toPose2d();
                         reefGoal = reefGoal.transformBy(
-                                        new Transform2d(RobotConstants.frontRobotVisionOffset.to(PARTsUnitType.Meter), 0,
+                                        new Transform2d(RobotConstants.frontRobotVisionOffset.to(PARTsUnitType.Meter),
+                                                        0,
                                                         new Rotation2d(PARTsUnit.DegreesToRadians.apply(180.0))));
-                                                        
+
                         Pose2d reefGoal1M = reefGoal.transformBy(new Transform2d(-1, 0, new Rotation2d()));
 
-                return new SequentialCommandGroup(drivetrain.commandPathFindToPose(feederStation1M),
-                                drivetrain.commandAlign(feederStationGoal), coral.commandAutoIntake(),
-                                drivetrain.commandPathFindToPose(reefGoal1M), drivetrain.commandAlign(reefGoal),
-                                elevator.commandToLevel(ElevatorState.L2), coral.autoScore(),
-                                new WaitCommand(0.25),
-                                elevator.commandToLevel(ElevatorState.STOW));
-        }, new HashSet<>(Arrays.asList(drivetrain, coral, elevator)));
+                        return new SequentialCommandGroup(drivetrain.commandPathFindToPose(feederStation1M),
+                                        drivetrain.commandAlign(feederStationGoal), coral.commandAutoIntake(),
+                                        drivetrain.commandPathFindToPose(reefGoal1M), drivetrain.commandAlign(reefGoal),
+                                        elevator.commandToLevel(ElevatorState.L2), coral.autoScore(),
+                                        new WaitCommand(0.25),
+                                        elevator.commandToLevel(ElevatorState.STOW));
+                }, new HashSet<>(Arrays.asList(drivetrain, coral, elevator)));
 
                 /*Command c = new SequentialCommandGroup(drivetrain.commandPathFindToPose(feederStation1M),
                                 drivetrain.commandAlign(feederStationGoal), coral.commandAutoIntake(),
