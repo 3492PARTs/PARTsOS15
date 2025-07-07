@@ -40,17 +40,17 @@ public class ElevatorSim extends Elevator {
         mPeriodicIO.elevator_measurement = new LaserCan.Measurement(2, 0, 0, true, 0,
                 new LaserCan.RegionOfInterest(0, 0, 0, 0));
 
-                // Elevator Feedforward
-    mElevatorFeedForward = new ElevatorFeedforward(
-        0,
-        0,
-        0,
-        0);
+        // Elevator Feedforward
+        mElevatorFeedForward = new ElevatorFeedforward(
+                0,
+                0,
+                0,
+                0);
     }
 
     @Override
     public double getElevatorPosition() {
-        return sim == null ? 0 : sim.getPositionMeters();
+        return sim == null ? 0 : sim.getPositionMeters() * 8;
     }
 
     @Override
@@ -68,6 +68,7 @@ public class ElevatorSim extends Elevator {
     @Override
     protected void setSpeedVoltageLimits(double voltage) {
         sim.setInputVoltage(voltage);
+        sim.update(0.02);
     }
 
     @Override

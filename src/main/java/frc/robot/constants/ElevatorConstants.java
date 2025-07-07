@@ -33,8 +33,8 @@ public class ElevatorConstants {
     public static final double homingSpeed = -0.1;
     public static final double bottomLimitPositionErrorMargin = 30;
 
-    public static final double MIN_HEIGHT_METERS = Units.inchesToMeters(40.85); // FROM FLOOR TO TOP OF ELEVATOR
-    public static final double MAX_HEIGHT_METERS = Units.inchesToMeters(69.85); // FROM FLOOR TO TOP OF ELEVATOR
+    public static final double MIN_HEIGHT_METERS = 0;//Units.inchesToMeters(40.85); // FROM FLOOR TO TOP OF ELEVATOR
+    public static final double MAX_HEIGHT_METERS = maxHeight;//Units.inchesToMeters(69.85); // FROM FLOOR TO TOP OF ELEVATOR
 
     public static final double MASS_KG = Units.lbsToKilograms(1); // Currently for sim only, not confirmed
     public static final double DRUM_RADIUS_METERS = ((MAX_HEIGHT_METERS - MIN_HEIGHT_METERS)

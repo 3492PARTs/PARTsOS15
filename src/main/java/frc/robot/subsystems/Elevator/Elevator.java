@@ -96,6 +96,10 @@ public abstract class Elevator extends PARTsSubsystem {
     super.partsNT.putSmartDashboardSendable("PID", mElevatorPIDController);
     super.partsNT.putSmartDashboardSendable("Zero Elevator", commandZero());
     super.partsNT.putSmartDashboardSendable("Toggle LaserCan Active", toggleLaserCanActive());
+    super.partsNT.putSmartDashboardSendable("Position Commands/STOW", commandStow());
+    super.partsNT.putSmartDashboardSendable("Position Commands/L2", commandL2());
+    super.partsNT.putSmartDashboardSendable("Position Commands/L3", commandL3());
+    super.partsNT.putSmartDashboardSendable("Position Commands/L4", commandL4());
 
     mPeriodicIO.elevator_previous_position = getElevatorPosition();
   }
