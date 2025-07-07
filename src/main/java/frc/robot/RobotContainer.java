@@ -7,6 +7,13 @@ import java.util.function.BooleanSupplier;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -83,6 +90,12 @@ public class RobotContainer {
                 configureCoralBindings();
 
                 partsNT.putSmartDashboardSendable("field", Field.FIELD2D);
+
+                if (Robot.isSimulation()) {
+                        drivetrain.resetPose(Field.conditionallyTransformToOppositeAlliance(new Pose2d(
+                                        new Translation2d(Units.inchesToMeters(607.37), Units.inchesToMeters(291.20)),
+                                        new Rotation2d(Math.PI))));
+                }
         }
 
         private void configureDrivetrainBindings() {

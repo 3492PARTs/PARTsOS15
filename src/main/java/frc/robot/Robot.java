@@ -45,6 +45,12 @@ public class Robot extends TimedRobot {
     return runtimeType == RuntimeType.kRoboRIO || runtimeType == RuntimeType.kRoboRIO2;
   }
 
+  private void getAlliance() {
+    if (DriverStation.getAlliance().isPresent()) {
+      alliance = DriverStation.getAlliance().get();
+    }
+  }
+
   public Robot() {
     // This is needed for lasercan, without it causes robot to lag on boot
     CanBridge.runTCP();
@@ -67,6 +73,7 @@ public class Robot extends TimedRobot {
 
     DriverStation.silenceJoystickConnectionWarning(!isReal());
 
+    getAlliance();
   }
 
   @Override
@@ -76,9 +83,7 @@ public class Robot extends TimedRobot {
     m_robotContainer.outputTelemetry();
     m_robotContainer.log();
 
-    if (DriverStation.getAlliance().isPresent()) {
-      alliance = DriverStation.getAlliance().get();
-    }
+    getAlliance();
   }
 
   @Override

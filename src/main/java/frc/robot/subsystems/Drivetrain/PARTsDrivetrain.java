@@ -411,7 +411,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
                 // Since AutoBuilder is configured, we can use it to build pathfinding commands
                 Command pathfindingCommand = AutoBuilder.pathfindToPose(
-                                pose,
+                                Field.conditionallyTransformToOppositeAlliance(pose),
                                 constraints, 0.0); // Goal end velocity in meters/sec
                 pathfindingCommand.setName("pathFindToPoseCommand");
                 
@@ -641,7 +641,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 try {
                         var config = RobotConfig.fromGUISettings();
                         AutoBuilder.configure(
-                                        () -> getPose(), // Supplier of current robot pose
+                                        this::getPose, // Supplier of current robot pose
                                         this::resetPose, // Consumer for seeding pose against auto
                                         () -> getState().Speeds, // Supplier of current robot speeds
                                         // Consumer of ChassisSpeeds and feedforwards to drive the robot
@@ -659,7 +659,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                         config,
                                         // Assume the path needs to be flipped for Red vs Blue, this is normally the
                                         // case
-                                        () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
+                                        () -> false,
                                         this // Subsystem for requirements
                         );
                 } catch (Exception ex) {
