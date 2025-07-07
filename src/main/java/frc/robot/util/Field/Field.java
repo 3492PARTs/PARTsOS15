@@ -23,6 +23,22 @@ public interface Field {
         double WIDTH = Units.inchesToMeters(317.000);
         double LENGTH = Units.inchesToMeters(690.876);
 
+        public static Pose3d conditionallyTransformToOppositeAlliance(Pose3d pose) {
+                return Robot.isBlue() ? pose : transformToOppositeAlliance(pose);
+        }
+
+        public static Pose2d conditionallyTransformToOppositeAlliance(Pose2d pose) {
+                return Robot.isBlue() ? pose : transformToOppositeAlliance(pose);
+        }
+
+        public static Translation2d conditionallyTransformToOppositeAlliance(Translation2d translation) {
+                return Robot.isBlue() ? translation : transformToOppositeAlliance(translation);
+        }
+
+        public static List<Pose2d> conditionallyTransformToOppositeAlliance(List<Pose2d> poses) {
+                return Robot.isBlue() ? poses : transformToOppositeAlliance(poses);
+        }
+
         public static Pose3d transformToOppositeAlliance(Pose3d pose) {
                 Pose3d rotated = pose.rotateBy(new Rotation3d(0, 0, Math.PI));
 

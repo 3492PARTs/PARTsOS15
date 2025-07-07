@@ -332,8 +332,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         }
 
         public Pose2d getFieldCentricPose() {
-                return Robot.isBlue() ? super.getState().Pose
-                                : Field.transformToOppositeAlliance(super.getState().Pose);
+                return Field.conditionallyTransformToOppositeAlliance(getPose());
         }
 
         public Command commandSnapToAngle(double angle) {
@@ -415,7 +414,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 pose,
                                 constraints, 0.0); // Goal end velocity in meters/sec
                 pathfindingCommand.setName("pathFindToPoseCommand");
-                System.out.println("anything");
+                
                 return pathfindingCommand;
         }
 
@@ -642,7 +641,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 try {
                         var config = RobotConfig.fromGUISettings();
                         AutoBuilder.configure(
-                                        () -> getState().Pose, // Supplier of current robot pose
+                                        () -> getPose(), // Supplier of current robot pose
                                         this::resetPose, // Consumer for seeding pose against auto
                                         () -> getState().Speeds, // Supplier of current robot speeds
                                         // Consumer of ChassisSpeeds and feedforwards to drive the robot
