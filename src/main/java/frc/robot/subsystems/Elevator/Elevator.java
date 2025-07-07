@@ -24,7 +24,7 @@ public abstract class Elevator extends PARTsSubsystem {
   private Candle candle;
 
   private final ProfiledPIDController mElevatorPIDController;
-  private final ElevatorFeedforward mElevatorFeedForward;
+  protected ElevatorFeedforward mElevatorFeedForward;
 
   public enum ElevatorState {
     SENSOR_ERROR(-1),

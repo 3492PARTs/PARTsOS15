@@ -5,6 +5,7 @@
 package frc.robot.subsystems.Elevator;
 
 import au.grapplerobotics.LaserCan;
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.subsystems.Candle;
@@ -37,6 +38,13 @@ public class ElevatorSim extends Elevator {
 
         mPeriodicIO.elevator_measurement = new LaserCan.Measurement(2, 0, 0, true, 0,
                 new LaserCan.RegionOfInterest(0, 0, 0, 0));
+
+                // Elevator Feedforward
+    mElevatorFeedForward = new ElevatorFeedforward(
+        0,
+        0,
+        0,
+        0);
     }
 
     @Override
@@ -73,5 +81,16 @@ public class ElevatorSim extends Elevator {
     @Override
     public boolean getTopLimit() {
         return super.partsNT.getBoolean(topLimitTopic);
+    }
+
+    @Override
+    public void outputTelemetry() {
+        super.outputTelemetry();
+
+        super.partsNT.putDouble("Current/Left", sim.getCurrentDrawAmps());
+        super.partsNT.putDouble("Current/Right", sim.getCurrentDrawAmps());
+
+        super.partsNT.putDouble("Output/Left", sim.getOutput().mean());
+        super.partsNT.putDouble("Output/Right", sim.getOutput().mean());
     }
 }
