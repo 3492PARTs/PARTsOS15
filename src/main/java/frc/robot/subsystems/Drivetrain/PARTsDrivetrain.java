@@ -425,8 +425,11 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                         // PathConstraints constraints = PathConstraints.unlimitedConstraints(12.0); //
                         // You can also use unlimited constraints, only limited by motor torque and
                         // nominal battery voltage
+
+                        //this is a point 1m from the end
                         Pose2d middlePoint = pose.transformBy(new Transform2d(
                                         1 + RobotConstants.frontRobotVisionOffset.getValue(), 0, new Rotation2d()));
+
                         Pose2d lastPoint = pose.transformBy(new Transform2d(
                                         RobotConstants.frontRobotVisionOffset.getValue(), 0, new Rotation2d()));
                         // Create the path using the waypoints created above

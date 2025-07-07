@@ -8,17 +8,16 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.constants.RobotConstants;
 import frc.robot.constants.generated.TunerConstants;
 import frc.robot.subsystems.Candle;
@@ -48,6 +47,8 @@ public class RobotContainer {
         private final PARTsCommandController driveController = new PARTsCommandController(0, ControllerType.XBOX);
         private final PARTsCommandController operatorController = new PARTsCommandController(1, ControllerType.XBOX);
         private final PARTsButtonBoxController buttonBoxController = new PARTsButtonBoxController(2);
+
+        private final GenericHID keyboardController = Robot.isSimulation() ? new GenericHID(5) : null;
 
         private boolean visionAlignActive = true;
         private BooleanSupplier visionAlignActiveBooleanSupplier = () -> visionAlignActive;
@@ -120,8 +121,13 @@ public class RobotContainer {
                 driveController.leftBumper().onTrue(drivetrain.commandSeedFieldCentric());
 
                 if (RobotConstants.debug) {
-                        partsNT.putSmartDashboardSendable("commandIntakeScoreIntake",
-                                        Reef.commandIntakeScoreIntake(drivetrain, coral, elevator));
+                        new Trigger(() -> keyboardController.getRawButton(1))
+                                        .onTrue(Reef.commandIntakeScoreIntake(drivetrain, coral, elevator));
+
+                        new Trigger(() -> keyboardController.getRawButton(2))
+                                        .onTrue(drivetrain.commandPathOnTheFly(
+                                                        Field.getTag(12).getLocation().toPose2d()));
+
                         driveController.rightTrigger()
                                         .whileTrue(Reef.commandIntakeScoreIntake(drivetrain, coral, elevator));
                         driveController.leftTrigger()
