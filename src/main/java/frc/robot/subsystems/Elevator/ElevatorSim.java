@@ -13,6 +13,9 @@ public class ElevatorSim extends Elevator {
 
     private final edu.wpi.first.wpilibj.simulation.ElevatorSim sim;
 
+    private final String bottomLimitTopic = "Sim Controls/Bottom Limit";
+    private final String topLimitTopic = "Sim Controls/Top Limit";
+
     public ElevatorSim(Candle candle) {
         super(candle);
 
@@ -27,6 +30,9 @@ public class ElevatorSim extends Elevator {
                 ElevatorConstants.MIN_HEIGHT_METERS);
 
         sim.setState(ElevatorConstants.MIN_HEIGHT_METERS, 0);
+
+        super.partsNT.putBoolean(bottomLimitTopic, false);
+        super.partsNT.putBoolean(topLimitTopic, false);
     }
 
     @Override
@@ -53,5 +59,15 @@ public class ElevatorSim extends Elevator {
     @Override
     protected void resetEncoder() {
         sim.setState(ElevatorConstants.MIN_HEIGHT_METERS, 0);
+    }
+
+    @Override
+    public boolean getBottomLimit() {
+        return super.partsNT.getBoolean(bottomLimitTopic);
+    }
+
+    @Override
+    public boolean getTopLimit() {
+        return super.partsNT.getBoolean(topLimitTopic);
     }
 }

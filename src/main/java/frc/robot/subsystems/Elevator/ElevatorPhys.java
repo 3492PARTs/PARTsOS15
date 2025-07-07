@@ -12,20 +12,24 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.subsystems.Candle;
 
 /** Add your docs here. */
 public class ElevatorPhys extends Elevator {
+    private final DigitalInput lowerLimitSwitch;
 
-    protected SparkMax mRightMotor;
+    protected final SparkMax mRightMotor;
     protected SparkMax mLeftMotor;
 
-    protected RelativeEncoder mLeftEncoder;
-    protected RelativeEncoder mRightEncoder;
+    protected final RelativeEncoder mLeftEncoder;
+    protected final RelativeEncoder mRightEncoder;
 
     public ElevatorPhys(Candle candle) {
         super(candle);
+
+        lowerLimitSwitch = new DigitalInput(ElevatorConstants.L_SWITCH_PORT);
 
         SparkMaxConfig elevatorConfig = new SparkMaxConfig();
 
@@ -87,6 +91,22 @@ public class ElevatorPhys extends Elevator {
     @Override
     protected void resetEncoder() {
         mLeftEncoder.setPosition(0.0);
+    }
+
+    @Override
+    public boolean getBottomLimit() {
+        if (!lowerLimitSwitch.get()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean getTopLimit() {
+        return mPeriodicIO.useLaserCan && mPeriodicIO.elevator_measurement != null
+                ? mPeriodicIO.elevator_measurement.distance_mm <= ElevatorConstants.maxLaserCanHeight
+                : getElevatorPosition() >= ElevatorConstants.maxHeight;
     }
 
 }

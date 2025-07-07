@@ -132,7 +132,7 @@ public class RobotContainer {
 
         private void configureElevatorBindings() {
                 operatorController.axisMagnitudeGreaterThan(5, 0.1)
-                                .onTrue(elevator.joystickElevatorControl(operatorController));
+                                .onTrue(elevator.commandJoystickControl(operatorController));
 
                 // --------------------- Stow --------------------//
                 buttonBoxController.negative1Trigger().onTrue(elevator.commandStow());

@@ -1,13 +1,5 @@
 package frc.robot.subsystems.Elevator;
 
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkMaxConfig;
-
 import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
@@ -28,13 +20,12 @@ import frc.robot.util.PARTs.Abstracts.PARTsSubsystem;
 public abstract class Elevator extends PARTsSubsystem {
 
   /*-------------------------------- Private instance variables ---------------------------------*/
-  private PeriodicIO mPeriodicIO;
+  protected PeriodicIO mPeriodicIO;
   private Candle candle;
 
   private final ProfiledPIDController mElevatorPIDController;
   private final ElevatorFeedforward mElevatorFeedForward;
 
-  private DigitalInput lowerLimitSwitch;
   private LaserCan upperLimitLaserCAN;
 
   public enum ElevatorState {
@@ -54,7 +45,7 @@ public abstract class Elevator extends PARTsSubsystem {
     }
   }
 
-  private static class PeriodicIO {
+  protected static class PeriodicIO {
     double elevator_previous_position = 0.0;
     int elevator_position_debounce = 0;
 
@@ -80,8 +71,6 @@ public abstract class Elevator extends PARTsSubsystem {
 
     this.candle = candle;
     mPeriodicIO = new PeriodicIO();
-
-    lowerLimitSwitch = new DigitalInput(ElevatorConstants.L_SWITCH_PORT);
 
     upperLimitLaserCAN = new LaserCan(ElevatorConstants.laserCanId);
     try {
@@ -228,8 +217,8 @@ public abstract class Elevator extends PARTsSubsystem {
     mPeriodicIO.elevator_power = power;
   }
 
-  public Command joystickElevatorControl(PARTsCommandController controller) {
-    return PARTsCommandUtils.setCommandName("JoystickElevatorCommand", this.run(() -> {
+  public Command commandJoystickControl(PARTsCommandController controller) {
+    return PARTsCommandUtils.setCommandName("commandJoystickControl", this.run(() -> {
       double speed = -controller.getRightY() * ElevatorConstants.maxSpeed;
       setElevatorPower(speed);
     }).until(() -> Math.abs(controller.getRightY()) < 0.1).andThen(() -> setElevatorPower(0)));
@@ -319,19 +308,9 @@ public abstract class Elevator extends PARTsSubsystem {
     return mPeriodicIO.is_elevator_pos_control;
   }
 
-  public boolean getBottomLimit() {
-    if (!lowerLimitSwitch.get()) {
-      return true;
-    } else {
-      return false;
-    }
-  }
+  public abstract boolean getBottomLimit();
 
-  public boolean getTopLimit() {
-    return mPeriodicIO.useLaserCan && mPeriodicIO.elevator_measurement != null
-        ? mPeriodicIO.elevator_measurement.distance_mm <= ElevatorConstants.maxLaserCanHeight
-        : getElevatorPosition() >= ElevatorConstants.maxHeight;
-  }
+  public abstract boolean getTopLimit();
 
   /*---------------------------------- Custom Private Functions ---------------------------------*/
 
