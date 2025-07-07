@@ -7,6 +7,7 @@ package frc.robot.subsystems.Elevator;
 import au.grapplerobotics.LaserCan;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.subsystems.Candle;
 
@@ -23,7 +24,7 @@ public class ElevatorSim extends Elevator {
 
         sim = new edu.wpi.first.wpilibj.simulation.ElevatorSim(
                 DCMotor.getNEO(2),
-                ElevatorConstants.gearRatio,
+                ElevatorConstants.Encoders.GEAR_RATIO,
                 ElevatorConstants.MASS_KG,
                 ElevatorConstants.DRUM_RADIUS_METERS,
                 ElevatorConstants.MIN_HEIGHT_METERS,
@@ -60,7 +61,8 @@ public class ElevatorSim extends Elevator {
 
     @Override
     protected void setSpeedWithoutLimits(double speed) {
-        sim.setInput(speed);
+        sim.setInput(speed * RobotController.getBatteryVoltage());
+        sim.update(0.02);
     }
 
     @Override

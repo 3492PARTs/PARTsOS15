@@ -36,7 +36,7 @@ public class ElevatorConstants {
     public static final double MIN_HEIGHT_METERS = Units.inchesToMeters(40.85); // FROM FLOOR TO TOP OF ELEVATOR
     public static final double MAX_HEIGHT_METERS = Units.inchesToMeters(69.85); // FROM FLOOR TO TOP OF ELEVATOR
 
-    public static final double MASS_KG = Units.lbsToKilograms(10); // Currently for sim only, not confirmed
+    public static final double MASS_KG = Units.lbsToKilograms(1); // Currently for sim only, not confirmed
     public static final double DRUM_RADIUS_METERS = ((MAX_HEIGHT_METERS - MIN_HEIGHT_METERS)
             / (Encoders.NUM_ROTATIONS_TO_REACH_TOP / Encoders.GEAR_RATIO)) / 2 / Math.PI;
 
