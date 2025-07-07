@@ -53,7 +53,6 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Robot;
 import frc.robot.Telemetry;
 import frc.robot.constants.DrivetrainConstants;
-import frc.robot.constants.RobotConstants;
 import frc.robot.constants.generated.TunerConstants;
 import frc.robot.util.Field.Field;
 import frc.robot.util.PARTs.PARTsCommandController;
@@ -231,11 +230,11 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 this.runOnce(() -> super.seedFieldCentric()));
         }
 
-        public Command alignCommand(Pose2d goalPose) {
-                return alignCommand(() -> goalPose);
+        public Command commandAlign(Pose2d goalPose) {
+                return commandAlign(() -> goalPose);
         }
 
-        public Command alignCommand(Supplier<Pose2d> goalPose) {
+        public Command commandAlign(Supplier<Pose2d> goalPose) {
                 Command c = new FunctionalCommand(
                                 () -> {
                                         timerElapsed = false;
@@ -337,7 +336,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 : Field.transformToOppositeAlliance(super.getState().Pose);
         }
 
-        public Command snapToAngle(double angle) {
+        public Command commandSnapToAngle(double angle) {
 
                 PARTsUnit currentRobotAngle = new PARTsUnit(getRotation3d().getAngle(), PARTsUnitType.Angle);
                 PARTsUnit goalAngle = new PARTsUnit(currentRobotAngle.to(PARTsUnitType.Angle) + angle,
@@ -370,7 +369,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 return new PARTsUnit(super.getState().Speeds.vyMetersPerSecond, PARTsUnitType.MetersPerSecond);
         }
 
-        public Command pathFindToPath(String pathname) {
+        public Command commandPathFindToPath(String pathname) {
                 try {
                         // Load the path we want to pathfind to and follow
                         PathPlannerPath path = PathPlannerPath.fromPathFile(pathname);
@@ -402,7 +401,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 return new WaitCommand(0);
         }
 
-        public Command pathFindToPose(Pose2d pose) {
+        public Command commandPathFindToPose(Pose2d pose) {
 
                 // Create the constraints to use while pathfinding. The constraints defined in
                 // the path will only be used for the path.

@@ -67,7 +67,7 @@ public class Reef {
                                                                                                                                         new Rotation2d(PARTsUnit.DegreesToRadians
                                                                                                                                                         .apply(180.0))));
                                                                                                 }).andThen(drivetrain
-                                                                                                                .alignCommand(() -> targetPose2d))
+                                                                                                                .commandAlign(() -> targetPose2d))
                                                                                                                 .andThen(elevator
                                                                                                                                 .commandToLevel(
                                                                                                                                                 elevatorState))
@@ -103,9 +103,9 @@ public class Reef {
                                                 new Rotation2d(PARTsUnit.DegreesToRadians.apply(180.0))));
                 Pose2d reefGoal1M = reefGoal.transformBy(new Transform2d(-1, 0, new Rotation2d()));
 
-                Command c = new SequentialCommandGroup(drivetrain.pathFindToPose(feederStation1M),
-                                drivetrain.alignCommand(feederStationGoal), coral.commandAutoIntake(),
-                                drivetrain.pathFindToPose(reefGoal1M), drivetrain.alignCommand(reefGoal),
+                Command c = new SequentialCommandGroup(drivetrain.commandPathFindToPose(feederStation1M),
+                                drivetrain.commandAlign(feederStationGoal), coral.commandAutoIntake(),
+                                drivetrain.commandPathFindToPose(reefGoal1M), drivetrain.commandAlign(reefGoal),
                                 elevator.commandToLevel(ElevatorState.L2), coral.autoScore(),
                                 new WaitCommand(0.25),
                                 elevator.commandToLevel(ElevatorState.STOW));
@@ -135,7 +135,7 @@ public class Reef {
                                                                                                                         .to(PARTsUnitType.Meter),
                                                                                         new Rotation2d(PARTsUnit.DegreesToRadians
                                                                                                         .apply(180.0))));
-                                                }).andThen(drivetrain.alignCommand(() -> targetPose2d))
+                                                }).andThen(drivetrain.commandAlign(() -> targetPose2d))
                                                                 .andThen(elevator
                                                                                 .commandToLevel(elevatorState)),
                                                                 new WaitCommand(0), () -> {

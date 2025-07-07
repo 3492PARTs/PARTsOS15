@@ -83,7 +83,6 @@ public class RobotContainer {
                 configureCoralBindings();
 
                 partsNT.putSmartDashboardSendable("field", Field.FIELD2D);
-
         }
 
         private void configureDrivetrainBindings() {
