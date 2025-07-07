@@ -11,17 +11,20 @@ import frc.robot.subsystems.Elevator.Elevator;
 /** Add your docs here. */
 public class CoralSim extends Coral {
 
+    private final String entryTopic = "Sim Controls/In Entry";
+    private final String exitTopic = "Sim Controls/In Exit";
+
     public CoralSim(Candle candle, Elevator elevator) {
         super(candle, elevator);
-        super.partsNT.putBoolean("In Entry", false);
-        super.partsNT.putBoolean("In Exit", false);
+        super.partsNT.putBoolean(entryTopic, false);
+        super.partsNT.putBoolean(exitTopic, false);
     }
 
     @Override
     public void periodic() {
         super.periodic();
-        mPeriodicIO.entryLaserMeasurement = generateLaserCanMeasurement(super.partsNT.getBoolean("In Entry") ? 0 : 50);
-        mPeriodicIO.exitLaserMeasurement = generateLaserCanMeasurement(super.partsNT.getBoolean("In Exit") ? 0 : 50);
+        mPeriodicIO.entryLaserMeasurement = generateLaserCanMeasurement(super.partsNT.getBoolean(entryTopic) ? 0 : 50);
+        mPeriodicIO.exitLaserMeasurement = generateLaserCanMeasurement(super.partsNT.getBoolean(exitTopic) ? 0 : 50);
     }
 
     private LaserCan.Measurement generateLaserCanMeasurement(int measurement) {
