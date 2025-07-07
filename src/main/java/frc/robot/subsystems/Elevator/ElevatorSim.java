@@ -78,12 +78,12 @@ public class ElevatorSim extends Elevator {
 
     @Override
     public boolean getBottomLimit() {
-        return super.partsNT.getBoolean(bottomLimitTopic);
+        return super.partsNT.getBoolean(bottomLimitTopic) || getElevatorPosition() == ElevatorConstants.StowHeight;
     }
 
     @Override
     public boolean getTopLimit() {
-        return super.partsNT.getBoolean(topLimitTopic);
+        return super.partsNT.getBoolean(topLimitTopic) || getElevatorPosition() == ElevatorConstants.maxHeight;
     }
 
     @Override
