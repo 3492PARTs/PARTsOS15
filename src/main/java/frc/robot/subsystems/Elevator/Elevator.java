@@ -25,8 +25,6 @@ public abstract class Elevator extends PARTsSubsystem {
   protected ElevatorFeedforward mElevatorFeedForward;
 
   public enum ElevatorState {
-    SENSOR_ERROR(-1, true),
-    POS_CTL_TRAVEL_ERROR(-1, true),
     GANTRY_BLOCKED(-1, true),
     MANUAL(-1, false),
     STOP(-1, false),
