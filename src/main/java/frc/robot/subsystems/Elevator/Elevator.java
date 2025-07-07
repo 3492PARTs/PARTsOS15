@@ -26,8 +26,6 @@ public abstract class Elevator extends PARTsSubsystem {
   private final ProfiledPIDController mElevatorPIDController;
   private final ElevatorFeedforward mElevatorFeedForward;
 
-  private LaserCan upperLimitLaserCAN;
-
   public enum ElevatorState {
     SENSOR_ERROR(-1),
     POS_CTL_TRAVEL_ERROR(-1),
@@ -72,15 +70,6 @@ public abstract class Elevator extends PARTsSubsystem {
     this.candle = candle;
     mPeriodicIO = new PeriodicIO();
 
-    upperLimitLaserCAN = new LaserCan(ElevatorConstants.laserCanId);
-    try {
-      upperLimitLaserCAN.setRangingMode(LaserCan.RangingMode.SHORT);
-      upperLimitLaserCAN.setRegionOfInterest(new LaserCan.RegionOfInterest(4, 4, 4, 4));
-      upperLimitLaserCAN.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
-    } catch (ConfigurationFailedException e) {
-      System.out.println("Configuration failed! " + e);
-    }
-
     // Elevator PID
     mElevatorPIDController = new ProfiledPIDController(
         ElevatorConstants.kP,
@@ -115,8 +104,6 @@ public abstract class Elevator extends PARTsSubsystem {
   @Override
   public void periodic() {
     errorTasks();
-
-    mPeriodicIO.elevator_measurement = upperLimitLaserCAN.getMeasurement();
 
     if (!mPeriodicIO.error) {
       if (mPeriodicIO.is_elevator_pos_control && !mPeriodicIO.gantry_blocked) {

@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.Elevator;
 
+import au.grapplerobotics.LaserCan;
 import edu.wpi.first.math.system.plant.DCMotor;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.subsystems.Candle;
@@ -33,6 +34,9 @@ public class ElevatorSim extends Elevator {
 
         super.partsNT.putBoolean(bottomLimitTopic, false);
         super.partsNT.putBoolean(topLimitTopic, false);
+
+        mPeriodicIO.elevator_measurement = new LaserCan.Measurement(2, 0, 0, true, 0,
+                new LaserCan.RegionOfInterest(0, 0, 0, 0));
     }
 
     @Override

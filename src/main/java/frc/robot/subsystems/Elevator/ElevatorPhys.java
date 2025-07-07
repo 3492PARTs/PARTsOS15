@@ -12,6 +12,8 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import au.grapplerobotics.ConfigurationFailedException;
+import au.grapplerobotics.LaserCan;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.subsystems.Candle;
@@ -19,6 +21,8 @@ import frc.robot.subsystems.Candle;
 /** Add your docs here. */
 public class ElevatorPhys extends Elevator {
     private final DigitalInput lowerLimitSwitch;
+
+    private final LaserCan upperLimitLaserCAN;
 
     protected final SparkMax mRightMotor;
     protected SparkMax mLeftMotor;
@@ -30,6 +34,15 @@ public class ElevatorPhys extends Elevator {
         super(candle);
 
         lowerLimitSwitch = new DigitalInput(ElevatorConstants.L_SWITCH_PORT);
+
+        upperLimitLaserCAN = new LaserCan(ElevatorConstants.laserCanId);
+        try {
+            upperLimitLaserCAN.setRangingMode(LaserCan.RangingMode.SHORT);
+            upperLimitLaserCAN.setRegionOfInterest(new LaserCan.RegionOfInterest(4, 4, 4, 4));
+            upperLimitLaserCAN.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
+        } catch (ConfigurationFailedException e) {
+            System.out.println("Configuration failed! " + e);
+        }
 
         SparkMaxConfig elevatorConfig = new SparkMaxConfig();
 
@@ -55,7 +68,11 @@ public class ElevatorPhys extends Elevator {
                 PersistMode.kPersistParameters);
     }
 
-    //OVERRRIDE
+    @Override
+    public void periodic() {
+        super.periodic();
+        mPeriodicIO.elevator_measurement = upperLimitLaserCAN.getMeasurement();
+    }
 
     @Override
     public void outputTelemetry() {

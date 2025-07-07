@@ -1,7 +1,28 @@
 {
   "version": 1.0,
-  "grid_size": 100,
+  "grid_size": 90,
   "tabs": [
+    {
+      "name": "Autonomous",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": "Auto Chooser",
+            "x": 675.0,
+            "y": 0.0,
+            "width": 225.0,
+            "height": 150.0,
+            "type": "ComboBox Chooser",
+            "properties": {
+              "topic": "/SmartDashboard/Auto Chooser",
+              "period": 0.06,
+              "sort_options": false
+            }
+          }
+        ]
+      }
+    },
     {
       "name": "Teleoperated",
       "grid_layout": {
@@ -193,7 +214,6 @@
             "properties": {
               "topic": "/CameraPublisher/USB Camera 0",
               "period": 0.06,
-              "rotation_turns": 0,
               "fps": 15
             }
           },
@@ -357,8 +377,7 @@
             "type": "Camera Stream",
             "properties": {
               "topic": "/CameraPublisher/limelight-slimmy",
-              "period": 0.06,
-              "rotation_turns": 0
+              "period": 0.06
             }
           },
           {
@@ -373,27 +392,6 @@
               "period": 0.06,
               "data_type": "double",
               "show_submit_button": false
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "Autonomous",
-      "grid_layout": {
-        "layouts": [],
-        "containers": [
-          {
-            "title": "Auto Chooser",
-            "x": 675.0,
-            "y": 0.0,
-            "width": 225.0,
-            "height": 150.0,
-            "type": "ComboBox Chooser",
-            "properties": {
-              "topic": "/SmartDashboard/Auto Chooser",
-              "period": 0.06,
-              "sort_options": false
             }
           }
         ]
@@ -1166,10 +1164,10 @@
           },
           {
             "title": "Current",
-            "x": 225.0,
+            "x": 270.0,
             "y": 0.0,
-            "width": 256.0,
-            "height": 256.0,
+            "width": 270.0,
+            "height": 270.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -1207,10 +1205,10 @@
           },
           {
             "title": "Limit",
-            "x": 225.0,
-            "y": 375.0,
-            "width": 256.0,
-            "height": 300.0,
+            "x": 270.0,
+            "y": 270.0,
+            "width": 270.0,
+            "height": 270.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -1254,10 +1252,10 @@
           },
           {
             "title": "Output",
-            "x": 375.0,
+            "x": 630.0,
             "y": 0.0,
-            "width": 256.0,
-            "height": 256.0,
+            "width": 270.0,
+            "height": 270.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -1295,10 +1293,10 @@
           },
           {
             "title": "Velocity",
-            "x": 225.0,
-            "y": 225.0,
-            "width": 256.0,
-            "height": 256.0,
+            "x": 630.0,
+            "y": 270.0,
+            "width": 270.0,
+            "height": 270.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -1331,28 +1329,15 @@
                   "data_type": "double",
                   "show_submit_button": false
                 }
-              },
-              {
-                "title": "Zero Elevator",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 400.0,
-                "height": 200.0,
-                "type": "Command",
-                "properties": {
-                  "topic": "/SmartDashboard/Elevator/Zero Elevator",
-                  "period": 0.06,
-                  "show_type": true
-                }
               }
             ]
           },
           {
             "title": "Position",
-            "x": 1425.0,
+            "x": 1620.0,
             "y": 0.0,
-            "width": 300.0,
-            "height": 675.0,
+            "width": 270.0,
+            "height": 720.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -1513,10 +1498,10 @@
           },
           {
             "title": "Commands",
-            "x": 975.0,
-            "y": 225.0,
-            "width": 300.0,
-            "height": 256.0,
+            "x": 1350.0,
+            "y": 270.0,
+            "width": 270.0,
+            "height": 270.0,
             "type": "List Layout",
             "properties": {
               "label_position": "HIDDEN"
@@ -1549,15 +1534,54 @@
                 }
               }
             ]
+          },
+          {
+            "title": "Sim Controls",
+            "x": 270.0,
+            "y": 540.0,
+            "width": 180.0,
+            "height": 270.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "Bottom Limit",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 180.0,
+                "height": 180.0,
+                "type": "Toggle Switch",
+                "properties": {
+                  "topic": "/PARTs/Elevator/Sim Controls/Bottom Limit",
+                  "period": 0.06,
+                  "data_type": "boolean"
+                }
+              },
+              {
+                "title": "Top Limit",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 180.0,
+                "height": 180.0,
+                "type": "Toggle Switch",
+                "properties": {
+                  "topic": "/PARTs/Elevator/Sim Controls/Top Limit",
+                  "period": 0.06,
+                  "data_type": "boolean"
+                }
+              }
+            ]
           }
         ],
         "containers": [
           {
             "title": "Elevator",
-            "x": 975.0,
+            "x": 1260.0,
             "y": 0.0,
-            "width": 375.0,
-            "height": 225.0,
+            "width": 360.0,
+            "height": 270.0,
             "type": "Subsystem",
             "properties": {
               "topic": "/SmartDashboard/Elevator",
@@ -1566,10 +1590,10 @@
           },
           {
             "title": "PID",
-            "x": 600.0,
+            "x": 900.0,
             "y": 0.0,
-            "width": 375.0,
-            "height": 600.0,
+            "width": 360.0,
+            "height": 630.0,
             "type": "ProfiledPIDController",
             "properties": {
               "topic": "/SmartDashboard/Elevator/PID",
@@ -1652,102 +1676,11 @@
             ]
           },
           {
-            "title": "Canandcolor",
-            "x": 525.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 300.0,
-            "type": "List Layout",
-            "properties": {
-              "label_position": "TOP"
-            },
-            "children": [
-              {
-                "title": "Connection",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 200.0,
-                "height": 200.0,
-                "type": "Boolean Box",
-                "properties": {
-                  "topic": "/PARTs/Coral/Canandcolor/Connection",
-                  "period": 0.06,
-                  "data_type": "boolean",
-                  "true_color": 4283215696,
-                  "false_color": 4294198070,
-                  "true_icon": "None",
-                  "false_icon": "None"
-                }
-              },
-              {
-                "title": "distance",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 200.0,
-                "height": 200.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/PARTs/Coral/Canandcolor/distance",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "hasCoral",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 200.0,
-                "height": 200.0,
-                "type": "Boolean Box",
-                "properties": {
-                  "topic": "/PARTs/Coral/Canandcolor/hasCoral",
-                  "period": 0.06,
-                  "data_type": "boolean",
-                  "true_color": 4283215696,
-                  "false_color": 4294198070,
-                  "true_icon": "None",
-                  "false_icon": "None"
-                }
-              }
-            ]
-          },
-          {
-            "title": "Laser",
-            "x": 300.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 256.0,
-            "type": "List Layout",
-            "properties": {
-              "label_position": "TOP"
-            },
-            "children": [
-              {
-                "title": "hasCoral",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 200.0,
-                "height": 200.0,
-                "type": "Boolean Box",
-                "properties": {
-                  "topic": "/PARTs/Coral/Laser/hasCoral",
-                  "period": 0.06,
-                  "data_type": "boolean",
-                  "true_color": 4283215696,
-                  "false_color": 4294198070,
-                  "true_icon": "None",
-                  "false_icon": "None"
-                }
-              }
-            ]
-          },
-          {
             "title": "RPM",
-            "x": 675.0,
+            "x": 810.0,
             "y": 0.0,
-            "width": 256.0,
-            "height": 256.0,
+            "width": 270.0,
+            "height": 270.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -1771,10 +1704,10 @@
           },
           {
             "title": "Current",
-            "x": 525.0,
-            "y": 300.0,
-            "width": 256.0,
-            "height": 256.0,
+            "x": 270.0,
+            "y": 0.0,
+            "width": 270.0,
+            "height": 270.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -1812,10 +1745,10 @@
           },
           {
             "title": "Output",
-            "x": 675.0,
-            "y": 300.0,
-            "width": 256.0,
-            "height": 256.0,
+            "x": 540.0,
+            "y": 0.0,
+            "width": 270.0,
+            "height": 270.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -1850,185 +1783,69 @@
                 }
               }
             ]
-          }
-        ],
-        "containers": [
-          {
-            "title": "Coral",
-            "x": 975.0,
-            "y": 0.0,
-            "width": 375.0,
-            "height": 225.0,
-            "type": "Subsystem",
-            "properties": {
-              "topic": "/SmartDashboard/Coral",
-              "period": 0.06
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "Debug Algae",
-      "grid_layout": {
-        "layouts": [
-          {
-            "title": "Candle",
-            "x": 0.0,
-            "y": 525.0,
-            "width": 256.0,
-            "height": 256.0,
-            "type": "List Layout",
-            "properties": {
-              "label_position": "TOP"
-            },
-            "children": [
-              {
-                "title": "Animation",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/PARTs/Candle/Animation",
-                  "period": 0.06,
-                  "data_type": "string",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "State",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/PARTs/Candle/State",
-                  "period": 0.06,
-                  "data_type": "string",
-                  "show_submit_button": false
-                }
-              }
-            ]
           },
           {
-            "title": "Algae",
-            "x": 0.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 256.0,
+            "title": "LaserEntry",
+            "x": 270.0,
+            "y": 270.0,
+            "width": 180.0,
+            "height": 450.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
             },
             "children": [
               {
-                "title": "State",
+                "title": "ambient",
                 "x": 0.0,
                 "y": 0.0,
-                "width": 200.0,
-                "height": 200.0,
+                "width": 180.0,
+                "height": 180.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/PARTs/Algae/State",
-                  "period": 0.06,
-                  "data_type": "string",
-                  "show_submit_button": false
-                }
-              }
-            ]
-          },
-          {
-            "title": "Intake",
-            "x": 225.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 300.0,
-            "type": "List Layout",
-            "properties": {
-              "label_position": "TOP"
-            },
-            "children": [
-              {
-                "title": "Current",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 200.0,
-                "height": 200.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/PARTs/Algae/Intake/Current",
+                  "topic": "/PARTs/Coral/LaserEntry/ambient",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
                 }
               },
               {
-                "title": "Output",
+                "title": "budget_ms",
                 "x": 0.0,
                 "y": 0.0,
-                "width": 200.0,
-                "height": 200.0,
+                "width": 180.0,
+                "height": 180.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/PARTs/Algae/Intake/Output",
+                  "topic": "/PARTs/Coral/LaserEntry/budget_ms",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
                 }
               },
               {
-                "title": "Power",
+                "title": "distance",
                 "x": 0.0,
                 "y": 0.0,
-                "width": 200.0,
-                "height": 200.0,
+                "width": 180.0,
+                "height": 180.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/PARTs/Algae/Intake/Power",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              }
-            ]
-          },
-          {
-            "title": "Wrist",
-            "x": 375.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 525.0,
-            "type": "List Layout",
-            "properties": {
-              "label_position": "TOP"
-            },
-            "children": [
-              {
-                "title": "Angle",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 200.0,
-                "height": 200.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/PARTs/Algae/Wrist/Angle",
+                  "topic": "/PARTs/Coral/LaserEntry/distance",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
                 }
               },
               {
-                "title": "At Goal",
+                "title": "hasCoral",
                 "x": 0.0,
                 "y": 0.0,
-                "width": 200.0,
-                "height": 200.0,
+                "width": 180.0,
+                "height": 180.0,
                 "type": "Boolean Box",
                 "properties": {
-                  "topic": "/PARTs/Algae/Wrist/At Goal",
+                  "topic": "/PARTs/Coral/LaserEntry/hasCoral",
                   "period": 0.06,
                   "data_type": "boolean",
                   "true_color": 4283215696,
@@ -2038,59 +1855,142 @@
                 }
               },
               {
-                "title": "Current",
+                "title": "status",
                 "x": 0.0,
                 "y": 0.0,
-                "width": 200.0,
-                "height": 200.0,
+                "width": 180.0,
+                "height": 180.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/PARTs/Algae/Wrist/Current",
+                  "topic": "/PARTs/Coral/LaserEntry/status",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              }
+            ]
+          },
+          {
+            "title": "LaserExit",
+            "x": 450.0,
+            "y": 270.0,
+            "width": 180.0,
+            "height": 450.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "ambient",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 180.0,
+                "height": 180.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/PARTs/Coral/LaserExit/ambient",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
                 }
               },
               {
-                "title": "Output",
+                "title": "budget_ms",
                 "x": 0.0,
                 "y": 0.0,
-                "width": 200.0,
-                "height": 200.0,
+                "width": 180.0,
+                "height": 180.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/PARTs/Algae/Wrist/Output",
+                  "topic": "/PARTs/Coral/LaserExit/budget_ms",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
                 }
               },
               {
-                "title": "Target",
+                "title": "distance",
                 "x": 0.0,
                 "y": 0.0,
-                "width": 200.0,
-                "height": 200.0,
+                "width": 180.0,
+                "height": 180.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/PARTs/Algae/Wrist/Target",
+                  "topic": "/PARTs/Coral/LaserExit/distance",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
                 }
               },
               {
-                "title": "Voltage",
+                "title": "hasCoral",
                 "x": 0.0,
                 "y": 0.0,
-                "width": 200.0,
-                "height": 200.0,
+                "width": 180.0,
+                "height": 180.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/PARTs/Coral/LaserExit/hasCoral",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              },
+              {
+                "title": "status",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 180.0,
+                "height": 180.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/PARTs/Algae/Wrist/Voltage",
+                  "topic": "/PARTs/Coral/LaserExit/status",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
+                }
+              }
+            ]
+          },
+          {
+            "title": "Sim Controls",
+            "x": 630.0,
+            "y": 270.0,
+            "width": 270.0,
+            "height": 270.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "In Entry",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 180.0,
+                "height": 180.0,
+                "type": "Toggle Switch",
+                "properties": {
+                  "topic": "/PARTs/Coral/Sim Controls/In Entry",
+                  "period": 0.06,
+                  "data_type": "boolean"
+                }
+              },
+              {
+                "title": "In Exit",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 180.0,
+                "height": 180.0,
+                "type": "Toggle Switch",
+                "properties": {
+                  "topic": "/PARTs/Coral/Sim Controls/In Exit",
+                  "period": 0.06,
+                  "data_type": "boolean"
                 }
               }
             ]
@@ -2098,26 +1998,14 @@
         ],
         "containers": [
           {
-            "title": "Algae",
-            "x": 975.0,
+            "title": "Coral",
+            "x": 1170.0,
             "y": 0.0,
-            "width": 375.0,
-            "height": 225.0,
+            "width": 360.0,
+            "height": 270.0,
             "type": "Subsystem",
             "properties": {
-              "topic": "/SmartDashboard/Algae",
-              "period": 0.06
-            }
-          },
-          {
-            "title": "Wrist PID",
-            "x": 600.0,
-            "y": 0.0,
-            "width": 375.0,
-            "height": 600.0,
-            "type": "ProfiledPIDController",
-            "properties": {
-              "topic": "/SmartDashboard/Algae/Wrist PID",
+              "topic": "/SmartDashboard/Coral",
               "period": 0.06
             }
           }
@@ -3052,8 +2940,7 @@
             "type": "Camera Stream",
             "properties": {
               "topic": "/CameraPublisher/limelight-thereal",
-              "period": 0.06,
-              "rotation_turns": 0
+              "period": 0.06
             }
           }
         ]

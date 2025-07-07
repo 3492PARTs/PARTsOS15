@@ -183,7 +183,6 @@ public class Candle extends PARTsSubsystem {
         candle.configAllSettings(configAll, 100);
 
         setNoColor();
-        publishDashboardValues();
     }
 
     /*---------------------------------- Custom Private Functions ---------------------------------*/
@@ -249,8 +248,6 @@ public class Candle extends PARTsSubsystem {
             default:
                 break;
         }
-
-        publishDashboardValues();
     }
 
     private void setColor(Color color) {
@@ -450,13 +447,10 @@ public class Candle extends PARTsSubsystem {
 
     @Override
     public void outputTelemetry() {
-
-    }
-
-    private void publishDashboardValues() {
         super.partsNT.putString("State", mPeriodicIO.state.toString());
         if (animation != null)
-            super.partsNT.putString("Animation", animation.toString().replace("com.ctre.phoenix.led.", ""));
+            super.partsNT.putString("Animation",
+                    animation.toString().replace("com.ctre.phoenix.led.", "").replaceAll("@(\\d|\\w)*", ""));
     }
 
     @Override
