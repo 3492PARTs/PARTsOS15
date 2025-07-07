@@ -16,10 +16,10 @@ import frc.robot.constants.RobotConstants;
 import frc.robot.constants.generated.TunerConstants;
 import frc.robot.subsystems.Candle;
 import frc.robot.subsystems.Candle.CandleState;
-import frc.robot.subsystems.PARTsDrivetrain;
 import frc.robot.subsystems.Coral.Coral;
 import frc.robot.subsystems.Coral.CoralPhys;
 import frc.robot.subsystems.Coral.CoralSim;
+import frc.robot.subsystems.Drivetrain.PARTsDrivetrain;
 import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Elevator.Elevator.ElevatorState;
 import frc.robot.subsystems.Elevator.ElevatorPhys;
@@ -38,7 +38,7 @@ import frc.robot.subsystems.LimelightVision.MegaTagMode;
 
 public class RobotContainer {
 
-        private final PARTsCommandController driveController = new PARTsCommandController(0, ControllerType.DS5);
+        private final PARTsCommandController driveController = new PARTsCommandController(0, ControllerType.XBOX);
         private final PARTsCommandController operatorController = new PARTsCommandController(1, ControllerType.XBOX);
         private final PARTsButtonBoxController buttonBoxController = new PARTsButtonBoxController(2);
 
