@@ -120,6 +120,8 @@ public class RobotContainer {
                 driveController.leftBumper().onTrue(drivetrain.commandSeedFieldCentric());
 
                 if (RobotConstants.debug) {
+                        partsNT.putSmartDashboardSendable("commandIntakeScoreIntake",
+                                        Reef.commandIntakeScoreIntake(drivetrain, coral, elevator));
                         driveController.rightTrigger()
                                         .whileTrue(Reef.commandIntakeScoreIntake(drivetrain, coral, elevator));
                         driveController.leftTrigger()
@@ -234,12 +236,12 @@ public class RobotContainer {
                  * .whileTrue(algae.sysIdDynamic(SysIdRoutine.Direction.kReverse));
                  */
 
-                 if (Robot.isSimulation()) {
+                if (Robot.isSimulation()) {
                         operatorController.a().onTrue(elevator.commandL2());
                         operatorController.b().onTrue(elevator.commandL3());
                         operatorController.x().onTrue(elevator.commandL4());
                         operatorController.y().onTrue(elevator.commandStow());
-                 }
+                }
         }
 
         private void configureCoralBindings() {

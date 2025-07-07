@@ -2,7 +2,6 @@ package frc.robot.subsystems.Drivetrain;
 
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.hardware.CANcoder;
-import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModule;
@@ -16,7 +15,6 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.path.Waypoint;
 import com.pathplanner.lib.util.FileVersionException;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
@@ -24,8 +22,8 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.function.BooleanSupplier;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.function.Supplier;
 
 import org.json.simple.parser.ParseException;
@@ -48,11 +46,13 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Robot;
 import frc.robot.Telemetry;
 import frc.robot.constants.DrivetrainConstants;
+import frc.robot.constants.RobotConstants;
 import frc.robot.constants.generated.TunerConstants;
 import frc.robot.util.Field.Field;
 import frc.robot.util.PARTs.PARTsCommandController;
@@ -95,8 +95,6 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         private ProfiledPIDController thetaController;
         private ProfiledPIDController xRangeController;
         private ProfiledPIDController yRangeController;
-        private PathPlannerPath path;
-        private Supplier<PathPlannerPath> pathSupplier = () -> path;
 
         public PARTsDrivetrain(
                         SwerveDrivetrainConstants DrivetrainConstants,
@@ -414,40 +412,42 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 Field.conditionallyTransformToOppositeAlliance(pose),
                                 constraints, 0.0); // Goal end velocity in meters/sec
                 pathfindingCommand.setName("pathFindToPoseCommand");
-                
+
                 return pathfindingCommand;
         }
 
-        /*public Command commandPathOnTheFly(Pose2d pose) {
-                
-                Command c = this.runOnce(()->{
-                PathConstraints constraints = new PathConstraints(0.01, 0.01, 2 * Math.PI, 4 * Math.PI); // The
-                                                                                                       // constraints
-                                                                                                       // for this path.
-                // PathConstraints constraints = PathConstraints.unlimitedConstraints(12.0); //
-                // You can also use unlimited constraints, only limited by motor torque and
-                // nominal battery voltage
-                Pose2d middlePoint = pose.transformBy(new Transform2d(1 + RobotConstants.frontRobotVisionOffset.getValue(),0, new Rotation2d()));
-                Pose2d lastPoint = pose.transformBy(new Transform2d(RobotConstants.frontRobotVisionOffset.getValue(),0, new Rotation2d()));
-                // Create the path using the waypoints created above
-                path = new PathPlannerPath(
-                                PathPlannerPath.waypointsFromPoses(getPose(),middlePoint,lastPoint),
-                                constraints,
-                                null, // The ideal starting state, this is only relevant for pre-planned paths, so can
-                                      // be null for on-the-fly paths.
-                                new GoalEndState(0.0, pose.getRotation()) // Goal end state. You can set a
-                                                                                   // holonomic rotation here. If using
-                                                                                   // a differential drivetrain, the
-                                                                                   // rotation will have no effect.
-                );
-        
-                // Prevent the path from being flipped if the coordinates are already correct
-                path.preventFlipping = false;
-        }).andThen(AutoBuilder.followPath(pathSupplier.get()));
-                c.setName("commandPathOnTheFly");
-                return c;
+        public Command commandPathOnTheFly(Pose2d pose) {
+
+                return PARTsCommandUtils.setCommandName("commandPathOnTheFly", Commands.defer(() -> {
+                        PathConstraints constraints = new PathConstraints(0.01, 0.01, 2 * Math.PI, 4 * Math.PI); // The
+                        // constraints
+                        // for this path.
+                        // PathConstraints constraints = PathConstraints.unlimitedConstraints(12.0); //
+                        // You can also use unlimited constraints, only limited by motor torque and
+                        // nominal battery voltage
+                        Pose2d middlePoint = pose.transformBy(new Transform2d(
+                                        1 + RobotConstants.frontRobotVisionOffset.getValue(), 0, new Rotation2d()));
+                        Pose2d lastPoint = pose.transformBy(new Transform2d(
+                                        RobotConstants.frontRobotVisionOffset.getValue(), 0, new Rotation2d()));
+                        // Create the path using the waypoints created above
+                        PathPlannerPath path = new PathPlannerPath(
+                                        PathPlannerPath.waypointsFromPoses(getPose(), middlePoint, lastPoint),
+                                        constraints,
+                                        null, // The ideal starting state, this is only relevant for pre-planned paths, so can
+                                        // be null for on-the-fly paths.
+                                        new GoalEndState(0.0, pose.getRotation()) // Goal end state. You can set a
+                        // holonomic rotation here. If using
+                        // a differential drivetrain, the
+                        // rotation will have no effect.
+                        );
+
+                        // Prevent the path from being flipped if the coordinates are already correct
+                        path.preventFlipping = false;
+
+                        return AutoBuilder.followPath(path);
+                }, new HashSet<>(Arrays.asList(this))));
+
         }
-        */
 
         /*---------------------------------- Custom Private Functions ---------------------------------*/
         private void alignCommandInitTelemetry(Pose2d holdDist) {

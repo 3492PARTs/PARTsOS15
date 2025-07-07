@@ -1573,6 +1573,71 @@
                 }
               }
             ]
+          },
+          {
+            "title": "Position Commands",
+            "x": 450.0,
+            "y": 540.0,
+            "width": 180.0,
+            "height": 360.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "HIDDEN"
+            },
+            "children": [
+              {
+                "title": "STOW",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 360.0,
+                "height": 180.0,
+                "type": "Command",
+                "properties": {
+                  "topic": "/SmartDashboard/Elevator/Position Commands/STOW",
+                  "period": 0.06,
+                  "show_type": false
+                }
+              },
+              {
+                "title": "L2",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 360.0,
+                "height": 180.0,
+                "type": "Command",
+                "properties": {
+                  "topic": "/SmartDashboard/Elevator/Position Commands/L2",
+                  "period": 0.06,
+                  "show_type": false
+                }
+              },
+              {
+                "title": "L3",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 360.0,
+                "height": 180.0,
+                "type": "Command",
+                "properties": {
+                  "topic": "/SmartDashboard/Elevator/Position Commands/L3",
+                  "period": 0.06,
+                  "show_type": false
+                }
+              },
+              {
+                "title": "L4",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 360.0,
+                "height": 180.0,
+                "type": "Command",
+                "properties": {
+                  "topic": "/SmartDashboard/Elevator/Position Commands/L4",
+                  "period": 0.06,
+                  "show_type": false
+                }
+              }
+            ]
           }
         ],
         "containers": [
@@ -2717,6 +2782,19 @@
               "period": 0.06,
               "data_type": "string",
               "show_submit_button": false
+            }
+          },
+          {
+            "title": "commandIntakeScoreIntake",
+            "x": 540.0,
+            "y": 540.0,
+            "width": 360.0,
+            "height": 180.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/RobotContainer/commandIntakeScoreIntake",
+              "period": 0.06,
+              "show_type": true
             }
           }
         ]
