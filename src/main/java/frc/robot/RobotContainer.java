@@ -233,6 +233,13 @@ public class RobotContainer {
                  * operatorController.y().and(operatorController.rightBumper())
                  * .whileTrue(algae.sysIdDynamic(SysIdRoutine.Direction.kReverse));
                  */
+
+                 if (Robot.isSimulation()) {
+                        operatorController.a().onTrue(elevator.commandL2());
+                        operatorController.b().onTrue(elevator.commandL3());
+                        operatorController.x().onTrue(elevator.commandL4());
+                        operatorController.y().onTrue(elevator.commandStow());
+                 }
         }
 
         private void configureCoralBindings() {
