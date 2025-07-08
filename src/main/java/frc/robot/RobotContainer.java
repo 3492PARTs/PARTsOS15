@@ -266,9 +266,9 @@ public class RobotContainer {
 
                 buttonBoxController.negative4Trigger().onTrue(coral.commandReverse()).onFalse(coral.commandStop());
 
-                buttonBoxController.povTrigger0().whileTrue(coral.commandL4Intake()).onFalse(coral.commandStop());
+                buttonBoxController.povTrigger0().whileTrue(coral.commandInchIntake()).onFalse(coral.commandStop());
 
-                buttonBoxController.povTrigger180().whileTrue(coral.commandL4OutTake())
+                buttonBoxController.povTrigger180().whileTrue(coral.commandInchReverse())
                                 .onFalse(coral.commandStop());
 
                 buttonBoxController.enginestartTrigger().onTrue(coral.commandScore());
@@ -283,7 +283,7 @@ public class RobotContainer {
                                 elevator.commandToLevel(ElevatorState.L4));
 
                 NamedCommands.registerCommand("Intake", coral.commandAutoIntake());
-                NamedCommands.registerCommand("Score", coral.autoScore());
+                NamedCommands.registerCommand("Score", coral.commandAutoScore());
 
                 NamedCommands.registerCommand("Right Align L2 Score",
                                 Reef.commandAlignAndScoreToVisibleTag(true, drivetrain, elevator, ElevatorState.L2,

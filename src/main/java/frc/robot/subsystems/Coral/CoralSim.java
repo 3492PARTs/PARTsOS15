@@ -23,8 +23,8 @@ public class CoralSim extends Coral {
     @Override
     public void periodic() {
         super.periodic();
-        mPeriodicIO.entryLaserMeasurement = generateLaserCanMeasurement(super.partsNT.getBoolean(entryTopic) ? 0 : 50);
-        mPeriodicIO.exitLaserMeasurement = generateLaserCanMeasurement(super.partsNT.getBoolean(exitTopic) ? 0 : 50);
+        entryLaserMeasurement = generateLaserCanMeasurement(super.partsNT.getBoolean(entryTopic) ? 0 : 50);
+        exitLaserMeasurement = generateLaserCanMeasurement(super.partsNT.getBoolean(exitTopic) ? 0 : 50);
     }
 
     private LaserCan.Measurement generateLaserCanMeasurement(int measurement) {

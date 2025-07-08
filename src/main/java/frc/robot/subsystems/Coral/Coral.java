@@ -32,9 +32,11 @@ import frc.robot.util.PARTs.PARTsCommandUtils;
 import frc.robot.util.PARTs.Abstracts.PARTsSubsystem;
 
 public abstract class Coral extends PARTsSubsystem {
+  protected CoralState coralState = CoralState.NONE;
+  protected LaserCan.Measurement entryLaserMeasurement;
+  protected LaserCan.Measurement exitLaserMeasurement;
 
   /*-------------------------------- Private instance variables ---------------------------------*/
-  private CoralState coralState = CoralState.NONE;
   private Elevator elevator;
   private final Candle candle;
 
@@ -74,9 +76,11 @@ public abstract class Coral extends PARTsSubsystem {
           if (!isCoralInEntry() && isCoralInExit()) {
             stopCoral();
             coralState = CoralState.READY;
-          } 
+          }
           break;
-        case SCORE:
+        case L1:
+        case L23:
+        case L4:
           // stop after the coral leaves the bot
           if (!isCoralInExit()) {
             stopCoral();
@@ -93,52 +97,50 @@ public abstract class Coral extends PARTsSubsystem {
         index();
       }
     } else
-      elevator.gantryBlocked(false);
+      elevator.gantryBlocked(false); // if there is an error, don't report state to gantry in elevator
   }
 
   @Override
   public void stop() {
-    mPeriodicIO.rpm = 0.0;
-    mPeriodicIO.speed_diff = 0.0;
-    mPeriodicIO.state = IntakeState.NONE;
+    coralState = CoralState.NONE;
   }
 
   @Override
   public void outputTelemetry() {
-    super.partsNT.putDouble("RPM/target", mPeriodicIO.rpm);
+    super.partsNT.putDouble("RPM/target", coralState.getSpeed());
 
-    if (mPeriodicIO.entryLaserMeasurement != null) {
-      super.partsNT.putDouble("LaserEntry/distance", mPeriodicIO.entryLaserMeasurement.distance_mm);
-      super.partsNT.putDouble("LaserEntry/ambient", mPeriodicIO.entryLaserMeasurement.ambient);
-      super.partsNT.putDouble("LaserEntry/budget_ms", mPeriodicIO.entryLaserMeasurement.budget_ms);
-      super.partsNT.putDouble("LaserEntry/status", mPeriodicIO.entryLaserMeasurement.status);
+    if (entryLaserMeasurement != null) {
+      super.partsNT.putDouble("LaserEntry/distance", entryLaserMeasurement.distance_mm);
+      super.partsNT.putDouble("LaserEntry/ambient", entryLaserMeasurement.ambient);
+      super.partsNT.putDouble("LaserEntry/budget_ms", entryLaserMeasurement.budget_ms);
+      super.partsNT.putDouble("LaserEntry/status", entryLaserMeasurement.status);
     }
 
-    if (mPeriodicIO.entryLaserMeasurement != null)
-      partsLogger.logDouble("LaserEntry/status", mPeriodicIO.entryLaserMeasurement.status);
+    if (entryLaserMeasurement != null)
+      partsLogger.logDouble("LaserEntry/status", entryLaserMeasurement.status);
     else
       partsLogger.logDouble("LaserEntry/status", -1);
 
-    partsLogger.logBoolean("LaserEntry/laserMeasurementExists", (mPeriodicIO.entryLaserMeasurement != null));
+    partsLogger.logBoolean("LaserEntry/laserMeasurementExists", (entryLaserMeasurement != null));
 
-    if (mPeriodicIO.exitLaserMeasurement != null) {
-      super.partsNT.putDouble("LaserExit/distance", mPeriodicIO.exitLaserMeasurement.distance_mm);
-      super.partsNT.putDouble("LaserExit/ambient", mPeriodicIO.exitLaserMeasurement.ambient);
-      super.partsNT.putDouble("LaserExit/budget_ms", mPeriodicIO.exitLaserMeasurement.budget_ms);
-      super.partsNT.putDouble("LaserExit/status", mPeriodicIO.exitLaserMeasurement.status);
+    if (exitLaserMeasurement != null) {
+      super.partsNT.putDouble("LaserExit/distance", exitLaserMeasurement.distance_mm);
+      super.partsNT.putDouble("LaserExit/ambient", exitLaserMeasurement.ambient);
+      super.partsNT.putDouble("LaserExit/budget_ms", exitLaserMeasurement.budget_ms);
+      super.partsNT.putDouble("LaserExit/status", exitLaserMeasurement.status);
     }
 
-    if (mPeriodicIO.exitLaserMeasurement != null)
-      partsLogger.logDouble("LaserExit/status", mPeriodicIO.exitLaserMeasurement.status);
+    if (exitLaserMeasurement != null)
+      partsLogger.logDouble("LaserExit/status", exitLaserMeasurement.status);
     else
       partsLogger.logDouble("LaserExit/status", -1);
 
-    partsLogger.logBoolean("LaserExit/laserMeasurementExists", (mPeriodicIO.exitLaserMeasurement != null));
+    partsLogger.logBoolean("LaserExit/laserMeasurementExists", (exitLaserMeasurement != null));
 
     super.partsNT.putBoolean("LaserEntry/hasCoral", isCoralInEntry());
     super.partsNT.putBoolean("LaserExit/hasCoral", isCoralInExit());
 
-    super.partsNT.putString("State", mPeriodicIO.state.toString());
+    super.partsNT.putString("State", coralState.toString());
   }
 
   @Override
@@ -154,96 +156,88 @@ public abstract class Coral extends PARTsSubsystem {
   /*---------------------------------- Custom Public Functions ----------------------------------*/
 
   public boolean isCoralInExit() {
-    if (mPeriodicIO.exitLaserMeasurement != null)
-      return mPeriodicIO.exitLaserMeasurement.distance_mm <= 22;
+    if (exitLaserMeasurement != null)
+      return exitLaserMeasurement.distance_mm <= 22;
     else
       return false;
   }
 
   public boolean isCoralInEntry() {
-    if (mPeriodicIO.entryLaserMeasurement != null)
-      return mPeriodicIO.entryLaserMeasurement.distance_mm <= 22;
+    if (entryLaserMeasurement != null)
+      return entryLaserMeasurement.distance_mm <= 22;
     else
       return false;
-  }
-
-  public void setSpeed(double rpm) {
-    mPeriodicIO.speed_diff = 0.0;
-    mPeriodicIO.rpm = rpm;
   }
 
   public Command commandIntake() {
     return PARTsCommandUtils.setCommandName("commandIntake",
         this.runOnce(() -> {
-          mPeriodicIO.speed_diff = 0.0;
-          mPeriodicIO.rpm = CoralConstants.kIntakeSpeed;
-          mPeriodicIO.state = IntakeState.INTAKE;
+          intake();
         }));
   }
 
-  public Command commandL4Intake() {
-    return PARTsCommandUtils.setCommandName("commandL4Intake",
+  public Command commandInchIntake() {
+    return PARTsCommandUtils.setCommandName("commandInchIntake",
         this.runOnce(() -> {
-          mPeriodicIO.speed_diff = 0.0;
-          mPeriodicIO.rpm = CoralConstants.kInchIntakeSpeed;
+          inchIntake();
         }));
   }
 
-  public Command commandL4OutTake() {
-    return PARTsCommandUtils.setCommandName("commandL4OutTake",
+  public Command commandInchReverse() {
+    return PARTsCommandUtils.setCommandName("commandInchReverse",
         this.runOnce(() -> {
-          mPeriodicIO.speed_diff = 0.0;
-          mPeriodicIO.rpm = -CoralConstants.kInchIntakeSpeed;
+          inchReverse();
         }));
   }
 
   public Command commandAutoIntake() {
     return PARTsCommandUtils.setCommandName("commandAutoIntake",
         this.runOnce(() -> {
-          mPeriodicIO.speed_diff = 0.0;
-          mPeriodicIO.rpm = CoralConstants.kIntakeSpeed;
-          mPeriodicIO.state = IntakeState.INTAKE;
-        })).andThen(new WaitUntilCommand(() -> mPeriodicIO.state == IntakeState.READY));
+          intake();
+        })).andThen(new WaitUntilCommand(() -> coralState == CoralState.READY));
   }
 
   public Command commandReverse() {
     return PARTsCommandUtils.setCommandName("commandReverse",
         this.runOnce(() -> {
-          mPeriodicIO.speed_diff = 0.0;
-          mPeriodicIO.rpm = CoralConstants.kReverseSpeed;
-          mPeriodicIO.state = IntakeState.REVERSE;
+          reverseCoral();
         }));
   }
 
   public void index() {
-    mPeriodicIO.speed_diff = 0.0;
-    mPeriodicIO.rpm = CoralConstants.kIndexSpeed;
-    mPeriodicIO.state = IntakeState.INDEX;
+    coralState = CoralState.INDEX;
+  }
 
+  public void intake() {
+    coralState = CoralState.INTAKE;
   }
 
   public void scoreL1() {
-    mPeriodicIO.speed_diff = CoralConstants.kSpeedDifference;
-    mPeriodicIO.rpm = CoralConstants.kL1Speed;
-    mPeriodicIO.state = IntakeState.SCORE;
+    coralState = CoralState.L1;
   }
 
   public void scoreL23() {
-    mPeriodicIO.speed_diff = 0.0;
-    mPeriodicIO.rpm = CoralConstants.kL23Speed;
-    mPeriodicIO.state = IntakeState.SCORE;
+    coralState = CoralState.L23;
   }
 
   public void scoreL4() {
-    mPeriodicIO.speed_diff = 0.0;
-    mPeriodicIO.rpm = CoralConstants.kL4Speed;
-    mPeriodicIO.state = IntakeState.SCORE;
+    coralState = CoralState.L4;
+  }
+
+  public void inchIntake() {
+    coralState = CoralState.INCH_INTAKE;
+  }
+
+  public void inchReverse() {
+    coralState = CoralState.INCH_REVERSE;
   }
 
   public void stopCoral() {
-    mPeriodicIO.rpm = 0.0;
-    mPeriodicIO.speed_diff = 0.0;
-    mPeriodicIO.state = IntakeState.NONE;
+    coralState = CoralState.NONE;
+  }
+
+  public void reverseCoral() {
+    coralState = CoralState.REVERSE;
   }
 
   public Command commandStop() {
@@ -267,7 +261,7 @@ public abstract class Coral extends PARTsSubsystem {
     }));
   }
 
-  public Command autoScore() {
+  public Command commandAutoScore() {
     return this.runOnce(() -> {
       candle.addState(CandleState.SCORING);
       switch (elevator.getState()) {
@@ -286,7 +280,7 @@ public abstract class Coral extends PARTsSubsystem {
 
   public Command scoreCommand() {
     return PARTsCommandUtils.setCommandName("coralScoreCmd",
-        commandScore().andThen(new WaitUntilCommand(() -> mPeriodicIO.state == IntakeState.NONE))
+        commandScore().andThen(new WaitUntilCommand(() -> coralState == CoralState.NONE))
             .andThen(elevator.commandStow()));
   }
 
@@ -299,21 +293,19 @@ public abstract class Coral extends PARTsSubsystem {
 
     // Trigger sub system error if exists
     // if there was an error but there isn't now remove error
-    if (mPeriodicIO.entryLaserMeasurement == null || !okStates.contains(mPeriodicIO.entryLaserMeasurement.status)
-        || mPeriodicIO.exitLaserMeasurement == null || !okStates.contains(mPeriodicIO.exitLaserMeasurement.status)) {
-      if (!mPeriodicIO.error && mPeriodicIO.state != IntakeState.ERROR) {
-        mPeriodicIO.error = true;
-        mPeriodicIO.state = IntakeState.ERROR;
+    if (entryLaserMeasurement == null || !okStates.contains(entryLaserMeasurement.status)
+        || exitLaserMeasurement == null || !okStates.contains(exitLaserMeasurement.status)) {
+      if (coralState != CoralState.ERROR) {
+        coralState = CoralState.ERROR;
         candle.addState(
-            (mPeriodicIO.exitLaserMeasurement == null || !okStates.contains(mPeriodicIO.exitLaserMeasurement.status))
+            (exitLaserMeasurement == null || !okStates.contains(exitLaserMeasurement.status))
                 ? CandleState.CORAL_LASER_EXIT_ERROR
                 : CandleState.CORAL_LASER_ENTRY_ERROR);
       }
 
     } else {
-      if (mPeriodicIO.error) {
-        mPeriodicIO.error = false;
-        mPeriodicIO.state = IntakeState.NONE;
+      if (coralState == CoralState.ERROR) {
+        coralState = CoralState.NONE;
         candle.removeState(CandleState.CORAL_LASER_EXIT_ERROR);
         candle.removeState(CandleState.CORAL_LASER_ENTRY_ERROR);
       }

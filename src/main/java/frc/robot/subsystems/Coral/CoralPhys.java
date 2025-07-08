@@ -67,11 +67,11 @@ public class CoralPhys extends Coral {
     @Override
     public void periodic() {
         super.periodic();
-        mPeriodicIO.entryLaserMeasurement = entrySensor.getMeasurement();
-        mPeriodicIO.exitLaserMeasurement = exitSensor.getMeasurement();
+        entryLaserMeasurement = entrySensor.getMeasurement();
+        exitLaserMeasurement = exitSensor.getMeasurement();
 
-        mLeftMotor.set(mPeriodicIO.rpm - mPeriodicIO.speed_diff);
-        mRightMotor.set(-mPeriodicIO.rpm);
+        mLeftMotor.set(coralState.getSpeed() - coralState.getSpeedDiff());
+        mRightMotor.set(-coralState.getSpeed());
     }
 
     @Override
