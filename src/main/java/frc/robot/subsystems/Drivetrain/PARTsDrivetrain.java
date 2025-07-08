@@ -403,7 +403,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 // Create the constraints to use while pathfinding. The constraints defined in
                 // the path will only be used for the path.
                 PathConstraints constraints = new PathConstraints(
-                                2, 2,
+                                DrivetrainConstants.MAX_AIM_VELOCITY, DrivetrainConstants.MAX_AIM_ACCELERATION,
                                 PARTsUnit.DegreesToRadians.apply(540.0),
                                 PARTsUnit.DegreesToRadians.apply(720.0));
 

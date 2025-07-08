@@ -136,11 +136,11 @@ public class RobotContainer {
                                         .onTrue(drivetrain.commandPathOnTheFly(
                                                         Field.getTag(12).getLocation().toPose2d()));
 
+                        //driveController.rightTrigger()
+                        //                .whileTrue(drivetrain.commandPathOnTheFly(
+                        //                                Field.getTag(12).getLocation().toPose2d()));
                         driveController.rightTrigger()
-                                        .whileTrue(drivetrain.commandPathOnTheFly(
-                                                        Field.getTag(12).getLocation().toPose2d()));
-                        // driveController.rightTrigger().whileTrue(Reef.commandIntakeScoreIntake(drivetrain,
-                        // coral, elevator));
+                                        .whileTrue(Reef.commandIntakeScoreIntake(drivetrain, coral, elevator));
                         driveController.leftTrigger()
                                         .whileTrue(vision.commandMegaTagMode(MegaTagMode.MEGATAG2));
                 }
