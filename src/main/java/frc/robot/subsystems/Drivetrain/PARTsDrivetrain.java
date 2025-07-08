@@ -374,7 +374,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                         // Create the constraints to use while pathfinding. The constraints defined in
                         // the path will only be used for the path.
                         PathConstraints constraints = new PathConstraints(
-                                        0.5, 0.5,
+                                        2, 2,
                                         PARTsUnit.DegreesToRadians.apply(540.0),
                                         PARTsUnit.DegreesToRadians.apply(720.0));
 
@@ -403,7 +403,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 // Create the constraints to use while pathfinding. The constraints defined in
                 // the path will only be used for the path.
                 PathConstraints constraints = new PathConstraints(
-                                1, 1,
+                                2, 2,
                                 PARTsUnit.DegreesToRadians.apply(540.0),
                                 PARTsUnit.DegreesToRadians.apply(720.0));
 
@@ -419,18 +419,20 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         public Command commandPathOnTheFly(Pose2d pose) {
 
                 return PARTsCommandUtils.setCommandName("commandPathOnTheFly", Commands.defer(() -> {
-                        PathConstraints constraints = new PathConstraints(0.01, 0.01, 2 * Math.PI, 4 * Math.PI); // The
+                        PathConstraints constraints = new PathConstraints(2, 2, 2 * Math.PI, 4 * Math.PI); // The
                         // constraints
                         // for this path.
                         // PathConstraints constraints = PathConstraints.unlimitedConstraints(12.0); //
                         // You can also use unlimited constraints, only limited by motor torque and
                         // nominal battery voltage
 
-                        //this is a point 1m from the end
-                        Pose2d middlePoint = pose.transformBy(new Transform2d(
-                                        1 + RobotConstants.frontRobotVisionOffset.getValue(), 0, new Rotation2d()));
+                        Pose2d fieldPose = pose;
 
-                        Pose2d lastPoint = pose.transformBy(new Transform2d(
+                        //this is a point 1m from the end
+                        Pose2d middlePoint = fieldPose.transformBy(new Transform2d(
+                                        - 1 + RobotConstants.frontRobotVisionOffset.getValue(), 0, new Rotation2d()));
+
+                        Pose2d lastPoint = fieldPose.transformBy(new Transform2d(
                                         RobotConstants.frontRobotVisionOffset.getValue(), 0, new Rotation2d()));
                         // Create the path using the waypoints created above
                         PathPlannerPath path = new PathPlannerPath(
@@ -438,14 +440,14 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                         constraints,
                                         null, // The ideal starting state, this is only relevant for pre-planned paths, so can
                                         // be null for on-the-fly paths.
-                                        new GoalEndState(0.0, pose.getRotation()) // Goal end state. You can set a
+                                        new GoalEndState(0.0, fieldPose.getRotation()) // Goal end state. You can set a
                         // holonomic rotation here. If using
                         // a differential drivetrain, the
                         // rotation will have no effect.
                         );
 
                         // Prevent the path from being flipped if the coordinates are already correct
-                        path.preventFlipping = false;
+                        path.preventFlipping = true;
 
                         return AutoBuilder.followPath(path);
                 }, new HashSet<>(Arrays.asList(this))));

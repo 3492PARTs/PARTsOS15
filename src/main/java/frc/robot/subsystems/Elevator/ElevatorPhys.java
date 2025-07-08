@@ -16,7 +16,6 @@ import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.constants.ElevatorConstants;
-import frc.robot.subsystems.Candle;
 
 /** Add your docs here. */
 public class ElevatorPhys extends Elevator {
@@ -30,9 +29,9 @@ public class ElevatorPhys extends Elevator {
     protected final RelativeEncoder mLeftEncoder;
     protected final RelativeEncoder mRightEncoder;
 
-    public ElevatorPhys(Candle candle) {
-        super(candle);
-
+    public ElevatorPhys() {
+        super();
+        
         lowerLimitSwitch = new DigitalInput(ElevatorConstants.L_SWITCH_PORT);
 
         upperLimitLaserCAN = new LaserCan(ElevatorConstants.laserCanId);
@@ -71,7 +70,7 @@ public class ElevatorPhys extends Elevator {
     @Override
     public void periodic() {
         super.periodic();
-        mPeriodicIO.elevator_measurement = upperLimitLaserCAN.getMeasurement();
+        carriageLaserCan = upperLimitLaserCAN.getMeasurement();
     }
 
     @Override
@@ -121,8 +120,8 @@ public class ElevatorPhys extends Elevator {
 
     @Override
     public boolean getTopLimit() {
-        return mPeriodicIO.useLaserCan && mPeriodicIO.elevator_measurement != null
-                ? mPeriodicIO.elevator_measurement.distance_mm <= ElevatorConstants.maxLaserCanHeight
+        return false && carriageLaserCan != null
+                ? carriageLaserCan.distance_mm <= ElevatorConstants.maxLaserCanHeight
                 : getElevatorPosition() >= ElevatorConstants.maxHeight;
     }
 

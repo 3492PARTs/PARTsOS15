@@ -9,7 +9,6 @@ import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.constants.ElevatorConstants;
-import frc.robot.subsystems.Candle;
 
 /** Add your docs here. */
 public class ElevatorSim extends Elevator {
@@ -19,8 +18,8 @@ public class ElevatorSim extends Elevator {
     private final String bottomLimitTopic = "Sim Controls/Bottom Limit";
     private final String topLimitTopic = "Sim Controls/Top Limit";
 
-    public ElevatorSim(Candle candle) {
-        super(candle);
+    public ElevatorSim() {
+        super();
 
         sim = new edu.wpi.first.wpilibj.simulation.ElevatorSim(
                 DCMotor.getNEO(2),
@@ -37,7 +36,7 @@ public class ElevatorSim extends Elevator {
         super.partsNT.putBoolean(bottomLimitTopic, false);
         super.partsNT.putBoolean(topLimitTopic, false);
 
-        mPeriodicIO.elevator_measurement = new LaserCan.Measurement(2, 0, 0, true, 0,
+        carriageLaserCan = new LaserCan.Measurement(2, 0, 0, true, 0,
                 new LaserCan.RegionOfInterest(0, 0, 0, 0));
 
         // Elevator Feedforward
@@ -78,12 +77,12 @@ public class ElevatorSim extends Elevator {
 
     @Override
     public boolean getBottomLimit() {
-        return super.partsNT.getBoolean(bottomLimitTopic) || getElevatorPosition() == ElevatorConstants.StowHeight;
+        return super.partsNT.getBoolean(bottomLimitTopic) || getElevatorPosition() <= ElevatorConstants.StowHeight;
     }
 
     @Override
     public boolean getTopLimit() {
-        return super.partsNT.getBoolean(topLimitTopic) || getElevatorPosition() == ElevatorConstants.maxHeight;
+        return super.partsNT.getBoolean(topLimitTopic) || getElevatorPosition() >= ElevatorConstants.maxHeight;
     }
 
     @Override

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.function.BooleanSupplier;
 
+import org.opencv.core.Mat;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
@@ -20,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.constants.RobotConstants;
 import frc.robot.constants.generated.TunerConstants;
+import frc.robot.states.ElevatorState;
 import frc.robot.subsystems.Candle;
 import frc.robot.subsystems.Candle.CandleState;
 import frc.robot.subsystems.Coral.Coral;
@@ -27,7 +30,6 @@ import frc.robot.subsystems.Coral.CoralPhys;
 import frc.robot.subsystems.Coral.CoralSim;
 import frc.robot.subsystems.Drivetrain.PARTsDrivetrain;
 import frc.robot.subsystems.Elevator.Elevator;
-import frc.robot.subsystems.Elevator.Elevator.ElevatorState;
 import frc.robot.subsystems.Elevator.ElevatorPhys;
 import frc.robot.subsystems.Elevator.ElevatorSim;
 import frc.robot.util.Field.Field;
@@ -57,7 +59,7 @@ public class RobotContainer {
 
         public final Candle candle = new Candle();
 
-        private final Elevator elevator = Robot.isReal() ? new ElevatorPhys(candle) : new ElevatorSim(candle);
+        private final Elevator elevator = Robot.isReal() ? new ElevatorPhys() : new ElevatorSim();
         // private final ElevatorSysId elevator = new ElevatorSysId();
 
         private final Coral coral = Robot.isReal() ? new CoralPhys(candle, elevator) : new CoralSim(candle, elevator);
@@ -95,7 +97,10 @@ public class RobotContainer {
                 if (Robot.isSimulation()) {
                         drivetrain.resetPose(Field.conditionallyTransformToOppositeAlliance(new Pose2d(
                                         new Translation2d(Units.inchesToMeters(607.37), Units.inchesToMeters(291.20)),
-                                        new Rotation2d(Math.PI))));
+                                        new Rotation2d())));
+                        drivetrain.setOperatorPerspectiveForward(
+                                        Robot.isBlue() ? new Rotation2d() : new Rotation2d(Math.PI));
+                        // drivetrain.seedFieldCentric();
                 }
         }
 
@@ -105,11 +110,14 @@ public class RobotContainer {
                 drivetrain.setDefaultCommand(drivetrain.commandDefault(driveController));
 
                 // fine grain controls
-                //driveController.rightBumper().onTrue(Commands.runOnce(() -> fineGrainDrive = !fineGrainDrive));
+                // driveController.rightBumper().onTrue(Commands.runOnce(() -> fineGrainDrive =
+                // !fineGrainDrive));
 
-                //new Trigger(() -> fineGrainDrive)
-                //                .onTrue(Commands.runOnce(() -> candle.addState(CandleState.FINE_GRAIN_DRIVE)))
-                //                .onFalse(Commands.runOnce(() -> candle.removeState(CandleState.FINE_GRAIN_DRIVE)));
+                // new Trigger(() -> fineGrainDrive)
+                // .onTrue(Commands.runOnce(() ->
+                // candle.addState(CandleState.FINE_GRAIN_DRIVE)))
+                // .onFalse(Commands.runOnce(() ->
+                // candle.removeState(CandleState.FINE_GRAIN_DRIVE)));
 
                 // brakes swerve, puts modules into x configuration
                 driveController.a().whileTrue(drivetrain.commandBrake());
@@ -129,7 +137,10 @@ public class RobotContainer {
                                                         Field.getTag(12).getLocation().toPose2d()));
 
                         driveController.rightTrigger()
-                                        .whileTrue(Reef.commandIntakeScoreIntake(drivetrain, coral, elevator));
+                                        .whileTrue(drivetrain.commandPathOnTheFly(
+                                                        Field.getTag(12).getLocation().toPose2d()));
+                        // driveController.rightTrigger().whileTrue(Reef.commandIntakeScoreIntake(drivetrain,
+                        // coral, elevator));
                         driveController.leftTrigger()
                                         .whileTrue(vision.commandMegaTagMode(MegaTagMode.MEGATAG2));
                 }
@@ -245,8 +256,8 @@ public class RobotContainer {
                 if (Robot.isSimulation()) {
                         operatorController.a().onTrue(elevator.commandL2());
                         operatorController.b().onTrue(elevator.commandL3());
-                        operatorController.x().onTrue(elevator.commandL4());
-                        operatorController.y().onTrue(elevator.commandStow());
+                        operatorController.y().onTrue(elevator.commandL4());
+                        operatorController.x().onTrue(elevator.commandStow());
                 }
         }
 
@@ -300,21 +311,22 @@ public class RobotContainer {
                                 Reef.alignToVisibleTagSideStop(true, drivetrain, elevator, ElevatorState.L4, coral,
                                                 escapeBooleanSupplier, candle));
 
-                /*NamedCommands.registerCommand("Align Middle L1 Score",
-                                new AutoAlignScoreCoral(
-                                                new Pose2d(Constants.Drivetrain.xZeroHoldDistance
-                                                                .to(PARTsUnitType.Meter),
-                                                                0,
-                                                                new Rotation2d()),
-                                                ElevatorState.STOW, drivetrain, elevator, coral, candle,
-                                                frontVision));
-                
-                NamedCommands.registerCommand("Align L1",
-                                drivetrain.alignCommand(new Pose2d(
-                                                Constants.Drivetrain.xZeroHoldDistance.to(PARTsUnitType.Meter),
-                                                0,
-                                                new Rotation2d()), frontVision));
-                */
+                /*
+                 * NamedCommands.registerCommand("Align Middle L1 Score",
+                 * new AutoAlignScoreCoral(
+                 * new Pose2d(Constants.Drivetrain.xZeroHoldDistance
+                 * .to(PARTsUnitType.Meter),
+                 * 0,
+                 * new Rotation2d()),
+                 * ElevatorState.STOW, drivetrain, elevator, coral, candle,
+                 * frontVision));
+                 * 
+                 * NamedCommands.registerCommand("Align L1",
+                 * drivetrain.alignCommand(new Pose2d(
+                 * Constants.Drivetrain.xZeroHoldDistance.to(PARTsUnitType.Meter),
+                 * 0,
+                 * new Rotation2d()), frontVision));
+                 */
 
                 autoChooser = AutoBuilder.buildAutoChooser();
                 SmartDashboard.putData("Auto Chooser", autoChooser);

@@ -9,8 +9,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.constants.ElevatorConstants;
-import frc.robot.subsystems.Candle;
-import frc.robot.subsystems.Candle.CandleState;
+import frc.robot.states.ElevatorState;
 import frc.robot.util.PARTs.PARTsCommandController;
 import frc.robot.util.PARTs.PARTsCommandUtils;
 import frc.robot.util.PARTs.Abstracts.PARTsSubsystem;
@@ -19,68 +18,38 @@ public abstract class Elevator extends PARTsSubsystem {
 
   /*-------------------------------- Private instance variables ---------------------------------*/
   private ElevatorState elevatorState;
-  private Candle candle;
+  private boolean gantryBlocked = false;
+
+  protected LaserCan.Measurement carriageLaserCan = null;
 
   private final ProfiledPIDController mElevatorPIDController;
   protected ElevatorFeedforward mElevatorFeedForward;
 
-  public enum ElevatorState {
-    GANTRY_BLOCKED(-1, true),
-    MANUAL(-1, false),
-    STOP(-1, false),
-    STOW(ElevatorConstants.StowHeight, false),
-    L2(ElevatorConstants.L2Height, false),
-    L3(ElevatorConstants.L3Height, false),
-    L4(ElevatorConstants.L4Height, false),
-    A1(ElevatorConstants.LowAlgaeHeight, false),
-    A2(ElevatorConstants.HighAlgaeHeight, false);
+  /*
+   * protected static class PeriodicIO {
+   * double elevator_previous_position = 0.0;
+   * int elevator_position_debounce = 0;
+   * 
+   * double elevator_target = 0.0;
+   * double elevator_power = 0.0;
+   * LaserCan.Measurement elevator_measurement = null;
+   * 
+   * boolean is_elevator_pos_control = false;
+   * boolean error = false;
+   * boolean gantry_blocked = false;
+   * 
+   * ElevatorState state = ElevatorState.STOW;
+   * 
+   * boolean useLaserCan = true;
+   * int lasercan_error_debounce = 0;
+   * 
+   * boolean elevator_bottom_limit_error = false;
+   * int elevator_bottom_limit_debounce = 0;
+   * }
+   */
 
-    private final double height;
-    private final boolean isError;
-
-    ElevatorState(double height, boolean isError) {
-      this.height = height;
-      this.isError = isError;
-    }
-
-    public boolean hasTarget() {
-      return height >= 0;
-    }
-
-    public double getTarget() {
-      return height;
-    }
-
-    public boolean isErrorState() {
-      return isError;
-    }
-  }
-
-  /*protected static class PeriodicIO {
-    double elevator_previous_position = 0.0;
-    int elevator_position_debounce = 0;
-  
-    double elevator_target = 0.0;
-    double elevator_power = 0.0;
-    LaserCan.Measurement elevator_measurement = null;
-  
-    boolean is_elevator_pos_control = false;
-    boolean error = false;
-    boolean gantry_blocked = false;
-  
-    ElevatorState state = ElevatorState.STOW;
-  
-    boolean useLaserCan = true;
-    int lasercan_error_debounce = 0;
-  
-    boolean elevator_bottom_limit_error = false;
-    int elevator_bottom_limit_debounce = 0;
-  }*/
-
-  public Elevator(Candle candle) {
+  public Elevator() {
     super("Elevator");
-
-    this.candle = candle;
 
     elevatorState = ElevatorState.STOW;
 
@@ -109,7 +78,8 @@ public abstract class Elevator extends PARTsSubsystem {
 
     super.partsNT.putSmartDashboardSendable("PID", mElevatorPIDController);
     super.partsNT.putSmartDashboardSendable("Zero Elevator", commandZero());
-    //super.partsNT.putSmartDashboardSendable("Toggle LaserCan Active", toggleLaserCanActive());
+    // super.partsNT.putSmartDashboardSendable("Toggle LaserCan Active",
+    // toggleLaserCanActive());
     super.partsNT.putSmartDashboardSendable("Position Commands/STOW", commandStow());
     super.partsNT.putSmartDashboardSendable("Position Commands/L2", commandL2());
     super.partsNT.putSmartDashboardSendable("Position Commands/L3", commandL3());
@@ -119,12 +89,15 @@ public abstract class Elevator extends PARTsSubsystem {
 
   @Override
   public void periodic() {
-    //errorTasks();
-
-    if (elevatorState == ElevatorState.STOP) {
-      setSpeed(0);
-    } else if (!elevatorState.isErrorState()) {
-      if (elevatorState != ElevatorState.MANUAL) {
+    // errorTasks();
+    if (gantryBlocked)
+      setVoltage(0);
+    else {
+      if (elevatorState == ElevatorState.STOP) {
+        setSpeed(0);
+      } else if (elevatorState == ElevatorState.MANUAL)
+        setSpeed(elevatorState.getPower());
+      else {
         double voltage = 0;
 
         mElevatorPIDController.setGoal(elevatorState.getTarget());
@@ -142,20 +115,8 @@ public abstract class Elevator extends PARTsSubsystem {
         }
         setVoltage(voltage);
 
-      } else if (elevatorState == ElevatorState.MANUAL)
-        setSpeed(mPeriodicIO.elevator_power);
-      else
-        setVoltage(mElevatorFeedForward.calculate(0));
-
+      }
     }
-    // Error controls
-    else {
-      if (Math.abs(mPeriodicIO.elevator_power) > 0 && elevatorState != ElevatorState.GANTRY_BLOCKED)
-        setSpeed(mPeriodicIO.elevator_power);
-      else
-        setVoltage(mElevatorFeedForward.calculate(0));
-    }
-
   }
 
   @Override
@@ -175,18 +136,18 @@ public abstract class Elevator extends PARTsSubsystem {
     super.partsNT.putBoolean("Limit/Bottom", getBottomLimit());
     super.partsNT.putBoolean("Limit/Top", getTopLimit());
 
-    if (mPeriodicIO.elevator_measurement != null) {
-      super.partsNT.putDouble("Laser/distance", mPeriodicIO.elevator_measurement.distance_mm);
-      super.partsNT.putDouble("Laser/ambient", mPeriodicIO.elevator_measurement.ambient);
-      super.partsNT.putDouble("Laser/budget_ms", mPeriodicIO.elevator_measurement.budget_ms);
-      super.partsNT.putDouble("Laser/status", mPeriodicIO.elevator_measurement.status);
+    if (carriageLaserCan != null) {
+      super.partsNT.putDouble("Laser/distance", carriageLaserCan.distance_mm);
+      super.partsNT.putDouble("Laser/ambient", carriageLaserCan.ambient);
+      super.partsNT.putDouble("Laser/budget_ms", carriageLaserCan.budget_ms);
+      super.partsNT.putDouble("Laser/status", carriageLaserCan.status);
     }
 
     super.partsNT.putDouble("RPS", getRPS());
-    super.partsNT.putDouble("Power", mPeriodicIO.elevator_power);
+    super.partsNT.putDouble("Power", elevatorState.getPower());
     super.partsNT.putString("State", elevatorState.toString());
-    super.partsNT.putBoolean("Gantry Blocked", elevatorState == ElevatorState.GANTRY_BLOCKED);
-    super.partsNT.putBoolean("Using LaserCan", mPeriodicIO.useLaserCan);
+    super.partsNT.putBoolean("Gantry Blocked", gantryBlocked);
+    super.partsNT.putBoolean("Using LaserCan", false);
   }
 
   @Override
@@ -203,8 +164,8 @@ public abstract class Elevator extends PARTsSubsystem {
   /*---------------------------------- Custom Public Functions ----------------------------------*/
   public abstract double getElevatorPosition();
 
-  public void gantryBlocked() {
-    elevatorState = ElevatorState.GANTRY_BLOCKED;
+  public void gantryBlocked(boolean b) {
+    gantryBlocked = b;
   }
 
   public abstract double getRPS();
@@ -214,8 +175,12 @@ public abstract class Elevator extends PARTsSubsystem {
   }
 
   public void setElevatorPower(double power) {
-    mPeriodicIO.is_elevator_pos_control = false;
-    mPeriodicIO.elevator_power = power;
+    elevatorState = ElevatorState.MANUAL;
+    try {
+      elevatorState.setPower(power);
+    } catch (Exception e) {
+      // exception is for setting on non-manual states. this can only be manual
+    }
   }
 
   public Command commandJoystickControl(PARTsCommandController controller) {
@@ -281,7 +246,7 @@ public abstract class Elevator extends PARTsSubsystem {
         this.run(() -> {
           setSpeedWithoutLimits(ElevatorConstants.homingSpeed);
         })
-            .unless(() -> elevatorState == ElevatorState.GANTRY_BLOCKED).until(this::getBottomLimit)
+            .unless(() -> gantryBlocked).until(this::getBottomLimit)
             .andThen(this.runOnce(() -> stop())).andThen(commandStow()));
   }
 
@@ -297,14 +262,14 @@ public abstract class Elevator extends PARTsSubsystem {
 
   private void setSpeed(double speed) {
     // Full control in limits
-    if (!getBottomLimit() && !getTopLimit() && elevatorState != ElevatorState.GANTRY_BLOCKED)
+    if (!getBottomLimit() && !getTopLimit() && !gantryBlocked)
       setSpeedWithoutLimits(speed);
     // Directional control at limits
     else if (((getBottomLimit() && speed > 0) || (getTopLimit() && speed < 0))
-        && elevatorState != ElevatorState.GANTRY_BLOCKED)
+        && !gantryBlocked)
       setSpeedWithoutLimits(speed);
     else
-      stop();
+      setSpeedWithoutLimits(0);
   }
 
   protected abstract void setSpeedWithoutLimits(double speed);
@@ -317,7 +282,7 @@ public abstract class Elevator extends PARTsSubsystem {
     else if ((getBottomLimit() && voltage > 0) || (getTopLimit() && voltage < 0))
       setSpeedVoltageLimits(voltage);
     else
-      stop();
+      setSpeedVoltageLimits(0);
   }
 
   protected abstract void setSpeedVoltageLimits(double voltage);
@@ -325,48 +290,53 @@ public abstract class Elevator extends PARTsSubsystem {
   protected abstract void resetEncoder();
 
   /*
-  private Command toggleLaserCanActive() {
-    return PARTsCommandUtils.setCommandName("toggleLaserCanActive",
-        this.runOnce(() -> mPeriodicIO.useLaserCan = !mPeriodicIO.useLaserCan));
-  }*/
+   * private Command toggleLaserCanActive() {
+   * return PARTsCommandUtils.setCommandName("toggleLaserCanActive",
+   * this.runOnce(() -> mPeriodicIO.useLaserCan = !mPeriodicIO.useLaserCan));
+   * }
+   */
 
-  /*private void errorTasks() {
-    /*
-     * Error Conditions
-     * Bottom and top limit hit at same time
-     * Laser can in use and the measurement is null or status is not good
-     * The bottom limit is hit for more than 10 loop runs and we are reporting a
-     * current position higher than the margin of error
-     *
-    if (mPeriodicIO.elevator_bottom_limit_error)
-      mPeriodicIO.elevator_bottom_limit_debounce++;
-    else
-      mPeriodicIO.elevator_bottom_limit_debounce = 0;
-  
-    if ((getBottomLimit() && getTopLimit()) ||
-        (mPeriodicIO.useLaserCan
-            && (mPeriodicIO.elevator_measurement == null || mPeriodicIO.elevator_measurement.status != 0))
-        || (mPeriodicIO.elevator_bottom_limit_error && mPeriodicIO.elevator_bottom_limit_debounce >= 10)) {
-      // If there wasn't an error report it.
-      mPeriodicIO.lasercan_error_debounce++;
-  
-      if (!mPeriodicIO.error) {
-        mPeriodicIO.error = true;
-  
-        setElevatorPower(0);
-        mPeriodicIO.state = ElevatorState.SENSOR_ERROR;
-        candle.addState(CandleState.ELEVATOR_ERROR);
-      }
-  
-      if (mPeriodicIO.lasercan_error_debounce > 10)
-        mPeriodicIO.useLaserCan = false;
-    } else {
-      // If there was an error remove it
-      if (mPeriodicIO.error && mPeriodicIO.state != ElevatorState.POS_CTL_TRAVEL_ERROR) {
-        mPeriodicIO.error = false;
-        mPeriodicIO.state = ElevatorState.STOW;
-        candle.removeState(CandleState.ELEVATOR_ERROR);
-      }
-    }
-  }*/
+  /*
+   * private void errorTasks() {
+   * /*
+   * Error Conditions
+   * Bottom and top limit hit at same time
+   * Laser can in use and the measurement is null or status is not good
+   * The bottom limit is hit for more than 10 loop runs and we are reporting a
+   * current position higher than the margin of error
+   *
+   * if (mPeriodicIO.elevator_bottom_limit_error)
+   * mPeriodicIO.elevator_bottom_limit_debounce++;
+   * else
+   * mPeriodicIO.elevator_bottom_limit_debounce = 0;
+   * 
+   * if ((getBottomLimit() && getTopLimit()) ||
+   * (mPeriodicIO.useLaserCan
+   * && (carriageLaserCan == null || carriageLaserCan.status != 0))
+   * || (mPeriodicIO.elevator_bottom_limit_error &&
+   * mPeriodicIO.elevator_bottom_limit_debounce >= 10)) {
+   * // If there wasn't an error report it.
+   * mPeriodicIO.lasercan_error_debounce++;
+   * 
+   * if (!mPeriodicIO.error) {
+   * mPeriodicIO.error = true;
+   * 
+   * setElevatorPower(0);
+   * mPeriodicIO.state = ElevatorState.SENSOR_ERROR;
+   * candle.addState(CandleState.ELEVATOR_ERROR);
+   * }
+   * 
+   * if (mPeriodicIO.lasercan_error_debounce > 10)
+   * mPeriodicIO.useLaserCan = false;
+   * } else {
+   * // If there was an error remove it
+   * if (mPeriodicIO.error && mPeriodicIO.state !=
+   * ElevatorState.POS_CTL_TRAVEL_ERROR) {
+   * mPeriodicIO.error = false;
+   * mPeriodicIO.state = ElevatorState.STOW;
+   * candle.removeState(CandleState.ELEVATOR_ERROR);
+   * }
+   * }
+   * }
+   */
 }

@@ -21,12 +21,12 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.constants.CameraConstants.CameraName;
 import frc.robot.constants.DrivetrainConstants;
 import frc.robot.constants.RobotConstants;
+import frc.robot.states.ElevatorState;
 import frc.robot.subsystems.Candle;
 import frc.robot.subsystems.LimelightVision;
 import frc.robot.subsystems.Coral.Coral;
 import frc.robot.subsystems.Drivetrain.PARTsDrivetrain;
 import frc.robot.subsystems.Elevator.Elevator;
-import frc.robot.subsystems.Elevator.Elevator.ElevatorState;
 import frc.robot.subsystems.Candle.CandleState;
 import frc.robot.util.PARTs.PARTsCommandUtils;
 import frc.robot.util.PARTs.PARTsUnit;
@@ -93,8 +93,7 @@ public class Reef {
         }
 
         public static Command commandIntakeScoreIntake(PARTsDrivetrain drivetrain, Coral coral, Elevator elevator) {
-                Command c = Commands.defer(() -> {
-                        Pose2d feederStationGoal = Field.getTag(12).getLocation().toPose2d();
+                Pose2d feederStationGoal = Field.getTag(12).getLocation().toPose2d();
                         feederStationGoal = feederStationGoal.transformBy(
                                         new Transform2d(RobotConstants.frontRobotVisionOffset.to(PARTsUnitType.Meter),
                                                         0,
@@ -110,20 +109,13 @@ public class Reef {
 
                         Pose2d reefGoal1M = reefGoal.transformBy(new Transform2d(-1, 0, new Rotation2d()));
 
-                        return new SequentialCommandGroup(drivetrain.commandPathFindToPose(feederStation1M),
-                                        drivetrain.commandAlign(feederStationGoal), coral.commandAutoIntake(),
-                                        drivetrain.commandPathFindToPose(reefGoal1M), drivetrain.commandAlign(reefGoal),
-                                        elevator.commandToLevel(ElevatorState.L2), coral.autoScore(),
-                                        new WaitCommand(0.25),
-                                        elevator.commandToLevel(ElevatorState.STOW));
-                }, new HashSet<>(Arrays.asList(drivetrain, coral, elevator)));
 
-                /*Command c = new SequentialCommandGroup(drivetrain.commandPathFindToPose(feederStation1M),
+                Command c = new SequentialCommandGroup(drivetrain.commandPathFindToPose(feederStation1M),
                                 drivetrain.commandAlign(feederStationGoal), coral.commandAutoIntake(),
                                 drivetrain.commandPathFindToPose(reefGoal1M), drivetrain.commandAlign(reefGoal),
                                 elevator.commandToLevel(ElevatorState.L2), coral.autoScore(),
                                 new WaitCommand(0.25),
-                                elevator.commandToLevel(ElevatorState.STOW));*/
+                                elevator.commandToLevel(ElevatorState.STOW));
                 c.setName("commandIntakeScoreIntake");
                 return c;
         }
