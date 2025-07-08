@@ -6,6 +6,7 @@ package frc.robot.subsystems.Coral;
 // the WPILib BSD license file in the root directory of this project.
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -23,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.constants.CoralConstants;
+import frc.robot.states.CoralState;
 import frc.robot.subsystems.Candle;
 import frc.robot.subsystems.Candle.CandleState;
 import frc.robot.subsystems.Elevator.Elevator;
@@ -30,21 +32,11 @@ import frc.robot.util.PARTs.PARTsCommandUtils;
 import frc.robot.util.PARTs.Abstracts.PARTsSubsystem;
 
 public abstract class Coral extends PARTsSubsystem {
-  private Elevator elevator;
 
   /*-------------------------------- Private instance variables ---------------------------------*/
-  protected PeriodicIO mPeriodicIO;
+  private CoralState coralState = CoralState.NONE;
+  private Elevator elevator;
   private final Candle candle;
-
-  public enum IntakeState {
-    NONE,
-    INTAKE,
-    REVERSE,
-    INDEX,
-    READY,
-    SCORE,
-    ERROR
-  }
 
   public Coral(Candle candle, Elevator elevator) {
     super("Coral");
@@ -52,28 +44,13 @@ public abstract class Coral extends PARTsSubsystem {
     this.candle = candle;
     this.elevator = elevator;
 
-    mPeriodicIO = new PeriodicIO();
+    new Trigger(this::isCoralInEntry)
+        .onTrue(Commands.runOnce(() -> candle.addState(CandleState.CORAL_ENTERING)).ignoringDisable(true))
+        .onFalse(Commands.runOnce(() -> candle.removeState(CandleState.CORAL_ENTERING)).ignoringDisable(true));
 
-    new Trigger(this::isCoralInEntry).onTrue(Commands.runOnce(() -> candle.addState(CandleState.CORAL_ENTERING)))
-        .onFalse(Commands.runOnce(() -> candle.removeState(CandleState.CORAL_ENTERING)));
-
-    new Trigger(this::isCoralInExit).onTrue(Commands.runOnce(() -> candle.addState(CandleState.HAS_CORAL)))
-        .onFalse(Commands.runOnce(() -> candle.removeState(CandleState.HAS_CORAL)));
-  }
-
-  protected static class PeriodicIO {
-    double rpm = 0.0;
-    double speed_diff = 0.0;
-
-    int index_debounce = 0;
-
-    LaserCan.Measurement entryLaserMeasurement = null;
-    LaserCan.Measurement exitLaserMeasurement = null;
-
-    IntakeState state = IntakeState.NONE;
-    boolean error = false;
-
-    CandleState candleState = null;
+    new Trigger(this::isCoralInExit)
+        .onTrue(Commands.runOnce(() -> candle.addState(CandleState.HAS_CORAL)).ignoringDisable(true))
+        .onFalse(Commands.runOnce(() -> candle.removeState(CandleState.HAS_CORAL)).ignoringDisable(true));
   }
 
   /*-------------------------------- Generic Subsystem Functions --------------------------------*/
@@ -83,11 +60,36 @@ public abstract class Coral extends PARTsSubsystem {
 
     checkErrors();
 
-    if (mPeriodicIO.state != IntakeState.ERROR) {
+    if (coralState != CoralState.ERROR) {
       elevator.gantryBlocked(isCoralInEntry());
-      checkAutoTasks();
+
+      switch (coralState) {
+        case INTAKE:
+          if (isCoralInEntry()) {
+            index();
+          }
+          break;
+        case INDEX:
+          // pulls in slowly till we pass the sensor, stop after
+          if (!isCoralInEntry() && isCoralInExit()) {
+            stopCoral();
+            coralState = CoralState.READY;
+          } 
+          break;
+        case SCORE:
+          // stop after the coral leaves the bot
+          if (!isCoralInExit()) {
+            stopCoral();
+            candle.removeState(CandleState.SCORING);
+          }
+          break;
+        default:
+          break;
+      }
+
       // Help us index a little more if its still detected in entry
-      if (isCoralInEntry() && mPeriodicIO.state != IntakeState.INTAKE && mPeriodicIO.state != IntakeState.REVERSE) {
+      if (isCoralInEntry()
+          && !new ArrayList<>(Arrays.asList(CoralState.INTAKE, CoralState.REVERSE)).contains(coralState)) {
         index();
       }
     } else
@@ -289,58 +291,6 @@ public abstract class Coral extends PARTsSubsystem {
   }
 
   /*---------------------------------- Custom Private Functions ---------------------------------*/
-
-  private void checkAutoTasks() {
-    switch (mPeriodicIO.state) {
-      case INTAKE:
-        if (isCoralInEntry()) {
-          mPeriodicIO.index_debounce++;
-
-          // Index for 10 loop run to get the coral in the right place, or check if in the
-          // exit incase it happened too fast
-          if (mPeriodicIO.index_debounce > 10 || isCoralInExit()) {
-            mPeriodicIO.index_debounce = 0;
-
-          }
-          index();
-        } else {
-          mPeriodicIO.index_debounce = 0;
-        }
-        break;
-      case INDEX:
-        // pulls in slowly till we pass the sensor, stop after
-        if (!isCoralInEntry() && isCoralInExit()) {
-          mPeriodicIO.index_debounce++;
-
-          if (mPeriodicIO.index_debounce > 1) {
-            mPeriodicIO.index_debounce = 0;
-
-          }
-
-          stopCoral();
-          mPeriodicIO.state = IntakeState.READY;
-        } else {
-          mPeriodicIO.index_debounce = 0;
-        }
-        break;
-      case SCORE:
-        // stop after the coral leaves the bot
-        if (!isCoralInExit()) {
-          mPeriodicIO.index_debounce++;
-
-          // Let coral be gone for 10 loop runs
-          if (mPeriodicIO.index_debounce > 10) {
-            mPeriodicIO.index_debounce = 0;
-
-          }
-          stopCoral();
-          candle.removeState(CandleState.SCORING);
-        }
-        break;
-      default:
-        break;
-    }
-  }
 
   private void checkErrors() {
     ArrayList<Integer> okStates = new ArrayList<Integer>();
