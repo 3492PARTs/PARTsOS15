@@ -20,7 +20,7 @@ public enum CoralState {
 
     CoralState(double speed, double speedDiff) {
         this.speed = speed;
-        this.speed = speedDiff;
+        this.speedDiff = speedDiff;
     }
 
     public double getSpeed() {

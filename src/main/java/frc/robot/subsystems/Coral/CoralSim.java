@@ -27,6 +27,16 @@ public class CoralSim extends Coral {
         exitLaserMeasurement = generateLaserCanMeasurement(super.partsNT.getBoolean(exitTopic) ? 0 : 50);
     }
 
+    @Override
+    public void outputTelemetry() {
+        super.outputTelemetry();
+        super.partsNT.putDouble("Current/Left", coralState.getSpeed() - coralState.getSpeedDiff());
+        super.partsNT.putDouble("Current/Right", -coralState.getSpeed());
+
+        super.partsNT.putDouble("Output/Left", coralState.getSpeed() - coralState.getSpeedDiff());
+        super.partsNT.putDouble("Output/Right", -coralState.getSpeed());
+    }
+
     private LaserCan.Measurement generateLaserCanMeasurement(int measurement) {
         return new LaserCan.Measurement(0, measurement, 0, true, 0, new LaserCan.RegionOfInterest(0, 0, 0, 0));
     }

@@ -272,6 +272,13 @@ public class RobotContainer {
                                 .onFalse(coral.commandStop());
 
                 buttonBoxController.enginestartTrigger().onTrue(coral.commandScore());
+
+                if (Robot.isSimulation()) {
+                        operatorController.a().onTrue(coral.commandIntake());
+                        operatorController.b().onTrue(coral.commandScoreL1());
+                        operatorController.y().onTrue(coral.commandScoreL23());
+                        operatorController.x().onTrue(coral.commandStop());
+                }
         }
 
         public void configureAutonomousCommands() {
