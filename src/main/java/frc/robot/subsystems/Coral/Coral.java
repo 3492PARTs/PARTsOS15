@@ -11,9 +11,7 @@ import java.util.Arrays;
 import au.grapplerobotics.LaserCan;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.states.CandleState;
 import frc.robot.states.CoralState;
 import frc.robot.subsystems.Candle;
@@ -28,21 +26,10 @@ public abstract class Coral extends PARTsSubsystem {
 
   /*-------------------------------- Private instance variables ---------------------------------*/
   private Elevator elevator;
-  private final Candle candle;
 
-  public Coral(Candle candle, Elevator elevator) {
+  public Coral(Elevator elevator) {
     super("Coral");
-
-    this.candle = candle;
     this.elevator = elevator;
-
-    new Trigger(this::isCoralInEntry)
-        .onTrue(Commands.runOnce(() -> candle.addState(CandleState.CORAL_ENTERING)).ignoringDisable(true))
-        .onFalse(Commands.runOnce(() -> candle.removeState(CandleState.CORAL_ENTERING)).ignoringDisable(true));
-
-    new Trigger(this::isCoralInExit)
-        .onTrue(Commands.runOnce(() -> candle.addState(CandleState.HAS_CORAL)).ignoringDisable(true))
-        .onFalse(Commands.runOnce(() -> candle.removeState(CandleState.HAS_CORAL)).ignoringDisable(true));
   }
 
   /*-------------------------------- Generic Subsystem Functions --------------------------------*/
@@ -52,7 +39,7 @@ public abstract class Coral extends PARTsSubsystem {
 
     checkErrors();
 
-    if (coralState != CoralState.ERROR) {
+    if (coralState != CoralState.LASER_EXIT_ERROR) {
       elevator.gantryBlocked(isCoralInEntry());
 
       switch (coralState) {
@@ -74,7 +61,6 @@ public abstract class Coral extends PARTsSubsystem {
           // stop after the coral leaves the bot
           if (!isCoralInExit()) {
             stopCoral();
-            candle.removeState(CandleState.SCORING);
           }
           break;
         default:
@@ -144,6 +130,9 @@ public abstract class Coral extends PARTsSubsystem {
     // throw new UnsupportedOperationException("Unimplemented method 'log'");
   }
   /*---------------------------------- Custom Public Functions ----------------------------------*/
+  public boolean isInScoringState() {
+    return new ArrayList<>(Arrays.asList(CoralState.L1, CoralState.L23, CoralState.L4)).contains(coralState);
+  }
 
   public boolean isCoralInExit() {
     if (exitLaserMeasurement != null)
@@ -257,7 +246,6 @@ public abstract class Coral extends PARTsSubsystem {
 
   public Command commandScore() {
     return PARTsCommandUtils.setCommandName("commandScore", this.runOnce(() -> {
-      candle.addState(CandleState.SCORING);
       switch (elevator.getState()) {
         case STOW:
           scoreL1();
@@ -274,7 +262,6 @@ public abstract class Coral extends PARTsSubsystem {
 
   public Command commandAutoScore() {
     return this.runOnce(() -> {
-      candle.addState(CandleState.SCORING);
       switch (elevator.getState()) {
         case STOW:
           scoreL1();
@@ -304,10 +291,13 @@ public abstract class Coral extends PARTsSubsystem {
 
     // Trigger sub system error if exists
     // if there was an error but there isn't now remove error
-    if (entryLaserMeasurement == null || !okStates.contains(entryLaserMeasurement.status)
-        || exitLaserMeasurement == null || !okStates.contains(exitLaserMeasurement.status)) {
-      if (coralState != CoralState.ERROR) {
-        coralState = CoralState.ERROR;
+    if (!coralState.isError()) {
+    if (entryLaserMeasurement == null || !okStates.contains(entryLaserMeasurement.status)){
+      coralState = CoralState.LASER_ENTRY_ERROR;
+    }
+        else if (exitLaserMeasurement == null || !okStates.contains(exitLaserMeasurement.status)) {
+      
+        coralState = CoralState.LASER_EXIT_ERROR;
         candle.addState(
             (exitLaserMeasurement == null || !okStates.contains(exitLaserMeasurement.status))
                 ? CandleState.CORAL_LASER_EXIT_ERROR
@@ -315,7 +305,7 @@ public abstract class Coral extends PARTsSubsystem {
       }
 
     } else {
-      if (coralState == CoralState.ERROR) {
+      if (coralState == CoralState.LASER_EXIT_ERROR) {
         coralState = CoralState.NONE;
         candle.removeState(CandleState.CORAL_LASER_EXIT_ERROR);
         candle.removeState(CandleState.CORAL_LASER_ENTRY_ERROR);

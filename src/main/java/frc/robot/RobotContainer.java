@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.function.BooleanSupplier;
 
-import org.opencv.core.Mat;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
@@ -279,6 +277,20 @@ public class RobotContainer {
                         operatorController.y().onTrue(coral.commandScoreL23());
                         operatorController.x().onTrue(coral.commandStop());
                 }
+        }
+
+        private void configureCandleBindings() {
+                new Trigger(coral::isCoralInEntry)
+                .onTrue(Commands.runOnce(() -> candle.addState(CandleState.CORAL_ENTERING)).ignoringDisable(true))
+                .onFalse(Commands.runOnce(() -> candle.removeState(CandleState.CORAL_ENTERING)).ignoringDisable(true));
+        
+            new Trigger(coral::isCoralInExit)
+                .onTrue(Commands.runOnce(() -> candle.addState(CandleState.HAS_CORAL)).ignoringDisable(true))
+                .onFalse(Commands.runOnce(() -> candle.removeState(CandleState.HAS_CORAL)).ignoringDisable(true));
+
+                new Trigger(coral::isInScoringState)
+                .onTrue(Commands.runOnce(() -> candle.addState(CandleState.SCORING)).ignoringDisable(true))
+                .onFalse(Commands.runOnce(() -> candle.removeState(CandleState.SCORING)).ignoringDisable(true));
         }
 
         public void configureAutonomousCommands() {
