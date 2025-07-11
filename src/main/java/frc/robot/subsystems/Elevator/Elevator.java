@@ -10,9 +10,9 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.states.ElevatorState;
-import frc.robot.util.PARTs.PARTsCommandController;
-import frc.robot.util.PARTs.PARTsCommandUtils;
-import frc.robot.util.PARTs.Abstracts.PARTsSubsystem;
+import frc.robot.util.PARTs.Classes.PARTsCommandController;
+import frc.robot.util.PARTs.Classes.PARTsCommandUtils;
+import frc.robot.util.PARTs.Classes.Abstracts.PARTsSubsystem;
 
 public abstract class Elevator extends PARTsSubsystem {
 

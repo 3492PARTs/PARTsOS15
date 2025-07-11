@@ -14,12 +14,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.states.CandleState;
 import frc.robot.states.CoralState;
 import frc.robot.subsystems.Candle;
-import frc.robot.subsystems.Candle.CandleState;
 import frc.robot.subsystems.Elevator.Elevator;
-import frc.robot.util.PARTs.PARTsCommandUtils;
-import frc.robot.util.PARTs.Abstracts.PARTsSubsystem;
+import frc.robot.util.PARTs.Classes.PARTsCommandUtils;
+import frc.robot.util.PARTs.Classes.Abstracts.PARTsSubsystem;
 
 public abstract class Coral extends PARTsSubsystem {
   protected CoralState coralState = CoralState.NONE;

@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.util.PARTs;
+package frc.robot.util.PARTs.Classes;
 
 import java.util.function.Function;
 
@@ -52,8 +52,8 @@ public class PARTsUnit {
     }
 
     /**
-     * Get the current unit type for an instance of {@link frc.robot.util.PARTs.PARTsUnit PARTsUnit}.
-     * @return The unit type as a {@link frc.robot.util.PARTs.PARTsUnit.PARTsUnitType PARTsUnitType}.
+     * Get the current unit type for an instance of {@link frc.robot.util.PARTs.Classes.PARTsUnit PARTsUnit}.
+     * @return The unit type as a {@link frc.robot.util.PARTs.Classes.PARTsUnit.PARTsUnitType PARTsUnitType}.
      */
     public PARTsUnitType getUnitType() {
         return unitType;
@@ -128,8 +128,8 @@ public class PARTsUnit {
 
     /**
      * Converts current unit into the requested unit.
-     * @param unitType The target {@link frc.robot.util.PARTs.PARTsUnit.PARTsUnitType PARTsUnitType}.
-     * @return The converted {@link frc.robot.util.PARTs.PARTsUnit PARTsUnit}.
+     * @param unitType The target {@link frc.robot.util.PARTs.Classes.PARTsUnit.PARTsUnitType PARTsUnitType}.
+     * @return The converted {@link frc.robot.util.PARTs.Classes.PARTsUnit PARTsUnit}.
      */
     public PARTsUnit as(PARTsUnitType unitType) {
         return new PARTsUnit(to(unitType), unitType);

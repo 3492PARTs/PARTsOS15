@@ -1,4 +1,4 @@
-package frc.robot.util.PARTs;
+package frc.robot.util.PARTs.Classes;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;

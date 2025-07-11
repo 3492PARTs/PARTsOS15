@@ -1,4 +1,4 @@
-package frc.robot.util.PARTs;
+package frc.robot.util.PARTs.Classes;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;

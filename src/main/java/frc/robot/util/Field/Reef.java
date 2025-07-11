@@ -21,16 +21,16 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.constants.CameraConstants.CameraName;
 import frc.robot.constants.DrivetrainConstants;
 import frc.robot.constants.RobotConstants;
+import frc.robot.states.CandleState;
 import frc.robot.states.ElevatorState;
 import frc.robot.subsystems.Candle;
 import frc.robot.subsystems.LimelightVision;
 import frc.robot.subsystems.Coral.Coral;
 import frc.robot.subsystems.Drivetrain.PARTsDrivetrain;
 import frc.robot.subsystems.Elevator.Elevator;
-import frc.robot.subsystems.Candle.CandleState;
-import frc.robot.util.PARTs.PARTsCommandUtils;
-import frc.robot.util.PARTs.PARTsUnit;
-import frc.robot.util.PARTs.PARTsUnit.PARTsUnitType;
+import frc.robot.util.PARTs.Classes.PARTsCommandUtils;
+import frc.robot.util.PARTs.Classes.PARTsUnit;
+import frc.robot.util.PARTs.Classes.PARTsUnit.PARTsUnitType;
 
 /** Add your docs here. */
 public class Reef {

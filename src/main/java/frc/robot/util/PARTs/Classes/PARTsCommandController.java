@@ -1,4 +1,4 @@
-package frc.robot.util.PARTs;
+package frc.robot.util.PARTs.Classes;
 
 import java.util.HashMap;
 import java.util.function.BooleanSupplier;
@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.constants.RobotConstants;
-import frc.robot.util.PARTs.PARTsController.ControllerType;
+import frc.robot.util.PARTs.Classes.PARTsController.ControllerType;
 
 public class PARTsCommandController {
 

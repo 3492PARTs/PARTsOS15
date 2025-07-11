@@ -2,8 +2,8 @@ package frc.robot.constants;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.numbers.N3;
-import frc.robot.util.PARTs.PARTsUnit;
-import frc.robot.util.PARTs.PARTsUnit.PARTsUnitType;
+import frc.robot.util.PARTs.Classes.PARTsUnit;
+import frc.robot.util.PARTs.Classes.PARTsUnit.PARTsUnitType;
 
 public class VisionConstants {
     public static final String DRIVETRAIN_LIMELIGHT = "limelight-slimmy"; // The_Real

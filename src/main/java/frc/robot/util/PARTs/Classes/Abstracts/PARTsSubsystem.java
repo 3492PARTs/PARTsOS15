@@ -1,4 +1,4 @@
-package frc.robot.util.PARTs.Abstracts;
+package frc.robot.util.PARTs.Classes.Abstracts;
 
 // Copyright (c) FIRST and other WPILib contributors.
 
@@ -6,9 +6,9 @@ package frc.robot.util.PARTs.Abstracts;
 // the WPILib BSD license file in the root directory of this project.
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.util.PARTs.PARTsLogger;
-import frc.robot.util.PARTs.PARTsNT;
-import frc.robot.util.PARTs.PARTsPreferences;
+import frc.robot.util.PARTs.Classes.PARTsLogger;
+import frc.robot.util.PARTs.Classes.PARTsNT;
+import frc.robot.util.PARTs.Classes.PARTsPreferences;
 import frc.robot.util.PARTs.Interfaces.IPARTsSubsystem;
 
 public abstract class PARTsSubsystem extends SubsystemBase implements IPARTsSubsystem {

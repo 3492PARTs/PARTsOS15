@@ -16,10 +16,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.RobotConstants;
 import frc.robot.subsystems.LimelightVision.MegaTagMode;
-import frc.robot.util.PARTs.PARTsDashboard;
-import frc.robot.util.PARTs.PARTsLogger;
-import frc.robot.util.PARTs.PARTsNT;
-import frc.robot.util.PARTs.PARTsDashboard.DashboardTab;
+import frc.robot.util.PARTs.Classes.PARTsDashboard;
+import frc.robot.util.PARTs.Classes.PARTsLogger;
+import frc.robot.util.PARTs.Classes.PARTsNT;
+import frc.robot.util.PARTs.Classes.PARTsDashboard.DashboardTab;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;

@@ -2,8 +2,8 @@ package frc.robot.constants;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import frc.robot.util.PARTs.PARTsUnit;
-import frc.robot.util.PARTs.PARTsUnit.PARTsUnitType;
+import frc.robot.util.PARTs.Classes.PARTsUnit;
+import frc.robot.util.PARTs.Classes.PARTsUnit.PARTsUnitType;
 
 public class AlgaeConstants {
     public static final int algaeIntakeId = 3;

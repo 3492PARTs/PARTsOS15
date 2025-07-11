@@ -1,7 +1,7 @@
 package frc.robot.constants;
 
-import frc.robot.util.PARTs.PARTsUnit;
-import frc.robot.util.PARTs.PARTsUnit.PARTsUnitType;
+import frc.robot.util.PARTs.Classes.PARTsUnit;
+import frc.robot.util.PARTs.Classes.PARTsUnit.PARTsUnitType;
 
 public class DrivetrainConstants {
         public static final String canBusName = "hi";
