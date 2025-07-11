@@ -17,69 +17,65 @@ import frc.robot.util.PARTs.Classes.Abstracts.PARTsCandle;
 
 /** Add your docs here. */
 public class Candle extends PARTsCandle {
-    private PeriodicIO mPeriodicIO;
-    private static class PeriodicIO {
-        CandleState state = CandleState.DISABLED;
-        Set<CandleState> robotStates = new HashSet<>();
-    }
+    private CandleState candleState = CandleState.DISABLED;
+    private Set<CandleState> candleStates = new HashSet<>();
 
     public Candle() {
-        super();
-
-        mPeriodicIO = new PeriodicIO();
+        super("Candle");
     }
 
     /*---------------------------------- Custom Public Functions ----------------------------------*/
     public void addState(CandleState state) {
-        mPeriodicIO.robotStates.add(state);
+        candleStates.add(state);
 
         setState();
     }
 
     public void removeState(CandleState state) {
-        mPeriodicIO.robotStates.remove(state);
+        candleStates.remove(state);
 
         setState();
     }
 
-    public Command addStateCommand(CandleState state) {
-        return PARTsCommandUtils.setCommandName("addStateCommand", this.runOnce(() -> addState(state)));
+    public Command commandAddState(CandleState state) {
+        return PARTsCommandUtils.setCommandName("commandAddState", this.runOnce(() -> addState(state)));
     }
 
-    public Command removeStateCommand(CandleState state) {
-        return PARTsCommandUtils.setCommandName("removeStateCommand", this.runOnce(() -> removeState(state)));
+    public Command commandRemoveState(CandleState state) {
+        return PARTsCommandUtils.setCommandName("commandRemoveState", this.runOnce(() -> removeState(state)));
     }
 
     /*---------------------------------- Custom Private Functions ---------------------------------*/
     private void setState() {
 
-        if (mPeriodicIO.robotStates.contains(CandleState.ELEVATOR_ERROR))
-            mPeriodicIO.state = CandleState.ELEVATOR_ERROR;
-        else if (mPeriodicIO.robotStates.contains(CandleState.CORAL_LASER_EXIT_ERROR))
-            mPeriodicIO.state = CandleState.CORAL_LASER_EXIT_ERROR;
-        else if (mPeriodicIO.robotStates.contains(CandleState.CORAL_LASER_ENTRY_ERROR))
-            mPeriodicIO.state = CandleState.CORAL_LASER_ENTRY_ERROR;
-        else if (mPeriodicIO.robotStates.contains(CandleState.DISABLED))
-            mPeriodicIO.state = CandleState.DISABLED;
-        else if (mPeriodicIO.robotStates.contains(CandleState.CORAL_ENTERING))
-            mPeriodicIO.state = CandleState.CORAL_ENTERING;
-
-        else if (mPeriodicIO.robotStates.contains(CandleState.AUTO_ALIGN))
-            mPeriodicIO.state = CandleState.AUTO_ALIGN;
-        else if (mPeriodicIO.robotStates.contains(CandleState.SCORING))
-            mPeriodicIO.state = CandleState.SCORING;
-        else if (mPeriodicIO.robotStates.contains(CandleState.HAS_CORAL))
-            mPeriodicIO.state = CandleState.HAS_CORAL;
-        else if (mPeriodicIO.robotStates.contains(CandleState.FINE_GRAIN_DRIVE))
-            mPeriodicIO.state = CandleState.FINE_GRAIN_DRIVE;
-        else if (mPeriodicIO.robotStates.contains(CandleState.IDLE))
-            mPeriodicIO.state = CandleState.IDLE;
+        // This picks the order of states to display
+        if (candleStates.contains(CandleState.ELEVATOR_ERROR))
+            candleState = CandleState.ELEVATOR_ERROR;
+        else if (candleStates.contains(CandleState.CORAL_LASER_EXIT_ERROR))
+            candleState = CandleState.CORAL_LASER_EXIT_ERROR;
+        else if (candleStates.contains(CandleState.CORAL_LASER_ENTRY_ERROR))
+            candleState = CandleState.CORAL_LASER_ENTRY_ERROR;
+        else if (candleStates.contains(CandleState.DISABLED))
+            candleState = CandleState.DISABLED;
+        else if (candleStates.contains(CandleState.CORAL_ENTERING))
+            candleState = CandleState.CORAL_ENTERING;
+        else if (candleStates.contains(CandleState.AUTO_ALIGN))
+            candleState = CandleState.AUTO_ALIGN;
+        else if (candleStates.contains(CandleState.SCORING))
+            candleState = CandleState.SCORING;
+        else if (candleStates.contains(CandleState.HAS_CORAL))
+            candleState = CandleState.HAS_CORAL;
+        else if (candleStates.contains(CandleState.FINE_GRAIN_DRIVE))
+            candleState = CandleState.FINE_GRAIN_DRIVE;
+        else if (candleStates.contains(CandleState.IDLE))
+            candleState = CandleState.IDLE;
 
         setStateAnimation();
     }
 
     private void setStateAnimation() {
-        switch (mPeriodicIO.state) {
+        // Maps state to animation
+        switch (candleState) {
             case ELEVATOR_ERROR:
                 runLarsonAnimation(Color.ORANGE, 0.75, BounceMode.Center, 7);
                 break;
@@ -120,6 +116,6 @@ public class Candle extends PARTsCandle {
     @Override
     public void outputTelemetry() {
         super.outputTelemetry();
-        super.partsNT.putString("State", mPeriodicIO.state.toString());
+        super.partsNT.putString("State", candleState.toString());
     }
 }

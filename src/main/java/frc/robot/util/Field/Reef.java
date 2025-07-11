@@ -42,7 +42,7 @@ public class Reef {
                         BooleanSupplier visionActiveBooleanSupplier) {
                 return PARTsCommandUtils.setCommandName("commandAlignAndScoreToVisibleTag",
                                 Commands.either(
-                                                candle.addStateCommand(CandleState.AUTO_ALIGN)
+                                                candle.commandAddState(CandleState.AUTO_ALIGN)
                                                                 .andThen(new ParallelDeadlineGroup(
                                                                                 new WaitUntilCommand(escapeBoolean),
                                                                                 new ConditionalCommand(
@@ -122,7 +122,7 @@ public class Reef {
         public static Command alignToVisibleTagSideStop(boolean rightSide, PARTsDrivetrain drivetrain,
                         Elevator elevator,
                         ElevatorState elevatorState, Coral coral, BooleanSupplier escapeBoolean, Candle candle) {
-                Command c = candle.addStateCommand(CandleState.AUTO_ALIGN)
+                Command c = candle.commandAddState(CandleState.AUTO_ALIGN)
                                 .andThen(new ParallelDeadlineGroup(new WaitUntilCommand(escapeBoolean),
                                                 new ConditionalCommand(Commands.runOnce(() -> {
                                                         int tagID = LimelightVision.getVisibleTagId(

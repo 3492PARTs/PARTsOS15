@@ -8,9 +8,6 @@
 
 package frc.robot.util.PARTs.Classes.Abstracts;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.FireAnimation;
@@ -22,7 +19,6 @@ import com.ctre.phoenix.led.TwinkleAnimation;
 import com.ctre.phoenix.led.CANdle.LEDStripType;
 import com.ctre.phoenix.led.CANdle.VBatOutputMode;
 import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
-import com.ctre.phoenix.led.LarsonAnimation.BounceMode;
 import com.ctre.phoenix.led.TwinkleAnimation.TwinklePercent;
 import com.ctre.phoenix.led.CANdleConfiguration;
 import com.ctre.phoenix.led.ColorFlowAnimation;
@@ -144,8 +140,8 @@ public abstract class PARTsCandle extends PARTsSubsystem {
     }
 
     /** Creates a new light. */
-    public PARTsCandle() {
-        super("PARTsCandle");
+    public PARTsCandle(String className) {
+        super(className);
         candle = new CANdle(CandleConstants.candleId, "rio");
 
         CANdleConfiguration configAll = new CANdleConfiguration();
