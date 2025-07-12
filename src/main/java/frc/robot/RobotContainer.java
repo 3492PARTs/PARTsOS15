@@ -92,6 +92,7 @@ public class RobotContainer {
                 configureDrivetrainBindings();
                 configureElevatorBindings();
                 configureCoralBindings();
+                configureCandleBindings();
 
                 partsNT.putSmartDashboardSendable("field", Field.FIELD2D);
 
