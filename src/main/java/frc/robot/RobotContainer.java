@@ -45,11 +45,9 @@ import frc.robot.subsystems.LimelightVision.MegaTagMode;
 
 public class RobotContainer {
 
-        private final PARTsCommandController driveController = new PARTsCommandController(0, ControllerType.XBOX);
+        private final PARTsCommandController driveController = new PARTsCommandController(0, ControllerType.DS5);
         private final PARTsCommandController operatorController = new PARTsCommandController(1, ControllerType.XBOX);
         private final PARTsButtonBoxController buttonBoxController = new PARTsButtonBoxController(2);
-
-        private final GenericHID keyboardController = Robot.isSimulation() ? new GenericHID(5) : null;
 
         private boolean visionAlignActive = true;
         private BooleanSupplier visionAlignActiveBooleanSupplier = () -> visionAlignActive;
@@ -68,9 +66,9 @@ public class RobotContainer {
                         TunerConstants.FrontLeft, TunerConstants.FrontRight, TunerConstants.BackLeft,
                         TunerConstants.BackRight);
 
-        private final LimelightVision vision = new LimelightVision(drivetrain.getPoseSupplier(),
-                        drivetrain::addVisionMeasurementBiConsumer, drivetrain::setVisionMeasurementStdDevsConsumer,
-                        drivetrain::resetPoseConsumer);
+        private final LimelightVision vision = new LimelightVision(drivetrain.supplierGetPose(),
+                        drivetrain.biConsumerAddVisionMeasurement(), drivetrain.consumerSetVisionMeasurementStdDevs(),
+                        drivetrain.consumerResetPose());
 
         private final ArrayList<IPARTsSubsystem> subsystems = new ArrayList<IPARTsSubsystem>(
                         Arrays.asList(candle, coral, elevator, drivetrain, vision));
@@ -131,12 +129,6 @@ public class RobotContainer {
                 driveController.leftBumper().onTrue(drivetrain.commandSeedFieldCentric());
 
                 if (RobotConstants.DEBUGGING) {
-                        new Trigger(() -> keyboardController.getRawButton(1))
-                                        .onTrue(Reef.commandIntakeScoreIntake(drivetrain, coral, elevator));
-
-                        new Trigger(() -> keyboardController.getRawButton(2))
-                                        .onTrue(drivetrain.commandPathOnTheFly(
-                                                        Field.getTag(12).getLocation().toPose2d()));
 
                         //driveController.rightTrigger()
                         //                .whileTrue(drivetrain.commandPathOnTheFly(

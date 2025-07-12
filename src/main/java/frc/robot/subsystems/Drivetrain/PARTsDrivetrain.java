@@ -47,12 +47,10 @@ import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.Robot;
 import frc.robot.Telemetry;
 import frc.robot.constants.DrivetrainConstants;
 import frc.robot.constants.RobotConstants;
@@ -459,19 +457,19 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
         }
 
-        public Consumer<Vector<N3>> setVisionMeasurementStdDevsConsumer(Vector<N3> stdDevs) {
+        public Consumer<Vector<N3>> consumerSetVisionMeasurementStdDevs() {
                 return this::setVisionMeasurementStdDevs;
         }
 
-        public BiConsumer<Pose2d, Double> addVisionMeasurementBiConsumer(Pose2d measurement, double timestamp) {
-                return this::addVisionMeasurementBiConsumer;
+        public BiConsumer<Pose2d, Double> biConsumerAddVisionMeasurement() {
+                return this::addVisionMeasurement;
         }
 
-        public Consumer<Pose2d> resetPoseConsumer(Pose2d pose) {
+        public Consumer<Pose2d> consumerResetPose() {
                 return this::resetPose;
         }
 
-        public Supplier<Pose2d> getPoseSupplier() {
+        public Supplier<Pose2d> supplierGetPose() {
                 return this::getPose;
         }
 

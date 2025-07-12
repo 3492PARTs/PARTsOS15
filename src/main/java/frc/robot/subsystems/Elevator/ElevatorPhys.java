@@ -15,6 +15,8 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.constants.ElevatorConstants;
 
 /** Add your docs here. */
@@ -65,6 +67,11 @@ public class ElevatorPhys extends Elevator {
                 elevatorConfig.follow(mLeftMotor, true),
                 ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters);
+
+        new Trigger(this::getBottomLimit)
+                .onTrue(new WaitCommand(0.2)
+                        .andThen(this.runOnce(() -> resetEncoder()))
+                        .onlyIf(() -> getElevatorPosition() <= ElevatorConstants.BOTTOM_LIMIT_POSITION_ERROR_MARGIN));
     }
 
     @Override

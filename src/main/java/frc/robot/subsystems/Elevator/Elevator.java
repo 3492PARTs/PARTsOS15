@@ -73,11 +73,6 @@ public abstract class Elevator extends PARTsSubsystem {
         ElevatorConstants.V,
         ElevatorConstants.A);
 
-    new Trigger(this::getBottomLimit)
-        .onTrue(new WaitCommand(0.2)
-            .andThen(this.runOnce(() -> resetEncoder()))
-            .onlyIf(() -> getElevatorPosition() <= ElevatorConstants.BOTTOM_LIMIT_POSITION_ERROR_MARGIN));
-
     super.partsNT.putSmartDashboardSendable("PID", mElevatorPIDController);
     super.partsNT.putSmartDashboardSendable("Zero Elevator", commandZero());
     // super.partsNT.putSmartDashboardSendable("Toggle LaserCan Active",
