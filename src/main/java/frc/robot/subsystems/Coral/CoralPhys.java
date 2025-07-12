@@ -14,8 +14,6 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
 import frc.robot.constants.CoralConstants;
-import frc.robot.subsystems.Candle;
-import frc.robot.subsystems.Elevator.Elevator;
 
 /** Add your docs here. */
 public class CoralPhys extends Coral {
@@ -26,8 +24,8 @@ public class CoralPhys extends Coral {
     private LaserCan entrySensor;
     private LaserCan exitSensor;
 
-    public CoralPhys(Candle candle, Elevator elevator) {
-        super(candle, elevator);
+    public CoralPhys() {
+        super();
 
         mLeftMotor = new SparkMax(CoralConstants.coralLeftMotorId, MotorType.kBrushless);
         mRightMotor = new SparkMax(CoralConstants.coralRightMotorId, MotorType.kBrushless);

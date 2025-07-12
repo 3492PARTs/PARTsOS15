@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.constants.RobotConstants;
 import frc.robot.constants.generated.TunerConstants;
 import frc.robot.states.CandleState;
+import frc.robot.states.CoralState;
 import frc.robot.states.ElevatorState;
 import frc.robot.subsystems.Coral.Coral;
 import frc.robot.subsystems.Coral.CoralPhys;
@@ -60,14 +61,16 @@ public class RobotContainer {
         private final Elevator elevator = Robot.isReal() ? new ElevatorPhys() : new ElevatorSim();
         // private final ElevatorSysId elevator = new ElevatorSysId();
 
-        private final Coral coral = Robot.isReal() ? new CoralPhys(candle, elevator) : new CoralSim(candle, elevator);
+        private final Coral coral = Robot.isReal() ? new CoralPhys() : new CoralSim();
 
         public final PARTsDrivetrain drivetrain = new PARTsDrivetrain(
                         TunerConstants.DrivetrainConstants,
                         TunerConstants.FrontLeft, TunerConstants.FrontRight, TunerConstants.BackLeft,
                         TunerConstants.BackRight);
 
-        private final LimelightVision vision = new LimelightVision(drivetrain);
+        private final LimelightVision vision = new LimelightVision(drivetrain.getPoseSupplier(),
+                        drivetrain::addVisionMeasurementBiConsumer, drivetrain::setVisionMeasurementStdDevsConsumer,
+                        drivetrain::resetPoseConsumer);
 
         private final ArrayList<IPARTsSubsystem> subsystems = new ArrayList<IPARTsSubsystem>(
                         Arrays.asList(candle, coral, elevator, drivetrain, vision));
@@ -160,6 +163,11 @@ public class RobotContainer {
         }
 
         private void configureElevatorBindings() {
+                new Trigger(() -> coral.getState().isError())
+                                .onTrue(Commands.runOnce(() -> elevator.setGantryBlocked(false)).ignoringDisable(true))
+                                .whileFalse(Commands.runOnce(() -> elevator.setGantryBlocked(coral.isCoralInEntry()))
+                                                .ignoringDisable(true));
+
                 operatorController.axisMagnitudeGreaterThan(5, 0.1)
                                 .onTrue(elevator.commandJoystickControl(operatorController));
 
@@ -269,7 +277,7 @@ public class RobotContainer {
                 buttonBoxController.povTrigger180().whileTrue(coral.commandInchReverse())
                                 .onFalse(coral.commandStop());
 
-                buttonBoxController.enginestartTrigger().onTrue(coral.commandScore());
+                buttonBoxController.enginestartTrigger().onTrue(coral.commandScore(elevator.getStateSupplier()));
 
                 if (Robot.isSimulation()) {
                         operatorController.a().onTrue(coral.commandIntake());
@@ -281,16 +289,24 @@ public class RobotContainer {
 
         private void configureCandleBindings() {
                 new Trigger(coral::isCoralInEntry)
-                .onTrue(Commands.runOnce(() -> candle.addState(CandleState.CORAL_ENTERING)).ignoringDisable(true))
-                .onFalse(Commands.runOnce(() -> candle.removeState(CandleState.CORAL_ENTERING)).ignoringDisable(true));
-        
-            new Trigger(coral::isCoralInExit)
-                .onTrue(Commands.runOnce(() -> candle.addState(CandleState.HAS_CORAL)).ignoringDisable(true))
-                .onFalse(Commands.runOnce(() -> candle.removeState(CandleState.HAS_CORAL)).ignoringDisable(true));
+                                .onTrue(candle.commandAddState(CandleState.CORAL_ENTERING))
+                                .onFalse(candle.commandRemoveState(CandleState.CORAL_ENTERING));
+
+                new Trigger(coral::isCoralInExit)
+                                .onTrue(candle.commandAddState(CandleState.HAS_CORAL))
+                                .onFalse(candle.commandRemoveState(CandleState.HAS_CORAL));
 
                 new Trigger(coral::isInScoringState)
-                .onTrue(Commands.runOnce(() -> candle.addState(CandleState.SCORING)).ignoringDisable(true))
-                .onFalse(Commands.runOnce(() -> candle.removeState(CandleState.SCORING)).ignoringDisable(true));
+                                .onTrue(candle.commandAddState(CandleState.SCORING))
+                                .onFalse(candle.commandRemoveState(CandleState.SCORING));
+
+                new Trigger(() -> coral.getState() == CoralState.LASER_ENTRY_ERROR)
+                                .onTrue(candle.commandAddState(CandleState.CORAL_LASER_ENTRY_ERROR))
+                                .onFalse(candle.commandRemoveState(CandleState.CORAL_LASER_ENTRY_ERROR));
+
+                new Trigger(() -> coral.getState() == CoralState.LASER_EXIT_ERROR)
+                                .onTrue(candle.commandAddState(CandleState.CORAL_LASER_EXIT_ERROR))
+                                .onFalse(candle.commandRemoveState(CandleState.CORAL_LASER_EXIT_ERROR));
         }
 
         public void configureAutonomousCommands() {
@@ -302,7 +318,7 @@ public class RobotContainer {
                                 elevator.commandToLevel(ElevatorState.L4));
 
                 NamedCommands.registerCommand("Intake", coral.commandAutoIntake());
-                NamedCommands.registerCommand("Score", coral.commandAutoScore());
+                NamedCommands.registerCommand("Score", coral.commandScore(elevator.getStateSupplier()));
 
                 NamedCommands.registerCommand("Right Align L2 Score",
                                 Reef.commandAlignAndScoreToVisibleTag(true, drivetrain, elevator, ElevatorState.L2,

@@ -1,7 +1,13 @@
 package frc.robot.subsystems;
 
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
@@ -17,7 +23,10 @@ import frc.robot.util.PARTs.Classes.Abstracts.PARTsSubsystem;
 
 public class LimelightVision extends PARTsSubsystem {
 
-    private PARTsDrivetrain drivetrain;
+    private final Supplier<Pose2d> poseSupplier;
+    private final BiConsumer<Pose2d, Double> addVisionMeasurementBiConsumer;
+    private final Consumer<Vector<N3>> setVisionMeasurementStdDevsConsumer;
+    private final Consumer<Pose2d> resetPoseConsumer;
 
     public enum MegaTagMode {
         MEGATAG1,
@@ -46,9 +55,13 @@ public class LimelightVision extends PARTsSubsystem {
     private int imuMode;
     private int maxTagCount;
 
-    public LimelightVision(PARTsDrivetrain drivetrain) {
+    public LimelightVision(Supplier<Pose2d> poseSupplier, BiConsumer<Pose2d, Double> addVisionMeasurementBiConsumer,
+            Consumer<Vector<N3>> setVisionMeasurementStdDevsConsumer, Consumer<Pose2d> resetPoseConsumer) {
         super("LimelightVision");
-        this.drivetrain = drivetrain;
+        this.poseSupplier = poseSupplier;
+        this.addVisionMeasurementBiConsumer = addVisionMeasurementBiConsumer;
+        this.setVisionMeasurementStdDevsConsumer = setVisionMeasurementStdDevsConsumer;
+        this.resetPoseConsumer = resetPoseConsumer;
         for (Camera camera : CameraConstants.LimelightCameras) {
             Pose3d robotRelativePose = camera.getLocation();
             LimelightHelpers.setCameraPose_RobotSpace(
@@ -76,10 +89,10 @@ public class LimelightVision extends PARTsSubsystem {
         this.megaTagMode = mode;
         switch (mode) {
             case MEGATAG1:
-                drivetrain.setVisionMeasurementStdDevs(VisionConstants.MT1_STDEVS);
+                setVisionMeasurementStdDevsConsumer.accept(VisionConstants.MT1_STDEVS);
                 break;
             case MEGATAG2:
-                drivetrain.setVisionMeasurementStdDevs(VisionConstants.MT2_STDEVS);
+                setVisionMeasurementStdDevsConsumer.accept(VisionConstants.MT2_STDEVS);
                 break;
         }
     }
@@ -146,7 +159,7 @@ public class LimelightVision extends PARTsSubsystem {
     }
 
     private boolean robotIsOnBlueSide() {
-        Pose2d pose = drivetrain.getPose();
+        Pose2d pose = poseSupplier.get();
         return pose.getX() < Field.LENGTH / 2 == Robot.isBlue();
     }
 
@@ -181,7 +194,7 @@ public class LimelightVision extends PARTsSubsystem {
         for (Camera camera : CameraConstants.LimelightCameras) {
             LimelightHelpers.SetRobotOrientation(
                     camera.getName(),
-                    (drivetrain.getPose().getRotation().getDegrees() + (Robot.isBlue() ? 0 : 180)) % 360,
+                    (poseSupplier.get().getRotation().getDegrees() + (Robot.isBlue() ? 0 : 180)) % 360,
                     0,
                     0,
                     0,
@@ -193,8 +206,7 @@ public class LimelightVision extends PARTsSubsystem {
                         : getMegaTag1PoseEstimate(camera.getName());
 
                 if (poseEstimate != null && poseEstimate.tagCount > 0) {
-                    //System.out.println("hi" + poseEstimate.pose);
-                    drivetrain.addVisionMeasurement(poseEstimate.pose, poseEstimate.timestampSeconds);
+                    addVisionMeasurementBiConsumer.accept(poseEstimate.pose, poseEstimate.timestampSeconds);
 
                     partsNT.putBoolean(camera.getName() + "/Has Data", true);
                     partsNT.putNumber(camera.getName() + "/Tag Count", poseEstimate.tagCount);
@@ -238,7 +250,7 @@ public class LimelightVision extends PARTsSubsystem {
         for (Camera camera : CameraConstants.LimelightCameras) {
             LimelightHelpers.SetRobotOrientation(
                     camera.getName(),
-                    (drivetrain.getPose().getRotation().getDegrees() + (Robot.isBlue() ? 0 : 180)) % 360,
+                    (poseSupplier.get().getRotation().getDegrees() + (Robot.isBlue() ? 0 : 180)) % 360,
                     0,
                     0,
                     0,
@@ -250,7 +262,7 @@ public class LimelightVision extends PARTsSubsystem {
                         : getMegaTag1PoseEstimate(camera.getName());
 
                 if (poseEstimate != null && poseEstimate.tagCount > 0) {
-                    drivetrain.resetPose(poseEstimate.pose);
+                    resetPoseConsumer.accept(poseEstimate.pose);
                     partsNT.putBoolean(camera.getName() + "/Has Data", true);
                     partsNT.putInteger(camera.getName() + "/Tag Count", poseEstimate.tagCount);
                     maxTagCount = Math.max(maxTagCount, poseEstimate.tagCount);

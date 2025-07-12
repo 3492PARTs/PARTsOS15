@@ -38,11 +38,13 @@ public class Candle extends PARTsCandle {
     }
 
     public Command commandAddState(CandleState state) {
-        return PARTsCommandUtils.setCommandName("commandAddState", this.runOnce(() -> addState(state)));
+        return PARTsCommandUtils.setCommandName("commandAddState",
+                this.runOnce(() -> addState(state)).ignoringDisable(true));
     }
 
     public Command commandRemoveState(CandleState state) {
-        return PARTsCommandUtils.setCommandName("commandRemoveState", this.runOnce(() -> removeState(state)));
+        return PARTsCommandUtils.setCommandName("commandRemoveState",
+                this.runOnce(() -> removeState(state)).ignoringDisable(true));
     }
 
     /*---------------------------------- Custom Private Functions ---------------------------------*/

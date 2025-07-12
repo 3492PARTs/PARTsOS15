@@ -7,15 +7,14 @@ package frc.robot.subsystems.Coral;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.function.Supplier;
 
 import au.grapplerobotics.LaserCan;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import frc.robot.states.CandleState;
 import frc.robot.states.CoralState;
-import frc.robot.subsystems.Candle;
-import frc.robot.subsystems.Elevator.Elevator;
+import frc.robot.states.ElevatorState;
 import frc.robot.util.PARTs.Classes.PARTsCommandUtils;
 import frc.robot.util.PARTs.Classes.Abstracts.PARTsSubsystem;
 
@@ -25,11 +24,10 @@ public abstract class Coral extends PARTsSubsystem {
   protected LaserCan.Measurement exitLaserMeasurement;
 
   /*-------------------------------- Private instance variables ---------------------------------*/
-  private Elevator elevator;
+  private ArrayList<Integer> laserCANOkStates = new ArrayList<Integer>(Arrays.asList(0, 2));
 
-  public Coral(Elevator elevator) {
+  public Coral() {
     super("Coral");
-    this.elevator = elevator;
   }
 
   /*-------------------------------- Generic Subsystem Functions --------------------------------*/
@@ -39,9 +37,7 @@ public abstract class Coral extends PARTsSubsystem {
 
     checkErrors();
 
-    if (coralState != CoralState.LASER_EXIT_ERROR) {
-      elevator.gantryBlocked(isCoralInEntry());
-
+    if (!coralState.isError()) {
       switch (coralState) {
         case INTAKE:
           if (isCoralInEntry()) {
@@ -72,8 +68,7 @@ public abstract class Coral extends PARTsSubsystem {
           && !new ArrayList<>(Arrays.asList(CoralState.INTAKE, CoralState.REVERSE)).contains(coralState)) {
         index();
       }
-    } else
-      elevator.gantryBlocked(false); // if there is an error, don't report state to gantry in elevator
+    }
   }
 
   @Override
@@ -129,7 +124,12 @@ public abstract class Coral extends PARTsSubsystem {
     // TODO Auto-generated method stub
     // throw new UnsupportedOperationException("Unimplemented method 'log'");
   }
+
   /*---------------------------------- Custom Public Functions ----------------------------------*/
+  public CoralState getState() {
+    return coralState;
+  }
+
   public boolean isInScoringState() {
     return new ArrayList<>(Arrays.asList(CoralState.L1, CoralState.L23, CoralState.L4)).contains(coralState);
   }
@@ -244,9 +244,9 @@ public abstract class Coral extends PARTsSubsystem {
     return PARTsCommandUtils.setCommandName("commandStop", super.runOnce(() -> stopCoral()));
   }
 
-  public Command commandScore() {
+  public Command commandScore(Supplier<ElevatorState> eSupplier) {
     return PARTsCommandUtils.setCommandName("commandScore", this.runOnce(() -> {
-      switch (elevator.getState()) {
+      switch (eSupplier.get()) {
         case STOW:
           scoreL1();
           break;
@@ -257,59 +257,28 @@ public abstract class Coral extends PARTsSubsystem {
           scoreL23();
           break;
       }
-    }));
-  }
-
-  public Command commandAutoScore() {
-    return this.runOnce(() -> {
-      switch (elevator.getState()) {
-        case STOW:
-          scoreL1();
-          break;
-        case L4:
-          scoreL4();
-          break;
-        default:
-          scoreL23();
-          break;
-      }
-    }).until(() -> !isCoralInExit());
-  }
-
-  public Command scoreCommand() {
-    return PARTsCommandUtils.setCommandName("coralScoreCmd",
-        commandScore().andThen(new WaitUntilCommand(() -> coralState == CoralState.NONE))
-            .andThen(elevator.commandStow()));
+    }).andThen(new WaitUntilCommand(() -> coralState == CoralState.NONE)));
   }
 
   /*---------------------------------- Custom Private Functions ---------------------------------*/
 
-  private void checkErrors() {
-    ArrayList<Integer> okStates = new ArrayList<Integer>();
-    okStates.add(0);
-    okStates.add(2);
+  private boolean laserCANEntryError() {
+    return entryLaserMeasurement == null || !laserCANOkStates.contains(entryLaserMeasurement.status);
+  }
 
+  private boolean laserCANExitError() {
+    return exitLaserMeasurement == null || !laserCANOkStates.contains(exitLaserMeasurement.status);
+  }
+
+  private void checkErrors() {
     // Trigger sub system error if exists
     // if there was an error but there isn't now remove error
-    if (!coralState.isError()) {
-    if (entryLaserMeasurement == null || !okStates.contains(entryLaserMeasurement.status)){
-      coralState = CoralState.LASER_ENTRY_ERROR;
-    }
-        else if (exitLaserMeasurement == null || !okStates.contains(exitLaserMeasurement.status)) {
-      
-        coralState = CoralState.LASER_EXIT_ERROR;
-        candle.addState(
-            (exitLaserMeasurement == null || !okStates.contains(exitLaserMeasurement.status))
-                ? CandleState.CORAL_LASER_EXIT_ERROR
-                : CandleState.CORAL_LASER_ENTRY_ERROR);
-      }
-
+    if (laserCANEntryError() || laserCANExitError()) {
+      if (!coralState.isError())
+        coralState = laserCANEntryError() ? CoralState.LASER_ENTRY_ERROR : CoralState.LASER_EXIT_ERROR;
     } else {
-      if (coralState == CoralState.LASER_EXIT_ERROR) {
+      if (coralState.isError())
         coralState = CoralState.NONE;
-        candle.removeState(CandleState.CORAL_LASER_EXIT_ERROR);
-        candle.removeState(CandleState.CORAL_LASER_ENTRY_ERROR);
-      }
     }
   }
 }

@@ -5,8 +5,6 @@
 package frc.robot.subsystems.Coral;
 
 import au.grapplerobotics.LaserCan;
-import frc.robot.subsystems.Candle;
-import frc.robot.subsystems.Elevator.Elevator;
 
 /** Add your docs here. */
 public class CoralSim extends Coral {
@@ -14,8 +12,8 @@ public class CoralSim extends Coral {
     private final String entryTopic = "Sim Controls/In Entry";
     private final String exitTopic = "Sim Controls/In Exit";
 
-    public CoralSim(Candle candle, Elevator elevator) {
-        super(candle, elevator);
+    public CoralSim() {
+        super();
         super.partsNT.putBoolean(entryTopic, false);
         super.partsNT.putBoolean(exitTopic, false);
     }

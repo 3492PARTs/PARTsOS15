@@ -1,5 +1,7 @@
 package frc.robot.subsystems.Elevator;
 
+import java.util.function.Supplier;
+
 import au.grapplerobotics.LaserCan;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -164,7 +166,7 @@ public abstract class Elevator extends PARTsSubsystem {
   /*---------------------------------- Custom Public Functions ----------------------------------*/
   public abstract double getElevatorPosition();
 
-  public void gantryBlocked(boolean b) {
+  public void setGantryBlocked(boolean b) {
     gantryBlocked = b;
   }
 
@@ -172,6 +174,10 @@ public abstract class Elevator extends PARTsSubsystem {
 
   public ElevatorState getState() {
     return elevatorState;
+  }
+
+  public Supplier<ElevatorState> getStateSupplier() {
+    return this::getState;
   }
 
   public void setElevatorPower(double power) {

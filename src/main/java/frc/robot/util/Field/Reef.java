@@ -73,7 +73,8 @@ public class Reef {
                                                                                                                 .andThen(elevator
                                                                                                                                 .commandToLevel(
                                                                                                                                                 elevatorState))
-                                                                                                                .andThen(coral.scoreCommand())
+                                                                                                                .andThen(coral.commandScore(
+                                                                                                                                elevator.getStateSupplier()))
                                                                                                                 .andThen(new WaitCommand(
                                                                                                                                 0.25))
                                                                                                                 .andThen(elevator
@@ -112,7 +113,8 @@ public class Reef {
                 Command c = new SequentialCommandGroup(drivetrain.commandPathFindToPose(feederStation1M),
                                 drivetrain.commandAlign(feederStationGoal), coral.commandAutoIntake(),
                                 drivetrain.commandPathFindToPose(reefGoal1M), drivetrain.commandAlign(reefGoal),
-                                elevator.commandToLevel(ElevatorState.L2), coral.commandAutoScore(),
+                                elevator.commandToLevel(ElevatorState.L2),
+                                coral.commandScore(elevator.getStateSupplier()),
                                 new WaitCommand(0.25),
                                 elevator.commandToLevel(ElevatorState.STOW));
                 c.setName("commandIntakeScoreIntake");

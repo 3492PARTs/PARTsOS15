@@ -24,11 +24,14 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import org.json.simple.parser.ParseException;
 
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -430,10 +433,12 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
                         //this is a point 1m from the end
                         Pose2d middlePoint = fieldPose.transformBy(new Transform2d(
-                                        - 1 + RobotConstants.frontRobotVisionOffset.to(PARTsUnitType.Meter), 0, new Rotation2d()));
+                                        -1 + RobotConstants.frontRobotVisionOffset.to(PARTsUnitType.Meter), 0,
+                                        new Rotation2d()));
 
                         Pose2d lastPoint = fieldPose.transformBy(new Transform2d(
-                                        RobotConstants.frontRobotVisionOffset.to(PARTsUnitType.Meter), 0, new Rotation2d()));
+                                        RobotConstants.frontRobotVisionOffset.to(PARTsUnitType.Meter), 0,
+                                        new Rotation2d()));
                         // Create the path using the waypoints created above
                         PathPlannerPath path = new PathPlannerPath(
                                         PathPlannerPath.waypointsFromPoses(getPose(), middlePoint, lastPoint),
@@ -452,6 +457,22 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                         return AutoBuilder.followPath(path);
                 }, new HashSet<>(Arrays.asList(this))));
 
+        }
+
+        public Consumer<Vector<N3>> setVisionMeasurementStdDevsConsumer(Vector<N3> stdDevs) {
+                return this::setVisionMeasurementStdDevs;
+        }
+
+        public BiConsumer<Pose2d, Double> addVisionMeasurementBiConsumer(Pose2d measurement, double timestamp) {
+                return this::addVisionMeasurementBiConsumer;
+        }
+
+        public Consumer<Pose2d> resetPoseConsumer(Pose2d pose) {
+                return this::resetPose;
+        }
+
+        public Supplier<Pose2d> getPoseSupplier() {
+                return this::getPose;
         }
 
         /*---------------------------------- Custom Private Functions ---------------------------------*/
