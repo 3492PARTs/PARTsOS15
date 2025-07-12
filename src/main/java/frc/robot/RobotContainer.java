@@ -158,7 +158,7 @@ public class RobotContainer {
         private void configureElevatorBindings() {
                 new Trigger(() -> coral.getState().isError())
                                 .onTrue(Commands.runOnce(() -> elevator.setGantryBlocked(false)).ignoringDisable(true))
-                                .whileFalse(Commands.runOnce(() -> elevator.setGantryBlocked(coral.isCoralInEntry()))
+                                .whileFalse(Commands.run(() -> elevator.setGantryBlocked(coral.isCoralInEntry()))
                                                 .ignoringDisable(true));
 
                 operatorController.axisMagnitudeGreaterThan(5, 0.1)

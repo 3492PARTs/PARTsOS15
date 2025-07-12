@@ -57,8 +57,6 @@ public class Candle extends PARTsCandle {
             candleState = CandleState.CORAL_LASER_EXIT_ERROR;
         else if (candleStates.contains(CandleState.CORAL_LASER_ENTRY_ERROR))
             candleState = CandleState.CORAL_LASER_ENTRY_ERROR;
-        else if (candleStates.contains(CandleState.DISABLED))
-            candleState = CandleState.DISABLED;
         else if (candleStates.contains(CandleState.CORAL_ENTERING))
             candleState = CandleState.CORAL_ENTERING;
         else if (candleStates.contains(CandleState.AUTO_ALIGN))
@@ -71,6 +69,8 @@ public class Candle extends PARTsCandle {
             candleState = CandleState.FINE_GRAIN_DRIVE;
         else if (candleStates.contains(CandleState.IDLE))
             candleState = CandleState.IDLE;
+        else if (candleStates.contains(CandleState.DISABLED))
+            candleState = CandleState.DISABLED;
 
         setStateAnimation();
     }
