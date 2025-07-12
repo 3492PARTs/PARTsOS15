@@ -73,28 +73,28 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
         private Telemetry telemetryLogger;
-        /// check which are needed.
-        private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
 
+        // refs to swerve modules, used in swerve module dashboard widget
         private SwerveModule<TalonFX, TalonFX, CANcoder> frontRightModule;
         private SwerveModule<TalonFX, TalonFX, CANcoder> frontLeftModule;
         private SwerveModule<TalonFX, TalonFX, CANcoder> backRightModule;
         private SwerveModule<TalonFX, TalonFX, CANcoder> backLeftModule;
 
+        // show robot pose on field dashboard display
         private FieldObject2d fieldObject2d;
-        private FieldObject2d targetObject2d;
 
+        // parts util classes
         private PARTsNT partsNT;
         private PARTsLogger partsLogger;
 
+        // for align command
         private Timer alignTimer;
         private PARTsUnit drivetrainVelocityX;
         private PARTsUnit drivetrainVelocityY;
         private boolean timerElapsed = false;
+        private FieldObject2d targetObject2d;
 
-        // Vision Variables
-        private SwerveRequest.FieldCentric alignRequest;
-
+        // pid controllers
         private ProfiledPIDController thetaController;
         private ProfiledPIDController xRangeController;
         private ProfiledPIDController yRangeController;
@@ -306,7 +306,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                         Translation2d translation = new Translation2d(rangeOutput.getX(),
                                                         rangeOutput.getY());
 
-                                        super.setControl(alignRequest
+                                        super.setControl(getFieldCentricDriveRequest()
                                                         .withVelocityX(translation.getX())
                                                         .withVelocityY(translation.getY())
                                                         .withRotationalRate(thetaOutput.getRadians()));
@@ -314,7 +314,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                         alignCommandExecuteTelemetry(thetaOutput, rangeOutput, diff);
                                 },
                                 (Boolean b) -> {
-                                        super.setControl(alignRequest
+                                        super.setControl(getFieldCentricDriveRequest()
                                                         .withVelocityX(0)
                                                         .withVelocityY(0)
                                                         .withRotationalRate(0));
@@ -348,7 +348,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                 thetaController.calculate(currentRobotAngle.to(PARTsUnitType.Radian),
                                                 goalAngle.to(PARTsUnitType.Radian)));
 
-                return this.runOnce(() -> super.setControl(alignRequest
+                return this.runOnce(() -> super.setControl(getFieldCentricDriveRequest()
                                 .withVelocityX(0)
                                 .withVelocityY(0)
                                 .withRotationalRate(thetaOutput.getRadians()))).until(() -> (thetaController.atGoal()));
@@ -610,9 +610,6 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
         }
 
         private void initializeControllers() {
-                alignRequest = new SwerveRequest.FieldCentric()
-                                .withDeadband(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * 0.1)
-                                .withRotationalDeadband(0.1);
 
                 thetaController = new ProfiledPIDController(DrivetrainConstants.THETA_P, DrivetrainConstants.THETA_I,
                                 DrivetrainConstants.THETA_D,
@@ -672,7 +669,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                         () -> getState().Speeds, // Supplier of current robot speeds
                                         // Consumer of ChassisSpeeds and feedforwards to drive the robot
                                         (speeds, feedforwards) -> setControl(
-                                                        m_pathApplyRobotSpeeds.withSpeeds(speeds)
+                                                        new SwerveRequest.ApplyRobotSpeeds().withSpeeds(speeds)
                                                                         .withWheelForceFeedforwardsX(feedforwards
                                                                                         .robotRelativeForcesXNewtons())
                                                                         .withWheelForceFeedforwardsY(feedforwards
