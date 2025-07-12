@@ -11,6 +11,7 @@ import com.ctre.phoenix.led.LarsonAnimation.BounceMode;
 import com.ctre.phoenix.led.TwinkleAnimation.TwinklePercent;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.states.CandleState;
 import frc.robot.util.PARTs.Classes.PARTsCommandUtils;
 import frc.robot.util.PARTs.Classes.Abstracts.PARTsCandle;
@@ -39,12 +40,12 @@ public class Candle extends PARTsCandle {
 
     public Command commandAddState(CandleState state) {
         return PARTsCommandUtils.setCommandName("commandAddState",
-                this.runOnce(() -> addState(state)).ignoringDisable(true));
+                Commands.runOnce(() -> addState(state)).ignoringDisable(true));
     }
 
     public Command commandRemoveState(CandleState state) {
         return PARTsCommandUtils.setCommandName("commandRemoveState",
-                this.runOnce(() -> removeState(state)).ignoringDisable(true));
+            Commands.runOnce(() -> removeState(state)).ignoringDisable(true));
     }
 
     /*---------------------------------- Custom Private Functions ---------------------------------*/

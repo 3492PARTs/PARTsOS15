@@ -192,7 +192,7 @@ public abstract class Elevator extends PARTsSubsystem {
   }
 
   public Command commandToLevel(ElevatorState state) {
-    return PARTsCommandUtils.setCommandName("elevatorToStateCommand", this.runOnce(() -> {
+    return PARTsCommandUtils.setCommandName("commandToLevel", this.runOnce(() -> {
       toLevel(state);
     }).andThen(new WaitUntilCommand(() -> mElevatorPIDController.atGoal() || !elevatorState.hasTarget())));
   }

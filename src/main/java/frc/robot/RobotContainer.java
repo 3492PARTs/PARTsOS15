@@ -107,7 +107,7 @@ public class RobotContainer {
         private void configureDrivetrainBindings() {
 
                 // Drivetrain will execute this command periodically
-                drivetrain.setDefaultCommand(drivetrain.commandDefault(driveController));
+                drivetrain.setDefaultCommand(drivetrain.commandJoystickDrive(driveController));
 
                 // fine grain controls
                 // driveController.rightBumper().onTrue(Commands.runOnce(() -> fineGrainDrive =
@@ -170,11 +170,11 @@ public class RobotContainer {
                 buttonBoxController.nukeTrigger().toggleOnTrue(
                                 PARTsCommandUtils.setCommandName("Toggle Vision Control", Commands.startEnd(
                                                 () -> {
-                                                        visionAlignActive = true;
+                                                        visionAlignActive = false;
                                                 },
                                                 () -> {
-                                                        visionAlignActive = false;
-                                                })));
+                                                        visionAlignActive = true;
+                                                }).ignoringDisable(true)));
 
                 // *---------------------------------------------------- *//
                 // * ---------------Right Reef Pole Controls ----------- *//

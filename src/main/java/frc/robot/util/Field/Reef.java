@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -42,10 +43,12 @@ public class Reef {
                         BooleanSupplier visionActiveBooleanSupplier) {
                 return PARTsCommandUtils.setCommandName("commandAlignAndScoreToVisibleTag",
                                 Commands.either(
+                                                // true
                                                 candle.commandAddState(CandleState.AUTO_ALIGN)
-                                                                .andThen(new ParallelDeadlineGroup(
+                                                                .andThen(new ParallelRaceGroup(
                                                                                 new WaitUntilCommand(escapeBoolean),
                                                                                 new ConditionalCommand(
+                                                                                                // true
                                                                                                 Commands.runOnce(() -> {
                                                                                                         int tagID = LimelightVision
                                                                                                                         .getVisibleTagId(
@@ -79,6 +82,7 @@ public class Reef {
                                                                                                                                 0.25))
                                                                                                                 .andThen(elevator
                                                                                                                                 .commandStow()),
+                                                                                                // false
                                                                                                 new WaitCommand(0),
                                                                                                 () -> {
                                                                                                         return LimelightVision
@@ -86,9 +90,9 @@ public class Reef {
                                                                                                                                         CameraName.FRONT_CAMERA
                                                                                                                                                         .getCameraName());
                                                                                                 })))
-                                                                .finallyDo(() -> {
-                                                                        candle.removeState(CandleState.AUTO_ALIGN);
-                                                                }),
+                                                                .andThen(candle.commandRemoveState(
+                                                                                CandleState.AUTO_ALIGN)),
+                                                // false
                                                 elevator.commandToLevel(elevatorState),
                                                 visionActiveBooleanSupplier));
         }

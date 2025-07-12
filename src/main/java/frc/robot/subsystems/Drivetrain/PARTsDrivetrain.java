@@ -194,10 +194,10 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 fineGrainDrive = !fineGrainDrive;
         }
 
-        public Command commandDefault(PARTsCommandController controller) {
+        public Command commandJoystickDrive(PARTsCommandController controller) {
                 // Note that X is defined as forward according to WPILib convention,
                 // and Y is defined as to the left according to WPILib convention.
-                return PARTsCommandUtils.setCommandName("commandDefault", applyRequest(() -> {
+                return PARTsCommandUtils.setCommandName("commandJoystickDrive", applyRequest(() -> {
                         double limit = MaxSpeed;
                         if (fineGrainDrive)
                                 limit *= 0.25;
