@@ -41,5 +41,5 @@ public class DrivetrainConstants {
 
         public static final PARTsUnit X_ZERO_HOLD_DISTANCE = new PARTsUnit(-9, PARTsUnitType.Inch);
 
-        public static final double ALIGN_TIMEOUT = 0.25; // seconds
+        public static final double ALIGN_TIMEOUT = 0.3; // seconds
 }
