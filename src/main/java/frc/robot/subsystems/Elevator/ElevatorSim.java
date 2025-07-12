@@ -54,7 +54,7 @@ public class ElevatorSim extends Elevator {
 
     @Override
     public double getRPS() {
-        return sim.getVelocityMetersPerSecond() * 60 / ElevatorConstants.gearRatio; // 16 is the gear reduction
+        return sim.getVelocityMetersPerSecond() * 60 / ElevatorConstants.GEAR_RATIO; // 16 is the gear reduction
 
     }
 
@@ -77,12 +77,12 @@ public class ElevatorSim extends Elevator {
 
     @Override
     public boolean getBottomLimit() {
-        return super.partsNT.getBoolean(bottomLimitTopic) || getElevatorPosition() <= ElevatorConstants.StowHeight;
+        return super.partsNT.getBoolean(bottomLimitTopic) || getElevatorPosition() <= ElevatorConstants.STOW_HEIGHT;
     }
 
     @Override
     public boolean getTopLimit() {
-        return super.partsNT.getBoolean(topLimitTopic) || getElevatorPosition() >= ElevatorConstants.maxHeight;
+        return super.partsNT.getBoolean(topLimitTopic) || getElevatorPosition() >= ElevatorConstants.MAX_HEIGHT;
     }
 
     @Override

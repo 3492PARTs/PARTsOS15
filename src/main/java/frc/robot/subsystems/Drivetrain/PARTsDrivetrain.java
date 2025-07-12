@@ -251,13 +251,13 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                                                                             // is
                                                                                                             // centered.
                                         thetaController.setTolerance(
-                                                        DrivetrainConstants.thetaControllerTolerance
+                                                        DrivetrainConstants.THETA_CONTROLLER_TOLERANCE
                                                                         .to(PARTsUnitType.Radian));
 
                                         // Initialize the x-range controller.
                                         xRangeController.reset(getFieldCentricPose().getX());
                                         xRangeController.setGoal(goalPose.get().getX());
-                                        xRangeController.setTolerance(DrivetrainConstants.xRControllerTolerance
+                                        xRangeController.setTolerance(DrivetrainConstants.X_RANGE_CONTROLLER_TOLERANCE
                                                         .to(PARTsUnitType.Meter));
 
                                         // Initialize the y-range controller.
@@ -265,7 +265,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                         // to
                                         // target.
                                         yRangeController.setGoal(goalPose.get().getY()); // Center to target.
-                                        yRangeController.setTolerance(DrivetrainConstants.yRControllerTolerance
+                                        yRangeController.setTolerance(DrivetrainConstants.Y_RANGE_CONTROLLER_TOLERANCE
                                                         .to(PARTsUnitType.Meter));
 
                                         alignCommandInitTelemetry(goalPose.get());
@@ -285,7 +285,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                                                 alignTimer.reset();
                                         }
 
-                                        if (alignTimer.hasElapsed(0.25)) {
+                                        if (alignTimer.hasElapsed(DrivetrainConstants.ALIGN_TIMEOUT)) {
                                                 timerElapsed = true;
                                         }
 
@@ -433,11 +433,11 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
 
                         //this is a point 1m from the end
                         Pose2d middlePoint = fieldPose.transformBy(new Transform2d(
-                                        -1 + RobotConstants.frontRobotVisionOffset.to(PARTsUnitType.Meter), 0,
+                                        -1 + RobotConstants.ROBOT_VISION_OFFSET.to(PARTsUnitType.Meter), 0,
                                         new Rotation2d()));
 
                         Pose2d lastPoint = fieldPose.transformBy(new Transform2d(
-                                        RobotConstants.frontRobotVisionOffset.to(PARTsUnitType.Meter), 0,
+                                        RobotConstants.ROBOT_VISION_OFFSET.to(PARTsUnitType.Meter), 0,
                                         new Rotation2d()));
                         // Create the path using the waypoints created above
                         PathPlannerPath path = new PathPlannerPath(

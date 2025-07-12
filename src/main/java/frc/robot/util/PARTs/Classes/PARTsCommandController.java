@@ -30,7 +30,7 @@ public class PARTsCommandController {
     private String err_msg = "";
 
     public PARTsCommandController(int port) {
-        if (RobotConstants.allowAutoControllerDetection) {
+        if (RobotConstants.ALLOW_AUTO_CONTROLLER_DETECTION) {
             if (DriverStation.getJoystickIsXbox(port)) {
                 controllerType = ControllerType.XBOX;
             } else if (DriverStation.getJoystickName(port).toLowerCase().contains("dualsense")) {

@@ -129,7 +129,7 @@ public class RobotContainer {
                 // reset the field-centric heading on left bumper press
                 driveController.leftBumper().onTrue(drivetrain.commandSeedFieldCentric());
 
-                if (RobotConstants.debug) {
+                if (RobotConstants.DEBUGGING) {
                         new Trigger(() -> keyboardController.getRawButton(1))
                                         .onTrue(Reef.commandIntakeScoreIntake(drivetrain, coral, elevator));
 

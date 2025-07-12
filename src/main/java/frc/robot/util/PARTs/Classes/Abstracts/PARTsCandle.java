@@ -31,7 +31,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 public abstract class PARTsCandle extends PARTsSubsystem {
     // https://github.com/CrossTheRoadElec/Phoenix5-Examples/blob/master/Java%20General/CANdle%20MultiAnimation/src/main/java/frc/robot/subsystems/CANdleSystem.java
     private static CANdle candle;
-    private final int LED_LENGTH = CandleConstants.ledLength;
+    private final int LED_LENGTH = CandleConstants.LED_LENGTH;
     private Animation animation = null;
 
     public enum Color {
@@ -142,7 +142,7 @@ public abstract class PARTsCandle extends PARTsSubsystem {
     /** Creates a new light. */
     public PARTsCandle(String className) {
         super(className);
-        candle = new CANdle(CandleConstants.candleId, "rio");
+        candle = new CANdle(CandleConstants.CAN_ID, "rio");
 
         CANdleConfiguration configAll = new CANdleConfiguration();
         configAll.statusLedOffWhenActive = true;
@@ -333,7 +333,7 @@ public abstract class PARTsCandle extends PARTsSubsystem {
     }
 
     @Override
-    public void outputTelemetry() {        
+    public void outputTelemetry() {
         if (animation != null)
             super.partsNT.putString("Animation",
                     animation.toString().replace("com.ctre.phoenix.led.", "").replaceAll("@(\\d|\\w)*", ""));

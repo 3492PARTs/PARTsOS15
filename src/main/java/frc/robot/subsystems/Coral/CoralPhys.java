@@ -27,8 +27,8 @@ public class CoralPhys extends Coral {
     public CoralPhys() {
         super();
 
-        mLeftMotor = new SparkMax(CoralConstants.coralLeftMotorId, MotorType.kBrushless);
-        mRightMotor = new SparkMax(CoralConstants.coralRightMotorId, MotorType.kBrushless);
+        mLeftMotor = new SparkMax(CoralConstants.LEFT_MOTOR_CAN_ID, MotorType.kBrushless);
+        mRightMotor = new SparkMax(CoralConstants.RIGHT_MOTOR_CAN_ID, MotorType.kBrushless);
 
         SparkMaxConfig coralConfig = new SparkMaxConfig();
 
@@ -43,7 +43,7 @@ public class CoralPhys extends Coral {
                 ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters);
 
-        entrySensor = new LaserCan(CoralConstants.laserCanId);
+        entrySensor = new LaserCan(CoralConstants.ENTRY_LASER_CAN_ID);
         try {
             entrySensor.setRangingMode(LaserCan.RangingMode.SHORT);
             entrySensor.setRegionOfInterest(new LaserCan.RegionOfInterest(4, 4, 4, 4));
@@ -52,7 +52,7 @@ public class CoralPhys extends Coral {
             System.out.println("Configuration failed! " + e);
         }
 
-        exitSensor = new LaserCan(CoralConstants.laserCan2Id);
+        exitSensor = new LaserCan(CoralConstants.EXIT_LASER_CAN_ID);
         try {
             exitSensor.setRangingMode(LaserCan.RangingMode.SHORT);
             exitSensor.setRegionOfInterest(new LaserCan.RegionOfInterest(4, 4, 4, 4));

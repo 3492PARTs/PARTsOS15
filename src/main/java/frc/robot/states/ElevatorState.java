@@ -5,12 +5,12 @@ import frc.robot.constants.ElevatorConstants;
 public enum ElevatorState {
     MANUAL(-1),
     STOP(-1),
-    STOW(ElevatorConstants.StowHeight),
-    L2(ElevatorConstants.L2Height),
-    L3(ElevatorConstants.L3Height),
-    L4(ElevatorConstants.L4Height),
-    A1(ElevatorConstants.LowAlgaeHeight),
-    A2(ElevatorConstants.HighAlgaeHeight);
+    STOW(ElevatorConstants.STOW_HEIGHT),
+    L2(ElevatorConstants.L2_HEIGHT),
+    L3(ElevatorConstants.L3_HEIGHT),
+    L4(ElevatorConstants.L4_HEIGHT),
+    A1(ElevatorConstants.LOW_ALGAE_HEIGHT),
+    A2(ElevatorConstants.HIGH_ALGAE_HEIGHT);
 
     private final double height;
     private double power = 0;

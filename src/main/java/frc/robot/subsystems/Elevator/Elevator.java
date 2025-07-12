@@ -57,26 +57,26 @@ public abstract class Elevator extends PARTsSubsystem {
 
     // Elevator PID
     mElevatorPIDController = new ProfiledPIDController(
-        ElevatorConstants.kP,
-        ElevatorConstants.kI,
-        ElevatorConstants.kD,
+        ElevatorConstants.P,
+        ElevatorConstants.I,
+        ElevatorConstants.D,
         new TrapezoidProfile.Constraints(
-            ElevatorConstants.kMaxVelocity,
-            ElevatorConstants.kMaxAcceleration));
+            ElevatorConstants.MAX_VELOCITY,
+            ElevatorConstants.MAX_ACCELERATION));
 
-    mElevatorPIDController.setTolerance(ElevatorConstants.kTolerance);
+    mElevatorPIDController.setTolerance(ElevatorConstants.TOLERANCE);
 
     // Elevator Feedforward
     mElevatorFeedForward = new ElevatorFeedforward(
-        ElevatorConstants.kS,
-        ElevatorConstants.kG,
-        ElevatorConstants.kV,
-        ElevatorConstants.kA);
+        ElevatorConstants.S,
+        ElevatorConstants.G,
+        ElevatorConstants.V,
+        ElevatorConstants.A);
 
     new Trigger(this::getBottomLimit)
         .onTrue(new WaitCommand(0.2)
             .andThen(this.runOnce(() -> resetEncoder()))
-            .onlyIf(() -> getElevatorPosition() <= ElevatorConstants.bottomLimitPositionErrorMargin));
+            .onlyIf(() -> getElevatorPosition() <= ElevatorConstants.BOTTOM_LIMIT_POSITION_ERROR_MARGIN));
 
     super.partsNT.putSmartDashboardSendable("PID", mElevatorPIDController);
     super.partsNT.putSmartDashboardSendable("Zero Elevator", commandZero());
@@ -105,7 +105,7 @@ public abstract class Elevator extends PARTsSubsystem {
         mElevatorPIDController.setGoal(elevatorState.getTarget());
 
         if (elevatorState == ElevatorState.STOW && !getBottomLimit() && mElevatorPIDController.atGoal()) {
-          voltage = ElevatorConstants.homingSpeed;
+          voltage = ElevatorConstants.HOMING_SPEED;
         } else if (elevatorState == ElevatorState.STOW && getBottomLimit()) {
           voltage = 0;
         } else {
@@ -191,7 +191,7 @@ public abstract class Elevator extends PARTsSubsystem {
 
   public Command commandJoystickControl(PARTsCommandController controller) {
     return PARTsCommandUtils.setCommandName("commandJoystickControl", this.run(() -> {
-      double speed = -controller.getRightY() * ElevatorConstants.maxSpeed;
+      double speed = -controller.getRightY() * ElevatorConstants.MAX_SPEED;
       setElevatorPower(speed);
     }).until(() -> Math.abs(controller.getRightY()) < 0.1).andThen(() -> setElevatorPower(0)));
   }
@@ -250,7 +250,7 @@ public abstract class Elevator extends PARTsSubsystem {
   public Command commandZero() {
     return PARTsCommandUtils.setCommandName("commandZero",
         this.run(() -> {
-          setSpeedWithoutLimits(ElevatorConstants.homingSpeed);
+          setSpeedWithoutLimits(ElevatorConstants.HOMING_SPEED);
         })
             .unless(() -> gantryBlocked).until(this::getBottomLimit)
             .andThen(this.runOnce(() -> stop())).andThen(commandStow()));

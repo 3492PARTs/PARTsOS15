@@ -30,7 +30,7 @@ public class PARTsLogger {
     }
 
     private void instantiate() {
-        if (RobotConstants.logging) {
+        if (RobotConstants.LOGGING) {
             // Starts recording to data log
             DataLogManager.start();
 
@@ -40,7 +40,7 @@ public class PARTsLogger {
     }
 
     public boolean logBoolean(String key, boolean b) {
-        if (RobotConstants.logging) {
+        if (RobotConstants.LOGGING) {
             new BooleanLogEntry(log, name.length() > 0 ? String.format("%s/%s", name, key) : key).append(b);
             return true;
         } else
@@ -48,7 +48,7 @@ public class PARTsLogger {
     }
 
     public boolean logDouble(String key, double d) {
-        if (RobotConstants.logging) {
+        if (RobotConstants.LOGGING) {
             new DoubleLogEntry(log, name.length() > 0 ? String.format("%s/%s", name, key) : key).append(d);
             return true;
         } else
@@ -56,7 +56,7 @@ public class PARTsLogger {
     }
 
     public boolean logString(String key, String s) {
-        if (RobotConstants.logging) {
+        if (RobotConstants.LOGGING) {
             new StringLogEntry(log, name.length() > 0 ? String.format("%s/%s", name, key) : key).append(s);
             return true;
         } else

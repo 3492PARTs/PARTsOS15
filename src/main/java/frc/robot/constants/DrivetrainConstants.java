@@ -4,9 +4,9 @@ import frc.robot.util.PARTs.Classes.PARTsUnit;
 import frc.robot.util.PARTs.Classes.PARTsUnit.PARTsUnitType;
 
 public class DrivetrainConstants {
-        public static final String canBusName = "hi";
-        public static final double kMaxAngularSpeed = Math.PI / 4; // Radians
-        public static final double kMaxSpeed = .5; // Meters per second
+        public static final String CAN_BUS_NAME = "hi";
+        public static final double MAX_ANGULAR_SPEED = Math.PI / 4; // Radians
+        public static final double MAX_SPEED = .5; // Meters per second
 
         public static final double MAX_AIM_VELOCITY = 1.5 * Math.PI; // radd/s
         public static final double MAX_AIM_ACCELERATION = Math.PI / 2; // rad/s^2
@@ -23,23 +23,23 @@ public class DrivetrainConstants {
 
         public static final double RANGE_Y_P = 4.5; // 4.5
 
-        public static final PARTsUnit yRControllerTolerance = new PARTsUnit(1, PARTsUnitType.Inch);
-        public static final PARTsUnit xRControllerTolerance = new PARTsUnit(2, PARTsUnitType.Inch);
-        public static final PARTsUnit thetaControllerTolerance = new PARTsUnit(1, PARTsUnitType.Angle);
+        public static final PARTsUnit Y_RANGE_CONTROLLER_TOLERANCE = new PARTsUnit(1, PARTsUnitType.Inch);
+        public static final PARTsUnit X_RANGE_CONTROLLER_TOLERANCE = new PARTsUnit(2, PARTsUnitType.Inch);
+        public static final PARTsUnit THETA_CONTROLLER_TOLERANCE = new PARTsUnit(1, PARTsUnitType.Angle);
 
-        public static final double leftSideOffset = 5.5;
+        public static final double LEFT_SIDE_OFFSET = 5.5;
 
         // more positive, more to left
-        public static final PARTsUnit leftAlignDistance = new PARTsUnit(6, PARTsUnitType.Inch);
+        public static final PARTsUnit LEFT_ALIGN_DISTANCE = new PARTsUnit(6, PARTsUnitType.Inch);
 
         // more negative, more to right
-        public static final PARTsUnit rightAlignDistance = new PARTsUnit(-6, PARTsUnitType.Inch); // -7.5
+        public static final PARTsUnit RIGHT_ALIGN_DISTANCE = new PARTsUnit(-6, PARTsUnitType.Inch); // -7.5
 
-        public static final PARTsUnit poleDistanceOffset = new PARTsUnit(6, PARTsUnitType.Inch);
+        public static final PARTsUnit POLE_DISTANCE_OFFSET = new PARTsUnit(6, PARTsUnitType.Inch);
 
-        public static final PARTsUnit L4XDistance = new PARTsUnit(-9 + (-4), PARTsUnitType.Inch);
+        public static final PARTsUnit L4_X_DISTANCE = new PARTsUnit(-9 + (-4), PARTsUnitType.Inch);
 
-        public static final PARTsUnit xZeroHoldDistance = new PARTsUnit(-9, PARTsUnitType.Inch);
+        public static final PARTsUnit X_ZERO_HOLD_DISTANCE = new PARTsUnit(-9, PARTsUnitType.Inch);
 
-        public static final double maxAlignTime = 4; // seconds
+        public static final double ALIGN_TIMEOUT = 0.25; // seconds
 }

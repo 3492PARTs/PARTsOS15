@@ -43,7 +43,7 @@ public class PARTsController {
      * @param port The controller port.
      */
     public PARTsController(int port) {
-        if (RobotConstants.allowAutoControllerDetection) {
+        if (RobotConstants.ALLOW_AUTO_CONTROLLER_DETECTION) {
             if (DriverStation.getJoystickIsXbox(port)) {
                 controllerType = ControllerType.XBOX;
             } else if (DriverStation.getJoystickName(port).toLowerCase().contains("dualsense")) {

@@ -58,13 +58,13 @@ public class Reef {
                                                                                                         targetPose2d = targetPose2d
                                                                                                                         .transformBy(new Transform2d(
                                                                                                                                         (elevatorState == ElevatorState.L4
-                                                                                                                                                        ? RobotConstants.frontRobotVisionL4Offset
+                                                                                                                                                        ? RobotConstants.ROBOT_VISION_L4_OFFSET
                                                                                                                                                                         .to(PARTsUnitType.Meter)
-                                                                                                                                                        : RobotConstants.frontRobotVisionOffset
+                                                                                                                                                        : RobotConstants.ROBOT_VISION_OFFSET
                                                                                                                                                                         .to(PARTsUnitType.Meter)),
                                                                                                                                         (rightSide ? 1
                                                                                                                                                         : -1)
-                                                                                                                                                        * DrivetrainConstants.poleDistanceOffset
+                                                                                                                                                        * DrivetrainConstants.POLE_DISTANCE_OFFSET
                                                                                                                                                                         .to(PARTsUnitType.Meter),
                                                                                                                                         new Rotation2d(PARTsUnit.DegreesToRadians
                                                                                                                                                         .apply(180.0))));
@@ -96,7 +96,7 @@ public class Reef {
         public static Command commandIntakeScoreIntake(PARTsDrivetrain drivetrain, Coral coral, Elevator elevator) {
                 Pose2d feederStationGoal = Field.getTag(12).getLocation().toPose2d();
                 feederStationGoal = feederStationGoal.transformBy(
-                                new Transform2d(RobotConstants.frontRobotVisionOffset.to(PARTsUnitType.Meter),
+                                new Transform2d(RobotConstants.ROBOT_VISION_OFFSET.to(PARTsUnitType.Meter),
                                                 0,
                                                 new Rotation2d(PARTsUnit.DegreesToRadians.apply(0.0))));
 
@@ -104,7 +104,7 @@ public class Reef {
 
                 Pose2d reefGoal = Field.getTag(18).getLocation().toPose2d();
                 reefGoal = reefGoal.transformBy(
-                                new Transform2d(RobotConstants.frontRobotVisionOffset.to(PARTsUnitType.Meter),
+                                new Transform2d(RobotConstants.ROBOT_VISION_OFFSET.to(PARTsUnitType.Meter),
                                                 0,
                                                 new Rotation2d(PARTsUnit.DegreesToRadians.apply(180.0))));
 
@@ -134,12 +134,12 @@ public class Reef {
                                                         targetPose2d = targetPose2d
                                                                         .transformBy(new Transform2d(
                                                                                         (elevatorState == ElevatorState.L4
-                                                                                                        ? RobotConstants.frontRobotVisionL4Offset
+                                                                                                        ? RobotConstants.ROBOT_VISION_L4_OFFSET
                                                                                                                         .to(PARTsUnitType.Meter)
-                                                                                                        : RobotConstants.frontRobotVisionOffset
+                                                                                                        : RobotConstants.ROBOT_VISION_OFFSET
                                                                                                                         .to(PARTsUnitType.Meter)),
                                                                                         (rightSide ? 1 : -1)
-                                                                                                        * DrivetrainConstants.poleDistanceOffset
+                                                                                                        * DrivetrainConstants.POLE_DISTANCE_OFFSET
                                                                                                                         .to(PARTsUnitType.Meter),
                                                                                         new Rotation2d(PARTsUnit.DegreesToRadians
                                                                                                         .apply(180.0))));

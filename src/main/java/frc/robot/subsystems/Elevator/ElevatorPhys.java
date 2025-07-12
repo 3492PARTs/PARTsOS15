@@ -31,10 +31,10 @@ public class ElevatorPhys extends Elevator {
 
     public ElevatorPhys() {
         super();
-        
-        lowerLimitSwitch = new DigitalInput(ElevatorConstants.L_SWITCH_PORT);
 
-        upperLimitLaserCAN = new LaserCan(ElevatorConstants.laserCanId);
+        lowerLimitSwitch = new DigitalInput(ElevatorConstants.LIMIT_SWITCH_PORT);
+
+        upperLimitLaserCAN = new LaserCan(ElevatorConstants.LASER_CAN_ID);
         try {
             upperLimitLaserCAN.setRangingMode(LaserCan.RangingMode.SHORT);
             upperLimitLaserCAN.setRegionOfInterest(new LaserCan.RegionOfInterest(4, 4, 4, 4));
@@ -45,13 +45,13 @@ public class ElevatorPhys extends Elevator {
 
         SparkMaxConfig elevatorConfig = new SparkMaxConfig();
 
-        elevatorConfig.smartCurrentLimit(ElevatorConstants.kMaxCurrent);
+        elevatorConfig.smartCurrentLimit(ElevatorConstants.MAX_CURRENT);
 
         elevatorConfig.idleMode(IdleMode.kBrake);
         elevatorConfig.limitSwitch.reverseLimitSwitchEnabled(true);
 
         // LEFT ELEVATOR MOTOR
-        mLeftMotor = new SparkMax(ElevatorConstants.leftElevatorId, MotorType.kBrushless);
+        mLeftMotor = new SparkMax(ElevatorConstants.LEFT_MOTOR_CAN_ID, MotorType.kBrushless);
         mLeftEncoder = mLeftMotor.getEncoder();
         mLeftMotor.configure(
                 elevatorConfig,
@@ -59,7 +59,7 @@ public class ElevatorPhys extends Elevator {
                 PersistMode.kPersistParameters);
 
         // RIGHT ELEVATOR MOTOR
-        mRightMotor = new SparkMax(ElevatorConstants.rightElevatorId, MotorType.kBrushless);
+        mRightMotor = new SparkMax(ElevatorConstants.RIGHT_MOTOR_CAN_ID, MotorType.kBrushless);
         mRightEncoder = mRightMotor.getEncoder();
         mRightMotor.configure(
                 elevatorConfig.follow(mLeftMotor, true),
@@ -91,7 +91,7 @@ public class ElevatorPhys extends Elevator {
 
     @Override
     public double getRPS() {
-        return mLeftEncoder.getVelocity() * 60 / ElevatorConstants.gearRatio; // 16 is the gear reduction
+        return mLeftEncoder.getVelocity() * 60 / ElevatorConstants.GEAR_RATIO; // 16 is the gear reduction
     }
 
     @Override
@@ -121,8 +121,8 @@ public class ElevatorPhys extends Elevator {
     @Override
     public boolean getTopLimit() {
         return false && carriageLaserCan != null
-                ? carriageLaserCan.distance_mm <= ElevatorConstants.maxLaserCanHeight
-                : getElevatorPosition() >= ElevatorConstants.maxHeight;
+                ? carriageLaserCan.distance_mm <= ElevatorConstants.MAX_LASER_CAN_HEIGHT
+                : getElevatorPosition() >= ElevatorConstants.MAX_HEIGHT;
     }
 
 }
