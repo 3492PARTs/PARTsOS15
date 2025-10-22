@@ -199,7 +199,7 @@ public class PARTsDrivetrain extends CommandSwerveDrivetrain implements IPARTsSu
                 // and Y is defined as to the left according to WPILib convention.
                 return PARTsCommandUtils.setCommandName("commandJoystickDrive", applyRequest(() -> {
                         double limit = MaxSpeed;
-                        if (fineGrainDrive)
+                        if (fineGrainDrive || true)
                                 limit *= 0.25;
                         return getFieldCentricDriveRequest().withVelocityX(-controller.getLeftY() * limit) // Drive forward with negative Y
                                         // (forward)
