@@ -11,7 +11,7 @@ public class CoralConstants {
     public static final double L1_SPEED = -0.22;
     public static final double L23_SPEED = -0.25;
     public static final double L4_SPEED = -.2;
-    public static final double INDEX_SPEED = -0.135;
+    public static final double INDEX_SPEED = -0.2;//-0.135;
     public static final double SPEED_DIFFERENCE = L1_SPEED * 0.9;
     public static final double INCH_INTAKE_SPEED = -.1;
 }
