@@ -29,6 +29,7 @@ import frc.robot.subsystems.LimelightVision;
 import frc.robot.subsystems.Coral.Coral;
 import frc.robot.subsystems.Drivetrain.PARTsDrivetrain;
 import frc.robot.subsystems.Elevator.Elevator;
+import frc.robot.subsystems.LimelightVision.WhitelistMode;
 import frc.robot.util.PARTs.Classes.PARTsCommandUtils;
 import frc.robot.util.PARTs.Classes.PARTsUnit;
 import frc.robot.util.PARTs.Classes.PARTsUnit.PARTsUnitType;
@@ -40,7 +41,7 @@ public class Reef {
         public static Command commandAlignAndScoreToVisibleTag(boolean rightSide, PARTsDrivetrain drivetrain,
                         Elevator elevator,
                         ElevatorState elevatorState, Coral coral, BooleanSupplier escapeBoolean, Candle candle,
-                        BooleanSupplier visionActiveBooleanSupplier) {
+                        BooleanSupplier visionActiveBooleanSupplier, LimelightVision vision) {
                 return PARTsCommandUtils.setCommandName("commandAlignAndScoreToVisibleTag",
                                 Commands.either(
                                                 // true
@@ -54,6 +55,14 @@ public class Reef {
                                                                                                                         .getVisibleTagId(
                                                                                                                                         CameraName.FRONT_CAMERA
                                                                                                                                                         .getCameraName());
+                                                                                                        if (Field.seesReefTags(Field.BLUE_REEF_TAG_IDS, tagID)) {
+                                                                                                                vision.setWhitelistMode(WhitelistMode.BLUE_REEF_TAGS);
+                                                                                                        }
+
+                                                                                                        else if (Field.seesReefTags(Field.RED_REEF_TAG_IDS, tagID)) {
+                                                                                                                vision.setWhitelistMode(WhitelistMode.RED_REEF_TAGS);
+                                                                                                        }
+                                                                                                        
                                                                                                         targetPose2d = Field
                                                                                                                         .getTag(tagID)
                                                                                                                         .getLocation()
@@ -81,7 +90,7 @@ public class Reef {
                                                                                                                 .andThen(new WaitCommand(
                                                                                                                                 0.25))
                                                                                                                 .andThen(elevator
-                                                                                                                                .commandStow()),
+                                                                                                                                .commandStow()).andThen(Commands.runOnce(() -> vision.setWhitelistMode(WhitelistMode.ALL))),
                                                                                                 // false
                                                                                                 new WaitCommand(0),
                                                                                                 () -> {

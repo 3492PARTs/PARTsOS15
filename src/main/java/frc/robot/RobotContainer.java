@@ -185,20 +185,20 @@ public class RobotContainer {
                                 .onTrue(Reef.commandAlignAndScoreToVisibleTag(true, drivetrain, elevator,
                                                 ElevatorState.L2,
                                                 coral,
-                                                escapeBooleanSupplier, candle, visionAlignActiveBooleanSupplier));
+                                                escapeBooleanSupplier, candle, visionAlignActiveBooleanSupplier, vision));
 
                 // --------------------- Align, L3, Score --------------------//
                 buttonBoxController.audioTrigger()
                                 .onTrue(Reef.commandAlignAndScoreToVisibleTag(true, drivetrain, elevator,
                                                 ElevatorState.L3, coral, escapeBooleanSupplier, candle,
-                                                visionAlignActiveBooleanSupplier));
+                                                visionAlignActiveBooleanSupplier, vision));
 
                 // --------------------- Align, L4, Score --------------------//
                 buttonBoxController.cruiseTrigger()
                                 .onTrue(Reef.commandAlignAndScoreToVisibleTag(true, drivetrain, elevator,
                                                 ElevatorState.L4,
                                                 coral,
-                                                escapeBooleanSupplier, candle, visionAlignActiveBooleanSupplier));
+                                                escapeBooleanSupplier, candle, visionAlignActiveBooleanSupplier, vision));
 
                 // *---------------------------------------------------- *//
                 // * ---------------Left Reef Pole Controls ----------- *//
@@ -210,21 +210,21 @@ public class RobotContainer {
                                 .onTrue(Reef.commandAlignAndScoreToVisibleTag(false, drivetrain, elevator,
                                                 ElevatorState.L2,
                                                 coral,
-                                                escapeBooleanSupplier, candle, visionAlignActiveBooleanSupplier));
+                                                escapeBooleanSupplier, candle, visionAlignActiveBooleanSupplier, vision));
 
                 // --------------------- Align, L3, Score --------------------//
                 buttonBoxController.flashTrigger()
                                 .onTrue(Reef.commandAlignAndScoreToVisibleTag(false, drivetrain, elevator,
                                                 ElevatorState.L3,
                                                 coral,
-                                                escapeBooleanSupplier, candle, visionAlignActiveBooleanSupplier));
+                                                escapeBooleanSupplier, candle, visionAlignActiveBooleanSupplier, vision));
 
                 // --------------------- Align, L4, Score --------------------//
                 buttonBoxController.handleTrigger()
                                 .onTrue(Reef.commandAlignAndScoreToVisibleTag(false, drivetrain, elevator,
                                                 ElevatorState.L4,
                                                 coral,
-                                                escapeBooleanSupplier, candle, visionAlignActiveBooleanSupplier));
+                                                escapeBooleanSupplier, candle, visionAlignActiveBooleanSupplier, vision));
 
                 // =============================================================================================
                 // ------------------------------------- SysID
@@ -316,20 +316,20 @@ public class RobotContainer {
                 NamedCommands.registerCommand("Right Align L2 Score",
                                 Reef.commandAlignAndScoreToVisibleTag(true, drivetrain, elevator, ElevatorState.L2,
                                                 coral,
-                                                escapeBooleanSupplier, candle, visionAlignActiveBooleanSupplier));
+                                                escapeBooleanSupplier, candle, visionAlignActiveBooleanSupplier, vision));
                 NamedCommands.registerCommand("Left Align L2 Score",
                                 Reef.commandAlignAndScoreToVisibleTag(false, drivetrain, elevator, ElevatorState.L2,
                                                 coral,
-                                                escapeBooleanSupplier, candle, visionAlignActiveBooleanSupplier));
+                                                escapeBooleanSupplier, candle, visionAlignActiveBooleanSupplier, vision));
 
                 NamedCommands.registerCommand("Right Align L4 Score",
                                 Reef.commandAlignAndScoreToVisibleTag(true, drivetrain, elevator, ElevatorState.L4,
                                                 coral,
-                                                escapeBooleanSupplier, candle, visionAlignActiveBooleanSupplier));
+                                                escapeBooleanSupplier, candle, visionAlignActiveBooleanSupplier, vision));
                 NamedCommands.registerCommand("Left Align L4 Score",
                                 Reef.commandAlignAndScoreToVisibleTag(false, drivetrain, elevator, ElevatorState.L4,
                                                 coral,
-                                                escapeBooleanSupplier, candle, visionAlignActiveBooleanSupplier));
+                                                escapeBooleanSupplier, candle, visionAlignActiveBooleanSupplier, vision));
 
                 NamedCommands.registerCommand("Align Left L4 Stop",
                                 Reef.alignToVisibleTagSideStop(false, drivetrain, elevator, ElevatorState.L4, coral,

@@ -263,6 +263,15 @@ public interface Field {
         public int[] BLUE_REEF_TAG_IDS = { 17, 18, 19, 20, 21, 22 };
         public int[] RED_REEF_TAG_IDS = { 6, 7, 8, 9, 10, 11 };
 
+        public static boolean seesReefTags(int [] reefArray, int id) {
+                for (int element : reefArray) {
+                        if (element == id) {
+                                return true;
+                        }
+                }
+                return false;
+        }
+
         /*** REEF ***/
         Translation2d ALLIANCE_REEF_CENTER = new Translation2d(Units.inchesToMeters(144.0 + (93.5 - 14.0 * 2) / 2),
                         Field.WIDTH / 2);
